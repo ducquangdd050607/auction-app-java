@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 public class BidTransaction {
     private Customer bidder;
     private double amount;
-    private LocalDateTime timestamp;
+    private LocalDateTime time;
 
     public BidTransaction(Customer bidder, double amount) {
         this.bidder = bidder;
         this.amount = amount;
-        this.timestamp = LocalDateTime.now();
+        this.time = LocalDateTime.now();
     }
 
     public double getAmount() { 
@@ -18,7 +18,7 @@ public class BidTransaction {
     public Customer getBidder() { 
         return this.bidder; 
     }
-    public LocalDateTime getTimestamp() { 
-        return this.timestamp; 
+    public LocalDateTime getTime() { 
+        return this.time; 
     }
 }
