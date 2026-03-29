@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Slide 7: Danh sách phiên đấu giá -->
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AuctionListController">
+    <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
+
+    <top>
+        <VBox spacing="14">
+            <!-- Screen title -->
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+
+            <!-- Search + filter bar -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="txtSearch" prefHeight="32" prefWidth="300" promptText="Tìm kiếm phiên đấu giá..." style="-fx-background-radius: 4; -fx-font-size: 13;" />
+                <ComboBox fx:id="cbFilterStatus" prefHeight="32" prefWidth="140" promptText="Trạng thái" style="-fx-font-size: 13;" />
+                <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Tìm" />
+            <Button onAction="#handleTest1" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Test1" />
+            <Button onAction="#handleTest2" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Test2" />
+            </HBox>
+            <padding><Insets bottom="6" /></padding>
+        </VBox>
+    </top>
+
+    <!-- Auction list -->
+    <center>
+        <ListView fx:id="listAuctions" onMouseClicked="#handleSelectAuction" style="-fx-background-color: transparent;                          -fx-background-insets: 0;                          -fx-control-inner-background: #3A8DAD;                          -fx-font-size: 14; -fx-text-fill: white;">
+            <BorderPane.margin><Insets top="10" /></BorderPane.margin>
+        </ListView>
+    </center>
+   <bottom>
+      <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại" BorderPane.alignment="CENTER" />
+   </bottom>
+
+</BorderPane>
