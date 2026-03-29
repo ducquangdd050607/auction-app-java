@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 public abstract class Item extends Entity {
     private double startPrice;
     private double currentPrice;
-    private Seller owner;
+    private Customer owner;
     private LocalDateTime endTime;
 
-    public Item(String id, String name, double startPrice, Seller owner, LocalDateTime endTime) {
+    public Item(String id, String name, double startPrice, Customer owner, LocalDateTime endTime) {
         super(id, name);
         this.startPrice = startPrice;
         this.currentPrice = startPrice;

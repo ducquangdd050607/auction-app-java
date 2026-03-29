@@ -1,10 +1,10 @@
 package models;
 
-public class Seller extends User {
+public class Customer extends User {
     private Wallet wallet;
 
-    public Seller(String id, String name, double balance) {
-        super(id, name);
+    public Customer(String id, String name, String email, String password, double balance) {
+        super(id, name, email, password);
         this.wallet = new Wallet(balance);
     }
 
