@@ -37,6 +37,7 @@ public class LoginController {
             lblError.setText("Hãy điền đủ thông tin");
             lblError.setVisible(true);
         } else {
+            isLoggedIn = true;
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainScreen.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
