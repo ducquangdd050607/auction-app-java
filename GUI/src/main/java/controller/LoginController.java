@@ -58,4 +58,16 @@ public class LoginController {
         stage.show();
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        updateRegisterStatus(RegisterController.isRegister);
+    }
+
+    @FXML
+    public void updateRegisterStatus(boolean isRegister) {
+        if (isRegister) {
+            lblError.setText("Hãy nhập lại tài khoản.");
+            lblError.setVisible(true);
+        }
+    }
 }
