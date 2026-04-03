@@ -1,4 +1,4 @@
-package models;
+package com.auctionapp.auctionappjava.models;
 
 public abstract class User extends Entity {
     private String email;

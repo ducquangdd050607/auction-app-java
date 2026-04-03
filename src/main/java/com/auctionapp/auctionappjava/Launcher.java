@@ -1,4 +1,4 @@
-package com.auctionapp.demomaven;
+package com.auctionapp.auctionappjava;
 
 import javafx.application.Application;
 

@@ -1,4 +1,4 @@
-module com.auctionapp.demomaven {
+module com.auctionapp.auctionappjava {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -9,6 +9,6 @@ module com.auctionapp.demomaven {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens com.auctionapp.demomaven to javafx.fxml;
-    exports com.auctionapp.demomaven;
+    opens com.auctionapp.auctionappjava.controllers to javafx.fxml;
+    exports com.auctionapp.auctionappjava;
 }
