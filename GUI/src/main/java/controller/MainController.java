@@ -36,6 +36,9 @@ public class MainController {
     private Label lblUserAvatar;
     @FXML
     private StackPane userNavBox;
+    @FXML
+    private VBox navigator;
+
 
     @FXML
     void handleAboutUs(ActionEvent event) {
