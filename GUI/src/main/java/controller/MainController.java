@@ -62,32 +62,6 @@ public class MainController implements Initializable {
 
     }
 
-//    @FXML
-//    void handleRegister(ActionEvent event) throws IOException {
-//        Parent root = FXMLLoader.load(getClass().getResource("/fxml/RegisterScreen.fxml"));
-//        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        stage.setScene(scene);
-//        stage.show();
-//    }
-
-    @FXML
-    void handleViewItems(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuctionListScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    @FXML
-    void wallet(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/WalletScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
