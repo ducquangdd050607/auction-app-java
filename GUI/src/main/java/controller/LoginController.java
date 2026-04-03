@@ -41,7 +41,7 @@ public class LoginController {
             lblError.setVisible(true);
         } else {
             isLoggedIn = true;
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainScreen.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Route.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
