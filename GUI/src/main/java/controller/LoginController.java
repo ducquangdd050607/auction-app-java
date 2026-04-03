@@ -18,6 +18,7 @@ public class LoginController {
     private Stage stage;
     private Parent root;
     private Scene scene;
+    static boolean isLoggedIn = false;
 
     @FXML
     private Label lblError;
