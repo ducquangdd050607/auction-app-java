@@ -3,6 +3,7 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,11 +20,12 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-public class MainController {
     private Stage stage;
     private Parent root;
     private Scene scene;
 
+    @FXML
+    private Button btnUser;
     @FXML
     private Button btnLogin;
     @FXML
@@ -46,11 +48,6 @@ public class MainController {
     }
 
     @FXML
-    void handleBit(ActionEvent event) {
-
-    }
-
-    @FXML
     void handleLogin(ActionEvent event) throws IOException {
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/LoginScreen.fxml"));
@@ -65,14 +62,14 @@ public class MainController {
 
     }
 
-    @FXML
-    void handleRegister(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/RegisterScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
+//    @FXML
+//    void handleRegister(ActionEvent event) throws IOException {
+//        Parent root = FXMLLoader.load(getClass().getResource("/fxml/RegisterScreen.fxml"));
+//        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//        scene = new Scene(root);
+//        stage.setScene(scene);
+//        stage.show();
+//    }
 
     @FXML
     void handleViewItems(ActionEvent event) throws IOException {
@@ -91,4 +88,24 @@ public class MainController {
         stage.setScene(scene);
         stage.show();
     }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        updateLoginStatus(LoginController.isLoggedIn);
+    }
+
+    @FXML
+    public void updateLoginStatus(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            // Làm nút Login biến mất hoàn toàn
+            btnLogin.setVisible(false);
+            btnLogin.setManaged(false);
+
+        } else {
+            // Trạng thái chưa đăng nhập
+            btnLogin.setVisible(true);
+            btnLogin.setManaged(true);
+        }
+    }
+
 }

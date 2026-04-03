@@ -26,12 +26,6 @@
         <!-- Title -->
         <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Register" />
 
-        <!-- Guest / Seller tab toggle -->
-        <HBox alignment="CENTER" spacing="40">
-            <Label fx:id="tabGuest" onMouseClicked="#handleSelectGuest" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;                           -fx-cursor: hand; -fx-underline: false;" text="Guest" />
-            <Hyperlink fx:id="tabSeller" onAction="#handleSelectSeller" style="-fx-text-fill: #B0D8E8; -fx-font-size: 16;" text="Seller" />
-        </HBox>
-
         <!-- Form fields -->
         <GridPane hgap="12" vgap="12">
             <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Username" GridPane.columnIndex="0" GridPane.rowIndex="0" />

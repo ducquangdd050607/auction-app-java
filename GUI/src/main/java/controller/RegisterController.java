@@ -29,12 +29,6 @@ public class RegisterController {
     private Label lblPrivateKey;
 
     @FXML
-    private Label tabGuest;
-
-    @FXML
-    private Hyperlink tabSeller;
-
-    @FXML
     private PasswordField txtConfirmPassword;
 
     @FXML
@@ -44,7 +38,7 @@ public class RegisterController {
     private PasswordField txtPassword;
 
     @FXML
-    private TextField txtPrivateKey;
+    private TextField txtPrivateKey;//?
 
     @FXML
     private TextField txtUsername;
@@ -70,16 +64,6 @@ public class RegisterController {
             stage.setScene(scene);
             stage.show();
         }
-    }
-
-    @FXML
-    void handleSelectGuest(MouseEvent event) {
-
-    }
-
-    @FXML
-    void handleSelectSeller(ActionEvent event) {
-
     }
 
     @FXML
