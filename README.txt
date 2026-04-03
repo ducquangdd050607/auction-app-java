@@ -1,3 +1,5 @@
-Brother-Cosx(Nguyễn Dũng)
-
-might be a beginner.
+-> login/registor/route mostly(?) done
+-> dashboard next
+-> list(add, remove, ...)
+-> demo bid(?)
+-> logout(whytho)
