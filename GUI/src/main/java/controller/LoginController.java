@@ -31,6 +31,8 @@ public class LoginController {
 
     @FXML
     private TextField txtUsername;
+    @FXML
+    private Button btnAdConfirm;
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
