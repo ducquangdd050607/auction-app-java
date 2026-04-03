@@ -20,6 +20,7 @@ public class RegisterController {
     private Stage stage;
     private Parent root;
     private Scene scene;
+    static boolean isRegister = false;
 
     @FXML
     private Label lblError;
