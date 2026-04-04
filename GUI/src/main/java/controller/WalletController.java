@@ -31,8 +31,8 @@ public class WalletController {
     private Label lblUsername;
 
     @FXML
-    void handleChangePassword(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/ChangePasswordScreen.fxml"));
+    void handleChangingInformation(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/ChangeInformation.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -50,13 +50,8 @@ public class WalletController {
     }
 
     @FXML
-    void handleViewItems(ActionEvent event) {
-
-    }
-
-    @FXML
     void handleBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Dashboard.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

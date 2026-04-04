@@ -16,6 +16,9 @@ import java.io.IOException;
 
 public class Route {
 
+    private Stage stage;
+    private Parent root;
+    private Scene scene;
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
     static boolean adminRoute = false;
@@ -80,21 +83,32 @@ public class Route {
             lblError.setText("Vui lòng nhập mã");
             lblError.setVisible(true);
         } else {
-            lblError.setText("Đợi");
+            adminRoute = true;
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Navigator.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         }
     }
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
         if (user.equals("1")) {
-            boolean sellerRoute = true;
-            lblError.setText("welcome seller");
-            lblError.setVisible(true);
+            sellerRoute = true;
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Navigator.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
 
         } else if (user.equals("0")) {
-            boolean bidderRoute = true;
-            lblError.setText("welcome bidder");
-            lblError.setVisible(true);
+            bidderRoute = true;
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Navigator.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         }
     }
 }
