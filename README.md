@@ -1,0 +1,5 @@
+-> login/registor/route mostly(?) done
+-> dashboard (?) done
+-> list(add, remove, ...) now here
+-> demo bid(?)
+-> logout(whytho)
