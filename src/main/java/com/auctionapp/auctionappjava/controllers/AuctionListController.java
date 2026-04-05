@@ -37,6 +37,20 @@ public class AuctionListController implements Initializable {
     @FXML
     private ComboBox<String> cbType;
     @FXML
+    private TableColumn<Item, Integer> clmBidders;
+    @FXML
+    private TableColumn<Item, Double> clmCurrentPrice;
+    @FXML
+    private TableColumn<Item, String> clmName;
+    @FXML
+    private TableColumn<Item, Double> clmStartPrice;
+    @FXML
+    private TableColumn<Item, String> clmStatus;
+    @FXML
+    private TableColumn<Item, Integer> clmTime;
+    @FXML
+    private TableColumn<Item, String> clmType;
+    @FXML
     private TableView<Item> listAuctions;
     @FXML
     private TextField txtSearch;
