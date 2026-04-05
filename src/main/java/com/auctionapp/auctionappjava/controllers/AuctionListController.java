@@ -86,11 +86,11 @@ public class AuctionListController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"};
+    public void initialize(URL location, ResourceBundle resources) { //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
+        String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
         cbFilterStatus.getItems().addAll(statuses);
 
-        String[] sorts = {"TÊN", "GÍA TIỀN", "THỜI GIAN", "XU HƯỚNG(?)"};
+        String[] sorts = {"TÊN", "GÍA TIỀN", "THỜI GIAN", "XU HƯỚNG(?)"};// sort
         cbSort.getItems().addAll(sorts);
 
         String[] type = {};//manual-added
@@ -107,13 +107,16 @@ public class AuctionListController implements Initializable {
     public void show() throws IOException {
         box.setVisible(true);
         box.setManaged(true);
+        // bidder không thêm bỏ sp
         btnAdd.setVisible(false);
         btnAdd.setManaged(false);
+        //thêm sp
         btnRemove.setVisible(false);
         btnRemove.setManaged(false);
+        //xóa sp
         btnAdmin.setVisible(false);
         btnAdmin.setManaged(false);
-
+        //nút admin
         if (Route.adminRoute) {
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);

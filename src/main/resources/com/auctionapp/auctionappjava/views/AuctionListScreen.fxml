@@ -39,14 +39,17 @@
       <TableView fx:id="listAuctions" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn prefWidth="26.4000244140625" text="STT" />
-          <TableColumn prefWidth="71.99999237060547" text="Thể loại" />
-            <TableColumn prefWidth="127.19998168945312" text="Tên" />
-            <TableColumn prefWidth="88.0" text="Trạng thái" />
-            <TableColumn prefWidth="114.4000244140625" text="Gía tiền" />
-            <TableColumn prefWidth="120.00009155273438" text="Thời gian bắt đầu" />
-            <TableColumn prefWidth="131.199951171875" text="Thời gian kết thúc" />
-            <TableColumn prefWidth="140.7999267578125" text="Số Bidders quan tâm" />
+          <TableColumn fx:id="clmType" prefWidth="71.99999237060547" text="Thể loại" />
+            <TableColumn fx:id="clmName" prefWidth="120.79998779296875" text="Tên" />
+            <TableColumn fx:id="clmStatus" prefWidth="70.39996337890625" text="Trạng thái" />
+            <TableColumn fx:id="clmStartPrice" prefWidth="127.20001220703125" text="Gía tiền khởi đầu" />
+            <TableColumn fx:id="clmCurrentPrice" prefWidth="124.00003051757812" text="Gía tiền hiện tại" />
+            <TableColumn fx:id="clmTime" prefWidth="144.0001220703125" text="Thời gian còn lại" />
+            <TableColumn fx:id="clmBidders" prefWidth="134.4000244140625" text="Số Bidders quan tâm" />
         </columns>
+         <BorderPane.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </BorderPane.margin>
       </TableView>
    </center>
    <bottom>
