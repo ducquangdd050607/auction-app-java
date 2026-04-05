@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="788.0" prefWidth="1354.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.Navigator">
+   <left>
+      <VBox prefHeight="457.0" prefWidth="178.0" style="-fx-background-color: #1F5A73;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="groupHome" prefHeight="18.0" prefWidth="131.0" style="-fx-background-color: #1F5A73;">
+               <children>
+                  <Label style="-fx-text-fill: white;" text="Trang chủ" />
+                  <Button mnemonicParsing="false" onAction="#handleBackToDash" prefHeight="26.0" prefWidth="235.0" text="Trang chủ" />
+               </children>
+            </VBox>
+            <VBox fx:id="groupBidder" prefHeight="17.0" prefWidth="195.0">
+               <children>
+                  <Label style="-fx-text-fill: white;" text="Đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="178.0" text="Danh sách đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#history" prefHeight="0.0" prefWidth="178.0" text="Lịch sử đấu giá" />
+               </children>
+            </VBox>
+            <VBox fx:id="groupAdmin" prefHeight="70.0" prefWidth="186.0">
+               <children>
+                  <Label style="-fx-text-fill: white;" text="Quản trị" />
+                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="6.0" prefWidth="178.0" text="Quản lý phiên đấu giá" />
+                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="178.0" text="Quản lý Users" />
+               </children>
+            </VBox>
+            <VBox fx:id="groupSeller" prefHeight="69.0" prefWidth="82.0">
+               <children>
+                  <Label style="-fx-text-fill: white;" text="Quản lý" />
+                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="177.0" text="Danh sách đấu giá" />
+                  <Button layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="177.0" text="Quản lý vật phẩm" />
+               </children>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <VBox fx:id="groupAccount" prefHeight="53.0" prefWidth="181.0">
+               <children>
+                  <Label style="-fx-text-fill: white;" text="Tài khoản" />
+                  <Button fx:id="wallet" onAction="#handleWallet" prefHeight="26.0" prefWidth="177.0" text="Ví tiền" />
+                  <Button fx:id="changePassword" mnemonicParsing="false" onAction="#handleChangePassword" prefHeight="26.0" prefWidth="177.0" text="Đổi mật khẩu" />
+                  <Button fx:id="setting" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="177.0" text="Cài đặt" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <AnchorPane prefHeight="736.0" prefWidth="1089.0" BorderPane.alignment="CENTER" />
+   </center>
+   <top>
+      <HBox alignment="CENTER" prefHeight="46.0" prefWidth="1082.0" style="-fx-background-color: #2E7D9B;" BorderPane.alignment="CENTER">
+         <children>
+            <StackPane prefHeight="50.0" prefWidth="62.0" style="-fx-background-color: white; -fx-background-radius: 18;">
+               <children>
+                  <Label text="Logo" />
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </StackPane>
+            <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
+            <Region prefHeight="50.0" prefWidth="302.0" HBox.hgrow="ALWAYS" />
+            <StackPane fx:id="indicator" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="28.0" prefWidth="62.0" style="-fx-background-color: white; -fx-background-radius: 18;">
+               <children>
+                  <Label fx:id="identity" text="&quot;for Route&quot;" />
+               </children>
+            </StackPane>
+            <Region prefHeight="46.0" prefWidth="22.0" />
+            <Button fx:id="btnSignout" mnemonicParsing="false" style="-fx-background-radius: 18;" text="Sign out" />
+            <Region layoutX="986.0" layoutY="10.0" prefHeight="46.0" prefWidth="24.0" />
+         </children>
+      </HBox>
+   </top>
+</BorderPane>

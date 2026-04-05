@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Slide 7: Danh sách phiên đấu giá -->
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.AuctionListController">
+    <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
+
+    <top>
+        <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
+            <!-- Screen title -->
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+
+            <!-- Search + filter bar -->
+            <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="726.0" spacing="10" style="-fx-background-color: #2E7D9B;">
+                <TextField fx:id="txtSearch" prefHeight="32" prefWidth="231.0" promptText="Tìm kiếm phiên đấu giá..." style="-fx-background-radius: 4; -fx-font-size: 13;" />
+                <ComboBox fx:id="cbFilterStatus" prefHeight="32" prefWidth="140" promptText="Trạng thái" style="-fx-font-size: 13;" />
+            <ComboBox fx:id="cbSort" layoutX="320.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Xếp theo" style="-fx-font-size: 13;" />
+            <ComboBox fx:id="cbType" layoutX="471.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Thể loại" style="-fx-font-size: 13;" />
+                <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Tìm" />
+            </HBox>
+            <padding><Insets bottom="10.0" left="30.0" right="10.0" top="10.0" /></padding>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+        </VBox>
+    </top>
+   <center>
+      <TableView fx:id="listAuctions" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn prefWidth="26.4000244140625" text="STT" />
+          <TableColumn prefWidth="71.99999237060547" text="Thể loại" />
+            <TableColumn prefWidth="127.19998168945312" text="Tên" />
+            <TableColumn prefWidth="88.0" text="Trạng thái" />
+            <TableColumn prefWidth="114.4000244140625" text="Gía tiền" />
+            <TableColumn prefWidth="120.00009155273438" text="Thời gian bắt đầu" />
+            <TableColumn prefWidth="131.199951171875" text="Thời gian kết thúc" />
+            <TableColumn prefWidth="140.7999267578125" text="Số Bidders quan tâm" />
+        </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox fx:id="box" alignment="CENTER" prefHeight="35.0" prefWidth="612.0" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="414.0" spacing="20.0" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12;">
+               <children>
+                  <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Thêm sản phẩm" />
+                  <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xóa sản phẩm" />
+                  <Button fx:id="btnAdmin" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenAdminScreen" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Quản trị" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </bottom>
+
+</BorderPane>
