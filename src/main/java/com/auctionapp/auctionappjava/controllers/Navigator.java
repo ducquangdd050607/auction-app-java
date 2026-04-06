@@ -118,5 +118,10 @@ public class Navigator implements Initializable {
         mainBorderPane.setCenter(scene1);
     }
 
+    @FXML
+    void handleGotoUsersManager(ActionEvent event) throws IOException {
+        Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/UsersManager.fxml"));
+        mainBorderPane.setCenter(scene1);
+    }
 
 }

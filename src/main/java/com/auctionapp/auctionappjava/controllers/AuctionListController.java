@@ -106,9 +106,12 @@ public class AuctionListController implements Initializable {
 
             if (response == ButtonType.OK) {
                 alert.close();
+
+                //xử lý xóa
+
                 btnConfirm.setVisible(false);
                 btnConfirm.setManaged(false);
-                clmChoose.setVisible(false); //xử lý xóa
+                clmChoose.setVisible(false);
             } else {//xử lý hủy(chắc chỉ thế này)
                 alert.close();
 
