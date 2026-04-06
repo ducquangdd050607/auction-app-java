@@ -149,6 +149,14 @@ public class AuctionListController implements Initializable {
         //xóa sp
         btnAdmin.setVisible(false);
         btnAdmin.setManaged(false);
+
+        // nút xác nhận-hủy-khung chọn chỉ khi bấm remove
+        btnConfirm.setVisible(false);
+        btnConfirm.setManaged(false);
+        clmChoose.setVisible(false);
+        btnCancel.setVisible(false);
+        btnCancel.setManaged(false);
+
         //nút admin
         if (Route.adminRoute) {
             btnAdmin.setVisible(true);
