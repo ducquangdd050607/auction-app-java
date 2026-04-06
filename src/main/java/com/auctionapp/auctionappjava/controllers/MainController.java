@@ -29,8 +29,6 @@ public class MainController {
     @FXML
     private Button btnLogin;
     @FXML
-    private Button btnManageProducts;
-    @FXML
     private Button btnRegister;
     @FXML
     private HBox guestNavBox;
@@ -55,10 +53,5 @@ public class MainController {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-    }
-
-    @FXML
-    void handleManageProducts(ActionEvent event) {
-
     }
 }

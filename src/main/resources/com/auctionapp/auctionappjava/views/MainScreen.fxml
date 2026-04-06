@@ -24,9 +24,7 @@
             <Region HBox.hgrow="ALWAYS" />
 
             <!-- Guest: Login + Register buttons -->
-            <HBox fx:id="guestNavBox" alignment="CENTER" spacing="8">
-                <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="34" prefWidth="90" style="-fx-background-color: #2E7D9B; -fx-text-fill: white;                                -fx-font-size: 13; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Log in" />
-            </HBox>
+            <HBox fx:id="guestNavBox" alignment="CENTER" spacing="8" />
 
             <!-- Logged-in: User avatar/name circle -->
             <StackPane fx:id="userNavBox" managed="false" prefHeight="48" prefWidth="48" style="-fx-background-color: #2E7D9B; -fx-background-radius: 24;                               -fx-cursor: hand;" visible="false">
@@ -49,9 +47,7 @@
 
             <!-- Bottom action buttons -->
             <HBox alignment="CENTER" spacing="20">
-                <Button onAction="#handleAboutUs" prefHeight="45" prefWidth="200" style="-fx-background-color: #2E7D9B; -fx-text-fill: white;                                -fx-font-size: 15; -fx-cursor: hand;                                -fx-background-radius: 6;" text="(?)Về chúng tôi" />
-                <!-- Seller only: Quản lý sản phẩm -->
-                <Button fx:id="btnManageProducts" managed="false" onAction="#handleManageProducts" prefHeight="45" prefWidth="200" style="-fx-background-color: #2E7D9B; -fx-text-fill: white;                                -fx-font-size: 15; -fx-cursor: hand;                                -fx-background-radius: 6;" text="Quản lý sản phẩm" visible="false" />
+                <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="45" prefWidth="200" style="-fx-background-color: #2E7D9B; -fx-text-fill: white;                                -fx-font-size: 15; -fx-cursor: hand;                                -fx-background-radius: 6;" text="Log in" />
             </HBox>
         </VBox>
     </center>
