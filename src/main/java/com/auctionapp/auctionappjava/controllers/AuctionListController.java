@@ -72,6 +72,39 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
+    void handleCancel(ActionEvent event) throws IOException{
+        // hủy:)) (admin)
+        btnConfirm.setVisible(false);
+        btnConfirm.setManaged(false);
+        clmChoose.setVisible(false);
+        btnAdmin.setVisible(true);
+        btnAdmin.setManaged(true);
+        btnCancel.setVisible(false);
+        btnCancel.setManaged(false);
+    }
+
+    @FXML
+    void handleConfirm(ActionEvent event) throws IOException{
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Chắc chưa?");
+        alert.setHeaderText("Bạn có muốn xóa sản phẩm không?");
+
+        alert.showAndWait().ifPresent(response -> {
+
+            if (response == ButtonType.OK) {
+                alert.close();
+                btnConfirm.setVisible(false);
+                btnConfirm.setManaged(false);
+                clmChoose.setVisible(false); //xử lý xóa
+            } else {//xử lý hủy(chắc chỉ thế này)
+                alert.close();
+
+            }
+        });
+    }
+
+
+    @FXML
     void handleAdd(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
         stage = new Stage();
