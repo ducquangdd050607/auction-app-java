@@ -120,6 +120,8 @@ public class AuctionListController implements Initializable {
         if (Route.adminRoute) {
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);
+            btnRemove.setVisible(true);
+            btnRemove.setManaged(true);
 
         } else if (Route.sellerRoute) {
             btnAdd.setVisible(true);
