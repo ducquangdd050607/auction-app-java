@@ -30,11 +30,11 @@
 
         <!-- Form fields -->
         <GridPane hgap="12" vgap="14">
-            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Username" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="txtUsername" prefHeight="34" prefWidth="260" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="txtUsername" prefHeight="34" prefWidth="260" promptText="Enter your username/email" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <PasswordField fx:id="txtPassword" prefHeight="34" prefWidth="260" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <PasswordField fx:id="txtPassword" prefHeight="34" prefWidth="260" promptText="Enter your password" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          <columnConstraints>
             <ColumnConstraints />
             <ColumnConstraints />
@@ -46,12 +46,12 @@
         </GridPane>
 
         <!-- Confirm button -->
-        <Button onAction="#handleConfirm" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Confirm" />
+        <Button onAction="#handleConfirm" prefHeight="36" prefWidth="104.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-font-size: 15; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 10;" text="Confirm" />
 
         <!-- Register link -->
         <HBox alignment="CENTER" spacing="4">
             <Label style="-fx-text-fill: white; -fx-font-size: 13;" text="Don't have an account?" />
-            <Hyperlink onAction="#handleRegister" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Register" />
+            <Hyperlink onAction="#handleRegister" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Register" underline="true" />
         </HBox>
 
         <!-- Error label (hidden by default) -->
