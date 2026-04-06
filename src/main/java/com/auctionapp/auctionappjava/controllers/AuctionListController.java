@@ -29,6 +29,10 @@ public class AuctionListController implements Initializable {
     @FXML
     private Button btnAdmin;
     @FXML
+    private Button btnConfirm;
+    @FXML
+    private Button btnCancel;
+    @FXML
     private Button btnRemove;
     @FXML
     private ComboBox<String> cbFilterStatus;
@@ -53,6 +57,8 @@ public class AuctionListController implements Initializable {
     @FXML
     private TableView<Item> listAuctions;
     @FXML
+    private TableColumn<?, ?> clmChoose;
+    @FXML
     private TextField txtSearch;
 
 
@@ -67,8 +73,15 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    void handleRemove(ActionEvent event) {
-
+    void handleRemove(ActionEvent event) throws IOException{
+        // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
+        btnConfirm.setVisible(true);
+        btnConfirm.setManaged(true);
+        clmChoose.setVisible(true);
+        btnAdmin.setVisible(false);
+        btnAdmin.setManaged(false);
+        btnCancel.setVisible(true);
+        btnCancel.setManaged(true);
     }
 
     @FXML
@@ -143,9 +156,11 @@ public class AuctionListController implements Initializable {
         // bidder không thêm bỏ sp
         btnAdd.setVisible(false);
         btnAdd.setManaged(false);
+
         //thêm sp
         btnRemove.setVisible(false);
         btnRemove.setManaged(false);
+
         //xóa sp
         btnAdmin.setVisible(false);
         btnAdmin.setManaged(false);
@@ -167,8 +182,6 @@ public class AuctionListController implements Initializable {
         } else if (Route.sellerRoute) {
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
-            btnRemove.setVisible(true);
-            btnRemove.setManaged(true);
 
         } else if (Route.bidderRoute) {
             box.setVisible(false);

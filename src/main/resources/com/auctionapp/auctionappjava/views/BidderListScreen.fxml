@@ -21,9 +21,9 @@
 
             <!-- Auction summary row -->
             <HBox alignment="CENTER_LEFT" spacing="14">
-                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="[Art]" />
-                <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Người con gái NX" />
-                <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 12; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 3 10 3 10;" text="RUNNING" />
+                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="[Type]" />
+                <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="[Name]" />
+                <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 12; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 3 10 3 10;" text="[STATUS]" />
             </HBox>
             <HBox spacing="12">
                 <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Giá khởi điểm:" />
@@ -47,8 +47,11 @@
                 <TableColumn fx:id="colRank" prefWidth="50" text="#" />
                 <TableColumn fx:id="colUsername" prefWidth="220" text="Tên người dùng" />
                 <TableColumn fx:id="colBidAmount" prefWidth="180" text="Giá đặt (đ)" />
-                <TableColumn fx:id="colBidTime" prefWidth="200" text="Thời gian đặt" />
+                <TableColumn fx:id="colBidTime" prefWidth="200.0" text="Thời gian đặt" />
             </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
         </TableView>
     </center>
 
@@ -57,6 +60,8 @@
             <Button onAction="#handleBack" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
             <!-- FINISHED state: export winner notice -->
             <Button fx:id="btnExportWinner" managed="false" onAction="#handleExportWinner" prefHeight="36" prefWidth="230" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xuất thông báo người thắng" visible="false" />
+         <Button layoutX="10.0" layoutY="10.0" onAction="#handleAdminRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xóa sản phẩm" />
+         <Button layoutX="142.0" layoutY="10.0" onAction="#handleBidders" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Quản lý Bidders" />
         </HBox>
     </bottom>
 
