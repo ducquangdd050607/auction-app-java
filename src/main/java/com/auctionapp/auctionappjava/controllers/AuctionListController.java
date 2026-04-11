@@ -138,9 +138,7 @@ public class AuctionListController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) { //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
         String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
         cbFilterStatus.getItems().addAll(statuses);
-
-        String[] sorts = {"TÊN", "GÍA TIỀN", "THỜI GIAN", "XU HƯỚNG(?)"};// sort
-        cbSort.getItems().addAll(sorts);
+        
 
         String[] type = {};//manual-added
         cbType.getItems().addAll(type);
