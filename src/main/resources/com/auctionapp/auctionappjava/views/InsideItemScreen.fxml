@@ -58,7 +58,7 @@
 
     <bottom>
         <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="386.0" spacing="12">
-            <Button onAction="#handleBack" prefHeight="36" prefWidth="99.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
+            <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36" prefWidth="99.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
          <Button layoutX="142.0" layoutY="10.0" onAction="#handleBidders" prefHeight="36" prefWidth="122.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Quản lý Bidders" />
          <Button layoutX="10.0" layoutY="10.0" onAction="#handleRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xóa sản phẩm" />
          <Button fx:id="btnExportWinner" layoutX="10.0" layoutY="10.0" onAction="#handleExportWinner" prefHeight="36" prefWidth="218.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xuất thông báo người thắng" />
