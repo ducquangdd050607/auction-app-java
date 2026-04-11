@@ -20,13 +20,12 @@
     <top>
         <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
             <!-- Screen title -->
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+            <Label fx:id="txtVersatile" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
 
             <!-- Search + filter bar -->
             <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="726.0" spacing="10" style="-fx-background-color: #2E7D9B;">
                 <TextField fx:id="txtSearch" prefHeight="32" prefWidth="231.0" promptText="Tìm kiếm phiên đấu giá..." style="-fx-background-radius: 4; -fx-font-size: 13;" />
                 <ComboBox fx:id="cbFilterStatus" prefHeight="32" prefWidth="140" promptText="Trạng thái" style="-fx-font-size: 13;" />
-            <ComboBox fx:id="cbSort" layoutX="320.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Xếp theo" style="-fx-font-size: 13;" />
             <ComboBox fx:id="cbType" layoutX="471.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Thể loại" style="-fx-font-size: 13;" />
                 <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Tìm" />
             </HBox>
@@ -71,6 +70,7 @@
                   <Button fx:id="btnAdmin" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenAdminScreen" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Quản trị" />
                   <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Hủy bỏ" />
+                  <Button fx:id="btnTest" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleTest" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Test" />
                </children>
             </HBox>
          </children>
