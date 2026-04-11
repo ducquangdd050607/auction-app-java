@@ -8,15 +8,16 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
 <!-- Slide 13 / 14: Seller – xem danh sách người đặt cược -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.BidderListController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.InsideItemController">
     <padding><Insets bottom="28" left="40" right="40" top="28" /></padding>
 
     <top>
-        <VBox spacing="6">
+        <VBox spacing="6.0">
             <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
 
             <!-- Auction summary row -->
@@ -56,12 +57,13 @@
     </center>
 
     <bottom>
-        <HBox alignment="CENTER_LEFT" spacing="12">
-            <Button onAction="#handleBack" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
-            <!-- FINISHED state: export winner notice -->
-            <Button fx:id="btnExportWinner" managed="false" onAction="#handleExportWinner" prefHeight="36" prefWidth="230" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xuất thông báo người thắng" visible="false" />
-         <Button layoutX="10.0" layoutY="10.0" onAction="#handleAdminRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xóa sản phẩm" />
-         <Button layoutX="142.0" layoutY="10.0" onAction="#handleBidders" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Quản lý Bidders" />
+        <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="386.0" spacing="12">
+            <Button onAction="#handleBack" prefHeight="36" prefWidth="99.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
+         <Button layoutX="142.0" layoutY="10.0" onAction="#handleBidders" prefHeight="36" prefWidth="122.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Quản lý Bidders" />
+         <Button layoutX="10.0" layoutY="10.0" onAction="#handleRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xóa sản phẩm" />
+         <Button fx:id="btnExportWinner" layoutX="10.0" layoutY="10.0" onAction="#handleExportWinner" prefHeight="36" prefWidth="218.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Xuất thông báo người thắng" />
+         <Pane prefHeight="36.0" prefWidth="118.0" HBox.hgrow="ALWAYS" />
+         <Button fx:id="btnGamble" contentDisplay="CENTER" layoutX="274.0" layoutY="10.0" onAction="#handleBidding" prefHeight="36.0" prefWidth="120.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Đặt cược" />
         </HBox>
     </bottom>
 
