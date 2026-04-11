@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -34,6 +35,8 @@ public class AuctionListController implements Initializable {
     private Button btnCancel;
     @FXML
     private Button btnRemove;
+    @FXML
+    private Button btnTest;
     @FXML
     private ComboBox<String> cbFilterStatus;
     @FXML
@@ -60,6 +63,8 @@ public class AuctionListController implements Initializable {
     private TableColumn<?, ?> clmChoose;
     @FXML
     private TextField txtSearch;
+    @FXML
+    private Label txtVersatile;
 
 
     @FXML
@@ -118,15 +123,28 @@ public class AuctionListController implements Initializable {
             }
         });
     }
-
+    
+    @FXML
+    // về sau khi bấm vào sản phẩm sẽ điều hướng đến 
+    // chi tiết sản phẩm, nếu trạng thái sp là OPEN, FINISHED, PAID/CANCELLED, điều hướng sang AuctionDetail
+    // nếu trạng thái là RUNNING, điều hướng sang InsideItemScreen
+    void handleTest(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
+        stage = new Stage(); // hiện tại là InsideItemScreen(demo), dưới dạng pop-up
+        scene = new Scene(root);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
     @FXML
     void handleAdd(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
         stage = new Stage();
         scene = new Scene(root);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
-        stage.show();
+        stage.showAndWait();
     }
 
     @FXML
@@ -138,13 +156,13 @@ public class AuctionListController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) { //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
         String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
         cbFilterStatus.getItems().addAll(statuses);
-        
+
 
         String[] type = {};//manual-added
         cbType.getItems().addAll(type);
 
         try {
-            show();
+            show();// kiểm tra kiểu người dùng
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
