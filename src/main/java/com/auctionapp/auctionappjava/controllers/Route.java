@@ -48,7 +48,6 @@ public class Route {
         txtPrivateKey.setVisible(true);
         btnConfirmAd.setVisible(true);
         confirmRoute.setText("Nhập mã: ");
-        confirmRoute.setVisible(true);
         btnConfirm.setVisible(false);
     }
 

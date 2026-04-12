@@ -19,7 +19,7 @@ public class JavaFXLaunch extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(JavaFXLaunch.class.getResource("views/MainScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1100, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 950, 650);
         stage.setTitle("Bid88");
         stage.setScene(scene);
         stage.show();

@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <!-- Slide 4: Login Screen -->
 
@@ -50,7 +51,10 @@
 
         <!-- Register link -->
         <HBox alignment="CENTER" spacing="4">
-            <Label style="-fx-text-fill: white; -fx-font-size: 13;" text="Don't have an account?" />
+            <Label style="-fx-text-fill: white;" text="Don't have an account?">
+            <font>
+               <Font name="System Italic" size="13.0" />
+            </font></Label>
             <Hyperlink onAction="#handleRegister" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Register" underline="true" />
         </HBox>
 
