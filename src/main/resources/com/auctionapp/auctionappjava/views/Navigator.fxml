@@ -31,7 +31,7 @@
                <children>
                   <Label style="-fx-text-fill: white;" text="Quản trị" />
                   <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="6.0" prefWidth="178.0" text="Quản lý phiên đấu giá" />
-                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="178.0" text="Quản lý Users" />
+                  <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="26.0" prefWidth="178.0" text="Quản lý Users" />
                </children>
             </VBox>
             <VBox fx:id="groupSeller" prefHeight="69.0" prefWidth="82.0">

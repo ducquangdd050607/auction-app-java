@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Slide 15 (User) / Slide 16 (Seller: Hà Minh) -->
+
+<BorderPane prefHeight="552.0" prefWidth="571.0" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ConfirmBiddingController">
+    <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
+
+    <top>
+        <VBox spacing="4">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Xác nhận đặt cược" />
+         <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại" />
+            <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
+            <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="18">
+
+            <!-- Role + username -->
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label fx:id="lblRole" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số tiền cao nhất hiện tại: " />
+            </HBox>
+
+            <!-- Personal info section -->
+            <VBox spacing="10">
+
+                <HBox alignment="CENTER_LEFT" spacing="8">
+   
+                   <HBox alignment="CENTER_LEFT" spacing="8" />
+                   <Label prefHeight="34.0" prefWidth="220.0" style="-fx-text-fill: white; -fx-font-size: 23; -fx-font-weight: bold;" text="Số tiền muốn đặt:" />
+               <TextField fx:id="txtSetPrice" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" />
+                </HBox>
+            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="360.0" spacing="26.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="Plus100" onAction="#handlePlus100" prefHeight="44" prefWidth="180.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="+100000đ" />
+                  <Button fx:id="Plus1000" onAction="#handlePlus1000" prefHeight="44" prefWidth="180" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="+1000000đ" />
+               </children>
+               <padding>
+                  <Insets left="13.0" right="13.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="47.0" prefHeight="0.0" prefWidth="360.0" spacing="26.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="Plus10000" onAction="#handlePlus10000" prefHeight="44" prefWidth="180.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="+10000000đ" />
+                  <Button fx:id="Plus100000" onAction="#handlePlus100000" prefHeight="44" prefWidth="180" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="+100000000đ" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="13.0" right="13.0" top="10.0" />
+               </padding>
+            </HBox>
+            </VBox>
+
+            <!-- Wallet balance -->
+            <HBox alignment="CENTER" spacing="10">
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số dư trong ví:" />
+                <Label fx:id="lblBalance" style="-fx-text-fill: #FFE066; -fx-font-size: 18; -fx-font-weight: bold;" text="36.000.000 đ" />
+            </HBox>
+         <Pane prefHeight="84.0" prefWidth="471.0" />
+         <Label fx:id="lblError" style="-fx-text-fill: red;" />
+
+        </VBox>
+    </center>
+
+    <!-- Bottom action buttons -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <Button onAction="#handleTrueConfirm" prefHeight="44" prefWidth="251.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-font-size: 20; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 6;" text="ĐặC KưỢk" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
