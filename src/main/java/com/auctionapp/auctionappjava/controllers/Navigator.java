@@ -107,6 +107,8 @@ public class Navigator implements Initializable {
 
     @FXML
     void itemsList(ActionEvent event) throws IOException {
+        Button btnClicked = (Button) event.getSource();
+        modeName = btnClicked.getText();
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml"));
         mainBorderPane.setCenter(scene1);
 
