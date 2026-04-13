@@ -58,6 +58,10 @@ public class AuctionListController implements Initializable {
     @FXML
     private TableColumn<Item, String> clmType;
     @FXML
+    private TableColumn<?, ?> clmBiddingMoney;
+    @FXML
+    private TableColumn<?, ?> clmBiddedTime;
+    @FXML
     private TableView<Item> listAuctions;
     @FXML
     private TableColumn<?, ?> clmChoose;
