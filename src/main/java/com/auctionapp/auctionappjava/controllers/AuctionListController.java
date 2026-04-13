@@ -163,6 +163,7 @@ public class AuctionListController implements Initializable {
 
         try {
             show();// kiểm tra kiểu người dùng
+            setMode(Navigator.modeName);// thay đổi trong AutionListScreen
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
