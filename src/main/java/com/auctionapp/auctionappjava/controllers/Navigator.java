@@ -22,6 +22,7 @@ public class Navigator implements Initializable {
     private Stage stage;
     private Parent root;
     private Scene scene;
+    public static String modeName;
 
     @FXML
     private BorderPane mainBorderPane;
