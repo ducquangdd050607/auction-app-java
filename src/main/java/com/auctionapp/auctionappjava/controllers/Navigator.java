@@ -46,11 +46,6 @@ public class Navigator implements Initializable {
     private Label identity;
 
 
-    @FXML
-    void history(ActionEvent event) {
-
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
