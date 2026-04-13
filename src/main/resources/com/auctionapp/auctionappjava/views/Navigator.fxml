@@ -24,7 +24,7 @@
                <children>
                   <Label style="-fx-text-fill: white;" text="Đấu giá" />
                   <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="178.0" text="Danh sách đấu giá" />
-                  <Button mnemonicParsing="false" onAction="#history" prefHeight="0.0" prefWidth="178.0" text="Lịch sử đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="0.0" prefWidth="178.0" text="Lịch sử đấu giá" />
                </children>
             </VBox>
             <VBox fx:id="groupAdmin" prefHeight="70.0" prefWidth="186.0">

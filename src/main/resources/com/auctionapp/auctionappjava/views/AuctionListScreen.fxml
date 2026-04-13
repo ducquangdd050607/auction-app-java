@@ -20,7 +20,7 @@
     <top>
         <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
             <!-- Screen title -->
-            <Label fx:id="txtVersatile" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+            <Label fx:id="txtVersatile" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
 
             <!-- Search + filter bar -->
             <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="726.0" spacing="10" style="-fx-background-color: #2E7D9B;">
@@ -44,6 +44,8 @@
             <TableColumn fx:id="clmStatus" prefWidth="70.39996337890625" text="Trạng thái" />
             <TableColumn fx:id="clmStartPrice" prefWidth="127.20001220703125" text="Gía tiền khởi đầu" />
             <TableColumn fx:id="clmCurrentPrice" prefWidth="124.00003051757812" text="Gía tiền hiện tại" />
+            <TableColumn fx:id="clmBiddingMoney" prefWidth="124.00003051757812" text="Gía tiền đã đặt" visible="false" />
+            <TableColumn fx:id="clmBiddedTime" prefWidth="144.0001220703125" text="Thời điểm đặt" visible="false" />
             <TableColumn fx:id="clmTime" prefWidth="144.0001220703125" text="Thời gian còn lại" />
             <TableColumn fx:id="clmBidders" prefWidth="134.4000244140625" text="Số Bidders quan tâm" />
             <TableColumn fx:id="clmChoose" minWidth="0.0" prefWidth="27.199951171875">
