@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="330.0" prefWidth="476.0" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.Route">
+<StackPane prefHeight="330.0" prefWidth="476.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/Route.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.Route">
 
 
     <VBox alignment="CENTER" maxHeight="480" maxWidth="476.0" prefHeight="346.0" prefWidth="476.0" spacing="20" style="-fx-background-color: #2E7D9B;">
@@ -22,9 +22,9 @@
          <children>
          
 
-              <Button fx:id="btnBid" onAction="#handleBidder" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Bidder" />
-            <Button fx:id="btnSell" onAction="#handleSeller" prefHeight="36" prefWidth="120.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Seller" />
-            <Button fx:id="btnAd" onAction="#handleAdmin" onMouseClicked="#showPrivateKey" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Admin" />
+              <Button fx:id="btnBid" onAction="#handleBidder" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Bidder" />
+            <Button fx:id="btnSell" onAction="#handleSeller" prefHeight="36" prefWidth="120.0" styleClass="confirm-btn" text="Seller" />
+            <Button fx:id="btnAd" onAction="#handleAdmin" onMouseClicked="#showPrivateKey" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Admin" />
          </children>
       </HBox>
 
@@ -35,8 +35,8 @@
 
 
         <Label fx:id="lblError" style="-fx-text-fill: #FF8A80; -fx-font-size: 12;" visible="false" />
-      <Button fx:id="btnConfirm" layoutX="188.0" layoutY="366.0" onAction="#handleConfirm" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Xác nhận" />
-      <Button fx:id="btnConfirmAd" onAction="#handleConfirmAd" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                        -fx-font-size: 14; -fx-font-weight: bold;                        -fx-cursor: hand; -fx-background-radius: 4;" text="Xác nhận" visible="false" />
+      <Button fx:id="btnConfirm" layoutX="188.0" layoutY="366.0" onAction="#handleConfirm" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Xác nhận" />
+      <Button fx:id="btnConfirmAd" onAction="#handleConfirmAd" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Xác nhận" visible="false" />
     </VBox>
 
 </StackPane>

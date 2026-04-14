@@ -1,5 +1,5 @@
 .nav-btn {
-    -fx-background-color: rgb(0, 113, 166);
+    -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-cursor: hand;
 }

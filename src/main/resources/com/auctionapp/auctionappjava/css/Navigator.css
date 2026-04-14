@@ -1,0 +1,17 @@
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.logout-btn:hover {
+    -fx-background-color: rgb(57, 155, 193);
+    -fx-font-weight: bold;
+}
+
+.logout-btn:pressed {
+    -fx-background-color: rgb(36, 103, 129);
+    -fx-translate-y: 1px;
+}
+

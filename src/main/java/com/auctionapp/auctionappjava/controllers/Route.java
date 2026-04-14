@@ -31,11 +31,11 @@ public class Route {
     @FXML
     private Button btnBid;
     @FXML
+    private Button btnSell;
+    @FXML
     private Button btnConfirm;
     @FXML
     private Button btnConfirmAd;
-    @FXML
-    private Button btnSell;
     @FXML
     private Label lblError;
     @FXML
@@ -83,10 +83,12 @@ public class Route {
             lblError.setVisible(true);
         } else {
             adminRoute = true;
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         }
     }
@@ -95,18 +97,22 @@ public class Route {
     void handleConfirm(ActionEvent event) throws IOException {
         if (user.equals("1")) {
             sellerRoute = true;
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
 
         } else if (user.equals("0")) {
             bidderRoute = true;
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         }
     }
