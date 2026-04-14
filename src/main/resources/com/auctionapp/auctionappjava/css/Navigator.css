@@ -19,11 +19,16 @@
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-cursor: hand;
-    -fx-padding: 10px 20px;
+    -fx-padding: 10px 10px;
 }
 
 .nav-menu-btn:hover {
     -fx-background-color: rgb(51, 149, 191);
+}
+
+.nav-menu-btn:pressed {
+    -fx-background-color: rgb(37, 109, 140);
+    -fx-translate-y: 1px;
 }
 
 .nav-menu-btn-active {

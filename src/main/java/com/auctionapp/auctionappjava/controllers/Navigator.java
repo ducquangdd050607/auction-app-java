@@ -143,7 +143,4 @@ public class Navigator implements Initializable {
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/UsersManager.fxml"));
         mainBorderPane.setCenter(scene1);
     }
-
-
-
 }
