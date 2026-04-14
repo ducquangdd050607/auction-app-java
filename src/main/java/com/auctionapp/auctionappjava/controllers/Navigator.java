@@ -44,7 +44,19 @@ public class Navigator implements Initializable {
     private Button wallet;
     @FXML
     private Label identity;
+    @FXML
+    private Button btnDashboard;
 
+    // Thêm thuộc tính và hành vi điều khiển UI/UX navbar
+    @FXML
+    private Button currentActiveButton;
+    private void setActiveButton(Button clickedButton) {
+        if (currentActiveButton != null) {
+            currentActiveButton.getStyleClass().remove("nav-menu-btn-active");
+        }
+        clickedButton.getStyleClass().add("nav-menu-btn-active");
+        currentActiveButton = clickedButton;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -79,6 +91,8 @@ public class Navigator implements Initializable {
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
         }
+        setActiveButton(btnDashboard);
+        currentActiveButton = btnDashboard;
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Dashboard.fxml"));
         mainBorderPane.setCenter(scene1);
     }
@@ -108,6 +122,7 @@ public class Navigator implements Initializable {
     @FXML
     void itemsList(ActionEvent event) throws IOException {
         Button btnClicked = (Button) event.getSource();
+        setActiveButton(btnClicked);
         modeName = btnClicked.getText();
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml"));
         mainBorderPane.setCenter(scene1);
@@ -115,14 +130,20 @@ public class Navigator implements Initializable {
 
     @FXML
     void handleBackToDash(ActionEvent event) throws IOException {
+        Button btnClicked = (Button) event.getSource();
+        setActiveButton(btnClicked);
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Dashboard.fxml"));
         mainBorderPane.setCenter(scene1);
     }
 
     @FXML
     void handleGotoUsersManager(ActionEvent event) throws IOException {
+        Button btnClicked = (Button) event.getSource();
+        setActiveButton(btnClicked);
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/UsersManager.fxml"));
         mainBorderPane.setCenter(scene1);
     }
+
+
 
 }
