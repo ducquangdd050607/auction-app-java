@@ -75,7 +75,6 @@ public class LoginController implements Initializable {
         if (isRegister) {
             lblError.setText("Đăng kí thành công, hãy nhập lại tài khoản.");
             lblError.setVisible(true);
-            lblError.setTextFill(Color.GREEN);
             lblError.setTextFill(Color.web("#d5ffda"));
         }
     }
