@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -40,22 +41,27 @@ public class LoginController implements Initializable {
         if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty()) {
             lblError.setText("Hãy điền đủ thông tin");
             lblError.setVisible(true);
+            lblError.setTextFill(Color.web("#FF8A80"));
         } else {
             isLoggedIn = true;
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         }
     }
 
     @FXML
     void handleRegister(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/RegisterScreen.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/RegisterScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -67,8 +73,10 @@ public class LoginController implements Initializable {
     @FXML
     public void updateRegisterStatus(boolean isRegister) {
         if (isRegister) {
-            lblError.setText("Hãy nhập lại tài khoản.");
+            lblError.setText("Đăng kí thành công, hãy nhập lại tài khoản.");
             lblError.setVisible(true);
+            lblError.setTextFill(Color.GREEN);
+            lblError.setTextFill(Color.web("#d5ffda"));
         }
     }
 }

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.MainController">
+<StackPane prefHeight="650.0" prefWidth="950.0" stylesheets="@../css/MainScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.MainController">
    <children>
       <ImageView fitHeight="651.0" fitWidth="951.0" pickOnBounds="true">
          <image>
@@ -25,23 +25,23 @@
           <top>
               <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="900.0" style="-fx-background-color: rgb(0, 113, 166); -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                <children>
-                  <HBox prefHeight="42.0" prefWidth="714.0" spacing="10.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="714.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="42.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/IconApp.png" />
                            </image>
                         </ImageView>
-                        <Label text="Hệ thống đấu giá trực tuyến" textFill="#ececec">
+                        <Label alignment="CENTER" text="Hệ thống đấu giá trực tuyến" textFill="#ececec">
                            <font>
-                              <Font size="27.0" />
+                              <Font size="17.0" />
                            </font>
                         </Label>
                      </children>
                   </HBox>
-                  <Button fx:id="btnAboutUs" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAboutUs" prefHeight="35.0" prefWidth="98.0" style="-fx-background-color: rgb(0, 113, 166); -fx-text-fill: white; -fx-cursor: hand;" text="Về chúng tôi..." />
-                  <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" onAction="#handleRegister" prefHeight="35.0" prefWidth="63.0" style="-fx-background-color: rgb(0, 113, 166); -fx-text-fill: white; -fx-cursor: hand;" text="Đăng kí" />
-                  <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: rgb(0, 113, 166); -fx-text-fill: white; -fx-cursor: hand;" text="Đăng nhập" />
+                  <Button fx:id="btnAboutUs" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAboutUs" prefHeight="39.0" prefWidth="98.0" styleClass="nav-btn" text="Về chúng tôi..." />
+                  <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" onAction="#handleRegister" prefHeight="39.0" prefWidth="63.0" styleClass="nav-btn" text="Đăng kí" />
+                  <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="39.0" prefWidth="80.0" styleClass="nav-btn" text="Đăng nhập" />
                </children>
               </HBox>
           </top>
@@ -56,7 +56,7 @@
                                <VBox alignment="CENTER_LEFT" prefHeight="260.0" prefWidth="490.0" spacing="10">
                                    <Label alignment="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 38; -fx-font-weight: bold;" text="Bét88" textFill="#1e1e1ec7" />
                                    <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 26;" text="Nhà cược 3 xu nhất vn" textFill="#1e1e1e" />
-                                  <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="50.0" prefWidth="187.0" style="-fx-background-color: rgb(243, 190, 122); -fx-text-fill: rgb(47, 107, 63); -fx-cursor: hand; -fx-background-radius: 6;" text="Khám phá ngay!">
+                                  <Button fx:id="btnExplore" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="50.0" prefWidth="187.0" styleClass="explore-btn" text="Khám phá ngay!">
                                  <font>
                                     <Font name="System Bold" size="19.0" />
                                  </font>

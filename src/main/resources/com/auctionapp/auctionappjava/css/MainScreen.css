@@ -1,0 +1,39 @@
+.nav-btn {
+    -fx-background-color: rgb(0, 113, 166);
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.nav-btn:hover {
+    -fx-background-color: rgb(0, 85, 125);
+    -fx-font-weight: bold;
+}
+
+.nav-btn:pressed {
+    -fx-background-color: rgb(0, 55, 85);
+    -fx-translate-y: 1px; /* Đẩy nút dịch xuống dưới 1 pixel tạo cảm giác lún */
+}
+
+.explore-btn {
+    -fx-background-color: rgb(243, 190, 122);
+    -fx-text-fill: rgb(47, 107, 63);
+    -fx-cursor: hand;
+    -fx-background-radius: 6;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+.explore-btn:hover {
+    -fx-background-color: rgb(255, 210, 140);
+    -fx-text-fill: rgb(20, 70, 30);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 5);
+}
+
+.explore-btn:pressed {
+    -fx-background-color: rgb(225, 170, 95);
+    -fx-text-fill: rgb(15, 55, 20);
+    -fx-translate-y: 2px; /* Đẩy lún xuống 2 pixel */
+
+    /* Thu nhỏ cái bóng lại, vì khi nút bị ấn xuống sát nền thì bóng đổ sẽ nhỏ và nét hơn */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 2);
+}

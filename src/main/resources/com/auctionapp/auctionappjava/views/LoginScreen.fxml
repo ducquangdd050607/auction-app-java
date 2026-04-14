@@ -16,7 +16,7 @@
 
 <!-- Slide 4: Login Screen -->
 
-<StackPane style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.LoginController">
+<StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.LoginController">
 
     <!-- Login card -->
     <VBox alignment="CENTER" maxHeight="480" maxWidth="460" spacing="20" style="-fx-background-color: #2E7D9B;">
@@ -47,7 +47,10 @@
         </GridPane>
 
         <!-- Confirm button -->
-        <Button onAction="#handleConfirm" prefHeight="36" prefWidth="104.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-font-size: 15; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 10;" text="Confirm" />
+        <Button onAction="#handleConfirm" prefHeight="36" prefWidth="104.0" styleClass="confirm-btn" text="Confirm">
+         <font>
+            <Font size="4.0" />
+         </font></Button>
 
         <!-- Register link -->
         <HBox alignment="CENTER" spacing="4">
@@ -55,11 +58,11 @@
             <font>
                <Font name="System Italic" size="13.0" />
             </font></Label>
-            <Hyperlink onAction="#handleRegister" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Register" underline="true" />
+            <Hyperlink onAction="#handleRegister" styleClass="underline-link" text="Register" underline="true" />
         </HBox>
 
         <!-- Error label (hidden by default) -->
-        <Label fx:id="lblError" style="-fx-text-fill: #FF8A80; -fx-font-size: 12;" visible="false" />
+        <Label fx:id="lblError" visible="false" />
     </VBox>
 
 </StackPane>

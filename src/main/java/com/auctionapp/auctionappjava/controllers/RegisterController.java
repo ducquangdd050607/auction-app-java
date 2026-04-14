@@ -38,7 +38,7 @@ public class RegisterController {
     private PasswordField txtPassword;
 
     @FXML
-    private TextField txtPrivateKey;//?
+    private TextField txtPrivateKey;//? --- :D?
 
     @FXML
     private TextField txtUsername;
@@ -58,10 +58,12 @@ public class RegisterController {
         else {
             isRegister = true;
             // yêu cầu nhập lại thông tin
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         }
     }
@@ -69,10 +71,12 @@ public class RegisterController {
     @FXML
     void handleLogIn(ActionEvent event) throws IOException {
 
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
 
