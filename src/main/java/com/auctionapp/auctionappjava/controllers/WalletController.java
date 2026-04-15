@@ -50,11 +50,8 @@ public class WalletController {
     }
 
     @FXML
-    void handleBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    void handleBack(ActionEvent event) {
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
     }
 }

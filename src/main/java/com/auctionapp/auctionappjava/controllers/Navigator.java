@@ -111,24 +111,35 @@ public class Navigator implements Initializable {
 
     @FXML
     void handleChangePassword(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml"));
+        Stage modalStage = new Stage();
+        modalStage.setTitle("Đổi mật khẩu");
+
+        // Lấy stage cha và chặn event ở cha bằng Modal Window
+        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+        modalStage.initOwner(parentStage);
+
+        Scene modalScene = new Scene(modalRoot);
+        modalStage.setScene(modalScene);
+        modalStage.setResizable(false);
+
+        // Dùng showAndWait() để đợi xử lý xong stage mới hiện lên
+        modalStage.showAndWait();
     }
 
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
+        Stage modalStage = new Stage();
+        modalStage.setTitle("Wallet");
+        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+        modalStage.initOwner(parentStage);
+        Scene modalScene = new Scene(modalRoot);
+        modalStage.setScene(modalScene);
+        modalStage.setResizable(false);
+        modalStage.showAndWait();
     }
 
     @FXML

@@ -29,18 +29,14 @@ public class ChangePasswordController {
     private PasswordField txtNewPassword;
 
     @FXML
-    void handleBack(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+    void handleBack(ActionEvent event) {
+        // Đóng stage lại khi back về nav
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
     }
 
     @FXML
-    void handleConfirm(ActionEvent event) throws IOException {
+    void handleConfirm(ActionEvent event) {
         if (txtNewPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty()) {
             lblMessage.setText("Hãy điền đủ mật khẩu mới và xác nhận");
             lblMessage.setVisible(true);
@@ -51,13 +47,9 @@ public class ChangePasswordController {
             lblMessage.setTextFill(Color.web("#FF8A80"));
         }
         else {
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.show();
+            // Xong việc thì tự động đóng cửa sổ modal này lại
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            currentStage.close();
         }
     }
 }
