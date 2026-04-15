@@ -98,6 +98,18 @@ public class Navigator implements Initializable {
     }
 
     @FXML
+    void handleSignOut(ActionEvent event) throws IOException {
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+
+    @FXML
     void handleChangePassword(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();

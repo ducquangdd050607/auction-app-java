@@ -76,8 +76,7 @@
                </children>
             </StackPane>
             <Region prefHeight="46.0" prefWidth="22.0" />
-            <Button fx:id="btnSignout" mnemonicParsing="false" prefHeight="43.0" prefWidth="66.0" styleClass="logout-btn" text="Sign out" />
-            <Region layoutX="986.0" layoutY="10.0" prefHeight="46.0" prefWidth="15.0" />
+            <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="43.0" prefWidth="81.0" styleClass="logout-btn" text="Sign out" />
          </children>
       </HBox>
    </top>
