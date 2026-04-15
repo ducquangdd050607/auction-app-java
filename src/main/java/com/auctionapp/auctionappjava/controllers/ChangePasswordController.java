@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,16 +30,34 @@ public class ChangePasswordController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
 
     @FXML
-    void handleConfirm(ActionEvent event) {
-
+    void handleConfirm(ActionEvent event) throws IOException {
+        if (txtNewPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty()) {
+            lblMessage.setText("Hãy điền đủ mật khẩu mới và xác nhận");
+            lblMessage.setVisible(true);
+            lblMessage.setTextFill(Color.web("#FF8A80"));
+        } else if (!txtConfirmPassword.getText().equals(txtNewPassword.getText())) {
+            lblMessage.setText("Mật khẩu mới không khớp nhau");
+            lblMessage.setVisible(true);
+            lblMessage.setTextFill(Color.web("#FF8A80"));
+        }
+        else {
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.show();
+        }
     }
-
 }
