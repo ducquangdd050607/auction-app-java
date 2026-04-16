@@ -1,0 +1,12 @@
+/target/
+/.idea/
+*.iml
+*.class
+*.log
+*.db
+*.mv.db
+*.trace.db
+/data/
+/out/
+.DS_Store
+data/*.mv.db

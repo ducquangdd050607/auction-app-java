@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionhub.client.controller.AdminDashboardController" spacing="12" styleClass="card">
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Admin Dashboard" styleClass="section-title"/>
+        <Button text="Refresh" onAction="#loadOverview"/>
+        <Button text="Mark PAID" onAction="#handleMarkPaid"/>
+        <Button text="Cancel auction" onAction="#handleCancelAuction" styleClass="danger-button"/>
+    </HBox>
+    <HBox spacing="12">
+        <Label text="Users:"/>
+        <Label fx:id="totalUsersLabel" styleClass="chip"/>
+        <Label text="Auctions:"/>
+        <Label fx:id="totalAuctionsLabel" styleClass="chip"/>
+        <Label text="Running:"/>
+        <Label fx:id="runningAuctionsLabel" styleClass="chip"/>
+        <Label text="Finished:"/>
+        <Label fx:id="finishedAuctionsLabel" styleClass="chip"/>
+    </HBox>
+    <SplitPane dividerPositions="0.45">
+        <items>
+            <TableView fx:id="userTable">
+                <columns>
+                    <TableColumn fx:id="usernameColumn" text="Username" prefWidth="140"/>
+                    <TableColumn fx:id="userRoleColumn" text="Role" prefWidth="100"/>
+                    <TableColumn fx:id="userEmailColumn" text="Email" prefWidth="220"/>
+                </columns>
+            </TableView>
+            <TableView fx:id="adminAuctionTable">
+                <columns>
+                    <TableColumn fx:id="adminAuctionTitleColumn" text="Auction" prefWidth="180"/>
+                    <TableColumn fx:id="adminAuctionStatusColumn" text="Status" prefWidth="110"/>
+                    <TableColumn fx:id="adminAuctionPriceColumn" text="Current price" prefWidth="140"/>
+                </columns>
+            </TableView>
+        </items>
+    </SplitPane>
+</VBox>

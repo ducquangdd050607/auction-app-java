@@ -1,0 +1,21 @@
+package com.auctionhub.common.enums;
+
+public enum RequestAction {
+    LOGIN,
+    REGISTER,
+    LOGOUT,
+    LIST_AUCTIONS,
+    GET_AUCTION_DETAIL,
+    SUBSCRIBE_AUCTION,
+    UNSUBSCRIBE_AUCTION,
+    PLACE_BID,
+    CONFIGURE_AUTO_BID,
+    CREATE_AUCTION,
+    UPDATE_AUCTION,
+    DELETE_AUCTION,
+    CANCEL_AUCTION,
+    MARK_AUCTION_PAID,
+    LIST_MY_AUCTIONS,
+    LIST_USERS,
+    ADMIN_OVERVIEW
+}

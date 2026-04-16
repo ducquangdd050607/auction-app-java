@@ -1,0 +1,13 @@
+app.name=AuctionHub
+app.server.host=127.0.0.1
+app.server.port=9090
+app.server.backlog=100
+app.server.accept-timeout-ms=500
+app.auction.minimum-increment=10.00
+app.auction.anti-sniping-threshold-seconds=30
+app.auction.anti-sniping-extension-seconds=60
+app.auction.monitor-interval-ms=1000
+app.db.vendor=mysql
+app.db.mysql.url=jdbc:mysql://localhost:3306/auctionhub?useSSL=false&serverTimezone=UTC
+app.db.mysql.username=root
+app.db.mysql.password=123456

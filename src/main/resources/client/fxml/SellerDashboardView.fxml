@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionhub.client.controller.SellerDashboardController" spacing="12" styleClass="card">
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Seller Dashboard" styleClass="section-title"/>
+        <Button text="Refresh" onAction="#loadMyAuctions"/>
+        <Button text="Clear form" onAction="#clearForm"/>
+    </HBox>
+    <SplitPane dividerPositions="0.42">
+        <items>
+            <TableView fx:id="sellerAuctionTable">
+                <columns>
+                    <TableColumn fx:id="sellerTitleColumn" text="Tên phiên" prefWidth="180"/>
+                    <TableColumn fx:id="sellerPriceColumn" text="Giá hiện tại" prefWidth="140"/>
+                    <TableColumn fx:id="sellerStatusColumn" text="Status" prefWidth="110"/>
+                </columns>
+            </TableView>
+            <VBox spacing="10">
+                <GridPane hgap="10" vgap="8">
+                    <Label text="Loại item" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="itemTypeCombo" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Tiêu đề" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="titleField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Giá khởi điểm" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="startPriceField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Bước giá tối thiểu" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="minIncrementField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="Thuộc tính 1" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="attributeOneField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Label text="Thuộc tính 2" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <TextField fx:id="attributeTwoField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    <Label text="Ngày bắt đầu" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="startDatePicker" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                    <Label text="Giờ bắt đầu (HH:mm[:ss])" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                    <TextField fx:id="startTimeField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                    <Label text="Ngày kết thúc" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="endDatePicker" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                    <Label text="Giờ kết thúc (HH:mm[:ss])" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                    <TextField fx:id="endTimeField" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+                </GridPane>
+                <Label text="Mô tả"/>
+                <TextArea fx:id="descriptionArea" prefRowCount="5" wrapText="true" VBox.vgrow="ALWAYS"/>
+                <HBox spacing="8">
+                    <Button text="Create" onAction="#handleCreateAuction" styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                    <Button text="Update" onAction="#handleUpdateAuction" HBox.hgrow="ALWAYS"/>
+                    <Button text="Delete" onAction="#handleDeleteAuction" styleClass="danger-button" HBox.hgrow="ALWAYS"/>
+                    <Button text="Cancel auction" onAction="#handleCancelAuction" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+        </items>
+    </SplitPane>
+</VBox>
