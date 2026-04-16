@@ -95,25 +95,30 @@ public class Route {
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
-        if (user.equals("1")) {
-            sellerRoute = true;
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.show();
+        try {
+            if (user.equals("1")) {
+                sellerRoute = true;
+                root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.centerOnScreen();
+                stage.show();
 
-        } else if (user.equals("0")) {
-            bidderRoute = true;
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.show();
+            } else if (user.equals("0")) {
+                bidderRoute = true;
+                root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.centerOnScreen();
+                stage.show();
+            }
+        } catch (NullPointerException e) {
+            lblError.setText("Vui lòng chọn vai trò");
+            lblError.setVisible(true);
         }
     }
 }
