@@ -1,14 +1,18 @@
 package com.auctionapp.auctionappjava.controllers;
 
+import com.auctionapp.auctionappjava.models.Art;
+import com.auctionapp.auctionappjava.models.Customer;
 import com.auctionapp.auctionappjava.models.Item;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -16,13 +20,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class AuctionListController implements Initializable {
     private Stage stage;
-    private Parent root;
     private Scene scene;
+    //private ObservableList<Art> arts;
 
     @FXML
     private HBox box;
@@ -63,7 +69,7 @@ public class AuctionListController implements Initializable {
     @FXML
     private TableColumn<?, ?> clmBiddedTime;
     @FXML
-    private TableView<Item> listAuctions;
+    private TableView<?> listAuctions;
     @FXML
     private TableColumn<?, ?> clmChoose;
     @FXML
@@ -107,7 +113,7 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    void handleConfirm(ActionEvent event) throws IOException{
+    void handleConfirm(ActionEvent event) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Chắc chưa?");
         alert.setHeaderText("Bạn có muốn xóa sản phẩm không?");
@@ -127,8 +133,27 @@ public class AuctionListController implements Initializable {
 
             }
         });
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+//
+//        Customer Who = new Customer("12", "Huy", "123123@gmail.com", "12345678", 360000000);
+//        arts = FXCollections.observableArrayList(
+//                new Art(
+//                        "23",
+//                        "Dep le",
+//                        360000.0,
+//                        Who,
+//                        LocalDateTime.parse("02-03-2300 23:59", formatter),
+//                        "Tran"
+//                )
+//        );
+//        clmStartPrice.setCellValueFactory(new PropertyValueFactory<>("startPrice"));
+//        clmName.setCellValueFactory(new PropertyValueFactory<>("name"));
+//        listAuctions.setItems(arts);
+//
+//    }
     }
-    
+
     @FXML
     // về sau khi bấm vào sản phẩm sẽ điều hướng đến 
     // chi tiết sản phẩm, nếu trạng thái sp là OPEN, FINISHED, PAID/CANCELLED, điều hướng sang AuctionDetail

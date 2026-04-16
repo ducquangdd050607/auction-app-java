@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -18,20 +19,16 @@
     Slide 13 → RUNNING   (Art) + Seller : Xem danh sách bidder
     Slide 14 → FINISHED  (Accessory) + Seller : Xem danh sách bidder
 -->
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.auctionapp.auctionappjava.controllers.AuctionDetailController"
-            prefWidth="900" prefHeight="600"
-            style="-fx-background-color: #2E7D9B;">
-    <padding><Insets top="30" right="50" bottom="30" left="50"/></padding>
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.AuctionDetailController">
+    <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
         <VBox spacing="4">
             <!-- Screen header -->
-            <Label text="Bét88 Live Auction Services"
-                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
-            <Separator style="-fx-background-color: rgba(255,255,255,0.4);"/>
-            <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
+            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+            <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
+            <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
     </top>
 
@@ -40,89 +37,58 @@
 
             <!-- Status badge -->
             <StackPane alignment="CENTER_LEFT">
-                <Label fx:id="lblStatus" text="OPEN"
-                       style="-fx-background-color: #27AE60; -fx-text-fill: white;
-                              -fx-font-size: 13; -fx-font-weight: bold;
-                              -fx-background-radius: 4; -fx-padding: 4 12 4 12;"/>
+                <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 13; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 4 12 4 12;" text="[STATUS]" />
             </StackPane>
 
             <!-- Category + Item name -->
-            <Label fx:id="lblCategory" text="[Electronics]"
-                   style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;"/>
-            <Label fx:id="lblItemName" text="Dép yên lãng"
-                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+            <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="[TYPE]" />
+            <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" text="Dép yên lãng" />
 
             <!-- Extra info (warranty / artist) -->
-            <Label fx:id="lblExtraInfo" text="Warranty info: 36 months"
-                   style="-fx-text-fill: white; -fx-font-size: 14;"/>
+            <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Warranty info: 36 months" />
 
             <!-- Starting price -->
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Giá khởi điểm:"
-                       style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;"/>
-                <Label fx:id="lblStartingPrice" text="36.000 đ"
-                       style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Giá khởi điểm:" />
+                <Label fx:id="lblStartingPrice" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" text="36.000 đ" />
             </HBox>
 
             <!-- Current bid (RUNNING / FINISHED / CANCELED only) -->
-            <VBox fx:id="boxCurrentBid" spacing="6" visible="false" managed="false">
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="Người dẫn đầu:"
-                           style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;"/>
-                    <Label fx:id="lblTopBidder" text="Nguyễn Văn An"
-                           style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
+            <VBox fx:id="boxCurrentBid" managed="false" spacing="6" visible="false">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Người dẫn đầu:" />
+                    <Label fx:id="lblTopBidder" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" text="Nguyễn Văn An" />
                 </HBox>
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="Giá đấu hiện tại:"
-                           style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;"/>
-                    <Label fx:id="lblCurrentBid" text="1.200.000 đ"
-                           style="-fx-text-fill: #FFE066; -fx-font-size: 16; -fx-font-weight: bold;"/>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Giá đấu hiện tại:" />
+                    <Label fx:id="lblCurrentBid" style="-fx-text-fill: #FFE066; -fx-font-size: 16; -fx-font-weight: bold;" text="1.200.000 đ" />
                 </HBox>
             </VBox>
 
             <!-- Open date (OPEN only) -->
-            <HBox fx:id="boxOpenDate" spacing="8" alignment="CENTER_LEFT"
-                  visible="false" managed="false">
-                <Label text="Thời gian mở sàn:"
-                       style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;"/>
-                <Label fx:id="lblOpenDate" text="25/03/2026"
-                       style="-fx-text-fill: white; -fx-font-size: 14;"/>
+            <HBox fx:id="boxOpenDate" alignment="CENTER_LEFT" managed="false" spacing="8" visible="false">
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Thời gian mở sàn:" />
+                <Label fx:id="lblOpenDate" style="-fx-text-fill: white; -fx-font-size: 14;" text="25/03/2026" />
             </HBox>
 
             <!-- End date -->
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Thời gian kết thúc:"
-                       style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;"/>
-                <Label fx:id="lblEndDate" text="07/07/2026"
-                       style="-fx-text-fill: white; -fx-font-size: 14;"/>
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Thời gian kết thúc:" />
+                <Label fx:id="lblEndDate" style="-fx-text-fill: white; -fx-font-size: 14;" text="07/07/2026" />
             </HBox>
 
             <!-- Cancellation / expiry notice -->
-            <Label fx:id="lblNotice" text=""
-                   visible="false" managed="false"
-                   style="-fx-text-fill: #FF8A80; -fx-font-size: 13; -fx-font-style: italic;"/>
+            <Label fx:id="lblNotice" managed="false" style="-fx-text-fill: #FF8A80; -fx-font-size: 13; -fx-font-style: italic;" text="" visible="false" />
 
             <!-- Bid input (RUNNING, guest/user) -->
-            <HBox fx:id="boxBidInput" spacing="10" alignment="CENTER_LEFT"
-                  visible="false" managed="false">
-                <TextField fx:id="txtBidAmount" promptText="Nhập giá đấu..."
-                           prefWidth="200" prefHeight="34"
-                           style="-fx-background-radius: 4; -fx-font-size: 14;"/>
-                <Button text="Đặt cược" onAction="#handlePlaceBid"
-                        prefWidth="100" prefHeight="34"
-                        style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;
-                               -fx-font-weight: bold; -fx-cursor: hand;
-                               -fx-background-radius: 4;"/>
+            <HBox fx:id="boxBidInput" alignment="CENTER_LEFT" managed="false" spacing="10" visible="false">
+                <TextField fx:id="txtBidAmount" prefHeight="34" prefWidth="200" promptText="Nhập giá đấu..." style="-fx-background-radius: 4; -fx-font-size: 14;" />
+                <Button onAction="#handlePlaceBid" prefHeight="34" prefWidth="100" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Đặt cược" />
             </HBox>
 
             <!-- Seller actions -->
-            <HBox fx:id="boxSellerActions" spacing="14"
-                  visible="false" managed="false">
-                <Button text="Xem danh sách bidder" onAction="#handleViewBidders"
-                        prefWidth="200" prefHeight="38"
-                        style="-fx-background-color: white; -fx-text-fill: #2E7D9B;
-                               -fx-font-size: 13; -fx-font-weight: bold;
-                               -fx-cursor: hand; -fx-background-radius: 4;"/>
+            <HBox fx:id="boxSellerActions" managed="false" spacing="14" visible="false">
+                <Button onAction="#handleViewBidders" prefHeight="38" prefWidth="200" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-size: 13; -fx-font-weight: bold;                                -fx-cursor: hand; -fx-background-radius: 4;" text="Xem danh sách bidder" />
             </HBox>
 
         </VBox>
@@ -131,9 +97,9 @@
     <!-- Back button -->
     <bottom>
         <HBox alignment="CENTER_LEFT">
-            <Button text="← Quay lại" onAction="#handleBack"
-                    style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;"/>
+         <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36" prefWidth="99.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
+         <Pane prefHeight="36.0" prefWidth="16.0" />
+         <Button onAction="#handleRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Hủy bỏ kết quả" />
         </HBox>
     </bottom>
 
