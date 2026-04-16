@@ -14,7 +14,7 @@
 
 <!-- Thêm sản phẩm mới (Seller only) -->
 
-<BorderPane prefHeight="501.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
+<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
@@ -33,19 +33,11 @@
 
                 <!-- Tên sản phẩm -->
                 <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <TextField fx:id="txtName" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                <!-- Danh mục -->
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Họ và Tên:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="txtUsername" layoutX="186.0" layoutY="10.0" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
 
                 <!-- Thông tin bổ sung (Artist / Warranty) -->
                 <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <TextField fx:id="txtEmail" prefHeight="34" prefWidth="300" promptText="VD: abc@email.com" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                <!-- Thời gian mở sàn -->
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Ngày sinh:" GridPane.rowIndex="4" />
-                <TextField fx:id="txtBirthday" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints />
