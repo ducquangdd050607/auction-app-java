@@ -11,7 +11,7 @@
 
 <!-- Nạp tiền vào ví -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.DepositController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/DepositScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.DepositController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
@@ -24,7 +24,7 @@
     </top>
 
     <center>
-        <VBox maxWidth="500" spacing="22">
+        <VBox alignment="TOP_CENTER" maxWidth="500" spacing="22">
 
             <!-- Current balance info -->
             <HBox alignment="CENTER_LEFT" spacing="10">
@@ -41,10 +41,10 @@
 
                 <!-- Quick-select preset amounts -->
                 <HBox spacing="10">
-                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" style="-fx-background-color: rgba(255,255,255,0.15);                                    -fx-text-fill: white; -fx-cursor: hand;                                    -fx-background-radius: 4; -fx-font-size: 12;" text="50.000" userData="50000" />
-                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" style="-fx-background-color: rgba(255,255,255,0.15);                                    -fx-text-fill: white; -fx-cursor: hand;                                    -fx-background-radius: 4; -fx-font-size: 12;" text="100.000" userData="100000" />
-                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" style="-fx-background-color: rgba(255,255,255,0.15);                                    -fx-text-fill: white; -fx-cursor: hand;                                    -fx-background-radius: 4; -fx-font-size: 12;" text="500.000" userData="500000" />
-                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="100" style="-fx-background-color: rgba(255,255,255,0.15);                                    -fx-text-fill: white; -fx-cursor: hand;                                    -fx-background-radius: 4; -fx-font-size: 12;" text="1.000.000" userData="1000000" />
+                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" styleClass="preset-btn" text="50.000" userData="50000" />
+                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" styleClass="preset-btn" text="100.000" userData="100000" />
+                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="90" styleClass="preset-btn" text="500.000" userData="500000" />
+                    <Button onAction="#handlePreset" prefHeight="30" prefWidth="100" styleClass="preset-btn" text="1.000.000" userData="1000000" />
                 </HBox>
             </VBox>
 
@@ -55,8 +55,8 @@
 
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="16">
-            <Button onAction="#handleDeposit" prefHeight="42" prefWidth="160" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="Xác nhận nạp" />
-            <Button onAction="#handleCancel" prefHeight="42" prefWidth="100" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="Hủy" />
+            <Button onAction="#handleDeposit" prefHeight="42" prefWidth="160" styleClass="confirm-btn" text="Xác nhận nạp" />
+            <Button onAction="#handleBack" prefHeight="42" prefWidth="100" styleClass="cancel-btn" text="Hủy" />
         </HBox>
     </bottom>
 

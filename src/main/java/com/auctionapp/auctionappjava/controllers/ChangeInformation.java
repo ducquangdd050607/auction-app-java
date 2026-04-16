@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -37,16 +38,32 @@ public class ChangeInformation {
     private TextField txtUsername;
 
     @FXML
-    void handleConfirm(ActionEvent event) {
+    void handleConfirm(ActionEvent event) throws IOException {
+        // TODO: Thay đổi thông tin trong database
 
+        if (txtEmail.getText().trim().isEmpty() || txtName.getText().trim().isEmpty() || txtUsername.getText().trim().isEmpty() || txtBirthday.getText().trim().isEmpty()) {
+            lblError.setText("Hãy điền tất cả thông tin");
+            lblError.setVisible(true);
+            lblError.setTextFill(Color.web("#FF8A80"));
+        } else {
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.show();
+        }
     }
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
 

@@ -1,0 +1,61 @@
+.cancel-btn {
+    -fx-background-radius: 6px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2B849D;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 2);
+}
+
+.cancel-btn:hover {
+    -fx-background-color: #edebeb;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+.cancel-btn:pressed {
+    -fx-background-color: #e0e0e0;
+    -fx-translate-y: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 1);
+}
+
+.confirm-btn {
+    -fx-background-color:  #FFE066;
+    -fx-text-fill:  #2E7D9B;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 2);
+}
+
+.confirm-btn:hover {
+    -fx-background-color: rgb(255, 254, 102);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+.confirm-btn:pressed {
+    -fx-background-color: rgb(204, 203, 81);
+    -fx-translate-y: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 1);
+}
+
+.preset-btn {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-text-fill: white;
+    -fx-font-size: 12;
+    -fx-cursor: hand;
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 2);
+}
+
+.preset-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+.preset-btn:pressed {
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-translate-y: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 1);
+}

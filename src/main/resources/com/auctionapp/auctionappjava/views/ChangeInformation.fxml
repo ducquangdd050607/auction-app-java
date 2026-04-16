@@ -14,20 +14,20 @@
 
 <!-- Thêm sản phẩm mới (Seller only) -->
 
-<BorderPane prefHeight="501.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
+<BorderPane prefHeight="501.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
         <VBox spacing="6">
             <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Thay đổi thông tin cá nhân" />
-         <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại trang chủ" />
+         <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại trang chủ" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
     </top>
 
     <center>
-        <VBox prefHeight="289.0" prefWidth="558.0" spacing="18">
+        <VBox alignment="TOP_CENTER" prefHeight="289.0" prefWidth="558.0" spacing="18">
 
             <GridPane hgap="16" vgap="14">
 
@@ -67,7 +67,7 @@
 
     <bottom>
         <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="245.0" spacing="16">
-            <Button onAction="#handleConfirm" prefHeight="42" prefWidth="617.0" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="Xác nhận" />
+            <Button onAction="#handleConfirm" prefHeight="42" prefWidth="617.0" styleClass="confirm-btn" text="Xác nhận" />
         </HBox>
     </bottom>
 
