@@ -25,7 +25,7 @@
           <top>
               <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="900.0" style="-fx-background-color: rgb(0, 113, 166); -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="631.0" spacing="10.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="638.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="42.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
                            <image>
