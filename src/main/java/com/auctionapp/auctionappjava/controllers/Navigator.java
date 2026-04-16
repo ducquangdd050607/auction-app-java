@@ -7,7 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -97,17 +99,6 @@ public class Navigator implements Initializable {
         mainBorderPane.setCenter(scene1);
     }
 
-    @FXML
-    void handleSignOut(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
-    }
-
 
     @FXML
     void handleChangePassword(ActionEvent event) throws IOException {
@@ -165,5 +156,35 @@ public class Navigator implements Initializable {
         setActiveButton(btnClicked);
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/UsersManager.fxml"));
         mainBorderPane.setCenter(scene1);
+    }
+
+    @FXML
+    void handleSignOut(ActionEvent event) throws IOException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Chắc chưa?");
+        alert.setHeaderText("Bạn có chắc muốn đăng xuất không?");
+
+        alert.showAndWait().ifPresent(response -> {
+
+            if (response == ButtonType.OK) {
+
+                alert.close();
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.centerOnScreen();
+                stage.show();
+
+            } else {
+                alert.close();
+
+            }
+        });
     }
 }
