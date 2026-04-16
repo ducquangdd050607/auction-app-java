@@ -39,10 +39,10 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Button fx:id="btnAboutUs" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAboutUs" prefHeight="39.0" prefWidth="98.0" styleClass="nav-btn" text="Về chúng tôi..." />
-                  <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" onAction="#handleRegister" prefHeight="39.0" prefWidth="63.0" styleClass="nav-btn" text="Đăng kí" />
-                  <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="39.0" prefWidth="80.0" styleClass="nav-btn" text="Đăng nhập" />
-                  <Button fx:id="btnExit" alignment="CENTER" contentDisplay="CENTER" layoutX="882.0" layoutY="12.0" onAction="#handleExit" prefHeight="39.0" prefWidth="80.0" styleClass="nav-btn" text="Thoát" />
+                  <Button fx:id="btnAboutUs" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAboutUs" prefHeight="39.0" prefWidth="107.0" styleClass="nav-btn" text="Về chúng tôi..." />
+                  <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" onAction="#handleRegister" prefHeight="39.0" prefWidth="83.0" styleClass="nav-btn" text="Đăng kí" />
+                  <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="39.0" prefWidth="90.0" styleClass="nav-btn" text="Đăng nhập" />
+                  <Button fx:id="btnExit" alignment="CENTER" contentDisplay="CENTER" layoutX="882.0" layoutY="12.0" onAction="#handleExit" prefHeight="39.0" prefWidth="57.0" styleClass="nav-btn" text="Thoát" />
                </children>
               </HBox>
           </top>
