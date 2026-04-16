@@ -7,7 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -73,5 +75,21 @@ public class MainController {
         // 2. Lệnh quyết định: Đưa cửa sổ ra chính giữa màn hình máy tính
         stage.centerOnScreen();
         stage.show();
+    }
+
+    @FXML
+    void handleExit (ActionEvent event) throws IOException {
+
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận thoát");
+        alert.setHeaderText("Bạn có chắc chắn muốn thoát ứng dụng không?");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                stage.close();
+            }
+        });
     }
 }
