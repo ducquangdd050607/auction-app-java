@@ -1,4 +1,4 @@
-package models;
+package com.auctionapp.auctionappjava.models;
 
 public abstract class Entity {
     private String id;
