@@ -84,4 +84,9 @@ public class AuctionDetailController {
 
     }
 
+    @FXML
+    void handleRemove(ActionEvent event) {
+
+    }
+
 }
