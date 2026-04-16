@@ -37,7 +37,7 @@
             <!-- Deposit amount input -->
             <VBox spacing="10">
                 <Label style="-fx-text-fill: white; -fx-font-size: 15;" text="Số tiền muốn nạp (đ):" />
-                <TextField fx:id="txtAmount" prefHeight="38" prefWidth="300" promptText="Nhập số tiền..." style="-fx-background-radius: 4; -fx-font-size: 15;" />
+                <TextField fx:id="txtAmount" onAction="#handleDeposit" prefHeight="38" prefWidth="300" promptText="Nhập số tiền..." style="-fx-background-radius: 4; -fx-font-size: 15;" />
 
                 <!-- Quick-select preset amounts -->
                 <HBox spacing="10">

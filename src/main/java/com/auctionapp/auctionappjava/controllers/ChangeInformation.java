@@ -17,6 +17,10 @@ import java.io.IOException;
 
 public class ChangeInformation {
 
+    private Stage stage;
+    private Parent root;
+    private Scene scene;
+
     @FXML
     private Label lblError;
 
@@ -52,11 +56,19 @@ public class ChangeInformation {
                     successAlert.setContentText("Đã thay đổi thông tin thành công!");
                     successAlert.showAndWait();
 
-                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    currentStage.close();
+                    try {
+                        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.sizeToScene();
+                    stage.centerOnScreen();
+                    stage.show();
                 } else {
                     alert.close();
-
                 }
             });
         }
@@ -64,7 +76,12 @@ public class ChangeInformation {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        currentStage.close();
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.show();
     }
 }

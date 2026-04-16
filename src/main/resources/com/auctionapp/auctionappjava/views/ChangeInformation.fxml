@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <!-- Thêm sản phẩm mới (Seller only) -->
 
-<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
+<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
         <VBox spacing="6">
             <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Thay đổi thông tin cá nhân" />
-         <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại trang chủ" />
+         <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại ví" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
@@ -33,11 +25,11 @@
 
                 <!-- Tên sản phẩm -->
                 <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="txtUsername" layoutX="186.0" layoutY="10.0" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
+            <TextField fx:id="txtUsername" layoutX="186.0" layoutY="10.0" onAction="#handleConfirm" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
 
                 <!-- Thông tin bổ sung (Artist / Warranty) -->
                 <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <TextField fx:id="txtEmail" prefHeight="34" prefWidth="300" promptText="VD: abc@email.com" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="txtEmail" onAction="#handleConfirm" prefHeight="34" prefWidth="300" promptText="VD: abc@email.com" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints />
