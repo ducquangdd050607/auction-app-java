@@ -77,7 +77,7 @@ public class ConfirmBiddingController {
     void handleTrueConfirm(ActionEvent event) {
         if (txtSetPrice.getText().isEmpty()) {
             lblError.setText("Hãy nhập giá tiền cược.");
-
+            lblError.setTextFill(Color.web("#FF8A80"));
         }
 
     }
