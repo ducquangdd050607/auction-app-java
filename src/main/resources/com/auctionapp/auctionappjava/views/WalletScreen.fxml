@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Slide 15 (User) / Slide 16 (Seller: Hà Minh) -->
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/WalletAndChangePasswordScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.WalletController">
+    <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
+
+    <top>
+        <VBox spacing="4">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Wallet" />
+         <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại trang chủ" />
+            <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
+            <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="18">
+
+            <!-- Role + username -->
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label fx:id="lblRole" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="User:" />
+                <Label fx:id="lblUsername" style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;" />
+            </HBox>
+
+            <!-- Personal info section -->
+            <VBox spacing="10">
+                <Label style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;" text="Thông tin cá nhân:" />
+
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label prefWidth="130" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Họ và Tên:" />
+                    <Label fx:id="lblFullName" style="-fx-text-fill: white; -fx-font-size: 14;" text="" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label prefWidth="130" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Email:" />
+                    <Label fx:id="lblEmail" style="-fx-text-fill: white; -fx-font-size: 14;" text="" />
+                </HBox>
+            </VBox>
+
+            <!-- Wallet balance -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số dư trong ví:" />
+                <Label fx:id="lblBalance" style="-fx-text-fill: #FFE066; -fx-font-size: 18; -fx-font-weight: bold;" text="36.000.000 đ" />
+            </HBox>
+
+        </VBox>
+    </center>
+
+    <!-- Bottom action buttons -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <Button onAction="#handleDeposit" prefHeight="44" prefWidth="180" styleClass="confirm-btn" text="Nạp tiền" />
+            <Button onAction="#handleChangingInformation" prefHeight="44" prefWidth="210" styleClass="confirm-btn" text="Chỉnh sửa thông tin" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
