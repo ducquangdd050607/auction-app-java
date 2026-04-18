@@ -14,10 +14,6 @@ import java.io.IOException;
 
 public class ChangeInformation {
 
-    private Stage stage;
-    private Parent root;
-    private Scene scene;
-
     @FXML
     private Label lblError;
 
