@@ -34,6 +34,8 @@ public class ChangeInformation {
     void handleConfirm(ActionEvent event) throws IOException {
         // TODO: Thay đổi thông tin trong database
 
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
         if (txtEmail.getText().trim().isEmpty() || txtUsername.getText().trim().isEmpty()) {
             lblError.setText("Hãy điền tất cả thông tin");
             lblError.setVisible(true);
