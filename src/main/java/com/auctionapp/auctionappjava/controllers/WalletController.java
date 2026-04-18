@@ -52,7 +52,7 @@ public class WalletController {
         stage.centerOnScreen();
         stage.show();
     }
-
+    
     @FXML
     void handleBack(ActionEvent event) {
         Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
