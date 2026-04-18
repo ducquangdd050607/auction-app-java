@@ -54,8 +54,19 @@ public class WalletController {
     }
     
     @FXML
-    void handleBack(ActionEvent event) {
-        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        currentStage.close();
+    void handleChangePassword(ActionEvent event) throws IOException {
+        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml"));
+        Stage modalStage = new Stage();
+        modalStage.setTitle("Đổi mật khẩu");
+
+        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+        modalStage.initOwner(parentStage);
+
+        Scene modalScene = new Scene(modalRoot);
+        modalStage.setScene(modalScene);
+        modalStage.setResizable(false);
+
+        modalStage.showAndWait();
     }
 }
