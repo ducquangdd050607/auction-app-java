@@ -3,48 +3,62 @@ package com.auctionapp.auctionappjava.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class LoginController implements Initializable {
+public class RegisterController {
 
     private Stage stage;
     private Parent root;
     private Scene scene;
-    static boolean isLoggedIn = false;
+    static boolean isRegister = false;
 
     @FXML
     private Label lblError;
+
+    @FXML
+    private Label lblPrivateKey;
+
+    @FXML
+    private PasswordField txtConfirmPassword;
+
+    @FXML
+    private TextField txtEmail;
+
     @FXML
     private PasswordField txtPassword;
+
     @FXML
-    private TextField txtPrivateKey;
+    private TextField txtPrivateKey;//? --- :D?
+
     @FXML
     private TextField txtUsername;
-    @FXML
-    private Button btnAdConfirm;
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
-        if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty()) {
+
+        if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() ||
+                txtConfirmPassword.getText().isEmpty() ||  txtEmail.getText().isEmpty()) {
             lblError.setText("Hãy điền đủ thông tin");
             lblError.setVisible(true);
-            lblError.setTextFill(Color.web("#FF8A80"));
-        } else {
-            isLoggedIn = true;
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
+        } else if  (!txtConfirmPassword.getText().equals(txtPassword.getText())) {
+            lblError.setText("Mật khẩu không khớp");
+            lblError.setVisible(true);
+        }
+
+        else {
+            isRegister = true;
+            // yêu cầu nhập lại thông tin
+            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -55,8 +69,9 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    void handleRegister(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/RegisterScreen.fxml"));
+    void handleLogIn(ActionEvent event) throws IOException {
+
+        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -65,17 +80,4 @@ public class LoginController implements Initializable {
         stage.show();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        updateRegisterStatus(RegisterController.isRegister);
-    }
-
-    @FXML
-    public void updateRegisterStatus(boolean isRegister) {
-        if (isRegister) {
-            lblError.setText("Đăng kí thành công, hãy nhập lại tài khoản.");
-            lblError.setVisible(true);
-            lblError.setTextFill(Color.web("#d5ffda"));
-        }
-    }
 }
