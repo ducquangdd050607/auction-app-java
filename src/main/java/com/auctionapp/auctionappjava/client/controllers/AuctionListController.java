@@ -1,10 +1,6 @@
-package com.auctionapp.auctionappjava.controllers;
+package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.models.Art;
-import com.auctionapp.auctionappjava.models.Customer;
-import com.auctionapp.auctionappjava.models.Item;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.auctionapp.auctionappjava.common.model.models.Item;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -20,8 +15,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 

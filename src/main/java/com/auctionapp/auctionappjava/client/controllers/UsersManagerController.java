@@ -1,10 +1,9 @@
-package com.auctionapp.auctionappjava.controllers;
+package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;

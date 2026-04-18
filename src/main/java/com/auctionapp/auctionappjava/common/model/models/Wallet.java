@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.models;
+package com.auctionapp.auctionappjava.common.model.models;
 public class Wallet {
     // Class quản lý số dư tài khoản
     private double balance;

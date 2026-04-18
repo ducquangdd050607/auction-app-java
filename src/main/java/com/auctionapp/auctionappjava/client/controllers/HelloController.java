@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.controllers;
+package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

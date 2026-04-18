@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.models;
+package com.auctionapp.auctionappjava.common.model.models;
 
 public class Customer extends User {
     private Wallet wallet;

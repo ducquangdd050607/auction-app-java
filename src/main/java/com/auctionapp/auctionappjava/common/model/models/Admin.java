@@ -1,6 +1,4 @@
-package com.auctionapp.auctionappjava.models;
-
-import java.time.LocalDateTime;
+package com.auctionapp.auctionappjava.common.model.models;
 
 public class Admin extends User {
 
