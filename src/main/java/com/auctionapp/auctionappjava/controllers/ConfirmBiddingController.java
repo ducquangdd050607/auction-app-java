@@ -58,20 +58,6 @@ public class ConfirmBiddingController {
 
     }
 
-    @FXML
-    void handlePlus1000(ActionEvent event) {
-
-    }
-
-    @FXML
-    void handlePlus10000(ActionEvent event) {
-
-    }
-
-    @FXML
-    void handlePlus100000(ActionEvent event) {
-
-    }
 
     @FXML
     void handleTrueConfirm(ActionEvent event) {
