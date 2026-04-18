@@ -57,18 +57,7 @@ public class ChangeInformation {
                     successAlert.setHeaderText(null);
                     successAlert.setContentText("Đã thay đổi thông tin thành công!");
                     successAlert.showAndWait();
-
-                    try {
-                        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.sizeToScene();
-                    stage.centerOnScreen();
-                    stage.show();
+                    currentStage.close();
                 } else {
                     alert.close();
                 }
