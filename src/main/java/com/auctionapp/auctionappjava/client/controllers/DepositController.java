@@ -1,14 +1,13 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+
+// Guaranteed Po*p Controller:>>
+
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.text.DecimalFormat;
@@ -16,11 +15,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import java.io.IOException;
-public class DepositController {
 
-    private Stage stage;
-    private Parent root;
-    private Scene scene;
+public class DepositController {
 
     @FXML
     private Label lblCurrentBalance;
@@ -110,13 +106,29 @@ public class DepositController {
             } else {
                 // TODO: Nơi bạn gọi Service/DAO để cộng tiền vào Database
 
-                root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.sizeToScene();
-                stage.centerOnScreen();
-                stage.show();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Chắc chưa?");
+                alert.setHeaderText("Bạn CHẮC muốn NẠP TIỀN không?");
+                alert.setContentText("Một khi vào, không thể rứt ra:>>");
+
+                alert.showAndWait().ifPresent(response -> {
+
+                    if (response == ButtonType.OK) {
+
+                        alert.close();
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("Thông báo");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("Đã nạp thành công!");
+                        successAlert.showAndWait();
+
+                        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        currentStage.close();
+
+                    } else {
+                        alert.close();
+                    }
+                });
             }
         }
     }
@@ -130,13 +142,7 @@ public class DepositController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
     }
-
 }
