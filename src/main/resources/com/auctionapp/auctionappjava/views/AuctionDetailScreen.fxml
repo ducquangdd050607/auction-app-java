@@ -20,7 +20,7 @@
     Slide 14 → FINISHED  (Accessory) + Seller : Xem danh sách bidder
 -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.AuctionDetailController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionDetailController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>

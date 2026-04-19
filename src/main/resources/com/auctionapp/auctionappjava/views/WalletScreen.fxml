@@ -10,7 +10,7 @@
 
 <!-- Slide 15 (User) / Slide 16 (Seller: Hà Minh) -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/WalletAndChangePasswordScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.WalletController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/WalletAndChangePasswordScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.WalletController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>

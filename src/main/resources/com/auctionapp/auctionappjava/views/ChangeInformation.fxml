@@ -6,7 +6,7 @@
 
 <!-- Thêm sản phẩm mới (Seller only) -->
 
-<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.ChangeInformation">
+<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.ChangeInformation">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
