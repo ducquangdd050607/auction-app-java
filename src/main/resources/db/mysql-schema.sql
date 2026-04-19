@@ -82,3 +82,15 @@ CREATE TABLE IF NOT EXISTS auto_bid_configs ( # chức năng tự động đặt
 /* ON DELETE CASCADE quy tắc này cho phép tự động xóa các bản ghi ở bảng con khi bản ghi tương ứng ở bảng cha bị xóa.
 ví dụ xóa 1 user thì sẽ xóa ở cả các bảng khác khi nó chứa user
 */
+CREATE TABLE IF NOT EXISTS Wallet (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    balance DECIMAL(19, 4) NOT NULL DEFAULT 0.0000, # 'Số dư hiện tại của ví',
+    currency VARCHAR(3) NOT NULL DEFAULT 'VND', # 'Mã tiền tệ (VD: VND, USD)',
+    status ENUM('active', 'locked', 'closed') NOT NULL DEFAULT 'active', # 'Trạng thái của ví'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    constraint fk_user_id foreign key(user_id) references users(id) ON DELETE RESTRICT,
+    /* ON DELETE RESTRICT nếu xóa user mà vẫn còn tiền thì không cho xóa */
+	UNIQUE KEY unique_user_currency (user_id, currency) # buộc mỗi ví của mỗi người dùng chỉ có 1 đơn vị tiền tệ
+);
