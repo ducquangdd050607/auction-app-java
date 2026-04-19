@@ -36,9 +36,6 @@ public class RegisterController {
     private PasswordField txtPassword;
 
     @FXML
-    private TextField txtPrivateKey;//? --- :D?
-
-    @FXML
     private TextField txtUsername;
 
     @FXML
