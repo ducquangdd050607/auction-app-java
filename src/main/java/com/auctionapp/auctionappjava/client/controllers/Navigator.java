@@ -187,4 +187,36 @@ public class Navigator implements Initializable {
             }
         });
     }
+
+    @FXML
+    // Đổi Route
+    void handleSwitcher(ActionEvent event) throws IOException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Chắc chưa?");
+        alert.setHeaderText("Bạn có chắc muốn đổi vai trò không?");
+
+        alert.showAndWait().ifPresent(response -> {
+
+            if (response == ButtonType.OK) {
+
+                alert.close();
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.centerOnScreen();
+                stage.show();
+
+            } else {
+                alert.close();
+
+            }
+        });
+    }
 }
+
