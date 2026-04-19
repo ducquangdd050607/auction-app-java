@@ -15,8 +15,7 @@
 
     <top>
         <VBox spacing="4">
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Wallet" />
-         <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại trang chủ" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 User Account" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
@@ -30,26 +29,24 @@
                 <Label fx:id="lblRole" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="User:" />
                 <Label fx:id="lblUsername" style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;" />
             </HBox>
-
-            <!-- Personal info section -->
-            <VBox spacing="10">
-                <Label style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;" text="Thông tin cá nhân:" />
-
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label prefWidth="130" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Họ và Tên:" />
-                    <Label fx:id="lblFullName" style="-fx-text-fill: white; -fx-font-size: 14;" text="" />
-                </HBox>
-
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label prefWidth="130" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Email:" />
-                    <Label fx:id="lblEmail" style="-fx-text-fill: white; -fx-font-size: 14;" text="" />
-                </HBox>
-            </VBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="8">
+                <children>
+                    <Label fx:id="lblRole1" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Vai trò:" />
+                    <Label fx:id="lblUsername1" style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;" />
+                </children>
+            </HBox>
 
             <!-- Wallet balance -->
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số dư trong ví:" />
-                <Label fx:id="lblBalance" style="-fx-text-fill: #FFE066; -fx-font-size: 18; -fx-font-weight: bold;" text="36.000.000 đ" />
+                <Label prefHeight="20.0" prefWidth="59.0" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Email:" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <children>
+                    <Label fx:id="lblEmail" style="-fx-text-fill: white; -fx-font-size: 14;" text="" />
+                    <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số dư trong ví:" />
+                    <Label fx:id="lblBalance" style="-fx-text-fill: #FFE066; -fx-font-size: 18; -fx-font-weight: bold;" text="36.000.000 đ" />
+                </children>
             </HBox>
 
         </VBox>
@@ -60,7 +57,9 @@
         <HBox alignment="CENTER" spacing="20">
             <Button onAction="#handleDeposit" prefHeight="44" prefWidth="180" styleClass="confirm-btn" text="Nạp tiền" />
             <Button onAction="#handleChangingInformation" prefHeight="44" prefWidth="210" styleClass="confirm-btn" text="Chỉnh sửa thông tin" />
+            <Button layoutX="205.0" layoutY="10.0" onAction="#handleChangePassword" prefHeight="44" prefWidth="180" styleClass="confirm-btn" text="Chỉnh sửa mật khẩu" textFill="#7e2727" />
         </HBox>
     </bottom>
 
 </BorderPane>
+
