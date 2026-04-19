@@ -99,26 +99,6 @@ public class Navigator implements Initializable {
         mainBorderPane.setCenter(scene1);
     }
 
-
-    @FXML
-    void handleChangePassword(ActionEvent event) throws IOException {
-        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml"));
-        Stage modalStage = new Stage();
-        modalStage.setTitle("Đổi mật khẩu");
-
-        // Lấy stage cha và chặn event ở cha bằng Modal Window
-        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
-        modalStage.initOwner(parentStage);
-
-        Scene modalScene = new Scene(modalRoot);
-        modalStage.setScene(modalScene);
-        modalStage.setResizable(false);
-
-        // Dùng showAndWait() để đợi xử lý xong stage mới hiện lên
-        modalStage.showAndWait();
-    }
-
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
         Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));

@@ -38,3 +38,18 @@
     -fx-border-color: #f3be7a;
     -fx-border-width: 0 0 0 5px;
 }
+
+.route-btn {
+    -fx-background-color: whitesmoke;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.route-btn:hover {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B849D;
+}
+
+.route-btn:pressed {
+    -fx-translate-y: 1px;
+}
