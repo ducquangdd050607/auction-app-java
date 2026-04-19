@@ -22,7 +22,7 @@ public class Route {
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
     static boolean adminRoute = false;
-    private String user;
+    private static String user;
 
     @FXML
     private Label confirmRoute;
@@ -82,6 +82,8 @@ public class Route {
             lblError.setText("Vui lòng nhập mã");
             lblError.setVisible(true);
         } else {
+            bidderRoute = false;
+            sellerRoute = false;
             adminRoute = true;
             root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -97,7 +99,9 @@ public class Route {
     void handleConfirm(ActionEvent event) throws IOException {
         try {
             if (user.equals("1")) {
+                bidderRoute = false;
                 sellerRoute = true;
+                adminRoute = false;
                 root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
@@ -108,6 +112,8 @@ public class Route {
 
             } else if (user.equals("0")) {
                 bidderRoute = true;
+                sellerRoute = false;
+                adminRoute = false;
                 root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
