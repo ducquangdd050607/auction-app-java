@@ -25,9 +25,9 @@
           <top>
               <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="900.0" style="-fx-background-color: rgb(0, 113, 166); -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="638.0" spacing="10.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="722.0" spacing="10.0">
                      <children>
-                        <ImageView fitHeight="42.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="42.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/IconApp.png" />
                            </image>
@@ -39,10 +39,9 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Button fx:id="btnAboutUs" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAboutUs" prefHeight="39.0" prefWidth="107.0" styleClass="nav-btn" text="Về chúng tôi..." />
                   <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" onAction="#handleRegister" prefHeight="39.0" prefWidth="83.0" styleClass="nav-btn" text="Đăng kí" />
                   <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="39.0" prefWidth="90.0" styleClass="nav-btn" text="Đăng nhập" />
-                  <Button fx:id="btnExit" alignment="CENTER" contentDisplay="CENTER" layoutX="882.0" layoutY="12.0" onAction="#handleExit" prefHeight="39.0" prefWidth="57.0" styleClass="nav-btn" text="Thoát" />
+                  <Button fx:id="btnExit" alignment="CENTER" contentDisplay="CENTER" layoutX="882.0" layoutY="12.0" onAction="#handleExit" prefHeight="39.0" prefWidth="66.0" styleClass="nav-btn" text="Thoát" />
                </children>
               </HBox>
           </top>

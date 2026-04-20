@@ -46,10 +46,12 @@
 }
 
 .route-btn:hover {
+    -fx-background-color: rgb(218, 218, 218);
     -fx-font-weight: bold;
     -fx-text-fill: #2B849D;
 }
 
 .route-btn:pressed {
+    -fx-background-color: rgb(180, 180, 180);
     -fx-translate-y: 1px;
 }

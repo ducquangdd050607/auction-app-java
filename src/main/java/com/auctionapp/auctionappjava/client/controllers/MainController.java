@@ -39,12 +39,8 @@ public class MainController {
     private VBox navigator;
     @FXML
     private Button btnExplore;
-
-
     @FXML
-    void handleAboutUs(ActionEvent event) {
-
-    }
+    private Button btnExit;
 
     @FXML
     void handleLogin(ActionEvent event) throws IOException {

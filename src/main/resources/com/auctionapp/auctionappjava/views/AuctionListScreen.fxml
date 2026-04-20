@@ -14,11 +14,11 @@
 
 <!-- Slide 7: Danh sách phiên đấu giá -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" stylesheets="@../css/AuctionListScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
     <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
 
     <top>
-        <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
+        <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 15;">
             <!-- Screen title -->
             <Label fx:id="txtVersatile" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
 
@@ -27,7 +27,7 @@
                 <TextField fx:id="txtSearch" prefHeight="32" prefWidth="231.0" promptText="Tìm kiếm phiên đấu giá..." style="-fx-background-radius: 4; -fx-font-size: 13;" />
                 <ComboBox fx:id="cbFilterStatus" prefHeight="32" prefWidth="140" promptText="Trạng thái" style="-fx-font-size: 13;" />
             <ComboBox fx:id="cbType" layoutX="471.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Thể loại" style="-fx-font-size: 13;" />
-                <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Tìm" />
+                <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" styleClass="confirm-btn" text="Tìm" />
             </HBox>
             <padding><Insets bottom="10.0" left="30.0" right="10.0" top="10.0" /></padding>
          <BorderPane.margin>
@@ -65,14 +65,14 @@
    <bottom>
       <HBox fx:id="box" alignment="CENTER" prefHeight="35.0" prefWidth="612.0" spacing="30.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="414.0" spacing="20.0" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12;">
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="619.0" spacing="20.0" style="-fx-background-color: #2E7D9B; -fx-background-radius: 5;">
                <children>
-                  <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Thêm sản phẩm" />
-                  <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xóa sản phẩm" />
-                  <Button fx:id="btnAdmin" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenAdminScreen" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Quản trị" />
-                  <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xác nhận" />
-                  <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Hủy bỏ" />
-                  <Button fx:id="btnTest" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleTest" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Test" />
+                  <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" styleClass="confirm-btn" text="Thêm sản phẩm" />
+                  <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" styleClass="confirm-btn" text="Xóa sản phẩm" />
+                  <Button fx:id="btnAdmin" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenAdminScreen" styleClass="confirm-btn" text="Quản trị" />
+                  <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" styleClass="confirm-btn" text="Xác nhận" />
+                  <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" styleClass="confirm-btn" text="Hủy bỏ" />
+                  <Button fx:id="btnTest" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleTest" styleClass="confirm-btn" text="Test" />
                </children>
             </HBox>
          </children>

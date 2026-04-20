@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava;
 
+import com.auctionapp.auctionappjava.client.JavaFXLaunch;
 import javafx.application.Application;
 
 public class Launcher {
