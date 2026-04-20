@@ -24,7 +24,7 @@ public class ServerProperties {
 
     // 1. Kiểm tra xem có đang dùng MySQL hay không
     public boolean isMysql() {
-        return "mysql".equalsIgnoreCase(properties.getProperty("app.db.vendor", "h2"));
+        return "mysql".equalsIgnoreCase(properties.getProperty("app.db.vendor"));
     }
 
     // 2. Lấy URL kết nối (Nếu là mysql thì lấy app.db.mysql.url)
