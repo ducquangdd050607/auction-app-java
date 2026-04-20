@@ -14,7 +14,7 @@
 
 <!-- Slide 7: Danh sách phiên đấu giá -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" stylesheets="@../css/AuctionListScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" stylesheets="@../css/AuctionListAndItemScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
     <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
 
     <top>

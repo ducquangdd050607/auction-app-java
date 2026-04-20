@@ -64,7 +64,7 @@
                   <Image url="@../images/IconApp.png" />
                </image>
             </ImageView>
-            <Pane prefHeight="46.0" prefWidth="23.0" />
+            <Pane prefHeight="46.0" prefWidth="10.0" />
             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
             <Region prefHeight="50.0" prefWidth="302.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="identity" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSwitcher" prefHeight="26.0" prefWidth="91.0" styleClass="route-btn" text="&quot;for Route&quot;" />
