@@ -75,7 +75,6 @@ public class InsideItemController {
     void handleBack(ActionEvent event) {
         stage = (Stage) btnBack.getScene().getWindow();
         stage.close();
-        // yêu cầu reload lại cửa sổ - cập nhật lại danh sách
     }
 
     @FXML
@@ -87,15 +86,5 @@ public class InsideItemController {
     void handleExportWinner(ActionEvent event) {
 
     }
-
-    @FXML
-    void handleBidding(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml"));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
 
 }
