@@ -3,13 +3,25 @@ package com.auctionapp.auctionappjava.client.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import java.io.IOException;
-public class AccountController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class AccountController implements Initializable {
+
+    @FXML
+    private HBox boxBalance;
+
+    @FXML
+    private Button btnDeposit;
 
     @FXML
     private Label lblBalance;
@@ -18,7 +30,7 @@ public class AccountController {
     private Label lblEmail;
 
     @FXML
-    private Label lblRole;
+    private Label lblRoute;
 
     @FXML
     private Label lblUsername;
@@ -74,4 +86,29 @@ public class AccountController {
 
         modalStage.showAndWait();
     }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        try {
+            show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void show() throws IOException {
+        if (Route.adminRoute) {
+            balanceAndDeposit(false);
+
+        } else {
+            balanceAndDeposit(true);
+        }
+    }
+
+    void balanceAndDeposit(boolean admin) {
+        boxBalance.setVisible(admin);
+        btnDeposit.setVisible(admin);
+        boxBalance.setManaged(admin);
+        btnDeposit.setManaged(admin);
+    }
+
 }
