@@ -68,7 +68,6 @@
                   <Button fx:id="btnRemove" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xóa tài khoản" />
                   <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Hủy bỏ" />
-                  <Button fx:id="btnPromoteAdmin" layoutX="154.0" layoutY="15.0" mnemonicParsing="false" onAction="#handlePromoteAdmin" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Thêm Admin" />
                </children>
             </HBox>
          </children>

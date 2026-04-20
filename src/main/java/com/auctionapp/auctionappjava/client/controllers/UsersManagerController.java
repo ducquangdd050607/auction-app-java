@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
 // Giải thích:
 // HOẠT ĐỘNG(ACTIVE): acc còn khỏe, còn chơi được
 // CHẶN(BAN): acc vi phạm luật lệ bị cảnh cáo và cấm đăng nhập trong 1 thời gian
@@ -21,7 +20,6 @@ public class UsersManagerController implements Initializable {
     //để confirm thực hiện đúng mục dích
     private boolean ban =  false;
     private boolean remove = false;
-    private boolean addAdmin = false;
 
     @FXML
     private HBox box;
@@ -61,20 +59,16 @@ public class UsersManagerController implements Initializable {
 
     @FXML
     void handleBan(ActionEvent event) {
-        orConfirm();
+        orConfirm(true);
         ban = true;
+        remove = false;
     }
 
     @FXML
     void handleRemove(ActionEvent event) {
-        orConfirm();
+        orConfirm(true);
         remove = true;
-    }
-
-    @FXML
-    void handlePromoteAdmin(ActionEvent event) {
-        orConfirm();
-        addAdmin = true;
+        ban = false;
     }
 
     @FXML
@@ -97,14 +91,12 @@ public class UsersManagerController implements Initializable {
 
             }
         });
-
-        orNotConfirm();
+        orConfirm(false);
     }
 
     @FXML
     void handleCancel(ActionEvent event) {
-
-        orNotConfirm();
+        orConfirm(false);
     }
 
     @FXML
@@ -128,41 +120,25 @@ public class UsersManagerController implements Initializable {
 
     }
 
-    public void orConfirm() {
+    public void orConfirm(boolean choose) {
         // nút xác nhận-hủy-khung chọn chỉ khi bấm remove/ban/promoteAdmin
-        btnConfirm.setVisible(true);
-        btnConfirm.setManaged(true);
-        clmChoose.setVisible(true);
-        btnCancel.setVisible(true);
-        btnCancel.setManaged(true);
-        btnBan.setManaged(false);
-        btnRemove.setManaged(false);
-        btnPromoteAdmin.setManaged(false);
-        btnBan.setVisible(false);
-        btnRemove.setVisible(false);
-        btnPromoteAdmin.setVisible(false);
-    }
-
-    public void orNotConfirm() {
-        // nút remove-ban-promoteAdmin chỉ khi bấm cancel
-        btnConfirm.setVisible(false);
-        btnConfirm.setManaged(false);
-        clmChoose.setVisible(false);
-        btnCancel.setVisible(false);
-        btnCancel.setManaged(false);
-        btnBan.setManaged(true);
-        btnRemove.setManaged(true);
-        btnPromoteAdmin.setManaged(true);
-        btnBan.setVisible(true);
-        btnRemove.setVisible(true);
-        btnPromoteAdmin.setVisible(true);
+        btnConfirm.setVisible(choose);
+        btnConfirm.setManaged(choose);
+        clmChoose.setVisible(choose);
+        btnCancel.setVisible(choose);
+        btnCancel.setManaged(choose);
+        btnBan.setManaged(!choose);
+        btnRemove.setManaged(!choose);
+        btnBan.setVisible(!choose);
+        btnRemove.setVisible(!choose);
     }
 
     public void show() throws IOException {
 
-        orNotConfirm();
+        orConfirm(false);
 
         //sao không làm cái này từ trước:((
+        //đã refine(?)
     }
 }
 
