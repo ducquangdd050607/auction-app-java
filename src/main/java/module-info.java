@@ -8,6 +8,8 @@ module com.auctionapp.auctionappjava {
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.sql;
+    requires mysql.connector.j;
 
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
     exports com.auctionapp.auctionappjava;
