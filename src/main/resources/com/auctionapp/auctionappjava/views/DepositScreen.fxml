@@ -11,13 +11,13 @@
 
 <!-- Nạp tiền vào ví -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/DepositScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.DepositController">
+<BorderPane prefHeight="609.0" prefWidth="688.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/DepositScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.DepositController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
         <VBox spacing="6">
             <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Wallet – Nạp tiền" />
-         <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại ví" />
+            <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
@@ -54,10 +54,11 @@
     </center>
 
     <bottom>
-        <HBox alignment="CENTER_LEFT" spacing="16">
+        <HBox alignment="CENTER" spacing="16">
             <Button onAction="#handleDeposit" prefHeight="42" prefWidth="160" styleClass="confirm-btn" text="Xác nhận nạp" />
-            <Button onAction="#handleBack" prefHeight="42" prefWidth="100" styleClass="cancel-btn" text="Hủy" />
         </HBox>
     </bottom>
 
 </BorderPane>
+
+

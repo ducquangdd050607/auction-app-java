@@ -13,7 +13,7 @@
 
 <!-- Slide 13 / 14: Seller – xem danh sách người đặt cược -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.InsideItemController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.InsideItemController">
     <padding><Insets bottom="28" left="40" right="40" top="28" /></padding>
 
     <top>

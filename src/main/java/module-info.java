@@ -9,6 +9,6 @@ module com.auctionapp.auctionappjava {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens com.auctionapp.auctionappjava.controllers to javafx.fxml;
+    opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
     exports com.auctionapp.auctionappjava;
 }

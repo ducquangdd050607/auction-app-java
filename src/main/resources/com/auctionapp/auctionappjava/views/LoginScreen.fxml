@@ -7,7 +7,7 @@
 
 <!-- Slide 4: Login Screen -->
 
-<StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.LoginController">
+<StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.LoginController">
 
     <!-- Login card -->
     <VBox alignment="CENTER" maxHeight="480" maxWidth="460" spacing="20" style="-fx-background-color: #2E7D9B;">

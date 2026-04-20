@@ -1,0 +1,101 @@
+package com.auctionapp.auctionappjava.client.controllers;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class InsideItemController {
+
+    private Stage stage;
+    private Parent root;
+    private Scene scene;
+
+    @FXML
+    private Button btnBack;
+
+    @FXML
+    private Button btnExportWinner;
+
+    @FXML
+    private TableColumn<?, ?> colBidAmount;
+
+    @FXML
+    private TableColumn<?, ?> colBidTime;
+
+    @FXML
+    private TableColumn<?, ?> colRank;
+
+    @FXML
+    private TableColumn<?, ?> colUsername;
+
+    @FXML
+    private Label lblCategory;
+
+    @FXML
+    private Label lblItemName;
+
+    @FXML
+    private Label lblStartingPrice;
+
+    @FXML
+    private Label lblStatus;
+
+    @FXML
+    private Label lblTopBid;
+
+    @FXML
+    private Label lblTopBidder;
+
+    @FXML
+    private TableView<?> tableBidders;
+
+    @FXML
+    void handleRemove(ActionEvent event) {
+        if (Route.adminRoute) {
+            // force-remove
+        } else if (Route.sellerRoute) {
+            // if (Item.status == "OPEN") {
+            // remove
+            // } else {
+            // { báo lỗi: Không đủ thẩm quyền xóa sản phẩm }
+        }
+    }
+
+    @FXML
+    void handleBack(ActionEvent event) {
+        stage = (Stage) btnBack.getScene().getWindow();
+        stage.close();
+        // yêu cầu reload lại cửa sổ - cập nhật lại danh sách
+    }
+
+    @FXML
+    void handleBidders(ActionEvent event) {
+
+    }
+
+    @FXML
+    void handleExportWinner(ActionEvent event) {
+
+    }
+
+    @FXML
+    void handleBidding(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml"));
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+}

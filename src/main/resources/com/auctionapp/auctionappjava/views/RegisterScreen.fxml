@@ -6,7 +6,7 @@
 
 <!-- Slide 5/6: Register Screen (Guest tab & Seller tab) -->
 
-<StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.controllers.RegisterController">
+<StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.RegisterController">
 
     <VBox alignment="CENTER" maxWidth="480" spacing="16" style="-fx-background-color: #2E7D9B;">
         <padding><Insets bottom="36" left="60" right="60" top="36" /></padding>
