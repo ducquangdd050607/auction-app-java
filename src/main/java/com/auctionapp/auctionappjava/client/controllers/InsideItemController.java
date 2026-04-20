@@ -72,9 +72,17 @@ public class InsideItemController {
     }
 
     @FXML
-    void handleBack(ActionEvent event) {
-        stage = (Stage) btnBack.getScene().getWindow();
-        stage.close();
+    void handleBack(ActionEvent event) throws IOException {
+        if (Route.bidderRoute) {
+            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } else {
+            stage = (Stage) btnBack.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML

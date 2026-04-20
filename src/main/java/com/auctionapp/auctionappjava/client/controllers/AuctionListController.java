@@ -152,12 +152,28 @@ public class AuctionListController implements Initializable {
     // chi tiết sản phẩm, nếu trạng thái sp là OPEN, FINISHED, PAID/CANCELLED, điều hướng sang AuctionDetail
     // nếu trạng thái là RUNNING, điều hướng sang InsideItemScreen
     void handleTest(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
-        stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
-        scene = new Scene(root);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(scene);
-        stage.showAndWait();
+        if (Route.bidderRoute) {
+            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+            stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
+            scene = new Scene(root);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+        }
+
+        else {
+            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
+            stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
+            scene = new Scene(root);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+        }
+
+
+
+
+
     }
 
     @FXML
@@ -227,9 +243,6 @@ public class AuctionListController implements Initializable {
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
 
-        } else if (Route.bidderRoute) {
-            box.setVisible(false);
-            box.setManaged(false);
         }
     }
 
