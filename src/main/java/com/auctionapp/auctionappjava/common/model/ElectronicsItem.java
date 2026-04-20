@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ElectronicsItem extends AuctionItem {
+public class ElectronicsItem extends Item {
     public ElectronicsItem() {
         setItemType(ItemType.ELECTRONICS);
     }
