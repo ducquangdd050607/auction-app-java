@@ -31,8 +31,6 @@ public class LoginController implements Initializable {
     private PasswordField txtPassword;
     @FXML
     private TextField txtUsername;
-    @FXML
-    private Button btnAdConfirm;
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
