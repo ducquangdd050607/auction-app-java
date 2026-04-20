@@ -95,20 +95,16 @@ public class AccountController implements Initializable {
             throw new RuntimeException(e);
         }
     }
+
+    void balanceAndDeposit(boolean isVisible) {
+        boxBalance.setVisible(isVisible);
+        btnDeposit.setVisible(isVisible);
+        boxBalance.setManaged(isVisible);
+        btnDeposit.setManaged(isVisible);
+    }
+
     public void show() throws IOException {
-        if (Route.adminRoute) {
-            balanceAndDeposit(false);
-
-        } else {
-            balanceAndDeposit(true);
-        }
+        // Nếu là admin thì set ẩn (false) là được
+        balanceAndDeposit(!Route.adminRoute);
     }
-
-    void balanceAndDeposit(boolean admin) {
-        boxBalance.setVisible(admin);
-        btnDeposit.setVisible(admin);
-        boxBalance.setManaged(admin);
-        btnDeposit.setManaged(admin);
-    }
-
 }
