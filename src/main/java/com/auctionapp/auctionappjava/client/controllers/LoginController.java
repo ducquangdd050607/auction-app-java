@@ -30,8 +30,6 @@ public class LoginController implements Initializable {
     @FXML
     private PasswordField txtPassword;
     @FXML
-    private TextField txtPrivateKey;
-    @FXML
     private TextField txtUsername;
     @FXML
     private Button btnAdConfirm;
