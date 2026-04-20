@@ -152,8 +152,8 @@ public class AuctionListController implements Initializable {
     // chi tiết sản phẩm, nếu trạng thái sp là OPEN, FINISHED, PAID/CANCELLED, điều hướng sang AuctionDetail
     // nếu trạng thái là RUNNING, điều hướng sang InsideItemScreen
     void handleTest(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
-        stage = new Stage(); // hiện tại là InsideItemScreen(demo), dưới dạng pop-up
+        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+        stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
         scene = new Scene(root);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
@@ -176,7 +176,8 @@ public class AuctionListController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) { //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
+    public void initialize(URL location, ResourceBundle resources) {
+        //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
         String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
         cbFilterStatus.getItems().addAll(statuses);
 
