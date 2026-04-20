@@ -12,4 +12,5 @@ module com.auctionapp.auctionappjava {
 
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
     exports com.auctionapp.auctionappjava;
+    exports com.auctionapp.auctionappjava.client;
 }

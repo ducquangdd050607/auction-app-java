@@ -20,7 +20,7 @@
     Slide 14 → FINISHED  (Accessory) + Seller : Xem danh sách bidder
 -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionDetailController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/AuctionListScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionDetailController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
@@ -97,9 +97,9 @@
     <!-- Back button -->
     <bottom>
         <HBox alignment="CENTER_LEFT">
-         <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36" prefWidth="99.0" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="← Quay lại" />
+         <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36" prefWidth="99.0" styleClass="confirm-btn" text="← Quay lại" />
          <Pane prefHeight="36.0" prefWidth="16.0" />
-         <Button onAction="#handleRemove" prefHeight="36" prefWidth="120" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 13; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 4;" text="Hủy bỏ kết quả" />
+         <Button onAction="#handleRemove" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Hủy bỏ kết quả" />
         </HBox>
     </bottom>
 

@@ -45,9 +45,11 @@ public class Navigator implements Initializable {
     @FXML
     private Button wallet;
     @FXML
-    private Label identity;
+    private Button identity;
     @FXML
     private Button btnDashboard;
+    @FXML
+    private Button btnExit;
 
     // Thêm thuộc tính và hành vi điều khiển UI/UX navbar
     @FXML
@@ -100,17 +102,12 @@ public class Navigator implements Initializable {
     }
 
     @FXML
-    void handleWallet(ActionEvent event) throws IOException {
-        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/WalletScreen.fxml"));
-        Stage modalStage = new Stage();
-        modalStage.setTitle("Wallet");
-        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
-        modalStage.initOwner(parentStage);
-        Scene modalScene = new Scene(modalRoot);
-        modalStage.setScene(modalScene);
-        modalStage.setResizable(false);
-        modalStage.showAndWait();
+    void handleAccount(ActionEvent event) throws IOException {
+        Button btnClicked = (Button) event.getSource();
+        setActiveButton(btnClicked);
+        modeName = btnClicked.getText();
+        Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AccountScreen.fxml"));
+        mainBorderPane.setCenter(scene1);
     }
 
     @FXML
@@ -195,6 +192,22 @@ public class Navigator implements Initializable {
             } else {
                 alert.close();
 
+            }
+        });
+    }
+
+    @FXML
+    void handleExit (ActionEvent event) throws IOException {
+
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận thoát");
+        alert.setHeaderText("Bạn có chắc chắn muốn thoát ứng dụng không?");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                stage.close();
             }
         });
     }

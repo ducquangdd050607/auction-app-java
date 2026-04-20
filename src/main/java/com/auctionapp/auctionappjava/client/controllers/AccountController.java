@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import java.io.IOException;
-public class WalletController {
+public class AccountController {
 
     @FXML
     private Label lblBalance;

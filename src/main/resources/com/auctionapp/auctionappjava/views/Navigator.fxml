@@ -47,7 +47,7 @@
             <VBox fx:id="groupAccount" alignment="CENTER" prefHeight="53.0" prefWidth="181.0">
                <children>
                   <Separator prefWidth="200.0" />
-                  <Button fx:id="setting" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleWallet" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Tài khoản" />
+                  <Button fx:id="setting" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleAccount" prefHeight="50.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Tài khoản" />
                </children>
             </VBox>
          </children>
@@ -67,15 +67,11 @@
             <Pane prefHeight="46.0" prefWidth="23.0" />
             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
             <Region prefHeight="50.0" prefWidth="302.0" HBox.hgrow="ALWAYS" />
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSwitcher" prefHeight="26.0" prefWidth="91.0" styleClass="route-btn">
-               <graphic>
-                  <Label fx:id="identity" alignment="CENTER" contentDisplay="CENTER" prefHeight="73.0" prefWidth="134.0" styleClass="route-btn" text="&quot;for Route&quot;" />
-               </graphic>
-            </Button>
+            <Button fx:id="identity" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSwitcher" prefHeight="26.0" prefWidth="91.0" styleClass="route-btn" text="&quot;for Route&quot;" />
             <Region prefHeight="46.0" prefWidth="22.0" />
-            <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="43.0" prefWidth="81.0" styleClass="logout-btn" text="Sign out" />
+            <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="43.0" prefWidth="74.0" styleClass="logout-btn" text="Sign out" />
+            <Button fx:id="btnExit" mnemonicParsing="false" onAction="#handleExit" prefHeight="43.0" prefWidth="62.0" styleClass="logout-btn" text="Exit" />
          </children>
       </HBox>
    </top>
 </BorderPane>
-
