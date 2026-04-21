@@ -51,11 +51,11 @@
 
                 <!-- Thời gian mở sàn -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
                 <!-- Thời gian kết thúc -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
                 <!-- Mô tả -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
@@ -76,7 +76,7 @@
             </GridPane>
 
             <!-- Error label -->
-            <Label fx:id="lblError" style="-fx-text-fill: #FF8A80; -fx-font-size: 13;" text="" visible="false" />
+            <Label fx:id="lblError" alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: #FF8A80; -fx-font-size: 13;" text="" />
         </VBox>
     </center>
 

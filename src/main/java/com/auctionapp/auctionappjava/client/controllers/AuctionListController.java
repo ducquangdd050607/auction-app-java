@@ -1,6 +1,9 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.model.Item;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -21,7 +25,8 @@ import java.util.ResourceBundle;
 public class AuctionListController implements Initializable {
     private Stage stage;
     private Scene scene;
-    //private ObservableList<Art> arts;
+
+    private ObservableList<Item> auctionData = FXCollections.observableArrayList();
 
     @FXML
     private HBox box;
@@ -50,19 +55,19 @@ public class AuctionListController implements Initializable {
     @FXML
     private TableColumn<Item, String> clmName;
     @FXML
-    private TableColumn<Item, Double> clmStartPrice;
+    private TableColumn<Item, BigDecimal> clmStartPrice;
     @FXML
     private TableColumn<Item, String> clmStatus;
     @FXML
-    private TableColumn<Item, Integer> clmTime;
+    private TableColumn<Item, Integer> clmTime; // Thời gian còn lại
     @FXML
-    private TableColumn<Item, String> clmType;
+    private TableColumn<Item, ItemType> clmType;
     @FXML
     private TableColumn<?, ?> clmBiddingMoney;
     @FXML
-    private TableColumn<?, ?> clmBiddedTime;
+    private TableColumn<?, ?> clmBiddedTime; // Thời điểm đặt
     @FXML
-    private TableView<?> listAuctions;
+    private TableView<Item> listAuctions;
     @FXML
     private TableColumn<?, ?> clmChoose;
     @FXML
@@ -126,25 +131,6 @@ public class AuctionListController implements Initializable {
 
             }
         });
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-//
-//        Customer Who = new Customer("12", "Huy", "123123@gmail.com", "12345678", 360000000);
-//        arts = FXCollections.observableArrayList(
-//                new Art(
-//                        "23",
-//                        "Dep le",
-//                        360000.0,
-//                        Who,
-//                        LocalDateTime.parse("02-03-2300 23:59", formatter),
-//                        "Tran"
-//                )
-//        );
-//        clmStartPrice.setCellValueFactory(new PropertyValueFactory<>("startPrice"));
-//        clmName.setCellValueFactory(new PropertyValueFactory<>("name"));
-//        listAuctions.setItems(arts);
-//
-//    }
     }
 
     @FXML
@@ -169,20 +155,22 @@ public class AuctionListController implements Initializable {
             stage.setScene(scene);
             stage.showAndWait();
         }
-
-
-
-
-
     }
 
     @FXML
     void handleAdd(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
+        Parent root = loader.load();
+
+        AddItemController addCtrl = loader.getController();
+        addCtrl.setOnItemAdded(newItem -> {
+            auctionData.add(newItem);
+            // auctionData là ObservableList đang bind vào TableView
+        });
+
         stage = new Stage();
-        scene = new Scene(root);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.showAndWait();
     }
 
@@ -208,6 +196,22 @@ public class AuctionListController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        setupColumns();
+        listAuctions.setItems(auctionData);
+
+    }
+
+    private void setupColumns() {
+        // Các cột nhận giá trị từ các getter
+        // Hiện tại chỉ có tên, giá khởi đầu, loại
+        clmName.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleStringProperty(cell.getValue().getTitle()));
+
+        clmStartPrice.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getStartingPrice()));
+
+        clmType.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getItemType()));
     }
 
     public void show() throws IOException {
