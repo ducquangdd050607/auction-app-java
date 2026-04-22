@@ -5,3 +5,4 @@ public enum ItemType {
     ART,
     VEHICLE
 }
+// 3 loại Item

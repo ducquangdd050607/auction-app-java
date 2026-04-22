@@ -3,7 +3,7 @@ package com.auctionapp.auctionappjava.common.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+//mỗi lần user đặt giá = 1 record BidTransaction
 public class BidTransaction extends BaseEntity {
     private UUID auctionId;
     private UUID bidderId;

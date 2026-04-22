@@ -3,7 +3,7 @@ package com.auctionapp.auctionappjava.common.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+//cấu hình cho phép user tự động trả giá thay vì phải bấm tay
 public class AutoBidConfig extends BaseEntity {
     private UUID auctionId;
     private UUID bidderId;

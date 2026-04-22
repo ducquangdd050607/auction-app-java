@@ -4,7 +4,7 @@ import com.auctionapp.auctionappjava.common.enums.Role;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+//Admin is a User
 public class Admin extends User {
     public Admin() {
         super();
@@ -16,7 +16,7 @@ public class Admin extends User {
                  LocalDateTime updatedAt,
                  String username,
                  String passwordHash,
-                 String passwordSalt,
+                 String passwordSalt,//Salt = chuỗi random thêm vào password trước khi hash
                  String fullName,
                  String email,
                  boolean active) {

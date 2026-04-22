@@ -43,9 +43,9 @@ public abstract class Item extends BaseEntity {
         return sellerId;
     }
 
-    public void setSellerId(UUID sellerId) {
+    /*public void setSellerId(UUID sellerId) {
         this.sellerId = sellerId;
-    }
+    }*/
 
     public String getTitle() {
         return title;
