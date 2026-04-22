@@ -3,8 +3,6 @@ package com.auctionapp.auctionappjava.client.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.paint.Color;
@@ -40,28 +38,14 @@ public class ChangePasswordController {
             lblMessage.setTextFill(Color.web("#FF8A80"));
         }
         else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Chắc chưa?");
-            alert.setHeaderText("Bạn có muốn đổi mật khẩu không?");
+            AlertController.SceneOffAlertController(event,
+                    "Chắc chưa?",
+                    "Bạn có muốn đổi mật khẩu không?",
+                    "",
+                    "Thông báo",
+                    "",
+                    "Đã thay đổi mật khẩu thành công!");
 
-            alert.showAndWait().ifPresent(response -> {
-
-                if (response == ButtonType.OK) {
-
-                    alert.close();
-                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                    successAlert.setTitle("Thông báo");
-                    successAlert.setHeaderText(null);
-                    successAlert.setContentText("Đã thay đổi mật khẩu thành công!");
-                    successAlert.showAndWait();
-
-                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    currentStage.close();
-
-                } else {
-                    alert.close();
-                }
-            });
         }
     }
 }
