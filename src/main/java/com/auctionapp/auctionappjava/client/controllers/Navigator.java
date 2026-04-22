@@ -51,6 +51,9 @@ public class Navigator implements Initializable {
             show();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            // Hàm fire() có tác dụng sẽ bấm thẳng vào nút được fire ngay khi load (initialize) scene hiện tại
+            btnDashboard.fire();
         }
     }
     public void show() throws IOException {
@@ -78,7 +81,6 @@ public class Navigator implements Initializable {
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
         }
-        SceneSwitcherController.NavSceneController(btnDashboard, mainBorderPane, "/com/auctionapp/auctionappjava/views/Dashboard.fxml");
     }
 
     @FXML

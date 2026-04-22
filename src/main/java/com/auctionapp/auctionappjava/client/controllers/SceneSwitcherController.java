@@ -40,23 +40,13 @@ public class SceneSwitcherController {
     }
 
     private static Button currentActiveButton;
-    private static void setActiveButton(Button clickedButton) {
+    public static void NavSceneController(ActionEvent event, BorderPane borderPane, String address) throws IOException {
         if (currentActiveButton != null) {
             currentActiveButton.getStyleClass().remove("nav-menu-btn-active");
         }
+        Button clickedButton = (Button) event.getSource();
         clickedButton.getStyleClass().add("nav-menu-btn-active");
         currentActiveButton = clickedButton;
-    }
-    public static void NavSceneController(ActionEvent event, BorderPane borderPane, String address) throws IOException {
-        Button clickedButton = (Button) event.getSource();
-        setActiveButton(clickedButton);
-        Parent view = FXMLLoader.load(SceneSwitcherController.class.getResource(address));
-        borderPane.setCenter(view);
-    }
-    // Lưu ý có 1 hàm để ngay khi đi vào Navigator sẽ ở Dashboard -> Set targetButton là btnDashboard luôn
-    // Cái này muốn xóa cái hàm này lắm nhưng không biết xóa đi thì xử lí sao :v
-    public static void NavSceneController(Button targetButton, BorderPane borderPane, String address) throws IOException {
-        setActiveButton(targetButton);
         Parent view = FXMLLoader.load(SceneSwitcherController.class.getResource(address));
         borderPane.setCenter(view);
     }
