@@ -53,7 +53,12 @@
 
             <!-- Category + Item name -->
             <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="[TYPE]" />
-         <Label fx:id="txtDescription" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả:" />
+         <HBox prefHeight="100.0" prefWidth="200.0">
+            <children>
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả:" />
+               <Label fx:id="txtDescription" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
+            </children>
+         </HBox>
 
             <!-- Starting price -->
             <HBox alignment="CENTER_LEFT" spacing="8">

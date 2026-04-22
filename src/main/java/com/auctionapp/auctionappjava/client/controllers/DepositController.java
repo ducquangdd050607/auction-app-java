@@ -1,9 +1,5 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-
-// Guaranteed Po*p Controller:>>
-
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
