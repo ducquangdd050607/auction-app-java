@@ -15,7 +15,7 @@ public class JavaFXLaunch extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(JavaFXLaunch.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 950, 650);
-        stage.setTitle("Bid88");
+        stage.setTitle("Bíd88");
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);
