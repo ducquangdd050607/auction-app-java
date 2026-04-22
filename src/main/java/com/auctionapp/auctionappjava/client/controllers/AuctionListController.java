@@ -78,12 +78,12 @@ public class AuctionListController implements Initializable {
 
     @FXML
     void handleSearch(ActionEvent event) {
-
+        // TODO: Tìm kiếm
     }
 
     @FXML
     void handleOpenAdminScreen(ActionEvent event) {
-
+        // Optional
     }
 
     @FXML
@@ -176,7 +176,7 @@ public class AuctionListController implements Initializable {
 
     @FXML
     void handleSelectAuction(MouseEvent event) {
-
+        // TODO later: Chỉ định sản phẩm/ Truy cập sản phẩm đó
     }
 
     @Override
