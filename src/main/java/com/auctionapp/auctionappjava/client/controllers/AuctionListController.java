@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -89,25 +90,13 @@ public class AuctionListController implements Initializable {
     @FXML
     void handleRemove(ActionEvent event) throws IOException{
         // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
-        btnConfirm.setVisible(true);
-        btnConfirm.setManaged(true);
-        clmChoose.setVisible(true);
-        btnAdmin.setVisible(false);
-        btnAdmin.setManaged(false);
-        btnCancel.setVisible(true);
-        btnCancel.setManaged(true);
+        removeBehaviour(true);
     }
 
     @FXML
     void handleCancel(ActionEvent event) throws IOException{
-        // hủy:)) (admin)
-        btnConfirm.setVisible(false);
-        btnConfirm.setManaged(false);
-        clmChoose.setVisible(false);
-        btnAdmin.setVisible(true);
-        btnAdmin.setManaged(true);
-        btnCancel.setVisible(false);
-        btnCancel.setManaged(false);
+        // hủy và khôi phục trạng thái ban đầu sau khi xóa (admin)
+        removeBehaviour(false);
     }
 
     @FXML
@@ -121,12 +110,12 @@ public class AuctionListController implements Initializable {
             if (response == ButtonType.OK) {
                 alert.close();
 
-                //xử lý xóa
+                //xử lý xóa...
 
-                btnConfirm.setVisible(false);
-                btnConfirm.setManaged(false);
-                clmChoose.setVisible(false);
-            } else {//xử lý hủy(chắc chỉ thế này)
+                removeBehaviour(false);
+
+            } else {
+                //xử lý hủy(chắc chỉ thế này)
                 alert.close();
 
             }
@@ -139,21 +128,11 @@ public class AuctionListController implements Initializable {
     // nếu trạng thái là RUNNING, điều hướng sang InsideItemScreen
     void handleTest(ActionEvent event) throws IOException {
         if (Route.bidderRoute) {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
-            stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
-            scene = new Scene(root);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
+            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Đặt cược");
         }
 
         else {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
-            stage = new Stage(); // hiện tại là (demo), dưới dạng pop-up
-            scene = new Scene(root);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
+            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
         }
     }
 
@@ -215,8 +194,7 @@ public class AuctionListController implements Initializable {
     }
 
     public void show() throws IOException {
-        box.setVisible(true);
-        box.setManaged(true);
+
         // bidder không thêm bỏ sp
         btnAdd.setVisible(false);
         btnAdd.setManaged(false);
@@ -225,7 +203,7 @@ public class AuctionListController implements Initializable {
         btnRemove.setVisible(false);
         btnRemove.setManaged(false);
 
-        //xóa sp
+        //nút admin
         btnAdmin.setVisible(false);
         btnAdmin.setManaged(false);
 
@@ -246,8 +224,18 @@ public class AuctionListController implements Initializable {
         } else if (Route.sellerRoute) {
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
-
         }
+    }
+
+    public void removeBehaviour(boolean admin) {
+        // Hành vi các nút khi thao tác xóa(admin)
+        btnConfirm.setVisible(admin);
+        btnConfirm.setManaged(admin);
+        clmChoose.setVisible(admin);
+        btnAdmin.setVisible(!admin);
+        btnAdmin.setManaged(!admin);
+        btnCancel.setVisible(admin);
+        btnCancel.setManaged(admin);
     }
 
     public void setMode(String mode) {
