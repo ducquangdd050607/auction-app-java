@@ -2,7 +2,6 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -52,15 +51,11 @@ public class AuctionDetailController {
 
     @FXML
     void handleBidding(ActionEvent event) throws IOException {
-
         SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
-
     }
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-
         SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng:))");
-
     }
 }
