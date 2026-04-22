@@ -20,11 +20,6 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    private Stage stage;
-    private Parent root;
-    private Scene scene;
-    static boolean isLoggedIn = false;
-
     @FXML
     private Label lblError;
     @FXML
@@ -39,26 +34,13 @@ public class LoginController implements Initializable {
             lblError.setVisible(true);
             lblError.setTextFill(Color.web("#FF8A80"));
         } else {
-            isLoggedIn = true;
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.show();
+            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Route.fxml", "Vai trò");
         }
     }
 
     @FXML
     void handleRegister(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/RegisterScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RegisterScreen.fxml", "Đăng kí tài khoản");
     }
 
     @Override

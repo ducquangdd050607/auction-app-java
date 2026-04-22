@@ -2,10 +2,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -18,8 +15,7 @@ import java.util.Locale;
 public class ConfirmBiddingController {
 
     private long defaultAmount = 0;
-    private Stage stage;
-    private Scene scene;
+
 
     @FXML
     private Label lblBalance;
@@ -81,11 +77,8 @@ public class ConfirmBiddingController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
+
     }
 
     @FXML
@@ -154,19 +147,9 @@ public class ConfirmBiddingController {
 
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
-        Parent modalRoot = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/DepositScreen.fxml"));
-        Stage modalStage = new Stage();
-        modalStage.setTitle("moneymoneymoney");
 
-        Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
-        modalStage.initOwner(parentStage);
+        SceneSwitcherController.PopupController(event,"/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "moneymoneymoney");
 
-        Scene modalScene = new Scene(modalRoot);
-        modalStage.setScene(modalScene);
-        modalStage.setResizable(false);
-
-        modalStage.showAndWait();
     }
     long purifyingText(String price) {
         return Long.parseLong(price.replaceAll("[^\\d]", ""));

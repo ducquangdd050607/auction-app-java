@@ -2,10 +2,6 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -17,8 +13,6 @@ import java.io.IOException;
 public class InsideItemController {
 
     private Stage stage;
-    private Parent root;
-    private Scene scene;
 
     @FXML
     private Button btnBack;
@@ -74,11 +68,8 @@ public class InsideItemController {
     @FXML
     void handleBack(ActionEvent event) throws IOException {
         if (Route.bidderRoute) {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
+
         } else {
             stage = (Stage) btnBack.getScene().getWindow();
             stage.close();
@@ -87,12 +78,12 @@ public class InsideItemController {
 
     @FXML
     void handleBidders(ActionEvent event) {
-
+        // TODO: Quản lý Bidders trong sản phẩm
     }
 
     @FXML
     void handleExportWinner(ActionEvent event) {
-
+        // TODO: Xuất ra danh sách người thắng (Optional)
     }
 
 }

@@ -2,23 +2,15 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class Route {
 
-    private Stage stage;
-    private Parent root;
-    private Scene scene;
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
     static boolean adminRoute = false;
@@ -85,13 +77,8 @@ public class Route {
             bidderRoute = false;
             sellerRoute = false;
             adminRoute = true;
-            root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.show();
+
+            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
         }
     }
 
@@ -102,29 +89,21 @@ public class Route {
                 bidderRoute = false;
                 sellerRoute = true;
                 adminRoute = false;
-                root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.sizeToScene();
-                stage.centerOnScreen();
-                stage.show();
 
             } else if (user.equals("0")) {
                 bidderRoute = true;
                 sellerRoute = false;
                 adminRoute = false;
-                root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Navigator.fxml"));
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.sizeToScene();
-                stage.centerOnScreen();
-                stage.show();
+
             }
+
         } catch (NullPointerException e) {
             lblError.setText("Vui lòng chọn vai trò");
             lblError.setVisible(true);
+
+        } finally {
+            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
+
         }
     }
 }

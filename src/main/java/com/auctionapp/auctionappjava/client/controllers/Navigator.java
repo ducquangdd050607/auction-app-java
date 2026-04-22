@@ -147,16 +147,11 @@ public class Navigator implements Initializable {
 
                 alert.close();
                 try {
-                    root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
+                    SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.sizeToScene();
-                stage.centerOnScreen();
-                stage.show();
 
             } else {
                 alert.close();
@@ -178,16 +173,11 @@ public class Navigator implements Initializable {
 
                 alert.close();
                 try {
-                    root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/Route.fxml"));
+                    SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Route.fxml", "Vai trò");
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.sizeToScene();
-                stage.centerOnScreen();
-                stage.show();
 
             } else {
                 alert.close();

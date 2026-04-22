@@ -44,31 +44,14 @@ public class MainController {
 
     @FXML
     void handleLogin(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/LoginScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        // 1. Ép Stage cập nhật lại kích thước cho vừa khít với LoginScreen
-        stage.sizeToScene();
+        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
-        // 2. Lệnh quyết định: Đưa cửa sổ ra chính giữa màn hình máy tính
-        stage.centerOnScreen();
-        stage.show();
     }
 
     @FXML
     void handleRegister(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/RegisterScreen.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        // 1. Ép Stage cập nhật lại kích thước cho vừa khít với LoginScreen
-        stage.sizeToScene();
-
-        // 2. Lệnh quyết định: Đưa cửa sổ ra chính giữa màn hình máy tính
-        stage.centerOnScreen();
-        stage.show();
-    }
+        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RegisterScreen.fxml", "Đăng kí tài khoản");
+}
 
     @FXML
     void handleExit (ActionEvent event) throws IOException {
