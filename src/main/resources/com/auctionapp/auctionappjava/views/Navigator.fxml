@@ -24,22 +24,22 @@
             </VBox>
             <VBox fx:id="groupBidder" alignment="CENTER" prefHeight="17.0" prefWidth="195.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
-                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="0.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#handleItemsList" prefHeight="0.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>
             <VBox fx:id="groupAdmin" alignment="CENTER" prefHeight="70.0" prefWidth="186.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="6.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
+                  <Button mnemonicParsing="false" onAction="#handleItemsList" prefHeight="6.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
                   <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý Users" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>
             <VBox fx:id="groupSeller" alignment="CENTER" prefHeight="69.0" prefWidth="82.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
-                  <Button layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#itemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Quản lý vật phẩm" />
+                  <Button mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
+                  <Button layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Quản lý vật phẩm" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>

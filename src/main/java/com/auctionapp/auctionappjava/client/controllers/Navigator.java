@@ -105,13 +105,12 @@ public class Navigator implements Initializable {
     void handleAccount(ActionEvent event) throws IOException {
         Button btnClicked = (Button) event.getSource();
         setActiveButton(btnClicked);
-        modeName = btnClicked.getText();
         Parent scene1 = FXMLLoader.load(getClass().getResource("/com/auctionapp/auctionappjava/views/AccountScreen.fxml"));
         mainBorderPane.setCenter(scene1);
     }
 
     @FXML
-    void itemsList(ActionEvent event) throws IOException {
+    void handleItemsList(ActionEvent event) throws IOException {
         Button btnClicked = (Button) event.getSource();
         setActiveButton(btnClicked);
         modeName = btnClicked.getText();
