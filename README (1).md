@@ -1,4 +1,4 @@
-# Phân chia công việc 
+# Phân chia công việc
 
 Dự án được chia thành các phần chính gồm: common, client, server, database, DAO và connection.
 
@@ -20,7 +20,7 @@ Hiện tại, nhóm phân công công việc như sau:
 
 +Chuẩn hóa cấu trúc dữ liệu để client, server và database có thể sử dụng thống nhất
 
-### 2\. Đức Quang
+### 2\. Dương Đình Đức Quang
 
 \-Phụ trách phần client, server
 
@@ -36,7 +36,7 @@ Hiện tại, nhóm phân công công việc như sau:
 
 +Kết nối dữ liệu từ client tới server
 
-### 3\. Minh Dũng
+### 3\. Nguyễn Minh Dũng
 
 \-Phụ trách phần server,client
 
@@ -48,11 +48,11 @@ Hiện tại, nhóm phân công công việc như sau:
 
 +Xây dựng logic xử lý nghiệp vụ phía server
 
-+Tạo API hoặc các cơ chế giao tiếp giữa client và server
++Làm các cơ chế giao tiếp giữa client và server
 
 +Xử lý request, response và luồng dữ liệu hệ thống
 
-### 4\. Bình
+### 4\. Lê Vũ Bình
 
 \-Phụ trách phần database, DAO và connection
 
