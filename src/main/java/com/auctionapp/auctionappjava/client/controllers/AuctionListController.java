@@ -1,0 +1,302 @@
+package com.auctionapp.auctionappjava.client.controllers;
+
+import com.auctionapp.auctionappjava.client.core.ClientContext;
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryDto;
+import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
+
+import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.model.Item;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.ResourceBundle;
+
+public class AuctionListController implements Initializable {
+    private Stage stage;
+    private Scene scene;
+
+    private ObservableList<Item> auctionData = FXCollections.observableArrayList();
+    private final Map<UUID, UUID> auctionIdsByItemId = new HashMap<>();
+
+    @FXML
+    private HBox box;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnAdmin;
+    @FXML
+    private Button btnConfirm;
+    @FXML
+    private Button btnCancel;
+    @FXML
+    private Button btnRemove;
+    @FXML
+    private Button btnTest;
+    @FXML
+    private ComboBox<String> cbFilterStatus;
+    @FXML
+    private ComboBox<String> cbSort;
+    @FXML
+    private ComboBox<String> cbType;
+    @FXML
+    private TableColumn<Item, Integer> clmBidders;
+    @FXML
+    private TableColumn<Item, Double> clmCurrentPrice;
+    @FXML
+    private TableColumn<Item, String> clmName;
+    @FXML
+    private TableColumn<Item, BigDecimal> clmStartPrice;
+    @FXML
+    private TableColumn<Item, String> clmStatus;
+    @FXML
+    private TableColumn<Item, Integer> clmTime; // Thời gian còn lại
+    @FXML
+    private TableColumn<Item, ItemType> clmType;
+    @FXML
+    private TableColumn<?, ?> clmBiddingMoney;
+    @FXML
+    private TableColumn<?, ?> clmBiddedTime; // Thời điểm đặt
+    @FXML
+    private TableView<Item> listAuctions;
+    @FXML
+    private TableColumn<?, ?> clmChoose;
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Label txtVersatile;
+
+
+    @FXML
+    void handleSearch(ActionEvent event) {
+        loadAuctionsFromServer();
+    }
+
+    @FXML
+    void handleOpenAdminScreen(ActionEvent event) {
+        // Optional
+    }
+
+    @FXML
+    void handleRemove(ActionEvent event) throws IOException{
+        // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
+        removeBehaviour(true);
+    }
+
+    @FXML
+    void handleCancel(ActionEvent event) throws IOException{
+        // hủy và khôi phục trạng thái ban đầu sau khi xóa (admin)
+        removeBehaviour(false);
+    }
+
+    @FXML
+    void handleConfirm(ActionEvent event) throws IOException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Chắc chưa?");
+        alert.setHeaderText("Bạn có muốn xóa sản phẩm không?");
+
+        alert.showAndWait().ifPresent(response -> {
+
+            if (response == ButtonType.OK) {
+                alert.close();
+
+                //xử lý xóa...
+
+                removeBehaviour(false);
+
+            } else {
+                //xử lý hủy(chắc chỉ thế này)
+                alert.close();
+
+            }
+        });
+    }
+
+    @FXML
+    // Điều hướng theo role và ghi nhớ phiên đấu giá đang chọn để màn hình bid có thể gọi server.
+    void handleTest(ActionEvent event) throws IOException {
+        rememberSelectedAuction();
+        if (Route.bidderRoute) {
+            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Đặt cược");
+        }
+
+        else {
+            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
+        }
+    }
+
+    @FXML
+    void handleAdd(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
+        Parent root = loader.load();
+
+        AddItemController addCtrl = loader.getController();
+        addCtrl.setOnItemAdded(newItem -> {
+            auctionData.add(newItem);
+            // auctionData là ObservableList đang bind vào TableView
+        });
+
+        stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
+    }
+
+    @FXML
+    void handleSelectAuction(MouseEvent event) {
+        rememberSelectedAuction();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
+        String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
+        cbFilterStatus.getItems().addAll(statuses);
+
+
+        String[] type = {};//manual-added
+        cbType.getItems().addAll(type);
+
+        try {
+            show();// kiểm tra kiểu người dùng
+            setMode(Navigator.modeName);// thay đổi trong AutionListScreen
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        setupColumns();
+        loadAuctionsFromServer();
+        listAuctions.setItems(auctionData);
+
+    }
+
+    private void setupColumns() {
+        // Các cột nhận giá trị từ các getter
+        // Hiện tại chỉ có tên, giá khởi đầu, loại
+        clmName.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleStringProperty(cell.getValue().getTitle()));
+
+        clmStartPrice.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getStartingPrice()));
+
+        clmType.setCellValueFactory(cell ->
+                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getItemType()));
+    }
+
+
+    private void loadAuctionsFromServer() {
+        try {
+            auctionData.clear();
+            auctionIdsByItemId.clear();
+            for (AuctionSummaryDto summary : ClientContext.getInstance().getApi().listAuctions()) {
+                Item item = AuctionItemFactory.create(
+                        summary.itemType(),
+                        summary.itemId(),
+                        summary.startTime(),
+                        summary.endTime(),
+                        summary.sellerId(),
+                        summary.title(),
+                        summary.description(),
+                        summary.startingPrice(),
+                        null,
+                        null);
+                auctionData.add(item);
+                auctionIdsByItemId.put(item.getId(), summary.auctionId());
+            }
+        } catch (RuntimeException ex) {
+            // Giữ màn hình cũ hoạt động ngay cả khi server chưa bật.
+        }
+    }
+
+    private void rememberSelectedAuction() {
+        Item selected = listAuctions == null ? null : listAuctions.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            ConfirmBiddingController.setSelectedAuctionId(auctionIdsByItemId.get(selected.getId()));
+        }
+    }
+
+    public void show() throws IOException {
+
+        // bidder không thêm bỏ sp
+        btnAdd.setVisible(false);
+        btnAdd.setManaged(false);
+
+        //thêm sp
+        btnRemove.setVisible(false);
+        btnRemove.setManaged(false);
+
+        //nút admin
+        btnAdmin.setVisible(false);
+        btnAdmin.setManaged(false);
+
+        // nút xác nhận-hủy-khung chọn chỉ khi bấm remove
+        btnConfirm.setVisible(false);
+        btnConfirm.setManaged(false);
+        clmChoose.setVisible(false);
+        btnCancel.setVisible(false);
+        btnCancel.setManaged(false);
+
+        //nút admin
+        if (Route.adminRoute) {
+            btnAdmin.setVisible(true);
+            btnAdmin.setManaged(true);
+            btnRemove.setVisible(true);
+            btnRemove.setManaged(true);
+
+        } else if (Route.sellerRoute) {
+            btnAdd.setVisible(true);
+            btnAdd.setManaged(true);
+        }
+    }
+
+    public void removeBehaviour(boolean admin) {
+        // Hành vi các nút khi thao tác xóa(admin)
+        btnConfirm.setVisible(admin);
+        btnConfirm.setManaged(admin);
+        clmChoose.setVisible(admin);
+        btnAdmin.setVisible(!admin);
+        btnAdmin.setManaged(!admin);
+        btnCancel.setVisible(admin);
+        btnCancel.setManaged(admin);
+    }
+
+    public void setMode(String mode) {
+
+        if (Objects.equals(mode, "Danh sách đấu giá")) {
+            txtVersatile.setText("Bét88 Live Auction Services");
+
+        } else if (Objects.equals(mode, "Quản lý vật phẩm")) {
+            txtVersatile.setText("Bét88 Items Manager");
+
+        } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
+            txtVersatile.setText("Bét88 Live Auction Manager");
+
+        } else if (Objects.equals(mode, "Lịch sử đấu giá")) {
+            txtVersatile.setText("Bét88 History");
+            clmBiddedTime.setVisible(true);
+            clmBiddingMoney.setVisible(true);
+            clmCurrentPrice.setVisible(false);
+            clmBidders.setVisible(false);
+        }
+
+
+    }
+}

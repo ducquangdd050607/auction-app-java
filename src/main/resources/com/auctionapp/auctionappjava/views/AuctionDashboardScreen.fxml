@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_LEFT" spacing="12.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionDashboardController">
+    <children>
+        <Label text="Auction Dashboard" style="-fx-font-size: 22px; -fx-font-weight: bold;" />
+        <Button text="Refresh" onAction="#refresh" />
+        <ListView fx:id="listAuctions" prefHeight="520.0" prefWidth="880.0" />
+    </children>
+</VBox>

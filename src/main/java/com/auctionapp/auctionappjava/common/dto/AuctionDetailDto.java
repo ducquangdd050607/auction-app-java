@@ -1,0 +1,12 @@
+package com.auctionapp.auctionappjava.common.dto;
+
+import java.io.Serializable;
+import java.util.List;
+
+public record AuctionDetailDto(
+        AuctionSummaryDto summary,
+        String attributeOne,
+        String attributeTwo,
+        List<BidDto> bidHistory
+) implements Serializable {
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Thêm sản phẩm mới (Seller only) -->
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #2E7D9B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AddItemController">
+    <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
+
+    <top>
+        <VBox spacing="6">
+            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Items Manager – Thêm sản phẩm" />
+         <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại trang chủ" />
+            <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
+            <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="18">
+
+            <GridPane hgap="16" vgap="14">
+
+                <!-- Tên sản phẩm -->
+                <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Tên sản phẩm:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="txtItemName" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <!-- Danh mục -->
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Danh mục:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ComboBox fx:id="cbCategory" prefHeight="34" prefWidth="300" style="-fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <!-- Thông tin bổ sung (Artist / Warranty) -->
+                <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Thông tin bổ sung:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="txtExtraInfo" prefHeight="34" prefWidth="300" promptText="VD: Văn Cao / 36 tháng" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <!-- Giá khởi điểm -->
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Giá khởi điểm (đ):" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <TextField fx:id="txtStartingPrice" prefHeight="34" prefWidth="300" promptText="VD: 500000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <!-- Thời gian mở sàn -->
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                <!-- Thời gian kết thúc -->
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                <!-- Mô tả -->
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                <TextArea fx:id="txtDescription" prefHeight="80" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <columnConstraints>
+               <ColumnConstraints />
+               <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+            </GridPane>
+
+            <!-- Error label -->
+            <Label fx:id="lblError" alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: #FF8A80; -fx-font-size: 13;" text="" />
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <Button onAction="#handleAddItem" prefHeight="42" prefWidth="170" style="-fx-background-color: #FFE066; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="Thêm sản phẩm" />
+            <Button onAction="#handleCancel" prefHeight="42" prefWidth="100" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                            -fx-font-size: 14; -fx-font-weight: bold;                            -fx-cursor: hand; -fx-background-radius: 6;" text="Hủy" />
+         <HBox alignment="CENTER" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
