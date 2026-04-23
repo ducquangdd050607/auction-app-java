@@ -40,7 +40,7 @@ public class AccountController implements Initializable {
     @FXML
     void handleDeposit(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformation.fxml", "Nạp tiền");
+        SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
 
     }
 
