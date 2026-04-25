@@ -10,6 +10,7 @@ module com.auctionapp.auctionappjava {
     requires eu.hansolo.tilesfx;
     requires java.sql;
 
+
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
     exports com.auctionapp.auctionappjava;
     exports com.auctionapp.auctionappjava.client;
