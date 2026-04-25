@@ -133,7 +133,17 @@ public class DepositController {
     void handlePreset(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
         String presetValue = clickedButton.getText();
-        txtAmount.setText(presetValue);
+
+        long amount = purifyingText(presetValue);
+
+        if (txtAmount.getText().isEmpty()) {
+            txtAmount.setText(String.valueOf(amount));
+            defaultAmount = amount;
+
+        } else {
+            defaultAmount += amount;
+            txtAmount.setText(String.valueOf(defaultAmount));
+        }
     }
 
     @FXML
