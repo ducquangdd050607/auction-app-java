@@ -47,7 +47,7 @@ public class RegisterController {
         else {
             isRegister = true;
 
-            User Bidder = new Bidder();
+            User bidder = new Bidder();
             User seller = new Seller();
 
             seller.setUsername(txtUsername.getText());
