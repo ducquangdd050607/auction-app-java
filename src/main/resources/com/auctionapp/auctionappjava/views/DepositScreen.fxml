@@ -17,7 +17,7 @@
     <top>
         <VBox spacing="6">
             <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Wallet – Nạp tiền" />
-            <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="← Quay lại" />
+            <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
@@ -60,5 +60,3 @@
     </bottom>
 
 </BorderPane>
-
-

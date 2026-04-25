@@ -24,6 +24,9 @@ public class ChangeInformation {
     private TextField txtUsername;
 
     @FXML
+    private TextField txtFullname;
+
+    @FXML
     void handleConfirm(ActionEvent event) throws IOException {
         // TODO: Thay đổi thông tin trong database
 

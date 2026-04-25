@@ -59,3 +59,19 @@
     -fx-translate-y: 2px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 1);
 }
+
+.underline-link {
+    -fx-background-color: transparent;
+    -fx-text-fill:  #B0D8E8;
+    -fx-font-size: 13;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.underline-link:hover {
+    -fx-underline: true;
+}
+
+.underline-link:pressed {
+    -fx-text-fill: rgb(164, 164, 164);
+}
