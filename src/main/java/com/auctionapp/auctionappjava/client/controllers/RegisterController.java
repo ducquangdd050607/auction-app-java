@@ -68,6 +68,10 @@ public class RegisterController {
             // yêu cầu nhập lại thông tin
             SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
+        } catch (ValidationException e) {
+
+            lblError.setText(e.getMessage());
+            lblError.setVisible(true);
         }
     }
 
