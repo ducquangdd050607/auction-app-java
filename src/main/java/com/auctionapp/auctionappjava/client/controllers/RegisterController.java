@@ -44,6 +44,23 @@ public class RegisterController {
 
         else {
             isRegister = true;
+
+            User Bidder = new Bidder();
+            User seller = new Seller();
+
+            seller.setUsername(txtUsername.getText());
+            seller.setEmail(txtEmail.getText());
+            seller.setPasswordHash(txtPassword.getText()); //placeholder
+
+
+            Bidder.setUsername(txtUsername.getText());
+            Bidder.setEmail(txtEmail.getText());
+            seller.setPasswordHash(txtPassword.getText()); //placeholder
+
+            //TODO: Cập nhật cách lấy Hash và Salt cho password
+
+            //TODO: Nối lên DataBase lưu dữ liệu người dùng
+
             // yêu cầu nhập lại thông tin
             SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
