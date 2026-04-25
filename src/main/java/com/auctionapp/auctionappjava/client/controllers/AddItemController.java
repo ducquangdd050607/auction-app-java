@@ -45,6 +45,8 @@ public class AddItemController implements Initializable {
     private TextField txtOpenDate;
     @FXML
     private TextField txtStartingPrice;
+    @FXML
+    private TextField txtMinIncrement;
 
     private java.util.function.Consumer<Item> onItemAdded;
 
@@ -63,6 +65,7 @@ public class AddItemController implements Initializable {
         String endDateText = txtEndDate.getText().trim();
         String category = cbCategory.getValue();
         String extraInfo = txtExtraInfo.getText().trim();
+        String minIncrement = txtMinIncrement.getText().trim();
 
         if (name.isEmpty() || priceText.isEmpty() || openDateText.isEmpty()
                 || endDateText.isEmpty() || category == null) {

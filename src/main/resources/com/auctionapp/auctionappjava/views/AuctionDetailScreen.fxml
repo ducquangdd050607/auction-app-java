@@ -53,12 +53,6 @@
 
             <!-- Category + Item name -->
             <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="[TYPE]" />
-         <HBox prefHeight="100.0" prefWidth="200.0">
-            <children>
-               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả:" />
-               <Label fx:id="txtDescription" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
-            </children>
-         </HBox>
 
             <!-- Starting price -->
             <HBox alignment="CENTER_LEFT" spacing="8">
@@ -71,6 +65,12 @@
                <Label fx:id="lblCurrentPrice" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>
+         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="280.0" spacing="8">
+            <children>
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Bước giá:" />
+               <Label fx:id="lblMinIncrement" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
+            </children>
+         </HBox>
 
             <!-- End date -->
             <HBox alignment="CENTER_LEFT" spacing="8">
@@ -81,6 +81,12 @@
             <children>
                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Người dẫn đầu hiện tại:" />
                <Label fx:id="lblCurrentLeader" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
+            </children>
+         </HBox>
+         <HBox prefHeight="100.0" prefWidth="200.0">
+            <children>
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả:" />
+               <Label fx:id="txtDescription" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>
 

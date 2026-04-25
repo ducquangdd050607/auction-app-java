@@ -19,6 +19,9 @@ public class AuctionDetailController {
     private Button btnGamble;
 
     @FXML
+    private Button btnRanking;
+
+    @FXML
     private Label lblCategory;
 
     @FXML
@@ -32,6 +35,9 @@ public class AuctionDetailController {
 
     @FXML
     private Label lblItemName;
+
+    @FXML
+    private Label lblMinIncrement;
 
     @FXML
     private Label lblStartingPrice;

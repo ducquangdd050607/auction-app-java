@@ -50,16 +50,18 @@
                 <TextField fx:id="txtStartingPrice" prefHeight="34" prefWidth="300" promptText="VD: 500000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                 <!-- Thời gian mở sàn -->
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
                 <!-- Thời gian kết thúc -->
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <!-- Mô tả -->
-                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-                <TextArea fx:id="txtDescription" prefHeight="80" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                <TextArea fx:id="txtDescription" prefHeight="80" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Bước giá (đ):" GridPane.rowIndex="4" />
+            <TextField fx:id="txtMinIncrement" prefHeight="34" prefWidth="300" promptText="VD: 10000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints />
@@ -69,6 +71,7 @@
                <RowConstraints />
                <RowConstraints />
                <RowConstraints />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" />
                <RowConstraints />
                <RowConstraints />
                <RowConstraints />
