@@ -55,8 +55,8 @@ public class RegisterController {
             seller.setPasswordHash(txtPassword.getText()); //placeholder
 
 
-            Bidder.setUsername(txtUsername.getText());
-            Bidder.setEmail(txtEmail.getText());
+            bidder.setUsername(txtUsername.getText());
+            bidder.setEmail(txtEmail.getText());
             seller.setPasswordHash(txtPassword.getText()); //placeholder
 
             //TODO: Cập nhật cách lấy Hash và Salt cho password
