@@ -43,10 +43,29 @@ public class RegisterController {
         } else if  (!txtConfirmPassword.getText().equals(txtPassword.getText())) {
             lblError.setText("Mật khẩu không khớp");
             lblError.setVisible(true);
-        }
+        } // else if Trùng username {
+            // lblError.setText("Tên người dùng đã được dùng");
+            // lblError.setVisible(true);
 
         else {
             isRegister = true;
+
+            User bidder = new Bidder();
+            User seller = new Seller();
+
+            seller.setUsername(txtUsername.getText());
+            seller.setEmail(txtEmail.getText());
+            seller.setPasswordHash(txtPassword.getText()); //placeholder
+
+
+            bidder.setUsername(txtUsername.getText());
+            bidder.setEmail(txtEmail.getText());
+            seller.setPasswordHash(txtPassword.getText()); //placeholder
+
+            //TODO: Cập nhật cách lấy Hash và Salt cho password
+
+            //TODO: Nối lên DataBase lưu dữ liệu người dùng
+
             // yêu cầu nhập lại thông tin
             SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
