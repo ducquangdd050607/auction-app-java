@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.common.util;
 
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -16,54 +17,80 @@ public final class MoneyUtils {
     }
 
     public static void settingMoneyFormat(TextField txtAmount) {
-    // Ép hệ thống dùng chuẩn Mỹ để chắc chắn hàng nghìn được ngăn cách bằng dấu phẩy (,)
+        // Ép hệ thống dùng chuẩn Mỹ để chắc chắn hàng nghìn được ngăn cách bằng dấu phẩy (,)
         DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
         formatter.applyPattern("#,###");
 
-        // Lắng nghe MỌI SỰ THAY ĐỔI từng phím gõ vào ô txtAmount
-        txtAmount.textProperty().addListener((observable, oldValue, newValue) -> {
-
-            // Nếu xóa trắng ô thì không làm gì cả
-            if (newValue == null || newValue.isEmpty()) {
-                return;
+        // Chuyển sang sử dụng TEXTFORMATTER
+        TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
+            // Nếu chỉ là click chuột, bôi đen (không đổi text) thì cho qua
+            if (!change.isContentChange()) {
+                return change;
             }
 
-            // 1. Tẩy sạch mọi ký tự không phải là số (Chặn luôn người dùng gõ chữ)
-            String cleanInput = newValue.replaceAll("[^\\d]", "");
+            // Lấy chuỗi mà người dùng định tạo ra (chưa được in lên UI)
+            String newText = change.getControlNewText();
+
+            if (newText.isEmpty()) {
+                return change;
+            }
+
+            // Đếm số lượng chữ số nằm trước con trỏ trong chuỗi
+            int caretPos = change.getCaretPosition();
+            int digitsBeforeCaret = 0;
+            for (int i = 0; i < caretPos && i < newText.length(); i++) {
+                if (Character.isDigit(newText.charAt(i))) {
+                    digitsBeforeCaret++;
+                }
+            }
+
+            // Lọc bỏ mọi thứ không phải là số
+            String cleanText = newText.replaceAll("[^\\d]", "");
+
+            if (cleanText.isEmpty()) {
+                // Không cho gõ chữ cái vào
+                return null;
+            }
 
             try {
-                if (cleanInput.isEmpty()) {
-                    txtAmount.setText("");
-                    return;
+                // Format tiền tệ và GHI ĐÈ toàn bộ thao tác của người dùng
+                long amount = Long.parseLong(cleanText);
+                String formattedStr = formatter.format(amount).replaceAll(",", ".");
+
+                // Ép sự thay đổi này áp dụng cho TOÀN BỘ chiều dài của TextField
+                change.setRange(0, change.getControlText().length());
+
+                // Nhét chuỗi đã format đẹp đẽ vào
+                change.setText(formattedStr);
+
+                // Dò lại đúng vị trí con trỏ an toàn tuyệt đối
+                int newCaretPos = 0;
+                int digitsCounted = 0;
+                for (int i = 0; i < formattedStr.length(); i++) {
+                    if (digitsCounted == digitsBeforeCaret) {
+                        break;
+                    }
+                    if (Character.isDigit(formattedStr.charAt(i))) {
+                        digitsCounted++;
+                    }
+                    newCaretPos++;
                 }
 
-                // 2. Ép sang số và định dạng (VD: 100000 -> "100,000")
-                long amount = Long.parseLong(cleanInput);
-                String formattedStr = formatter.format(amount);
+                // Cập nhật vị trí con trỏ và mốc bôi đen ngay bên trong gói tin
+                change.setCaretPosition(newCaretPos);
+                change.setAnchor(newCaretPos);
 
-                // 3. Chuẩn hóa sang kiểu Việt Nam (Đổi dấu phẩy thành dấu chấm -> "100.000")
-                formattedStr = formattedStr.replaceAll(",", ".");
-
-                // 4. CHỐNG VÒNG LẶP VÔ TẬN: Chỉ cập nhật khi chuỗi mới thực sự khác
-                if (!newValue.equals(formattedStr)) {
-
-                    // 5. CHỐNG NHẢY CON TRỎ CHUỘT: Tính toán độ chênh lệch chiều dài chuỗi
-                    int cursorPosition = txtAmount.getCaretPosition();
-                    int lengthDiff = formattedStr.length() - newValue.length();
-
-                    // Ghi đè text mới lên giao diện
-                    txtAmount.setText(formattedStr);
-
-                    // Đẩy con trỏ chuột về đúng vị trí nó đang đứng
-                    txtAmount.positionCaret(cursorPosition + lengthDiff);
-                }
+                // CHẤP NHẬN gói tin đã được nhào nặn này
+                return change;
 
             } catch (NumberFormatException e) {
-                // Nếu người dùng cố tình dán (paste) một số quá lớn vượt ngưỡng long
-                // Ép quay về giá trị cũ trước khi dán
-                txtAmount.setText(oldValue);
+                // Nếu số nhập vào to vượt quá kiểu 'long', TỪ CHỐI không cho nhập thêm
+                return null;
             }
         });
+
+        // 3. GẮN VÀO TEXTFIELD
+        txtAmount.setTextFormatter(textFormatter);
     }
 
     public static long purifyingText(String price) {
