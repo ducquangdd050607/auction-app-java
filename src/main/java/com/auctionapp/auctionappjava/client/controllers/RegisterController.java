@@ -2,7 +2,6 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.common.model.Bidder;
 import com.auctionapp.auctionappjava.common.model.Seller;
 import com.auctionapp.auctionappjava.common.model.User;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -17,9 +16,6 @@ public class RegisterController {
 
     @FXML
     private Label lblError;
-
-    @FXML
-    private Label lblPrivateKey;
 
     @FXML
     private PasswordField txtConfirmPassword;
@@ -43,17 +39,16 @@ public class RegisterController {
                 txtConfirmPassword.getText().isEmpty() ||  txtEmail.getText().isEmpty()) {
             lblError.setText("Hãy điền đủ thông tin");
             lblError.setVisible(true);
+
         } else if  (!txtConfirmPassword.getText().equals(txtPassword.getText())) {
             lblError.setText("Mật khẩu không khớp");
             lblError.setVisible(true);
+
         } // else if Trùng username {
             // lblError.setText("Tên người dùng đã được dùng");
             // lblError.setVisible(true);
 
-        try {
-
-            ValidationUtils.requireEmail(txtEmail.getText());
-            isRegister = true;
+        else {
 
             User bidder = new Bidder();
             User seller = new Seller();
@@ -74,10 +69,6 @@ public class RegisterController {
             // yêu cầu nhập lại thông tin
             SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
-        } catch (ValidationException e) {
-
-            lblError.setText(e.getMessage());
-            lblError.setVisible(true);
         }
     }
 
