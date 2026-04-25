@@ -44,7 +44,9 @@ public class RegisterController {
             // lblError.setText("Tên người dùng đã được dùng");
             // lblError.setVisible(true);
 
-        else {
+        try {
+
+            ValidationUtils.requireEmail(txtEmail.getText());
             isRegister = true;
 
             User bidder = new Bidder();
