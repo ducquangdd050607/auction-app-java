@@ -49,14 +49,21 @@ public abstract class BaseEntity implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object compare) {
+        // Nếu là chính nó thì true
+        if (this == compare) {
             return true;
         }
-        if (!(o instanceof BaseEntity that)) {
+
+        // Nếu kphai cùng kiểu thì false
+        if (!(compare instanceof BaseEntity)) {
             return false;
         }
-        return Objects.equals(id, that.id);
+        else {
+            // Kiểm tra UUID 2 object, bằng nhau là true
+            BaseEntity that = (BaseEntity) compare;
+            return Objects.equals(this.id, that.id);
+        }
     }
 
     @Override
