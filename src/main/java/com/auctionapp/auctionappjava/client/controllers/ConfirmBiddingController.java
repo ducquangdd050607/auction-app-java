@@ -8,9 +8,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
+
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+
 
 public class ConfirmBiddingController {
 
@@ -32,48 +33,8 @@ public class ConfirmBiddingController {
     @FXML
     public void initialize() {
         btnMore.setManaged(false);
-        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-        formatter.applyPattern("#,###");
-
-        txtSetPrice.textProperty().addListener((observable, oldValue, newValue) -> {
-
-            if (newValue == null || newValue.isEmpty()) {
-                return;
-            }
-
-            String cleanInput = newValue.replaceAll("[^\\d]", "");
-
-            try {
-                if (cleanInput.isEmpty()) {
-                    txtSetPrice.setText("");
-                    return;
-                }
-
-                long amount = Long.parseLong(cleanInput);
-                String formattedStr = formatter.format(amount);
-
-                formattedStr = formattedStr.replaceAll(",", ".");
-
-                if (!newValue.equals(formattedStr)) {
-
-                    int cursorPosition = txtSetPrice.getCaretPosition();
-                    int lengthDiff = formattedStr.length() - newValue.length();
-
-                    txtSetPrice.setText(formattedStr);
-
-                    txtSetPrice.positionCaret(cursorPosition + lengthDiff);
-                }
-
-            } catch (NumberFormatException e) {
-                // TODO: xử lí exception số quá lớn
-
-                txtSetPrice.setText(oldValue);
-            }
-        });
+        settingMoneyFormat(txtSetPrice);
     }
-
-
-
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
@@ -105,38 +66,42 @@ public class ConfirmBiddingController {
         if (txtSetPrice.getText().isEmpty()) {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
-            btnMore.setManaged(false);
-            btnMore.setVisible(false);
-        }
 
-        else if (purifyingText(lblBalance.getText()) < defaultAmount) {
+
+        } else if (purifyingText(lblBalance.getText()) < purifyingText(txtSetPrice.getText())) {
             lblError.setText("Không đủ tiền trong số dư!");
             lblError.setTextFill(Color.web("#FF8A80"));
             btnMore.setManaged(true);
             btnMore.setVisible(true);
         }
 
+//            elif (amount < minIncrement) {
+//                lblError.setText("Vui lòng nhiều hơn mức " + minIncrement + ".");
+//                lblError.setVisible(true);
+//                lblError.setTextFill(Color.web("#FF8A80"));
+//            }
         else {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Chắc chưa?");
-            alert.setHeaderText("Bạn CHẮC muốn ĐặC KưỢk không?");
+            alert.setHeaderText("Bạn CHẮC muốn NẠP TIỀN không?");
+            alert.setContentText("Một khi vào, không thể rứt ra:>>");
 
             alert.showAndWait().ifPresent(response -> {
-
                 if (response == ButtonType.OK) {
+
+                    // TODO: Nơi bạn gọi Service/DAO để trừ tiền vào Database
+                    // TODO: Cập nhật sàn đấu giá cho người đặt cược mới
 
                     alert.close();
                     Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                     successAlert.setTitle("Thông báo");
                     successAlert.setHeaderText(null);
-                    successAlert.setContentText("Đã ĐặC KưỢk xong!");
+                    successAlert.setContentText("Đã nạp thành công!");
                     successAlert.showAndWait();
 
                     Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     currentStage.close();
-
-                    //Reload lại list
 
                 } else {
                     alert.close();
@@ -145,13 +110,11 @@ public class ConfirmBiddingController {
         }
     }
 
+
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
 
         SceneSwitcherController.PopupController(event,"/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "moneymoneymoney");
 
-    }
-    long purifyingText(String price) {
-        return Long.parseLong(price.replaceAll("[^\\d]", ""));
     }
 }
