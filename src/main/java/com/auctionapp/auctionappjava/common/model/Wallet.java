@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.common.model;
 
-import java.math.BigDecimal; // kiểu dữ liệu trong Java dùng để lưu số thập phân với độ chính xác cao
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

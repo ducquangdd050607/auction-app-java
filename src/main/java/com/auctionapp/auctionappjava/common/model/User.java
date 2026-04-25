@@ -1,7 +1,7 @@
 package com.auctionapp.auctionappjava.common.model;
 
 import com.auctionapp.auctionappjava.common.enums.Role;
-//550e8400-e29b-41d4-a716-446655440000
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 

@@ -31,6 +31,9 @@ public class RegisterController {
     private TextField txtUsername;
 
     @FXML
+    private TextField txtFullname;
+
+    @FXML
     void handleConfirm(ActionEvent event) throws IOException {
 
         if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() ||
