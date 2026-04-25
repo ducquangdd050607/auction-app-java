@@ -40,7 +40,9 @@ public class RegisterController {
         } else if  (!txtConfirmPassword.getText().equals(txtPassword.getText())) {
             lblError.setText("Mật khẩu không khớp");
             lblError.setVisible(true);
-        }
+        } // else if Trùng username {
+            // lblError.setText("Tên người dùng đã được dùng");
+            // lblError.setVisible(true);
 
         else {
             isRegister = true;
