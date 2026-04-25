@@ -59,7 +59,6 @@ public final class MoneyUtils {
                 }
 
             } catch (NumberFormatException e) {
-                // TODO: xử lí exception số quá lớn
                 // Nếu người dùng cố tình dán (paste) một số quá lớn vượt ngưỡng long
                 // Ép quay về giá trị cũ trước khi dán
                 txtAmount.setText(oldValue);
