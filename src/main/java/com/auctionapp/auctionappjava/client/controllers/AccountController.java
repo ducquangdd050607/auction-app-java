@@ -31,6 +31,8 @@ public class AccountController implements Initializable {
     @FXML
     private Label lblUsername;
 
+    //TODO: Truy cập tài khoản từ DB lấy thông tin User
+
     @FXML
     void handleChangingInformation(ActionEvent event) throws IOException {
 

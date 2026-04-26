@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.common.util.AlertUtil;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,8 +15,6 @@ import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
 
 public class DepositController {
-
-    private long defaultAmount = 0;
 
     @FXML
     private Label lblCurrentBalance;
@@ -62,7 +60,7 @@ public class DepositController {
                 };
 
 
-                AlertUtil.SceneOffAlertController(event,
+                AlertUtils.SceneOffAlertController(event,
                         "Chắc chưa?",
                         "Bạn CHẮC muốn NẠP TIỀN không?",
                         "Một khi vào, không thể rứt ra:>>",

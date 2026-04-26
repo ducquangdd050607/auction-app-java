@@ -136,9 +136,6 @@ public class UsersManagerController implements Initializable {
     public void show() throws IOException {
 
         orConfirm(false);
-
-        //sao không làm cái này từ trước:((
-        //đã refine(?)
     }
 }
 

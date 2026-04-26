@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.common.util.AlertUtil;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -88,7 +88,7 @@ public class ConfirmBiddingController {
             };
 
 
-            AlertUtil.SceneOffAlertController(event,
+            AlertUtils.SceneOffAlertController(event,
                     "Chắc chưa?",
                     "Bạn CHẮC muốn ĐặK CưỢk không?",
                     "",

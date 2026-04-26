@@ -63,7 +63,7 @@ public class RegisterController {
             bidder.setEmail(txtEmail.getText());
             seller.setPasswordHash(txtPassword.getText()); //placeholder
 
-            //TODO: Cập nhật cách lấy Hash và Salt cho password
+            //TODO: Cập nhật cách lấy Hash và Salt cho password từ PasswordUtils
 
             //TODO: Nối lên DataBase lưu dữ liệu người dùng
 

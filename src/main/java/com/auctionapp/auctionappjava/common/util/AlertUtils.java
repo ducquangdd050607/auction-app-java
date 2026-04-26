@@ -6,7 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-public class AlertUtil {
+public class AlertUtils {
     // Runnable cho phép hàm có thể chạy sau khi bấm nút OK
     public static void SceneOffAlertController(ActionEvent event, String alertTitle, String alertHeader, String alertContent,
                                                String announcementTitle, String announcementHeader, String announcementContent, Runnable onConfirm) {
@@ -35,6 +35,20 @@ public class AlertUtil {
                 currentStage.close();
             } else {
                 alert.close();
+            }
+        });
+    }
+
+    public static void ConfirmExitController(ActionEvent event, String title, String header, Runnable onConfirm) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                if (onConfirm != null) {
+                    onConfirm.run();
+                }
             }
         });
     }

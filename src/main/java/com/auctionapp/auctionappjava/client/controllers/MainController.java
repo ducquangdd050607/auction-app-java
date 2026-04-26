@@ -1,16 +1,11 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,19 +15,9 @@ public class MainController {
     private Stage stage;
 
     @FXML
-    private Button btnUser;
-    @FXML
     private Button btnLogin;
     @FXML
     private Button btnRegister;
-    @FXML
-    private HBox guestNavBox;
-    @FXML
-    private Label lblUserAvatar;
-    @FXML
-    private StackPane userNavBox;
-    @FXML
-    private VBox navigator;
     @FXML
     private Button btnExplore;
     @FXML
@@ -54,14 +39,13 @@ public class MainController {
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Xác nhận thoát");
-        alert.setHeaderText("Bạn có chắc chắn muốn thoát ứng dụng không?");
+        Runnable closeStage = () -> {
+            stage.close();
+        };
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                stage.close();
-            }
-        });
+        AlertUtils.ConfirmExitController(event,
+                "Xác nhận thoát",
+                "Bạn có chắc chắn muốn thoát ứng dụng không?",
+                closeStage);
     }
 }

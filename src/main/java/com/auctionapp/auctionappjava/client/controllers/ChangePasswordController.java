@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.common.util.AlertUtil;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -46,7 +46,7 @@ public class ChangePasswordController {
             };
 
 
-            AlertUtil.SceneOffAlertController(event,
+            AlertUtils.SceneOffAlertController(event,
                     "Chắc chưa?",
                     "Bạn có muốn đổi mật khẩu không?",
                     "",

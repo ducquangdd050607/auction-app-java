@@ -174,9 +174,4 @@ public class AddItemController implements Initializable {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
-
-    @FXML
-    void handleBack(ActionEvent event) {
-        handleCancel(event);
-    }
 }

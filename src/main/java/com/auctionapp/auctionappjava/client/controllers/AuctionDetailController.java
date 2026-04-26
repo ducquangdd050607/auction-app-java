@@ -11,8 +11,6 @@ import java.io.IOException;
 
 public class AuctionDetailController {
 
-    private Stage stage;
-
     @FXML
     private Button btnBack;
 
@@ -49,10 +47,11 @@ public class AuctionDetailController {
     @FXML
     private Label txtDescription;
 
+    //TODO: Truy cập thông tin vật phẩm
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        stage = (Stage) btnBack.getScene().getWindow();
+        Stage stage = (Stage) btnBack.getScene().getWindow();
         stage.close();
     }
 
