@@ -20,6 +20,11 @@ public class AlertController {
             if (response == ButtonType.OK) {
 
                 alert.close();
+
+                if (onConfirm != null) {
+                    onConfirm.run();
+                }
+
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                 successAlert.setTitle(announcementTitle);
                 successAlert.setHeaderText(announcementHeader);
