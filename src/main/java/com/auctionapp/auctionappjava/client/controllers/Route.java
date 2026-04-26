@@ -95,6 +95,8 @@ public class Route {
                 sellerRoute = false;
                 adminRoute = false;
 
+            } else {
+                SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
             }
 
         } catch (NullPointerException e) {
