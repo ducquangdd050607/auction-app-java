@@ -1,22 +1,20 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.AlertUtil;
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
 
 
 public class ConfirmBiddingController {
-
-    private long defaultAmount = 0;
-
 
     @FXML
     private Label lblBalance;
@@ -38,7 +36,7 @@ public class ConfirmBiddingController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
 
     }
 
@@ -48,18 +46,16 @@ public class ConfirmBiddingController {
         Button clickedButton = (Button) event.getSource();
         String presetValue = clickedButton.getText();
 
-        long amount = purifyingText(presetValue);
+        BigDecimal amount = purifyingText(presetValue);
 
         if (txtSetPrice.getText().isEmpty()) {
             txtSetPrice.setText(String.valueOf(amount));
-            defaultAmount = amount;
 
         } else {
-            defaultAmount += amount;
-            txtSetPrice.setText(String.valueOf(defaultAmount));
+            txtSetPrice.setText(String.valueOf(purifyingText(txtSetPrice.getText()).add(amount)));
+
         }
     }
-
 
     @FXML
     void handleTrueConfirm(ActionEvent event) {
@@ -67,8 +63,9 @@ public class ConfirmBiddingController {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
+        } else if (((purifyingText(lblBalance.getText()).subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))) < 0) {
+            //:((((((
 
-        } else if (purifyingText(lblBalance.getText()) < purifyingText(txtSetPrice.getText())) {
             lblError.setText("Không đủ tiền trong số dư!");
             lblError.setTextFill(Color.web("#FF8A80"));
             btnMore.setManaged(true);
@@ -80,33 +77,26 @@ public class ConfirmBiddingController {
 //                lblError.setVisible(true);
 //                lblError.setTextFill(Color.web("#FF8A80"));
 //            }
+
         else {
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Chắc chưa?");
-            alert.setHeaderText("Bạn CHẮC muốn NẠP TIỀN không?");
-            alert.setContentText("Một khi vào, không thể rứt ra:>>");
+            // TODO: Nơi bạn gọi Service/DAO để trừ tiền vào Database
+            // TODO: Cập nhật sàn đấu giá cho người đặt cược mới
 
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
+            Runnable pseudoMethod = () -> { //Test
+                System.out.println("PseudoMethod");
+            };
 
-                    // TODO: Nơi bạn gọi Service/DAO để trừ tiền vào Database
-                    // TODO: Cập nhật sàn đấu giá cho người đặt cược mới
 
-                    alert.close();
-                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                    successAlert.setTitle("Thông báo");
-                    successAlert.setHeaderText(null);
-                    successAlert.setContentText("Đã nạp thành công!");
-                    successAlert.showAndWait();
+            AlertUtil.SceneOffAlertController(event,
+                    "Chắc chưa?",
+                    "Bạn CHẮC muốn ĐặK CưỢk không?",
+                    "",
+                    "Thông báo",
+                    "",
+                    "Đã thay đổi ĐặK CưỢk thành công!",
+                    pseudoMethod);
 
-                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    currentStage.close();
-
-                } else {
-                    alert.close();
-                }
-            });
         }
     }
 
@@ -114,7 +104,7 @@ public class ConfirmBiddingController {
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.PopupController(event,"/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "moneymoneymoney");
+        SceneSwitcherUtils.PopupController(event,"/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "moneymoneymoney");
 
     }
 }

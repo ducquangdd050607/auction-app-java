@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.common.util;
 
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 
@@ -93,8 +95,20 @@ public final class MoneyUtils {
         txtAmount.setTextFormatter(textFormatter);
     }
 
-    public static long purifyingText(String price) {
-        return Long.parseLong(price.replaceAll("[^\\d]", ""));
-    }
+    public static BigDecimal purifyingText(String price) {
+        // 1. Kiểm tra nếu chuỗi rỗng hoặc null để tránh lỗi crash
+        if (price == null || price.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
 
+        // 2. Làm sạch chuỗi (chỉ giữ lại số)
+        String cleanString = price.replaceAll("[^\\d]", "");
+
+        // 3. Chuyển đổi sang BigDecimal
+        // Nếu chuỗi sau khi làm sạch bị trống (ví dụ input chỉ toàn chữ), trả về 0
+        if (cleanString.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(cleanString);
+    }
 }

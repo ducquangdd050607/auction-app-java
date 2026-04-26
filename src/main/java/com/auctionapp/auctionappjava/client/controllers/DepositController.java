@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.AlertUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -8,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
@@ -44,40 +46,30 @@ public class DepositController {
             lblMessage.setTextFill(Color.web("#FF8A80"));
         } else {
             // Thay bằng purifyingText
-            long amount = purifyingText(rawInput);
+            BigDecimal amount = purifyingText(rawInput);
 
             // Kiểm tra logic nghiệp vụ
-            if (amount < 10000) {
+            // compareTo trả về -1, 0, 1 theo thứ tự: Bé, bằng, lớn(cần cải thiện)
+            if (amount.compareTo(new BigDecimal("10000")) < 0) {
                 lblMessage.setText("Vui lòng nạp tối thiểu 10.000 đ!");
                 lblMessage.setVisible(true);
                 lblMessage.setTextFill(Color.web("#FF8A80"));
             } else {
+                // TODO: Nơi bạn gọi Service/DAO để cộng tiền vào Database
 
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Chắc chưa?");
-                alert.setHeaderText("Bạn CHẮC muốn NẠP TIỀN không?");
-                alert.setContentText("Một khi vào, không thể rứt ra:>>");
+                Runnable pseudoMethod = () -> { //Test
+                    System.out.println("PseudoMethod");
+                };
 
-                alert.showAndWait().ifPresent(response -> {
 
-                    if (response == ButtonType.OK) {
-
-                        // TODO: Nơi bạn gọi Service/DAO để cộng tiền vào Database
-
-                        alert.close();
-                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                        successAlert.setTitle("Thông báo");
-                        successAlert.setHeaderText(null);
-                        successAlert.setContentText("Đã nạp thành công!");
-                        successAlert.showAndWait();
-
-                        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        currentStage.close();
-
-                    } else {
-                        alert.close();
-                    }
-                });
+                AlertUtil.SceneOffAlertController(event,
+                        "Chắc chưa?",
+                        "Bạn CHẮC muốn NẠP TIỀN không?",
+                        "Một khi vào, không thể rứt ra:>>",
+                        "Thông báo",
+                        "Đã nạp thành công!",
+                        "Happy Gambling!",
+                        pseudoMethod);
             }
         }
     }
@@ -87,15 +79,14 @@ public class DepositController {
         Button clickedButton = (Button) event.getSource();
         String presetValue = clickedButton.getText();
 
-        long amount = purifyingText(presetValue);
+        BigDecimal amount = purifyingText(presetValue);
 
         if (txtAmount.getText().isEmpty()) {
             txtAmount.setText(String.valueOf(amount));
-            defaultAmount = amount;
 
         } else {
-            defaultAmount += amount;
-            txtAmount.setText(String.valueOf(defaultAmount));
+            txtAmount.setText(String.valueOf(purifyingText(txtAmount.getText()).add(amount)));
+
         }
     }
 
