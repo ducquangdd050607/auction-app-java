@@ -2,13 +2,13 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.model.Item;
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -123,16 +123,13 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    // về sau khi bấm vào sản phẩm sẽ điều hướng đến 
-    // chi tiết sản phẩm, nếu trạng thái sp là OPEN, FINISHED, PAID/CANCELLED, điều hướng sang AuctionDetail
-    // nếu trạng thái là RUNNING, điều hướng sang InsideItemScreen
     void handleTest(ActionEvent event) throws IOException {
-        if (Route.bidderRoute) {
-            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Đặt cược");
+        if (RouteController.bidderRoute) {
+            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
         }
 
         else {
-            SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
+            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
         }
     }
 
@@ -170,7 +167,7 @@ public class AuctionListController implements Initializable {
 
         try {
             show();// kiểm tra kiểu người dùng
-            setMode(Navigator.modeName);// thay đổi trong AutionListScreen
+            setMode(NavigatorController.modeName);// thay đổi trong AutionListScreen
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -215,13 +212,13 @@ public class AuctionListController implements Initializable {
         btnCancel.setManaged(false);
 
         //nút admin
-        if (Route.adminRoute) {
+        if (RouteController.adminRoute) {
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);
             btnRemove.setVisible(true);
             btnRemove.setManaged(true);
 
-        } else if (Route.sellerRoute) {
+        } else if (RouteController.sellerRoute) {
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
         }
@@ -256,7 +253,5 @@ public class AuctionListController implements Initializable {
             clmCurrentPrice.setVisible(false);
             clmBidders.setVisible(false);
         }
-
-
     }
 }

@@ -14,7 +14,7 @@
 
 <!-- Thêm sản phẩm mới (Seller only) -->
 
-<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.ChangeInformation">
+<BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.ChangeInformationController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
     <top>
@@ -33,16 +33,12 @@
             <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Fullname:" />
             <TextField fx:id="txtFullname" onAction="#handleConfirm" prefHeight="34.0" promptText="Enter your new fullname" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
 
-                <!-- Tên sản phẩm -->
-                <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Username:" GridPane.rowIndex="2" />
-            <TextField fx:id="txtUsername" layoutX="186.0" layoutY="10.0" onAction="#handleConfirm" prefHeight="34" prefWidth="300" promptText="Enter your new username" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
                 <!-- Thông tin bổ sung (Artist / Warranty) -->
                 <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Email:" GridPane.rowIndex="4" />
                 <TextField fx:id="txtEmail" onAction="#handleConfirm" prefHeight="34" prefWidth="300" promptText="VD: abc@email.com" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <columnConstraints>
-               <ColumnConstraints />
-               <ColumnConstraints />
+               <ColumnConstraints maxWidth="110.0" minWidth="23.0" prefWidth="97.0" />
+               <ColumnConstraints maxWidth="254.0" minWidth="167.0" prefWidth="180.0" />
             </columnConstraints>
             <rowConstraints>
                <RowConstraints minHeight="30.0" />

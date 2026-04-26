@@ -1,11 +1,9 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -20,8 +18,6 @@ import java.io.IOException;
 public class MainController {
 
     private Stage stage;
-    private Parent root;
-    private Scene scene;
 
     @FXML
     private Button btnUser;
@@ -44,13 +40,13 @@ public class MainController {
 
     @FXML
     void handleLogin(ActionEvent event) throws IOException {
-        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
     }
 
     @FXML
     void handleRegister(ActionEvent event) throws IOException {
-        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RegisterScreen.fxml", "Đăng kí tài khoản");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RegisterScreen.fxml", "Đăng kí tài khoản");
 }
 
     @FXML

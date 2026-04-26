@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Dashboard {
+public class DashboardController {
 
     private Stage stage;
     private Parent root;

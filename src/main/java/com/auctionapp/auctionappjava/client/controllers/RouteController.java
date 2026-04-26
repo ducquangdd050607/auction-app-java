@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
-public class Route {
+public class RouteController {
 
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
@@ -78,7 +79,7 @@ public class Route {
             sellerRoute = false;
             adminRoute = true;
 
-            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
+            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
         }
     }
 
@@ -89,23 +90,19 @@ public class Route {
                 bidderRoute = false;
                 sellerRoute = true;
                 adminRoute = false;
+                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
             } else if (user.equals("0")) {
                 bidderRoute = true;
                 sellerRoute = false;
                 adminRoute = false;
+                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
-            } else {
-                SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
             }
 
         } catch (NullPointerException e) {
             lblError.setText("Vui lòng chọn vai trò");
             lblError.setVisible(true);
-
-        } finally {
-            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Navigator.fxml", "Bíd88");
-
         }
     }
 }

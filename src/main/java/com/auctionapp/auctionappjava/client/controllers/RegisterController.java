@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.common.model.Bidder;
 import com.auctionapp.auctionappjava.common.model.Seller;
 import com.auctionapp.auctionappjava.common.model.User;
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -67,7 +68,7 @@ public class RegisterController {
             //TODO: Nối lên DataBase lưu dữ liệu người dùng
 
             // yêu cầu nhập lại thông tin
-            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
+            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
         }
     }
@@ -75,7 +76,7 @@ public class RegisterController {
     @FXML
     void handleLogIn(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
     }
 }

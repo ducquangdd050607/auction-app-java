@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,21 +34,21 @@ public class AccountController implements Initializable {
     @FXML
     void handleChangingInformation(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformation.fxml", "Thay đổi thông tin");
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformationScreen.fxml", "Thay đổi thông tin");
 
     }
 
     @FXML
     void handleDeposit(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
 
     }
 
     @FXML
     void handleChangePassword(ActionEvent event) throws IOException {
 
-        SceneSwitcherController.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml", "Đổi mật khẩu");
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml", "Đổi mật khẩu");
 
     }
 
@@ -69,6 +70,6 @@ public class AccountController implements Initializable {
 
     public void show() throws IOException {
         // Nếu là admin thì set ẩn (false) là được
-        balanceAndDeposit(!Route.adminRoute);
+        balanceAndDeposit(!RouteController.adminRoute);
     }
 }

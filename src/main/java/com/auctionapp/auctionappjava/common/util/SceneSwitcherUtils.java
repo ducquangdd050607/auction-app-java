@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.client.controllers;
+package com.auctionapp.auctionappjava.common.util;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -11,9 +11,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class SceneSwitcherController {
+public class SceneSwitcherUtils {
     public static void PopupController(ActionEvent event, String address, String title) throws IOException {
-        Parent modalRoot = FXMLLoader.load(SceneSwitcherController.class.getResource(address));
+        Parent modalRoot = FXMLLoader.load(SceneSwitcherUtils.class.getResource(address));
         Stage modalStage = new Stage();
         modalStage.setTitle(title);
 
@@ -29,7 +29,7 @@ public class SceneSwitcherController {
     }
 
     public static void NewSceneController(ActionEvent event, String address, String title) throws IOException {
-        Parent root = FXMLLoader.load(SceneSwitcherController.class.getResource(address));
+        Parent root = FXMLLoader.load(SceneSwitcherUtils.class.getResource(address));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setTitle(title);
         Scene scene = new Scene(root);
@@ -47,7 +47,7 @@ public class SceneSwitcherController {
         Button clickedButton = (Button) event.getSource();
         clickedButton.getStyleClass().add("nav-menu-btn-active");
         currentActiveButton = clickedButton;
-        Parent view = FXMLLoader.load(SceneSwitcherController.class.getResource(address));
+        Parent view = FXMLLoader.load(SceneSwitcherUtils.class.getResource(address));
         borderPane.setCenter(view);
     }
 }

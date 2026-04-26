@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Navigator implements Initializable {
+public class NavigatorController implements Initializable {
 
     private Stage stage;
     private Parent root;
@@ -66,17 +67,17 @@ public class Navigator implements Initializable {
         groupBidder.setManaged(false);
 
         // Lấy giá trị boolean từ class Route và kiểm tra
-        if (Route.adminRoute) {
+        if (RouteController.adminRoute) {
             groupAdmin.setVisible(true);
             groupAdmin.setManaged(true);
             identity.setText("ADMIN");
 
-        } else if (Route.sellerRoute) {
+        } else if (RouteController.sellerRoute) {
             groupSeller.setVisible(true);
             groupSeller.setManaged(true);
             identity.setText("SELLER");
 
-        } else if (Route.bidderRoute) {
+        } else if (RouteController.bidderRoute) {
             groupBidder.setVisible(true);
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
@@ -85,23 +86,23 @@ public class Navigator implements Initializable {
 
     @FXML
     void handleAccount(ActionEvent event) throws IOException {
-        SceneSwitcherController.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
     }
 
     @FXML
     void handleItemsList(ActionEvent event) throws IOException {
         modeName = ((Button) event.getSource()).getText();
-        SceneSwitcherController.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
     }
 
     @FXML
     void handleBackToDash(ActionEvent event) throws IOException {
-        SceneSwitcherController.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/Dashboard.fxml");
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/DashboardScreen.fxml");
     }
 
     @FXML
     void handleGotoUsersManager(ActionEvent event) throws IOException {
-        SceneSwitcherController.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManager.fxml");
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManagerScreen.fxml");
     }
 
     @FXML
@@ -114,7 +115,7 @@ public class Navigator implements Initializable {
             if (response == ButtonType.OK) {
                 alert.close();
                 try {
-                    SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
+                    SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -135,7 +136,7 @@ public class Navigator implements Initializable {
             if (response == ButtonType.OK) {
                 alert.close();
                 try {
-                    SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/Route.fxml", "Vai trò");
+                    SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -55,9 +56,9 @@ public class InsideItemController {
 
     @FXML
     void handleRemove(ActionEvent event) {
-        if (Route.adminRoute) {
+        if (RouteController.adminRoute) {
             // force-remove
-        } else if (Route.sellerRoute) {
+        } else if (RouteController.sellerRoute) {
             // if (Item.status == "OPEN") {
             // remove
             // } else {
@@ -67,8 +68,8 @@ public class InsideItemController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        if (Route.bidderRoute) {
-            SceneSwitcherController.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
+        if (RouteController.bidderRoute) {
+            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
 
         } else {
             stage = (Stage) btnBack.getScene().getWindow();

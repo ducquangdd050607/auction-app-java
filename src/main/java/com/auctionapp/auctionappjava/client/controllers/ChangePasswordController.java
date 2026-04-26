@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.util.AlertUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -36,15 +37,24 @@ public class ChangePasswordController {
             lblMessage.setText("Mật khẩu mới không khớp nhau");
             lblMessage.setVisible(true);
             lblMessage.setTextFill(Color.web("#FF8A80"));
-        }
-        else {
-            AlertController.SceneOffAlertController(event,
+        } else {
+
+            //TODO: Logic cập nhật lại mật khẩu
+
+            Runnable pseudoMethod = () -> { //Test
+                System.out.println("PseudoMethod");
+            };
+
+
+            AlertUtil.SceneOffAlertController(event,
                     "Chắc chưa?",
                     "Bạn có muốn đổi mật khẩu không?",
                     "",
                     "Thông báo",
                     "",
-                    "Đã thay đổi mật khẩu thành công!");
+                    "Đã thay đổi mật khẩu thành công!",
+                    pseudoMethod);
+
 
         }
     }

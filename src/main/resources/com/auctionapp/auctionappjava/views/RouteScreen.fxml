@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="330.0" prefWidth="476.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/Route.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.Route">
+<StackPane prefHeight="330.0" prefWidth="476.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/Route.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.RouteController">
 
 
     <VBox alignment="CENTER" maxHeight="480" maxWidth="476.0" prefHeight="346.0" prefWidth="476.0" spacing="20" style="-fx-background-color: #2E7D9B;">

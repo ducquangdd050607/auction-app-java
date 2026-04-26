@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.client.controllers;
+package com.auctionapp.auctionappjava.common.util;
 
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -6,10 +6,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-public class AlertController {
-
+public class AlertUtil {
+    // Runnable cho phép hàm có thể chạy sau khi bấm nút OK
     public static void SceneOffAlertController(ActionEvent event, String alertTitle, String alertHeader, String alertContent,
-                                               String announcementTitle, String announcementHeader, String announcementContent) {
+                                               String announcementTitle, String announcementHeader, String announcementContent, Runnable onConfirm) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(alertTitle);
         alert.setHeaderText(alertHeader);
