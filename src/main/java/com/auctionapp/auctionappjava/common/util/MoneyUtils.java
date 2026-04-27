@@ -1,5 +1,5 @@
 package com.auctionapp.auctionappjava.common.util;
-
+//Tránh lỗi NullPointerException khi làm việc với số tiền
 import java.math.BigDecimal;
 
 public final class MoneyUtils {

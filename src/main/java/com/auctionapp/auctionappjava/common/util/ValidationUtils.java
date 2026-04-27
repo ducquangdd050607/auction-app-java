@@ -4,7 +4,9 @@ import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
-
+//Validate dữ liệu đầu vào (input validation)
+//Đảm bảo dữ liệu hợp lệ trước khi xử lý business logic
+//Nếu sai → ném ValidationException
 public final class ValidationUtils {
 
     private static final Pattern EMAIL =

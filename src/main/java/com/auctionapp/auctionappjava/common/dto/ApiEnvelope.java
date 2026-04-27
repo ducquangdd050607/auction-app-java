@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+//là lớp bao ngoài để chuẩn hóa dữ liệu giao tiếp trong hệ thống, giúp client và server hiểu cùng một format
 public class ApiEnvelope<T extends Serializable> implements Serializable {
 
  @Serial
@@ -20,7 +20,7 @@ public class ApiEnvelope<T extends Serializable> implements Serializable {
  private T payload;
  private LocalDateTime timestamp = LocalDateTime.now();
 
- // ================= CONSTRUCTOR =================
+ // CONSTRUCTOR
  public ApiEnvelope() {}
 
  private ApiEnvelope(MessageKind kind,
@@ -35,7 +35,7 @@ public class ApiEnvelope<T extends Serializable> implements Serializable {
   this.payload = payload;
  }
 
- // ================= FACTORY METHODS =================
+ // FACTORY METHODS
  public static <T extends Serializable> ApiEnvelope<T> request(RequestAction action, T payload) {
   return new ApiEnvelope<>(MessageKind.REQUEST, action, false, null, payload);
  }
@@ -52,7 +52,7 @@ public class ApiEnvelope<T extends Serializable> implements Serializable {
   return new ApiEnvelope<>(MessageKind.EVENT, action, true, message, payload);
  }
 
- // ================= GETTER / SETTER =================
+ // GETTER / SETTER
  public UUID getCorrelationId() {
   return correlationId;
  }
