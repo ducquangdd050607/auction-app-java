@@ -73,16 +73,19 @@ public class NavigatorController implements Initializable {
             groupAdmin.setVisible(true);
             groupAdmin.setManaged(true);
             identity.setText("ADMIN");
+            identity.setDisable(true);
 
         } else if (RouteController.sellerRoute) {
             groupSeller.setVisible(true);
             groupSeller.setManaged(true);
             identity.setText("SELLER");
+            identity.setDisable(false);
 
         } else if (RouteController.bidderRoute) {
             groupBidder.setVisible(true);
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
+            identity.setDisable(false);
         }
     }
 

@@ -56,6 +56,12 @@
     -fx-translate-y: 1px;
 }
 
+.route-btn:disabled {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-opacity: 1.0;
+}
+
 .stat-btn {
     -fx-background-color: white;
     -fx-background-radius: 10;
