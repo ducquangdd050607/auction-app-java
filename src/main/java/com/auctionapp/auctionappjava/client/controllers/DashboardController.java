@@ -1,70 +1,197 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class DashboardController {
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-    private Stage stage;
-    private Parent root;
-    private Scene scene;
+import static com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils.NavSceneController;
+
+public class DashboardController implements Initializable {
+
+    public static int mode = 0;
 
     @FXML
-    private Button btnQuickManage;
+    private Button btnGo1;
+
     @FXML
-    private Button btnQuickUsers;
+    private Button btnGo2;
+
     @FXML
-    private VBox groupAccount;
+    private Button btnGo3;
+
     @FXML
-    private VBox groupAdmin;
+    private Button btnHistory;
+
     @FXML
-    private VBox groupBidder;
+    private Button btnSellerItemManager;
+
     @FXML
-    private VBox groupHome;
+    private Button btnShowList;
+
     @FXML
-    private VBox groupSeller;
+    private Button btnWallet;
+
     @FXML
-    private Label identity;
+    private Label endTime1;
+
+    @FXML
+    private Label endTime2;
+
+    @FXML
+    private Label endTime3;
+
+    @FXML
+    private VBox itemCard1;
+
+    @FXML
+    private VBox itemCard2;
+
+    @FXML
+    private VBox itemCard3;
+
+    @FXML
+    private Label lblBalance;
+
+    @FXML
+    private Label lblBidders;
+
+    @FXML
+    private Label lblCompleted;
+
     @FXML
     private Label lblGreeting;
+
     @FXML
     private Label lblGreetingSub;
+
+    @FXML
+    private Label lblHistory;
+
+    @FXML
+    private Label lblItemDesc1;
+
+    @FXML
+    private Label lblItemDesc2;
+
+    @FXML
+    private Label lblItemDesc3;
+
+    @FXML
+    private Label lblItemName1;
+
+    @FXML
+    private Label lblItemName2;
+
+    @FXML
+    private Label lblItemName3;
+
+    @FXML
+    private Label lblItemPrice1;
+
+    @FXML
+    private Label lblItemPrice2;
+
+    @FXML
+    private Label lblItemPrice3;
+
+    @FXML
+    private Label lblRUNNINGs;
+
     @FXML
     private Label lblStat1Label;
+
     @FXML
-    private Label lblStat1Value;
-    @FXML
-    private Label lblStat2Label;
-    @FXML
-    private Label lblStat2Value;
+    private Label lblStat1Label1;
+
     @FXML
     private Label lblStat3Label;
+
     @FXML
     private Label lblStat3Label1;
+
     @FXML
-    private Label lblStat3Value;
+    private Label lblStat3Label2;
+
     @FXML
-    private Label lblStat3Value1;
+    private Label lblTimer1;
+
     @FXML
-    private Label lblStat4Icon;
+    private Label lblTimer2;
+
     @FXML
-    private Label lblStat4Label;
+    private Label lblTimer3;
+
     @FXML
-    private Label lblStat4Value;
+    void handleDetail(ActionEvent event) {
+
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        try {
+            show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void show() throws IOException {
+
+        // Mặc định theo Admin
+        btnHistory.setVisible(false);
+        btnHistory.setManaged(false);
+        btnSellerItemManager.setVisible(false);
+        btnSellerItemManager.setManaged(false);
+        btnWallet.setVisible(false);
+        btnWallet.setManaged(false);
+
+        if (RouteController.sellerRoute) {
+            btnBehaviour(false);
+            btnWallet.setVisible(true);
+            btnWallet.setManaged(true);
+
+
+        } else if (RouteController.bidderRoute) {
+            btnBehaviour(true);
+            btnWallet.setVisible(true);
+            btnWallet.setManaged(true);
+        }
+
+    }
+    public void btnBehaviour(boolean bool) {
+        btnHistory.setVisible(bool);
+        btnHistory.setManaged(bool);
+        btnSellerItemManager.setVisible(!bool);
+        btnSellerItemManager.setManaged(!bool);
+    }
+
     @FXML
-    private HBox quickActions;
+    void handleHistory(ActionEvent event) throws IOException {
+        mode = 1;
+        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+
+    }
+
     @FXML
-    private VBox statCard1;
+    void handleManager(ActionEvent event) throws IOException {
+        mode = 2;
+        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+
+    }
+
     @FXML
-    private VBox statCard2;
+    void handleOpenList(ActionEvent event) throws IOException {
+        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+    }
+
     @FXML
-    private VBox statCard3;
-    @FXML
-    private VBox statCard4;
+    void handleWallet(ActionEvent event) throws IOException{
+        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
+    }
 }

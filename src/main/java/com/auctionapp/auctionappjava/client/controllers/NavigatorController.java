@@ -19,6 +19,7 @@ public class NavigatorController implements Initializable {
 
     private Stage stage;
     protected static String modeName;
+    private static NavigatorController instance;
 
     @FXML
     private BorderPane mainBorderPane;
@@ -43,6 +44,7 @@ public class NavigatorController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
         try {
             show();
         } catch (IOException e) {
@@ -52,14 +54,19 @@ public class NavigatorController implements Initializable {
             btnDashboard.fire();
         }
     }
+
+    public static BorderPane getMainBorderPane() {
+        return instance.mainBorderPane;
+    }
+
     public void show() throws IOException {
         // Ẩn tất cả đi trước
-        groupAdmin.setVisible(false);
-        groupAdmin.setManaged(false);
-        groupSeller.setVisible(false);
-        groupSeller.setManaged(false);
-        groupBidder.setVisible(false);
-        groupBidder.setManaged(false);
+            groupAdmin.setVisible(false);
+            groupAdmin.setManaged(false);
+            groupSeller.setVisible(false);
+            groupSeller.setManaged(false);
+            groupBidder.setVisible(false);
+            groupBidder.setManaged(false);
 
         // Lấy giá trị boolean từ class Route và kiểm tra
         if (RouteController.adminRoute) {
