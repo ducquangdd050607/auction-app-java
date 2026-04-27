@@ -1,4 +1,5 @@
 package com.auctionapp.auctionappjava.client.controllers;
+
 import com.auctionapp.auctionappjava.common.model.Bidder;
 import com.auctionapp.auctionappjava.common.model.Seller;
 import com.auctionapp.auctionappjava.common.model.User;

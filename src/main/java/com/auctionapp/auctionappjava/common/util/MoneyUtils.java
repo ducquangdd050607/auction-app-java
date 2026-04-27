@@ -1,7 +1,5 @@
 package com.auctionapp.auctionappjava.common.util;
 
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 

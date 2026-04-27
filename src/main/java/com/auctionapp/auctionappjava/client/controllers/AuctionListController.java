@@ -24,8 +24,6 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class AuctionListController implements Initializable {
-    private Stage stage;
-    private Scene scene;
 
     private ObservableList<Item> auctionData = FXCollections.observableArrayList();
 
@@ -45,8 +43,6 @@ public class AuctionListController implements Initializable {
     private Button btnTest;
     @FXML
     private ComboBox<String> cbFilterStatus;
-    @FXML
-    private ComboBox<String> cbSort;
     @FXML
     private ComboBox<String> cbType;
     @FXML
@@ -144,7 +140,7 @@ public class AuctionListController implements Initializable {
             // auctionData là ObservableList đang bind vào TableView
         });
 
-        stage = new Stage();
+        Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(new Scene(root));
         stage.showAndWait();
