@@ -14,13 +14,10 @@ public class RouteController {
 
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
-    static boolean adminRoute = false;
     private static String user;
 
     @FXML
     private Label confirmRoute;
-    @FXML
-    private Button btnAd;
     @FXML
     private Button btnBid;
     @FXML
@@ -28,59 +25,22 @@ public class RouteController {
     @FXML
     private Button btnConfirm;
     @FXML
-    private Button btnConfirmAd;
-    @FXML
     private Label lblError;
-    @FXML
-    private TextField txtPrivateKey;
-
-
-    @FXML
-    void handleAdmin(ActionEvent event) {
-        lblError.setText(""); //clear
-        txtPrivateKey.setVisible(true);
-        btnConfirmAd.setVisible(true);
-        confirmRoute.setText("Nhập mã: ");
-        btnConfirm.setVisible(false);
-    }
 
     @FXML
     void handleBidder(ActionEvent event) {
-        lblError.setText(""); //clear
+        lblError.setText("");
         btnConfirm.setVisible(true);
         confirmRoute.setText("Bạn chọn là Bidder");
-        txtPrivateKey.setVisible(false);
-        btnConfirmAd.setVisible(false);
         user = "0";
     }
 
     @FXML
     void handleSeller(ActionEvent event) {
-        lblError.setText(""); //clear
+        lblError.setText("");
         btnConfirm.setVisible(true);
         confirmRoute.setText("Bạn chọn là Seller");
-        txtPrivateKey.setVisible(false);
-        btnConfirmAd.setVisible(false);
         user = "1";
-    }
-
-    @FXML
-    void showPrivateKey(MouseEvent event) {
-        btnConfirmAd.setVisible(true);
-    }
-
-    @FXML
-    void handleConfirmAd(ActionEvent event) throws IOException {
-        if (txtPrivateKey.getText().isEmpty()) {
-            lblError.setText("Vui lòng nhập mã");
-            lblError.setVisible(true);
-        } else {
-            bidderRoute = false;
-            sellerRoute = false;
-            adminRoute = true;
-
-            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
-        }
     }
 
     @FXML
@@ -89,13 +49,13 @@ public class RouteController {
             if (user.equals("1")) {
                 bidderRoute = false;
                 sellerRoute = true;
-                adminRoute = false;
+                LoginController.adminRoute = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
             } else if (user.equals("0")) {
                 bidderRoute = true;
                 sellerRoute = false;
-                adminRoute = false;
+                LoginController.adminRoute = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
             }

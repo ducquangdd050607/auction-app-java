@@ -56,7 +56,7 @@ public class InsideItemController {
 
     @FXML
     void handleRemove(ActionEvent event) {
-        if (RouteController.adminRoute) {
+        if (LoginController.adminRoute) {
             // force-remove
         } else if (RouteController.sellerRoute) {
             // if (Item.status == "OPEN") {

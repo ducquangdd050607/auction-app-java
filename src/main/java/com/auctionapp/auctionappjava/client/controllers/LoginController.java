@@ -1,9 +1,16 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.common.dto.LoginRequest;
+import com.auctionapp.auctionappjava.common.dto.LoginResponse;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -12,8 +19,11 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 public class LoginController implements Initializable {
+
+    static boolean adminRoute = false;
 
     @FXML
     private Label lblError;
@@ -21,6 +31,8 @@ public class LoginController implements Initializable {
     private PasswordField txtPassword;
     @FXML
     private TextField txtUsername;
+    @FXML
+    private Button btnLogin;
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
@@ -31,8 +43,53 @@ public class LoginController implements Initializable {
         } else {
 
             //TODO: Kiểm tra DB cho tài khoản
+            btnLogin.setDisable(true); // Khóa nút bấm
 
-            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
+            String user = txtUsername.getText();
+            String pass = txtPassword.getText();
+
+            // 1. Gói dữ liệu và tạo Request
+            LoginRequest payload = new LoginRequest(user, pass);
+            Request loginReq = new Request("LOGIN", payload);
+
+            // 2. Gửi qua mạng ngầm
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    // Gọi Singleton Client của bạn
+                    return Client.getInstance().sendRequest(loginReq);
+                } catch (Exception e) {
+                    return new Response(false, "Lỗi kết nối máy chủ!", null);
+                }
+            }).thenAccept(response -> {
+                // 3. Trở lại luồng UI để vẽ giao diện
+                Platform.runLater(() -> {
+                    btnLogin.setDisable(false);
+
+                    if (response.success()) {
+                        // Móc DTO ra xem Role là gì
+                        LoginResponse authUser = (LoginResponse) response.data();
+
+                        if ("ADMIN".equals(authUser.role())) {
+                            try {
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            try {
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } else {
+                        // Báo lỗi sai pass
+                        lblError.setText(response.message());
+                        lblError.setVisible(true);
+                        lblError.setTextFill(Color.web("#FF8A80"));
+                    }
+                });
+            });
         }
     }
 

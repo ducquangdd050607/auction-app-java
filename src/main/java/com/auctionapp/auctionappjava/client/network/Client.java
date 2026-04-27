@@ -1,4 +1,7 @@
 package com.auctionapp.auctionappjava.client.network;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -23,17 +26,15 @@ public class Client {
     public void connect(String serverIp, int port) throws Exception {
         socket = new Socket(serverIp, port);
 
-        // TODO: nào mở cmt bên clienthandler thì mở ở đây
         // Output luôn khởi tạo trước Input
-        /*out = new ObjectOutputStream(socket.getOutputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
         out.flush();
-        in = new ObjectInputStream(socket.getInputStream());*/
+        in = new ObjectInputStream(socket.getInputStream());
         System.out.println("Đã kết nối thành công tới Server!");
     }
 
-    // TODO: Phần dùng để gửi request sau khi có DAO
     // Hàm dùng chung cho mọi Controller để gửi Request và lấy Response
-    /*public synchronized Response sendRequest(Request request) throws Exception {
+    public synchronized Response sendRequest(Request request) throws Exception {
         if (socket == null || socket.isClosed()) {
             throw new Exception("Chưa kết nối đến máy chủ!");
         }
@@ -44,7 +45,7 @@ public class Client {
 
         // Đứng đợi và hứng kết quả Server trả về
         return (Response) in.readObject();
-    }*/
+    }
 
     // Gọi khi người dùng tắt App
     public void disconnect() {

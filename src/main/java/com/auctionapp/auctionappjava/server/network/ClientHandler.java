@@ -1,4 +1,11 @@
 package com.auctionapp.auctionappjava.server.network;
+import com.auctionapp.auctionappjava.common.dto.LoginRequest;
+import com.auctionapp.auctionappjava.common.dto.LoginResponse;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
@@ -12,31 +19,55 @@ public class ClientHandler implements Runnable {
     public void run() {
         String threadName = Thread.currentThread().getName();
         System.out.println("[" + threadName + "] Bắt đầu phục vụ Client: " + socket.getInetAddress());
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
 
         try {
-            // TODO Bước 1: Sau khi có Request/Response, mở comment 3 dòng dưới đây
-            // out = new ObjectOutputStream(socket.getOutputStream());
-            // out.flush();
-            // in = new ObjectInputStream(socket.getInputStream());
-
-            System.out.println("[" + threadName + "] Đã kết nối thành công. Đang chờ các chức năng DAO hoàn thiện...");
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(socket.getInputStream());
 
             // TODO Bước 2: Tạo vòng lặp while(true) ở đây để đọc Request
+            while (true) {
+                Request req = (Request) in.readObject();
+                // TODO: nào làm service thì chuyển qua switch-case ở đây, đồng thời đẩy logic qua service
+                if("LOGIN".equals(req.action())) {
+                    LoginRequest loginData = (LoginRequest) req.payload();
+                    String user = loginData.username();
+                    String pass = loginData.password();
 
-            // TẠM THỜI: Giữ cho luồng này sống để Socket không bị đóng ngay lập tức
-            // Vòng lặp rỗng này giúp Server không bị treo, mô phỏng việc đang "trò chuyện"
-            while (!socket.isClosed()) {
-                Thread.sleep(1000); // Ngủ 1 giây để không ăn CPU của máy tính
+                    Response response;
+
+                    // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
+                    if (user.equals("admin") && pass.equals("123")) {
+                        // Giả lập Database trả về 1 ông Admin
+                        LoginResponse admin1 = new LoginResponse("admin", "ADMIN");
+                        response = new Response(true, "Đăng nhập thành công Admin!", admin1);
+
+                    } else if (user.equals("quang") && pass.equals("123")) {
+                        // Giả lập Database trả về 1 ông Bidder/Seller bình thường
+                        LoginResponse user1 = new LoginResponse("quang", "USER");
+                        response = new Response(true, "Đăng nhập thành công!", user1);
+
+                    } else {
+                        // Giả lập Database báo không tìm thấy tài khoản
+                        response = new Response(false, "Sai thông tin đăng nhập hoặc tài khoản không tồn tại!", null);
+                    }
+
+                    // Đóng gói kết quả ném trả lại cho Client
+                    out.writeObject(response);
+                    // Hàm flush() để đẩy dữ liệu đi đến đích (client) ngay lập tức
+                    out.flush();
+                }
             }
 
         } catch (Exception e) {
             System.out.println("[" + threadName + "] Client đã ngắt kết nối. Lỗi: " + e.getMessage());
         } finally {
-            // TODO Bước 3: Đóng in/out stream ở đây
             try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
-                }
+                if (in != null) in.close();
+                if (out != null) out.close();
+                if (socket != null) socket.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
