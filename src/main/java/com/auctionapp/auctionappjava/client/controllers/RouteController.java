@@ -14,7 +14,7 @@ public class RouteController {
 
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
-    private static String user;
+    private String user = null;
 
     @FXML
     private Label confirmRoute;
@@ -49,13 +49,11 @@ public class RouteController {
             if (user.equals("1")) {
                 bidderRoute = false;
                 sellerRoute = true;
-                LoginController.adminRoute = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
             } else if (user.equals("0")) {
                 bidderRoute = true;
                 sellerRoute = false;
-                LoginController.adminRoute = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
 
             }

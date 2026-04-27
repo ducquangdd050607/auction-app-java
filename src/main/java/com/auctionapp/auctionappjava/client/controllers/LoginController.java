@@ -71,15 +71,16 @@ public class LoginController implements Initializable {
 
                         if ("ADMIN".equals(authUser.role())) {
                             try {
+                                adminRoute = true;
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
                             }
                         } else {
                             try {
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
                             }
                         }
                     } else {
