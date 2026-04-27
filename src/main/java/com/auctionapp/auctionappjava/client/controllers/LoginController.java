@@ -78,6 +78,7 @@ public class LoginController implements Initializable {
                             }
                         } else {
                             try {
+                                adminRoute = false;
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
                             } catch (IOException e) {
                                 e.printStackTrace();
