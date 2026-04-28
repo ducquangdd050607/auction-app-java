@@ -6,6 +6,7 @@ import com.auctionapp.auctionappjava.common.dto.Response;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
@@ -41,12 +42,12 @@ public class ClientHandler implements Runnable {
                     // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
                     if (user.equals("admin") && pass.equals("123")) {
                         // Giả lập Database trả về 1 ông Admin
-                        LoginResponse admin1 = new LoginResponse("admin", "ADMIN");
+                        LoginResponse admin1 = new LoginResponse("001", "admin", "admin", "ADMIN", null);
                         response = new Response(true, "Đăng nhập thành công Admin!", admin1);
 
                     } else if (user.equals("quang") && pass.equals("123")) {
                         // Giả lập Database trả về 1 ông Bidder/Seller bình thường
-                        LoginResponse user1 = new LoginResponse("quang", "USER");
+                        LoginResponse user1 = new LoginResponse("002", "quang", "user", "USER", BigDecimal.valueOf(36000000));
                         response = new Response(true, "Đăng nhập thành công!", user1);
 
                     } else {

@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.common.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-public record LoginResponse(String username, String role) implements Serializable {}
+public record LoginResponse(String id, String username, String fullName, String role, BigDecimal walletBalance) implements Serializable {}

@@ -24,7 +24,7 @@
                <children>
                   <VBox spacing="4.0">
                      <children>
-                        <Label fx:id="lblGreeting" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Xin chào, userName!" />
+                        <Label fx:id="lblGreeting" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
                         <Label fx:id="lblGreetingSub" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Gôd day ni99a" />
                      </children>
                   </VBox>

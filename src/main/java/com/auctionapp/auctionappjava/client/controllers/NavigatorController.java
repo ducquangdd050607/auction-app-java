@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
@@ -117,6 +118,8 @@ public class NavigatorController implements Initializable {
 
         Runnable switchScene = () -> {
             try {
+                // Xóa thông tin user trong session này
+                UserSession.getInstance().cleanUserSession();
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
             } catch (IOException e) {
                 throw new RuntimeException(e);

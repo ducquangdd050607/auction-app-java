@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.LoginRequest;
 import com.auctionapp.auctionappjava.common.dto.LoginResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
@@ -35,7 +36,7 @@ public class LoginController implements Initializable {
     private Button btnLogin;
 
     @FXML
-    void handleConfirm(ActionEvent event) throws IOException {
+    void handleConfirm(ActionEvent event) {
         if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty()) {
             lblError.setText("Hãy điền đủ thông tin");
             lblError.setVisible(true);
@@ -68,6 +69,8 @@ public class LoginController implements Initializable {
                     if (response.success()) {
                         // Móc DTO ra xem Role là gì
                         LoginResponse authUser = (LoginResponse) response.data();
+                        // Thêm thông tin user cho session đó
+                        UserSession.getInstance().setCurrentUser(authUser);
 
                         if ("ADMIN".equals(authUser.role())) {
                             try {

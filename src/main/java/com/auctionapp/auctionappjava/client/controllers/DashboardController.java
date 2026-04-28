@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -136,6 +137,7 @@ public class DashboardController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            lblGreeting.setText("Xin chào, " + UserSession.getInstance().getCurrentUser().fullName() + "!");
             show();
         } catch (IOException e) {
             throw new RuntimeException(e);
