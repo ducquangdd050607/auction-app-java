@@ -27,7 +27,7 @@ public class Server {
         } catch (IOException e) {
             System.err.println("Lỗi khởi động Server: " + e.getMessage());
         } finally {
-            if (threadPool != null && !threadPool.isShutdown()) {
+            if (!threadPool.isShutdown()) {
                 threadPool.shutdown();
             }
         }

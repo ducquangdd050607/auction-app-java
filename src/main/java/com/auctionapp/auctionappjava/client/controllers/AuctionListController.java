@@ -1,8 +1,13 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.common.enums.ItemType;
-import com.auctionapp.auctionappjava.common.model.Item;
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,12 +25,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 public class AuctionListController implements Initializable {
 
-    private ObservableList<Item> auctionData = FXCollections.observableArrayList();
+    private ObservableList<AuctionSummaryResponse> auctionData = FXCollections.observableArrayList();
 
     @FXML
     private HBox box;
@@ -46,27 +53,29 @@ public class AuctionListController implements Initializable {
     @FXML
     private ComboBox<String> cbType;
     @FXML
-    private TableColumn<Item, Integer> clmBidders;
+    private TableView<AuctionSummaryResponse> listAuctions;
     @FXML
-    private TableColumn<Item, Double> clmCurrentPrice;
+    private TableColumn<AuctionSummaryResponse, String> clmName;
     @FXML
-    private TableColumn<Item, String> clmName;
+    private TableColumn<AuctionSummaryResponse, String> clmType;
     @FXML
-    private TableColumn<Item, BigDecimal> clmStartPrice;
+    private TableColumn<AuctionSummaryResponse, BigDecimal> clmStartPrice;
     @FXML
-    private TableColumn<Item, String> clmStatus;
+    private TableColumn<AuctionSummaryResponse, BigDecimal> clmCurrentPrice;
     @FXML
-    private TableColumn<Item, Integer> clmTime; // Thời gian còn lại
+    private TableColumn<AuctionSummaryResponse, BigDecimal> clmMinIncrement;
     @FXML
-    private TableColumn<Item, ItemType> clmType;
+    private TableColumn<AuctionSummaryResponse, Integer> clmBidders;
     @FXML
-    private TableColumn<?, ?> clmBiddingMoney;
+    private TableColumn<AuctionSummaryResponse, String> clmStatus;
     @FXML
-    private TableColumn<?, ?> clmBiddedTime; // Thời điểm đặt
+    private TableColumn<AuctionSummaryResponse, /*Integer*/String> clmTime; // Thời gian còn lại
     @FXML
-    private TableView<Item> listAuctions;
+    private TableColumn<AuctionSummaryResponse, ?> clmBiddingMoney;
     @FXML
-    private TableColumn<?, ?> clmChoose;
+    private TableColumn<AuctionSummaryResponse, ?> clmBiddedTime; // Thời điểm đặt
+    @FXML
+    private TableColumn<AuctionSummaryResponse, ?> clmChoose;
     @FXML
     private TextField txtSearch;
     @FXML
@@ -84,13 +93,13 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    void handleRemove(ActionEvent event) throws IOException{
+    void handleRemove(ActionEvent event) throws IOException {
         // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
         removeBehaviour(true);
     }
 
     @FXML
-    void handleCancel(ActionEvent event) throws IOException{
+    void handleCancel(ActionEvent event) throws IOException {
         // hủy và khôi phục trạng thái ban đầu sau khi xóa (admin)
         removeBehaviour(false);
     }
@@ -122,9 +131,7 @@ public class AuctionListController implements Initializable {
     void handleTest(ActionEvent event) throws IOException {
         if (RouteController.bidderRoute) {
             SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
-        }
-
-        else {
+        } else {
             SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
         }
     }
@@ -136,8 +143,7 @@ public class AuctionListController implements Initializable {
 
         AddItemController addCtrl = loader.getController();
         addCtrl.setOnItemAdded(newItem -> {
-            auctionData.add(newItem);
-            // auctionData là ObservableList đang bind vào TableView
+            loadAuctionsFromServer();
         });
 
         Stage stage = new Stage();
@@ -168,22 +174,69 @@ public class AuctionListController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        // Khởi tạo các cột và set data vào bảng
         setupColumns();
         listAuctions.setItems(auctionData);
 
+        // Tự động kéo dữ liệu từ mạng khi mở màn hình
+        loadAuctionsFromServer();
+    }
+
+    // Luồng xử lý ngầm gọi Server
+    private void loadAuctionsFromServer() {
+        Request req = new Request("GET_ALL_AUCTIONS", null);
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(req);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Response(false, "Lỗi kết nối Server", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response.success()) {
+                    // Ép kiểu lấy danh sách từ Response
+                    List<AuctionSummaryResponse> listFromServer = (List<AuctionSummaryResponse>) response.data();
+
+                    // Xóa dữ liệu cũ và cập nhật dữ liệu mới vào bảng
+                    auctionData.setAll(listFromServer);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+                    alert.show();
+                }
+            });
+        });
     }
 
     private void setupColumns() {
-        // Các cột nhận giá trị từ các getter
-        // Hiện tại chỉ có tên, giá khởi đầu, loại
-        clmName.setCellValueFactory(cell ->
-                new javafx.beans.property.SimpleStringProperty(cell.getValue().getTitle()));
+        // Dùng SimpleStringProperty cho các cột chứa chuỗi (String)
+        clmName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().itemName()));
+        clmType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().category()));
 
-        clmStartPrice.setCellValueFactory(cell ->
-                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getStartingPrice()));
+        // Nếu bạn có khai báo các cột này trong FXML, hãy map dữ liệu tương tự
+        if (clmStatus != null) {
+            clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().status()));
+        }
+        if (clmTime != null) {
+            clmTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().timeLeft()));
+        }
 
-        clmType.setCellValueFactory(cell ->
-                new javafx.beans.property.SimpleObjectProperty<>(cell.getValue().getItemType()));
+        // Dùng SimpleObjectProperty cho các cột chứa Số (BigDecimal, int...)
+        clmStartPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().startPrice()));
+
+        if (clmCurrentPrice != null) {
+            clmCurrentPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().currentPrice()));
+        }
+
+        if (clmMinIncrement != null) {
+            clmMinIncrement.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().stepPrice()));
+        }
+
+        if (clmBidders != null) {
+            // Lambda sẽ tự động autoboxing int thành Integer cho TableColumn
+            clmBidders.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bidderCount()));
+        }
     }
 
     public void show() throws IOException {
@@ -233,7 +286,7 @@ public class AuctionListController implements Initializable {
 
     public void setMode(String mode) {
 
-        if (Objects.equals(mode, "Danh sách đấu giá") || (DashboardController.mode == 0)){
+        if (Objects.equals(mode, "Danh sách đấu giá") || (DashboardController.mode == 0)) {
             txtVersatile.setText("Bét88 Live Auction Services");
 
         } else if (Objects.equals(mode, "Quản lý vật phẩm") || (DashboardController.mode == 2)) {

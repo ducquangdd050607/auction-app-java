@@ -1,13 +1,12 @@
 package com.auctionapp.auctionappjava.server.network;
-import com.auctionapp.auctionappjava.common.dto.LoginRequest;
-import com.auctionapp.auctionappjava.common.dto.LoginResponse;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -30,10 +29,10 @@ public class ClientHandler implements Runnable {
 
             // TODO Bước 2: Tạo vòng lặp while(true) ở đây để đọc Request
             while (true) {
-                Request req = (Request) in.readObject();
+                Request request = (Request) in.readObject();
                 // TODO: nào làm service thì chuyển qua switch-case ở đây, đồng thời đẩy logic qua service
-                if("LOGIN".equals(req.action())) {
-                    LoginRequest loginData = (LoginRequest) req.payload();
+                if("LOGIN".equals(request.action())) {
+                    LoginRequest loginData = (LoginRequest) request.payload();
                     String user = loginData.username();
                     String pass = loginData.password();
 
@@ -59,7 +58,34 @@ public class ClientHandler implements Runnable {
                     out.writeObject(response);
                     // Hàm flush() để đẩy dữ liệu đi đến đích (client) ngay lập tức
                     out.flush();
-                }
+                } else if ("GET_ALL_AUCTIONS".equals(request.action())) {
+                    // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
+                    // Fake danh sách sử dụng BigDecimal
+                    List<AuctionSummaryResponse> fakeList = new ArrayList<>();
+
+                    fakeList.add(new AuctionSummaryResponse(
+                            "A001", "Điện tử", "iPhone 15 Pro Max",
+                            new BigDecimal("25000000"), new BigDecimal("20000000"), new BigDecimal("500000"),
+                            "02:15:30", "Đang diễn ra", 12
+                    ));
+
+                    fakeList.add(new AuctionSummaryResponse(
+                            "A002", "Nghệ thuật", "Tranh sơn dầu",
+                            new BigDecimal("0"), new BigDecimal("5000000"), new BigDecimal("200000"),
+                            "12:00:00", "Sắp bắt đầu", 5
+                    ));
+
+                    fakeList.add(new AuctionSummaryResponse(
+                            "A003", "Phương tiện", "Honda SH 150i",
+                            new BigDecimal("85000000"), new BigDecimal("70000000"), new BigDecimal("1000000"),
+                            "00:45:10", "Đang diễn ra", 25
+                    ));
+
+                    // Gói vào Response và gửi đi
+                    Response response = new Response(true, "Lấy danh sách thành công", fakeList);
+                    out.writeObject(response);
+                    out.flush();
+                } // TODO: thêm lệnh nhận về ở đây
             }
 
         } catch (Exception e) {

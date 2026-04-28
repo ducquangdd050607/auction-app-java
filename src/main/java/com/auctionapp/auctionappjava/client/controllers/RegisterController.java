@@ -69,6 +69,7 @@ public class RegisterController {
             //TODO: Nối lên DataBase lưu dữ liệu người dùng
 
             // yêu cầu nhập lại thông tin
+            isRegister = true;
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 
         }
