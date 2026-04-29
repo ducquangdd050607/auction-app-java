@@ -44,7 +44,7 @@ public class LoginController implements Initializable {
         } else {
 
             //TODO: Kiểm tra DB cho tài khoản
-            btnLogin.setDisable(true); // Khóa nút bấm
+            btnLogin.setDisable(true); // Khóa nút bấm, chống trường hợp nhồi c*t vào server
 
             String user = txtUsername.getText();
             String pass = txtPassword.getText();

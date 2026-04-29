@@ -191,6 +191,7 @@ public class DashboardController implements Initializable {
     void handleOpenList(ActionEvent event) throws IOException {
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
     }
+    //TODO: Tách hàm.
 
     @FXML
     void handleWallet(ActionEvent event) throws IOException{
