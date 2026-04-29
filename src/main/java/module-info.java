@@ -3,6 +3,7 @@ module com.auctionapp.auctionappjava {
     requires javafx.fxml;
     requires java.sql;
 
+
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
     opens com.auctionapp.auctionappjava.common.util to javafx.fxml;
 

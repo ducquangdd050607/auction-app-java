@@ -12,8 +12,8 @@ public abstract class Item extends BaseEntity {
     private String description;
     private BigDecimal startingPrice;
     private ItemType itemType;
-    private String attributeOne;
-    private String attributeTwo;
+    private String attributeOne;// là các đặc điểm của đồ vật
+    private String attributeTwo;//
 
     protected Item() {
         super();
