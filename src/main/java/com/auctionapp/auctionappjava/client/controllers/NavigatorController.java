@@ -23,7 +23,23 @@ public class NavigatorController implements Initializable {
     private static NavigatorController instance;
 
     @FXML
-    private BorderPane mainBorderPane;
+    private Button btnDashboard;
+    @FXML
+    private Button btnExit;
+    @FXML
+    private Button btnGotoUsersManager;
+    @FXML
+    private Button btnHistory;
+    @FXML
+    private Button btnItemListAdmin;
+    @FXML
+    private Button btnItemListBidder;
+    @FXML
+    private Button btnItemListSeller;
+    @FXML
+    private Button btnItemManager;
+    @FXML
+    private Button btnSignout;
     @FXML
     private VBox groupAccount;
     @FXML
@@ -35,13 +51,11 @@ public class NavigatorController implements Initializable {
     @FXML
     private VBox groupSeller;
     @FXML
-    private Button setting;
-    @FXML
     private Button identity;
     @FXML
-    private Button btnDashboard;
+    private BorderPane mainBorderPane;
     @FXML
-    private Button btnExit;
+    private Button setting;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -93,21 +107,25 @@ public class NavigatorController implements Initializable {
     @FXML
     void handleAccount(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
+        activateAccountButton();
     }
 
     @FXML
     void handleItemsList(ActionEvent event) throws IOException {
         modeName = ((Button) event.getSource()).getText();
+        setActiveButton((Button) event.getSource());
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
     }
 
     @FXML
     void handleBackToDash(ActionEvent event) throws IOException {
+        activateDashboardButton();
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/DashboardScreen.fxml");
     }
 
     @FXML
     void handleGotoUsersManager(ActionEvent event) throws IOException {
+        NavigatorController.activateAccountButton();
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManagerScreen.fxml");
     }
 
@@ -167,4 +185,53 @@ public class NavigatorController implements Initializable {
                 closeStage);
     }
 
+    private Button currentActiveButton = null;
+
+    // Gọi nội bộ mỗi khi điều hướng trong Navigator
+    private void setActiveButton(Button btn) {
+        if (currentActiveButton != null) {
+            currentActiveButton.getStyleClass().remove("nav-menu-btn-active");
+        }
+        if (btn != null) {
+            btn.getStyleClass().add("nav-menu-btn-active");
+        }
+        currentActiveButton = btn;
+    }
+
+    // Expose tĩnh để Dashboard gọi được
+    public static void activateAccountButton() {
+        if (instance != null) {
+            instance.setActiveButton(instance.setting);
+        }
+    }
+
+    public static void activateHistory() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnHistory);
+        }
+    }
+
+    public static void activateItemListBidder() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnItemListBidder);
+        }
+    }
+
+    public static void activateItemListSeller() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnItemListSeller);
+        }
+    }
+
+    public static void activateItemListAdmin() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnItemListAdmin);
+        }
+    }
+
+    public static void activateDashboardButton() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnDashboard);
+        }
+    }
 }

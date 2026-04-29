@@ -16,8 +16,6 @@ import static com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils.NavSc
 
 public class DashboardController implements Initializable {
 
-    public static int mode = 0;
-
     @FXML
     private Button btnGo1;
 
@@ -175,26 +173,42 @@ public class DashboardController implements Initializable {
 
     @FXML
     void handleHistory(ActionEvent event) throws IOException {
-        mode = 1;
+        NavigatorController.modeName = "Lịch sử đấu giá";
+        NavigatorController.activateHistory();
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
 
     }
 
     @FXML
     void handleManager(ActionEvent event) throws IOException {
-        mode = 2;
+        NavigatorController.modeName = "Quản lý vật phẩm";
+        NavigatorController.activateAccountButton();
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
 
     }
 
     @FXML
     void handleOpenList(ActionEvent event) throws IOException {
+        if (LoginController.adminRoute) {
+            NavigatorController.activateItemListAdmin();
+            NavigatorController.modeName = "Quản lý phiên đấu giá";
+
+        } else if (RouteController.bidderRoute) {
+            NavigatorController.activateItemListBidder();
+            NavigatorController.modeName = "Danh sách đấu giá";
+
+        } else if (RouteController.sellerRoute) {
+            NavigatorController.activateItemListSeller();
+            NavigatorController.modeName = "Danh sách đấu giá";
+        }
+
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
     }
     //TODO: Tách hàm.
 
     @FXML
     void handleWallet(ActionEvent event) throws IOException{
+        NavigatorController.activateAccountButton();
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
     }
 }
