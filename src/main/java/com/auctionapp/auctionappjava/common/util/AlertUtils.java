@@ -39,7 +39,7 @@ public class AlertUtils {
         });
     }
 
-    public static void ConfirmExitController(ActionEvent event, String title, String header, Runnable onConfirm) {
+    public static void ConfirmExitController(String title, String header, Runnable onConfirm) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(header);

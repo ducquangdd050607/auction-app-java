@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,7 +72,11 @@ public class AuctionDetailController {
         if (lblStatus.getText().equals("RUNNING")) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {
-            btnGamble.setDisable(true);
+            Runnable unableToGamble = () -> {
+                btnGamble.setDisable(true);
+            };
+
+            AlertUtils.ConfirmExitController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble);
         }
     }
 
@@ -79,4 +84,6 @@ public class AuctionDetailController {
     void handleRanking(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng:))");
     }
+
+
 }

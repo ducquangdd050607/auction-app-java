@@ -283,16 +283,16 @@ public class AuctionListController implements Initializable {
 
     public void setMode(String mode) {
 
-        if (Objects.equals(mode, "Danh sách đấu giá") || (DashboardController.mode == 0)) {
+        if (Objects.equals(mode, "Danh sách đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Services");
 
-        } else if (Objects.equals(mode, "Quản lý vật phẩm") || (DashboardController.mode == 2)) {
+        } else if (Objects.equals(mode, "Quản lý vật phẩm")) {
             txtVersatile.setText("Bét88 Items Manager");
 
         } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Manager");
 
-        } else if (Objects.equals(mode, "Lịch sử đấu giá") || (DashboardController.mode == 1)) {
+        } else if (Objects.equals(mode, "Lịch sử đấu giá")) {
             txtVersatile.setText("Bét88 History");
             clmBiddedTime.setVisible(true);
             clmBiddingMoney.setVisible(true);
