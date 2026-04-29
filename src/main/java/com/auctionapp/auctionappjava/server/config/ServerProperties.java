@@ -1,7 +1,5 @@
 package com.auctionapp.auctionappjava.server.config;
 
-import com.auctionapp.auctionappjava.common.config.AppConstants;
-
 public final class ServerProperties {
 
     /*
@@ -42,7 +40,7 @@ public final class ServerProperties {
      */
     public static final String DB_PASSWORD = System.getProperty(
             "auction.db.password",
-            "fIuI1VfsMgUpAUok"
+            "f1bADPyWrfHl5k3M"
     );
 
     /*
@@ -54,7 +52,7 @@ public final class ServerProperties {
      */
     public static final int SERVER_PORT = Integer.getInteger(
             "auction.server.port",
-            AppConstants.DEFAULT_SERVER_PORT
+            8080
     );
 
     /*

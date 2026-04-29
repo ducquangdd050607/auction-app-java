@@ -14,6 +14,7 @@ public class RouteController {
 
     static boolean bidderRoute = false;
     static boolean sellerRoute = false;
+    static boolean adminRoute = false;
     private String user = null;
 
     @FXML

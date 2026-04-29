@@ -24,8 +24,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class LoginController implements Initializable {
 
-    static boolean adminRoute = false;
-
     @FXML
     private Label lblError;
     @FXML
@@ -74,14 +72,14 @@ public class LoginController implements Initializable {
 
                         if ("ADMIN".equals(authUser.role())) {
                             try {
-                                adminRoute = true;
+                                RouteController.adminRoute = true;
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         } else {
                             try {
-                                adminRoute = false;
+                                RouteController.adminRoute = false;
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
                             } catch (IOException e) {
                                 e.printStackTrace();

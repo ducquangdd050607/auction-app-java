@@ -59,7 +59,7 @@
         </GridPane>
 
         <!-- Confirm button -->
-        <Button onAction="#handleConfirm" prefHeight="34" prefWidth="110" styleClass="confirm-btn" text="Confirm" />
+        <Button fx:id="btnConfirm" onAction="#handleConfirm" prefHeight="34" prefWidth="110" styleClass="confirm-btn" text="Confirm" />
 
         <!-- Sign-in link -->
         <HBox alignment="CENTER" spacing="4">

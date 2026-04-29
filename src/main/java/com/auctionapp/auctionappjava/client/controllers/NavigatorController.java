@@ -84,7 +84,7 @@ public class NavigatorController implements Initializable {
             groupBidder.setManaged(false);
 
         // Lấy giá trị boolean từ class RouteController và LoginController ra kiểm tra
-        if (LoginController.adminRoute) {
+        if (RouteController.adminRoute) {
             groupAdmin.setVisible(true);
             groupAdmin.setManaged(true);
             identity.setText("ADMIN");

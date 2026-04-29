@@ -1,15 +1,28 @@
 package com.auctionapp.auctionappjava.server.network;
 import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.factory.UserFactory;
+import com.auctionapp.auctionappjava.common.model.User;
+import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.common.util.PasswordUtils;
+import com.auctionapp.auctionappjava.server.dao.*;
+import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
+
+    // Khai báo đối tượng DAO (có thể để làm thuộc tính của class)
+    private final UserDao userDao = new JdbcUserDao();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -34,35 +47,53 @@ public class ClientHandler implements Runnable {
                 if("LOGIN".equals(request.action())) {
                     LoginRequest loginData = (LoginRequest) request.payload();
                     String user = loginData.username();
-                    String pass = loginData.password();
+                    String pass = loginData.password(); // Pass người dùng nhập
 
                     Response response;
 
-                    // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
-                    if (user.equals("admin") && pass.equals("123")) {
-                        // Giả lập Database trả về 1 ông Admin
-                        LoginResponse admin1 = new LoginResponse("001", "admin", "admin", "ADMIN", null);
-                        response = new Response(true, "Đăng nhập thành công Admin!", admin1);
+                    try {
+                        // 1. Dùng DAO chui xuống MySQL tìm người dùng theo username
+                        Optional<User> userOptional = userDao.findByName(user);
 
-                    } else if (user.equals("quang") && pass.equals("123")) {
-                        // Giả lập Database trả về 1 ông Bidder/Seller bình thường
-                        LoginResponse user1 = new LoginResponse("002", "quang", "user", "USER", BigDecimal.valueOf(36000000));
-                        UserDetailResponse user1Detail = new UserDetailResponse("quang", "Quang", "USER", new BigDecimal(3600000), "ACTIVE", 36);
-                        response = new Response(true, "Đăng nhập thành công!", user1);
+                        // 2. Nếu tìm thấy tài khoản trong Database
+                        if (userOptional.isPresent()) {
+                            User dbUser = userOptional.get();
 
-                    } else if (user.equals("gay") && pass.equals("123")) {
-                        LoginResponse user2 = new LoginResponse("002", "gay", "gaylo", "USER", BigDecimal.valueOf(36000000));
-                        UserDetailResponse user2Detail = new UserDetailResponse("gay", "gaylo", "USER", new BigDecimal(3600000), "ACTIVE", 12);
-                        response = new Response(true, "Đăng nhập thành công!", user2);
+                            // 3. So sánh mật khẩu (Tạm thời so sánh chuỗi chay)
+                            // Nếu hệ thống của bạn có băm mật khẩu, bạn cần hash biến 'pass' trước khi so sánh với dbUser.getPasswordHash()
+                            if (PasswordUtils.verifyPassword(pass, dbUser.getPasswordSalt(), dbUser.getPasswordHash())) {
 
-                    } else {
-                        // Giả lập Database báo không tìm thấy tài khoản
-                        response = new Response(false, "Sai thông tin đăng nhập hoặc tài khoản không tồn tại!", null);
+                                // 4. Mật khẩu đúng! Kéo tiếp số dư ví của ông này lên
+                                Optional<Wallet> walletOpt = userDao.findWalletByUserId(dbUser.getId());
+                                // Nếu có ví thì lấy số dư, chưa có ví thì gán mặc định là 0 đồng
+                                BigDecimal balance = walletOpt.isPresent() ? walletOpt.get().getBalance() : BigDecimal.ZERO;
+
+                                // 5. Đóng gói Model từ Database thành DTO gửi về Client
+                                LoginResponse loginRes = new LoginResponse(
+                                        dbUser.getId().toString(),   // Chuyển UUID thành String cho DTO
+                                        dbUser.getUsername(),
+                                        dbUser.getFullName(),
+                                        dbUser.getRole().name(),     // "ADMIN", "SELLER" hoặc "BIDDER"
+                                        balance
+                                );
+
+                                response = new Response(true, "Đăng nhập thành công!", loginRes);
+
+                            } else {
+                                response = new Response(false, "Sai mật khẩu!", null);
+                            }
+                        } else {
+                            // Không tìm thấy username trong DB
+                            response = new Response(false, "Tài khoản không tồn tại!", null);
+                        }
+                    } catch (Exception e) {
+                        // Bắt lỗi Database sập hoặc đứt kết nối
+                        e.printStackTrace();
+                        response = new Response(false, "Lỗi máy chủ cơ sở dữ liệu!", null);
                     }
 
                     // Đóng gói kết quả ném trả lại cho Client
                     out.writeObject(response);
-                    // Hàm flush() để đẩy dữ liệu đi đến đích (client) ngay lập tức
                     out.flush();
                 } else if ("GET_ALL_AUCTIONS".equals(request.action())) {
                     // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
@@ -100,6 +131,59 @@ public class ClientHandler implements Runnable {
                     userDetailList.add(new UserDetailResponse("quang", "Quang", "USER", new BigDecimal(3600000), "ACTIVE", 36));
 
                     Response response = new Response(true, "Lấy danh sách thành công", userDetailList);
+                    out.writeObject(response);
+                    out.flush();
+                }
+                // ... (code xử lý LOGIN) ...
+
+                else if ("REGISTER".equals(request.action())) {
+                    RegisterRequest regData = (RegisterRequest) request.payload();
+                    Response response;
+
+                    try {
+                        // 1. Kiểm tra xem username đã tồn tại trong DB chưa?
+                        if (userDao.findByName(regData.username()).isPresent()) {
+                            response = new Response(false, "Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.", null);
+                        } else {
+                            // 2. Tạo đối tượng User mới.
+                            // Vì User là Abstract Class, ta dùng UserFactory (giống cách bạn làm trong JdbcUserDao)
+                            Role roleEnum = Role.valueOf(regData.role().toUpperCase());
+                            User newUser = UserFactory.create(roleEnum);
+
+                            // 3. Gắn dữ liệu (Fake hash password để test trước)
+                            newUser.setId(UUID.randomUUID());
+                            newUser.setUsername(regData.username());
+                            newUser.setPasswordSalt(PasswordUtils.generateSalt());
+                            newUser.setPasswordHash(PasswordUtils.hashPassword(regData.password(), newUser.getPasswordSalt()));
+                            newUser.setFullName(regData.fullName());
+                            newUser.setEmail(regData.email());
+                            newUser.setRole(roleEnum);
+                            newUser.setActive(true);
+                            newUser.setCreatedAt(LocalDateTime.now());
+                            newUser.setUpdatedAt(LocalDateTime.now());
+
+                            // 4. Gọi DAO để INSERT xuống TiDB
+                            userDao.save(newUser);
+
+                            // 5. Tạo luôn một cái Ví (Wallet) 0 đồng cho tài khoản mới này
+                            Wallet newWallet = new Wallet(
+                                    UUID.randomUUID(),
+                                    LocalDateTime.now(),
+                                    LocalDateTime.now(),
+                                    newUser.getId(),
+                                    java.math.BigDecimal.ZERO
+                            );
+                            userDao.saveWallet(newWallet);
+
+                            // 6. Báo thành công
+                            response = new Response(true, "Đăng ký tài khoản thành công!", null);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response = new Response(false, "Lỗi máy chủ khi lưu dữ liệu!", null);
+                    }
+
+                    // Gửi kết quả về cho Client
                     out.writeObject(response);
                     out.flush();
                 }

@@ -189,7 +189,7 @@ public class DashboardController implements Initializable {
 
     @FXML
     void handleOpenList(ActionEvent event) throws IOException {
-        if (LoginController.adminRoute) {
+        if (RouteController.adminRoute) {
             NavigatorController.activateItemListAdmin();
             NavigatorController.modeName = "Quản lý phiên đấu giá";
 

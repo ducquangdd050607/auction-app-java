@@ -258,7 +258,7 @@ public class AuctionListController implements Initializable {
         btnCancel.setManaged(false);
 
         //nút admin
-        if (LoginController.adminRoute) {
+        if (RouteController.adminRoute) {
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);
             btnRemove.setVisible(true);

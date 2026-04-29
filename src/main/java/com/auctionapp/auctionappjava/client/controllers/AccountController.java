@@ -72,6 +72,6 @@ public class AccountController implements Initializable {
 
     public void show() throws IOException {
         // Nếu là admin thì set ẩn (false) là được
-        balanceAndDeposit(!LoginController.adminRoute);
+        balanceAndDeposit(!RouteController.adminRoute);
     }
 }
