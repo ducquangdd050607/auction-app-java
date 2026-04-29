@@ -72,19 +72,19 @@ public class ClientHandler implements Runnable {
                     fakeList.add(new AuctionSummaryResponse(
                             "A001", "Điện tử", "iPhone 15 Pro Max",
                             new BigDecimal("25000000"), new BigDecimal("20000000"), new BigDecimal("500000"),
-                            "02:15:30", "Đang diễn ra", 12
+                            "02:15:30", "RUNNING", 12
                     ));
 
                     fakeList.add(new AuctionSummaryResponse(
                             "A002", "Nghệ thuật", "Tranh sơn dầu",
                             new BigDecimal("0"), new BigDecimal("5000000"), new BigDecimal("200000"),
-                            "12:00:00", "Sắp bắt đầu", 5
+                            "12:00:00", "OPEN", 5
                     ));
 
                     fakeList.add(new AuctionSummaryResponse(
                             "A003", "Phương tiện", "Honda SH 150i",
                             new BigDecimal("85000000"), new BigDecimal("70000000"), new BigDecimal("1000000"),
-                            "00:45:10", "Đang diễn ra", 25
+                            "00:45:10", "RUNNING", 25
                     ));
 
                     // Gói vào Response và gửi đi

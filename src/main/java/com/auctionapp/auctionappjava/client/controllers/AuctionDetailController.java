@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,6 +50,15 @@ public class AuctionDetailController {
 
     //TODO: Truy cập thông tin vật phẩm
 
+    void setAuction(AuctionSummaryResponse auction) {
+        lblItemName.setText(auction.itemName());
+        lblCategory.setText(auction.category());
+        lblCurrentPrice.setText(auction.currentPrice().toString());
+        lblMinIncrement.setText(auction.stepPrice().toString());
+        lblStartingPrice.setText(auction.startPrice().toString());
+        lblStatus.setText(auction.status());
+    }
+
     @FXML
     void handleBack(ActionEvent event) throws IOException {
         Stage stage = (Stage) btnBack.getScene().getWindow();
@@ -57,7 +67,12 @@ public class AuctionDetailController {
 
     @FXML
     void handleBidding(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
+
+        if (lblStatus.getText().equals("RUNNING")) {
+            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
+        } else {
+            btnGamble.setDisable(true);
+        }
     }
 
     @FXML

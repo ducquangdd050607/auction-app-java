@@ -17,7 +17,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -152,11 +151,6 @@ public class AuctionListController implements Initializable {
         stage.showAndWait();
     }
 
-    @FXML
-    void handleSelectAuction(MouseEvent event) {
-        // TODO later: Chỉ định sản phẩm/ Truy cập sản phẩm đó
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
@@ -180,6 +174,9 @@ public class AuctionListController implements Initializable {
 
         // Tự động kéo dữ liệu từ mạng khi mở màn hình
         loadAuctionsFromServer();
+
+        // Cho phép Double-click truy cập sản phẩm
+        setupRowDoubleClick();
     }
 
     // Luồng xử lý ngầm gọi Server
@@ -301,6 +298,62 @@ public class AuctionListController implements Initializable {
             clmBiddingMoney.setVisible(true);
             clmCurrentPrice.setVisible(false);
             clmBidders.setVisible(false);
+        }
+    }
+
+    private void setupRowDoubleClick() {
+        listAuctions.setRowFactory(tv -> {
+            TableRow<AuctionSummaryResponse> row = new TableRow<>();
+
+            row.setOnMouseClicked(event -> {
+
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+
+                    try {
+                        openAuctionDetail(row.getItem());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            return row;
+        });
+    }
+
+    private void openAuctionDetail(AuctionSummaryResponse auction) throws IOException {
+        if (RouteController.bidderRoute) {
+            // Bidder
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+            Parent root = loader.load();
+
+            // Truyền dữ liệu sang màn hình con
+            AuctionDetailController ctrl = loader.getController();
+            ctrl.setAuction(auction);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Chi tiết: " + auction.itemName());
+            stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.showAndWait();
+
+        } else {
+            // Seller/Admin
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("BXH – " + auction.itemName());
+            stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.showAndWait();
+
+            // NewSceneController(event,"/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml");
         }
     }
 }
