@@ -36,7 +36,7 @@
         </VBox>
     </top>
    <center>
-      <TableView fx:id="listAuctions" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="listUsers" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn prefWidth="26.4000244140625" text="STT" />
             <TableColumn fx:id="clmName" prefWidth="120.79998779296875" text="Tên" />

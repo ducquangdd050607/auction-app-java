@@ -47,7 +47,13 @@ public class ClientHandler implements Runnable {
                     } else if (user.equals("quang") && pass.equals("123")) {
                         // Giả lập Database trả về 1 ông Bidder/Seller bình thường
                         LoginResponse user1 = new LoginResponse("002", "quang", "user", "USER", BigDecimal.valueOf(36000000));
+                        UserDetailResponse user1Detail = new UserDetailResponse("quang", "Quang", "USER", new BigDecimal(3600000), "ACTIVE", 36);
                         response = new Response(true, "Đăng nhập thành công!", user1);
+
+                    } else if (user.equals("gay") && pass.equals("123")) {
+                        LoginResponse user2 = new LoginResponse("002", "gay", "gaylo", "USER", BigDecimal.valueOf(36000000));
+                        UserDetailResponse user2Detail = new UserDetailResponse("gay", "gaylo", "USER", new BigDecimal(3600000), "ACTIVE", 12);
+                        response = new Response(true, "Đăng nhập thành công!", user2);
 
                     } else {
                         // Giả lập Database báo không tìm thấy tài khoản
@@ -86,6 +92,17 @@ public class ClientHandler implements Runnable {
                     out.writeObject(response);
                     out.flush();
                 } // TODO: thêm lệnh nhận về ở đây
+
+                else if ("GET_USERS".equals(request.action())) {
+                    List<UserDetailResponse> userDetailList = new ArrayList<>();
+
+                    userDetailList.add(new UserDetailResponse("gay", "gaylo", "USER", new BigDecimal(3600000), "ACTIVE", 12));
+                    userDetailList.add(new UserDetailResponse("quang", "Quang", "USER", new BigDecimal(3600000), "ACTIVE", 36));
+
+                    Response response = new Response(true, "Lấy danh sách thành công", userDetailList);
+                    out.writeObject(response);
+                    out.flush();
+                }
             }
 
         } catch (Exception e) {
