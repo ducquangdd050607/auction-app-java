@@ -79,6 +79,27 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
             throw new IllegalStateException("Khong xoa duoc auto-bid", exception);
         }
     }
+    @Override
+    public void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId) {
+        // Chuyển từ DELETE sang UPDATE, set enabled = FALSE và cập nhật thời gian
+        String sql = """
+                UPDATE auto_bid_configs 
+                SET enabled = FALSE, updated_at = NOW() 
+                WHERE auction_id = ? AND bidder_id = ?
+                """;
+
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Truyền 2 tham số vào điều kiện WHERE
+            statement.setString(1, uuid(auctionId));
+            statement.setString(2, uuid(bidderId));
+
+            // Thực thi câu lệnh
+            statement.executeUpdate();
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong the tat auto-bid cua user", exception);
+        }
+    }
 
     private AutoBidConfig mapConfig(ResultSet resultSet) throws SQLException {
         return new AutoBidConfig(

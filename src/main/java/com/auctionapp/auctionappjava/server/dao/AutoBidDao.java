@@ -12,5 +12,8 @@ public interface AutoBidDao {
 
     List<AutoBidConfig> findEnabledByAuctionId(UUID auctionId); // in ra thông tin của những cấu hình auto_bid đang bật
 
-    void deleteByAuctionId(UUID auctionId); // xóa cấu hình autobid nếu phiên bị hủy
+    void deleteByAuctionId(UUID auctionId); // xóa all cấu hình autobid nếu phiên bị hủy
+
+    void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId); // 1 người dùng muốn tắt cấu hin autobid
 }
+

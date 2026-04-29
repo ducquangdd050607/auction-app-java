@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
@@ -18,9 +19,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 INSERT INTO bids (
                     id, auction_id, bidder_id, amount, auto_generated, note, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                    auction_id = VALUES(auction_id), bidder_id = VALUES(bidder_id), amount = VALUES(amount),
-                    auto_generated = VALUES(auto_generated), note = VALUES(note), updated_at = VALUES(updated_at)
+                
                 """;
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid(bidTransaction.getId()));
@@ -54,7 +53,22 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Khong doc duoc danh sach bid", exception);
         }
     }
+    @Override
+    public Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId) {
+        // Sắp xếp amount giảm dần (DESC) và lấy 1 kết quả đầu tiên
+        String sql = "SELECT * FROM bids WHERE auction_id = ? ORDER BY amount DESC LIMIT 1";
 
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                // Nếu có kết quả thì map ra đối tượng Bid, nếu không thì trả về Optional.empty()
+                return resultSet.next() ? Optional.of(mapBid(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong tim thay bid cao nhat cua phien dau gia", exception);
+        }
+    }
     @Override
     public long countByAuctionId(UUID auctionId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE auction_id = ?", uuid(auctionId));

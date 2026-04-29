@@ -15,4 +15,5 @@ public interface UserDao {
     void updateProfile(UUID id, String fullName, String email);
     void updatePassword(UUID id, String hash, String salt);
     Wallet saveWallet(Wallet wallet);
+    Optional<Wallet> findWalletByUserId(UUID userId);
 }

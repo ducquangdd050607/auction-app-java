@@ -11,6 +11,8 @@ public interface AuctionDao {
 
     Optional<Auction> findById(UUID auctionId);
 
+    List<Auction> findByStatus(AuctionStatus status);
+
     List<Auction> findAll();
 
     List<Auction> findBySellerId(UUID sellerId);

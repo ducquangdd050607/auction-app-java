@@ -36,7 +36,18 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             throw new IllegalStateException("Khong luu duoc user", exception);
         }
     }
-
+    @Override
+    public Optional<Wallet> findWalletByUserId(UUID userId) {
+        String sql = "SELECT * FROM Wallet WHERE user_id = ?";
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid(userId));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapWallet(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc wallet", exception);
+        }
+    }
     @Override
     public Optional<User> findById(UUID userId) {
         return findUser("SELECT * FROM users WHERE id = ?", uuid(userId));
@@ -128,6 +139,13 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             throw new IllegalStateException(e);
         }
     }
-
+    private Wallet mapWallet(ResultSet resultSet) throws SQLException {
+        return new Wallet(
+                uuid(resultSet.getString("id")),
+                localDateTime(resultSet.getTimestamp("created_at")),
+                localDateTime(resultSet.getTimestamp("updated_at")),
+                uuid(resultSet.getString("user_id")),
+                resultSet.getBigDecimal("balance"));
+    }
 
 }

@@ -49,6 +49,26 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
     }
 
     @Override
+    public List<Auction> findByStatus(AuctionStatus status) {
+        String sql = "SELECT * FROM auctions WHERE status = ? ORDER BY created_at DESC";
+
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Chuyển Enum thành String để lưu xuống DB
+            statement.setString(1, status.name());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<Auction> auctions = new ArrayList<>();
+                while (resultSet.next()) {
+                    auctions.add(mapAuction(resultSet));
+                }
+                return auctions;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach auction theo trang thai", exception);
+        }
+    }
+
+    @Override
     public List<Auction> findAll() {
         return queryAuctions("SELECT * FROM auctions ORDER BY created_at", null);
     }
