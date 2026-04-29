@@ -76,27 +76,27 @@ public class NavigatorController implements Initializable {
 
     public void show() throws IOException {
         // Ẩn tất cả đi trước
-            groupAdmin.setVisible(false);
-            groupAdmin.setManaged(false);
-            groupSeller.setVisible(false);
-            groupSeller.setManaged(false);
-            groupBidder.setVisible(false);
-            groupBidder.setManaged(false);
+        groupAdmin.setVisible(false);
+        groupAdmin.setManaged(false);
+        groupSeller.setVisible(false);
+        groupSeller.setManaged(false);
+        groupBidder.setVisible(false);
+        groupBidder.setManaged(false);
 
-        // Lấy giá trị boolean từ class RouteController và LoginController ra kiểm tra
-        if (RouteController.adminRoute) {
+        // Lấy giá trị boolean từ class LoginController ra kiểm tra
+        if (LoginController.adminRoute) {
             groupAdmin.setVisible(true);
             groupAdmin.setManaged(true);
             identity.setText("ADMIN");
             identity.setDisable(true);
 
-        } else if (RouteController.sellerRoute) {
+        } else if (LoginController.sellerRoute) {
             groupSeller.setVisible(true);
             groupSeller.setManaged(true);
             identity.setText("SELLER");
             identity.setDisable(false);
 
-        } else if (RouteController.bidderRoute) {
+        } else if (LoginController.bidderRoute) {
             groupBidder.setVisible(true);
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
@@ -148,27 +148,8 @@ public class NavigatorController implements Initializable {
                 "Chắc chưa?",
                 "Bạn có chắc muốn đăng xuất không?",
                 switchScene);
-        }
-
-    @FXML
-    // Đổi Route
-    void handleSwitcher(ActionEvent event) throws IOException {
-
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        Runnable switchScene = () -> {
-            try {
-                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-
-        AlertUtils.ConfirmExitController(
-                "Chắc chưa?",
-                "Bạn có chắc muốn đổi vai trò không?",
-                switchScene);
     }
+
 
     @FXML
     void handleExit (ActionEvent event) throws IOException {

@@ -128,7 +128,7 @@ public class AuctionListController implements Initializable {
 
     @FXML
     void handleTest(ActionEvent event) throws IOException {
-        if (RouteController.bidderRoute) {
+        if (LoginController.bidderRoute) {
             SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
         } else {
             SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
@@ -258,13 +258,13 @@ public class AuctionListController implements Initializable {
         btnCancel.setManaged(false);
 
         //nút admin
-        if (RouteController.adminRoute) {
+        if (LoginController.adminRoute) {
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);
             btnRemove.setVisible(true);
             btnRemove.setManaged(true);
 
-        } else if (RouteController.sellerRoute) {
+        } else if (LoginController.sellerRoute) {
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
         }
@@ -321,7 +321,7 @@ public class AuctionListController implements Initializable {
     }
 
     private void openAuctionDetail(AuctionSummaryResponse auction) throws IOException {
-        if (RouteController.bidderRoute) {
+        if (LoginController.bidderRoute) {
             // Bidder
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
                     "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));

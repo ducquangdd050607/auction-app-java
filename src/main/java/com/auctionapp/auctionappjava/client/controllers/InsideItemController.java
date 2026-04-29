@@ -56,9 +56,9 @@ public class InsideItemController {
 
     @FXML
     void handleRemove(ActionEvent event) {
-        if (RouteController.adminRoute) {
+        if (LoginController.adminRoute) {
             // force-remove
-        } else if (RouteController.sellerRoute) {
+        } else if (LoginController.sellerRoute) {
             // if (Item.status == "OPEN") {
             // remove
             // } else {
@@ -68,7 +68,7 @@ public class InsideItemController {
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        if (RouteController.bidderRoute) {
+        if (LoginController.bidderRoute) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
 
         } else {

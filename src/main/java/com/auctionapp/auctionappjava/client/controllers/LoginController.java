@@ -24,6 +24,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class LoginController implements Initializable {
 
+    static boolean bidderRoute = false;
+    static boolean sellerRoute = false;
+    static boolean adminRoute = false;
+
     @FXML
     private Label lblError;
     @FXML
@@ -72,15 +76,31 @@ public class LoginController implements Initializable {
 
                         if ("ADMIN".equals(authUser.role())) {
                             try {
-                                RouteController.adminRoute = true;
+                                adminRoute = true;
+                                sellerRoute = false;
+                                bidderRoute = false;
                                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        } else {
+
+
+                        } else if ("SELLER".equals(authUser.role())) {
                             try {
-                                RouteController.adminRoute = false;
-                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RouteScreen.fxml", "Vai trò");
+                                adminRoute = false;
+                                sellerRoute = true;
+                                bidderRoute = false;
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        } else if ("BIDDER".equals(authUser.role())){
+                            try {
+                                adminRoute = false;
+                                sellerRoute = false;
+                                bidderRoute = true;
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

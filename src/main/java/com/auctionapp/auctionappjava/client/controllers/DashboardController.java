@@ -151,13 +151,13 @@ public class DashboardController implements Initializable {
         btnWallet.setVisible(false);
         btnWallet.setManaged(false);
 
-        if (RouteController.sellerRoute) {
+        if (LoginController.sellerRoute) {
             btnBehaviour(false);
             btnWallet.setVisible(true);
             btnWallet.setManaged(true);
 
 
-        } else if (RouteController.bidderRoute) {
+        } else if (LoginController.bidderRoute) {
             btnBehaviour(true);
             btnWallet.setVisible(true);
             btnWallet.setManaged(true);
@@ -189,15 +189,15 @@ public class DashboardController implements Initializable {
 
     @FXML
     void handleOpenList(ActionEvent event) throws IOException {
-        if (RouteController.adminRoute) {
+        if (LoginController.adminRoute) {
             NavigatorController.activateItemListAdmin();
             NavigatorController.modeName = "Quản lý phiên đấu giá";
 
-        } else if (RouteController.bidderRoute) {
+        } else if (LoginController.bidderRoute) {
             NavigatorController.activateItemListBidder();
             NavigatorController.modeName = "Danh sách đấu giá";
 
-        } else if (RouteController.sellerRoute) {
+        } else if (LoginController.sellerRoute) {
             NavigatorController.activateItemListSeller();
             NavigatorController.modeName = "Danh sách đấu giá";
         }

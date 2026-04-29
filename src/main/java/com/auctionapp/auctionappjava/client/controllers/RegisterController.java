@@ -4,9 +4,6 @@ import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.common.dto.RegisterRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
-import com.auctionapp.auctionappjava.common.model.Bidder;
-import com.auctionapp.auctionappjava.common.model.Seller;
-import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -22,6 +19,19 @@ import java.util.concurrent.CompletableFuture;
 public class RegisterController {
 
     static boolean isRegister = false;
+    static String roles = "";
+
+    @FXML
+    private Button btnBid;
+
+    @FXML
+    private Button btnConfirm;
+
+    @FXML
+    private Button btnSell;
+
+    @FXML
+    private Label confirmRoute;
 
     @FXML
     private Label lblError;
@@ -33,16 +43,27 @@ public class RegisterController {
     private TextField txtEmail;
 
     @FXML
+    private TextField txtFullname;
+
+    @FXML
     private PasswordField txtPassword;
 
     @FXML
     private TextField txtUsername;
 
     @FXML
-    private TextField txtFullname;
+    void handleSeller(ActionEvent event) {
+        roles = "SELLER";
+        confirmRoute.setText("Bạn chọn là Seller");
+        System.out.println(roles); //Debug
+    }
 
     @FXML
-    private Button btnConfirm;
+    void handleBidder(ActionEvent event) {
+        roles = "BIDDER";
+        confirmRoute.setText("Bạn chọn là Bidder");
+        System.out.println(roles);
+    }
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
@@ -60,6 +81,11 @@ public class RegisterController {
             // lblError.setText("Tên người dùng đã được dùng");
             // lblError.setVisible(true);
 
+        else if (roles.isEmpty()) {
+            lblError.setText("Vui lòng chọn vai trò");
+            lblError.setVisible(true);
+        }
+
         else {
             btnConfirm.setDisable(true);
 
@@ -67,7 +93,9 @@ public class RegisterController {
             String pass = txtPassword.getText();
             String name = txtFullname.getText();
             String mail = txtEmail.getText();
-            String role = "BIDDER"; // TODO: Thêm 1 ComboBox chọn vai trò
+            String role = roles;
+
+             // TODO: Thêm 1 ComboBox chọn vai trò - nah good ol' buttons'll work.
 
             // Đóng gói Request
             RegisterRequest payload = new RegisterRequest(user, pass, name, mail, role);
