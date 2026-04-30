@@ -55,7 +55,7 @@ public class AuctionDetailController {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
         lblCurrentPrice.setText(auction.currentPrice().toString());
-        lblMinIncrement.setText(auction.stepPrice().toString());
+        /*lblMinIncrement.setText(auction.stepPrice().toString());*/
         lblStartingPrice.setText(auction.startPrice().toString());
         lblStatus.setText(auction.status());
     }

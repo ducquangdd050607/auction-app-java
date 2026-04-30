@@ -226,9 +226,9 @@ public class AuctionListController implements Initializable {
             clmCurrentPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().currentPrice()));
         }
 
-        if (clmMinIncrement != null) {
+        /*if (clmMinIncrement != null) {
             clmMinIncrement.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().stepPrice()));
-        }
+        }*/
 
         if (clmBidders != null) {
             // Lambda sẽ tự động autoboxing int thành Integer cho TableColumn

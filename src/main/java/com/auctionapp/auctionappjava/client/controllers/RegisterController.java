@@ -119,7 +119,7 @@ public class RegisterController {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        lblError.setText("Lỗi" + response.message());
+                        lblError.setText(response.message());
                         lblError.setVisible(true);
                     }
                 });

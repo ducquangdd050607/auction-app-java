@@ -2,6 +2,8 @@ package com.auctionapp.auctionappjava.server.network;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
+import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.common.model.Item;
 import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
@@ -21,8 +23,11 @@ import java.util.UUID;
 public class ClientHandler implements Runnable {
     private Socket socket;
 
-    // Khai báo đối tượng DAO (có thể để làm thuộc tính của class)
+    // Khai báo các DAO cần thiết ở đầu ClientHandler
     private final UserDao userDao = new JdbcUserDao();
+    private final AuctionDao auctionDao = new JdbcAuctionDao();
+    private final AuctionItemDao itemDao = new JdbcAuctionItemDao();
+    private final BidDao bidDao = new JdbcBidDao();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -46,35 +51,32 @@ public class ClientHandler implements Runnable {
                 // TODO: nào làm service thì chuyển qua switch-case ở đây, đồng thời đẩy logic qua service
                 if("LOGIN".equals(request.action())) {
                     LoginRequest loginData = (LoginRequest) request.payload();
-                    String user = loginData.username();
+                    String username = loginData.username();
                     String pass = loginData.password(); // Pass người dùng nhập
 
                     Response response;
 
                     try {
                         // 1. Dùng DAO chui xuống MySQL tìm người dùng theo username
-                        Optional<User> userOptional = userDao.findByName(user);
+                        Optional<User> userOptional = userDao.findByName(username);
 
                         // 2. Nếu tìm thấy tài khoản trong Database
                         if (userOptional.isPresent()) {
-                            User dbUser = userOptional.get();
+                            User user = userOptional.get();
 
-                            // 3. So sánh mật khẩu (Tạm thời so sánh chuỗi chay)
-                            // Nếu hệ thống của bạn có băm mật khẩu, bạn cần hash biến 'pass' trước khi so sánh với dbUser.getPasswordHash()
-                            if (PasswordUtils.verifyPassword(pass, dbUser.getPasswordSalt(), dbUser.getPasswordHash())) {
+                            // 3. So sánh mật khẩu
+                            if (PasswordUtils.verifyPassword(pass, user.getPasswordSalt(), user.getPasswordHash())) {
 
-                                // 4. Mật khẩu đúng! Kéo tiếp số dư ví của ông này lên
-                                Optional<Wallet> walletOpt = userDao.findWalletByUserId(dbUser.getId());
-                                // Nếu có ví thì lấy số dư, chưa có ví thì gán mặc định là 0 đồng
-                                BigDecimal balance = walletOpt.isPresent() ? walletOpt.get().getBalance() : BigDecimal.ZERO;
+                                // 4. Nếu pass đúng, kéo tiếp số dư ví của ông này lên
+                                BigDecimal balance = userDao.findWalletByUserId(user.getId()).get().getBalance();
 
                                 // 5. Đóng gói Model từ Database thành DTO gửi về Client
                                 LoginResponse loginRes = new LoginResponse(
-                                        dbUser.getId().toString(),   // Chuyển UUID thành String cho DTO
-                                        dbUser.getUsername(),
-                                        dbUser.getFullName(),
-                                        dbUser.getRole().name(),     // "ADMIN", "SELLER" hoặc "BIDDER"
-                                        dbUser.getEmail(),
+                                        user.getId().toString(),   // Chuyển UUID thành String cho DTO
+                                        user.getUsername(),
+                                        user.getFullName(),
+                                        user.getRole().name(),     // "ADMIN", "SELLER" hoặc "BIDDER"
+                                        user.getEmail(),
                                         balance
                                 );
 
@@ -97,32 +99,57 @@ public class ClientHandler implements Runnable {
                     out.writeObject(response);
                     out.flush();
                 } else if ("GET_ALL_AUCTIONS".equals(request.action())) {
-                    // TODO: gọi DAO ở đây để xử lí thông tin, ở đây tôi fake database bằng hardcode
-                    // Fake danh sách sử dụng BigDecimal
-                    List<AuctionSummaryResponse> fakeList = new ArrayList<>();
+                    try {
+                        // 1. Kéo toàn bộ danh sách Phiên đấu giá từ Database lên
+                        List<Auction> dbAuctions = auctionDao.findAll();
 
-                    fakeList.add(new AuctionSummaryResponse(
-                            "A001", "Điện tử", "iPhone 15 Pro Max",
-                            new BigDecimal("25000000"), new BigDecimal("20000000"), new BigDecimal("500000"),
-                            "02:15:30", "RUNNING", 12
-                    ));
+                        // 2. Chuẩn bị một chiếc hộp rỗng để chứa các DTO gửi về Client
+                        List<AuctionSummaryResponse> responseList = new ArrayList<>();
 
-                    fakeList.add(new AuctionSummaryResponse(
-                            "A002", "Nghệ thuật", "Tranh sơn dầu",
-                            new BigDecimal("0"), new BigDecimal("5000000"), new BigDecimal("200000"),
-                            "12:00:00", "OPEN", 5
-                    ));
+                        // 3. Dây chuyền lắp ráp: Lắp thông tin Item và Bid vào từng Auction
+                        for (Auction auction : dbAuctions) {
 
-                    fakeList.add(new AuctionSummaryResponse(
-                            "A003", "Phương tiện", "Honda SH 150i",
-                            new BigDecimal("85000000"), new BigDecimal("70000000"), new BigDecimal("1000000"),
-                            "00:45:10", "RUNNING", 25
-                    ));
+                            // Chui vào kho (bảng auction_items) để lấy tên và loại đồ vật dựa vào itemId
+                            Optional<Item> itemOptional = itemDao.findById(auction.getItemId());
 
-                    // Gói vào Response và gửi đi
-                    Response response = new Response(true, "Lấy danh sách thành công", fakeList);
-                    out.writeObject(response);
-                    out.flush();
+                            if (itemOptional.isPresent()) {
+                                Item item = itemOptional.get();
+
+                                // Chui vào bảng bids để đếm xem có bao nhiêu lượt đặt giá cho phiên này
+                                int bidderCount = (int) bidDao.countByAuctionId(auction.getId());
+
+                                // TODO: Xử lý thời gian còn lại (timeLeft)
+                                // Tạm thời để một chuỗi text, sau này bạn có thể viết hàm trừ EndTime cho Time.now()
+                                String timeLeftStr = "Đang diễn ra";
+
+                                // Lắp ráp toàn bộ dữ liệu thành 1 cái DTO chuẩn chỉ
+                                AuctionSummaryResponse dto = new AuctionSummaryResponse(
+                                        auction.getId().toString(),
+                                        item.getItemType().name(),        // Loại lấy từ bảng Item
+                                        item.getTitle(),                  // Tên lấy từ bảng Item
+                                        item.getStartingPrice(),          // Giá khởi điểm từ Item
+                                        auction.getCurrentPrice(),        // Giá hiện tại từ bảng Auction
+                                        auction.getStatus().name(),       // Trạng thái từ bảng Auction
+                                        timeLeftStr,
+                                        bidderCount                       // Số lượt bid từ bảng Bids
+                                );
+
+                                // Bỏ DTO vào hộp
+                                responseList.add(dto);
+                            }
+                        }
+
+                        // 4. Gói ghém cẩn thận và ném qua Socket về cho màn hình JavaFX
+                        Response response = new Response(true, "Tải dữ liệu thành công!", responseList);
+                        out.writeObject(response);
+                        out.flush();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // Báo lỗi nếu đứt mạng hoặc sập TiDB
+                        out.writeObject(new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null));
+                        out.flush();
+                    }
                 } // TODO: thêm lệnh nhận về ở đây
 
                 else if ("GET_USERS".equals(request.action())) {
@@ -138,32 +165,31 @@ public class ClientHandler implements Runnable {
                 // ... (code xử lý LOGIN) ...
 
                 else if ("REGISTER".equals(request.action())) {
-                    RegisterRequest regData = (RegisterRequest) request.payload();
+                    RegisterRequest registerRequest = (RegisterRequest) request.payload();
                     Response response;
 
                     try {
                         // 1. Kiểm tra xem username đã tồn tại trong DB chưa?
-                        if (userDao.findByName(regData.username()).isPresent()) {
-                            response = new Response(false, "Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.", null);
+                        if (userDao.findByName(registerRequest.username()).isPresent()) {
+                            response = new Response(false, "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác!", null);
                         } else {
-                            // 2. Tạo đối tượng User mới.
-                            // Vì User là Abstract Class, ta dùng UserFactory (giống cách bạn làm trong JdbcUserDao)
-                            Role roleEnum = Role.valueOf(regData.role().toUpperCase());
+                            // 2. Tạo đối tượng User mới (Abstract factory ở UserFactory)
+                            Role roleEnum = Role.valueOf(registerRequest.role().toUpperCase());
                             User newUser = UserFactory.create(roleEnum);
 
-                            // 3. Gắn dữ liệu (Fake hash password để test trước)
+                            // 3. Gắn dữ liệu
                             newUser.setId(UUID.randomUUID());
-                            newUser.setUsername(regData.username());
+                            newUser.setUsername(registerRequest.username());
                             newUser.setPasswordSalt(PasswordUtils.generateSalt());
-                            newUser.setPasswordHash(PasswordUtils.hashPassword(regData.password(), newUser.getPasswordSalt()));
-                            newUser.setFullName(regData.fullName());
-                            newUser.setEmail(regData.email());
+                            newUser.setPasswordHash(PasswordUtils.hashPassword(registerRequest.password(), newUser.getPasswordSalt()));
+                            newUser.setFullName(registerRequest.fullName());
+                            newUser.setEmail(registerRequest.email());
                             newUser.setRole(roleEnum);
                             newUser.setActive(true);
                             newUser.setCreatedAt(LocalDateTime.now());
                             newUser.setUpdatedAt(LocalDateTime.now());
 
-                            // 4. Gọi DAO để INSERT xuống TiDB
+                            // 4. Gọi DAO để INSERT xuống database
                             userDao.save(newUser);
 
                             // 5. Tạo luôn một cái Ví (Wallet) 0 đồng cho tài khoản mới này
