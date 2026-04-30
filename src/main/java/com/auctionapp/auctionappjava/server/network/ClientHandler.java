@@ -1,6 +1,9 @@
 package com.auctionapp.auctionappjava.server.network;
 import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
 import com.auctionapp.auctionappjava.common.model.Auction;
 import com.auctionapp.auctionappjava.common.model.Item;
@@ -129,6 +132,7 @@ public class ClientHandler implements Runnable {
                                         item.getTitle(),                  // Tên lấy từ bảng Item
                                         item.getStartingPrice(),          // Giá khởi điểm từ Item
                                         auction.getCurrentPrice(),        // Giá hiện tại từ bảng Auction
+                                        auction.getMinimumIncrement(),    // Bước giá
                                         auction.getStatus().name(),       // Trạng thái từ bảng Auction
                                         timeLeftStr,
                                         bidderCount                       // Số lượt bid từ bảng Bids
@@ -211,6 +215,64 @@ public class ClientHandler implements Runnable {
                     }
 
                     // Gửi kết quả về cho Client
+                    out.writeObject(response);
+                    out.flush();
+                } else if ("ADD_ITEM".equals(request.action())) {
+                    AddItemRequest data = (AddItemRequest) request.payload();
+                    Response response;
+
+                    try {
+                        // 1. Tạo ID ngẫu nhiên cho vật phẩm mới
+                        UUID newItemId = UUID.randomUUID();
+                        UUID sellerUuid = UUID.fromString(data.sellerId());
+
+                        // 2. KHỞI TẠO VÀ LƯU VẬT PHẨM (Sử dụng AuctionItemFactory giống trong JdbcAuctionItemDao)
+                        // Lưu ý: Tùy thuộc vào thiết kế Factory của nhóm, các tham số có thể cần điều chỉnh thứ tự
+                        Item newItem = AuctionItemFactory.create(
+                                ItemType.valueOf(data.itemType().toUpperCase()), // Ép kiểu chuỗi về Enum ItemType
+                                newItemId,
+                                LocalDateTime.now(),
+                                LocalDateTime.now(),
+                                sellerUuid,
+                                data.title(),
+                                data.description(),
+                                data.startPrice(),
+                                // TODO: Cập nhật 2 thuộc tính bên dưới
+                                "N/A", // Thuộc tính 1 (Có thể cập nhật sau)
+                                "N/A"  // Thuộc tính 2 (Có thể cập nhật sau)
+                        );
+
+                        itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
+
+                        // 3. KHỞI TẠO VÀ LƯU PHIÊN ĐẤU GIÁ LIÊN KẾT VỚI VẬT PHẨM ĐÓ
+                        Auction newAuction = new Auction(
+                                UUID.randomUUID(), // ID phiên đấu giá
+                                LocalDateTime.now(), // Thời gian tạo
+                                LocalDateTime.now(), // Thời gian cập nhật
+                                newItemId,           // Liên kết khóa ngoại với ID vật phẩm vừa tạo
+                                sellerUuid,          // ID người bán
+                                data.startPrice(),   // Giá hiện tại lúc bắt đầu chính là giá khởi điểm
+                                null,                // Chưa có ai đấu giá (Leading Bidder = null)
+                                // TODO: Check để sửa phần dưới này cho phù hợp với UI
+                                LocalDateTime.now(), // Bắt đầu đấu giá ngay lập tức
+                                LocalDateTime.now().plusDays(data.durationDays()), // Kết thúc sau X ngày
+                                AuctionStatus.OPEN,  // Trạng thái phiên
+                                new BigDecimal("50000"), // Bước giá tối thiểu (ví dụ fix cứng 50k)
+                                null                 // Chưa có người chiến thắng
+                        );
+
+                        auctionDao.save(newAuction); // Gọi lệnh INSERT xuống bảng auctions[cite: 1, 6]
+
+                        // 4. Báo cáo thành công
+                        response = new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);
+
+                    } catch (IllegalArgumentException e) {
+                        response = new Response(false, "Sai định dạng loại sản phẩm!", null);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response = new Response(false, "Lỗi máy chủ khi lưu sản phẩm: " + e.getMessage(), null);
+                    }
+
                     out.writeObject(response);
                     out.flush();
                 }

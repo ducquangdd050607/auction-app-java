@@ -88,7 +88,6 @@ public class RegisterController {
 
         else {
             btnConfirm.setDisable(true);
-
             String user = txtUsername.getText();
             String pass = txtPassword.getText();
             String name = txtFullname.getText();
@@ -119,6 +118,7 @@ public class RegisterController {
                             throw new RuntimeException(e);
                         }
                     } else {
+                        btnConfirm.setDisable(false);
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                     }
