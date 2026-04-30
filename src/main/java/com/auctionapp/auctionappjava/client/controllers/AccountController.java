@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,38 +30,36 @@ public class AccountController implements Initializable {
     private Label lblRoute;
 
     @FXML
-    private Label lblUsername;
+    private Label lblFullname;
 
     //TODO: Truy cập tài khoản từ DB lấy thông tin User
-
-    @FXML
-    void handleChangingInformation(ActionEvent event) throws IOException {
-
-        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformationScreen.fxml", "Thay đổi thông tin");
-
-    }
-
-    @FXML
-    void handleDeposit(ActionEvent event) throws IOException {
-
-        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
-
-    }
-
-    @FXML
-    void handleChangePassword(ActionEvent event) throws IOException {
-
-        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml", "Đổi mật khẩu");
-
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            lblFullname.setText(UserSession.getInstance().getCurrentUser().fullName());
+            lblRoute.setText(UserSession.getInstance().getCurrentUser().role());
+            lblEmail.setText(UserSession.getInstance().getCurrentUser().email());
+            lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
             show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    void handleChangingInformation(ActionEvent event) throws IOException {
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformationScreen.fxml", "Thay đổi thông tin");
+    }
+
+    @FXML
+    void handleDeposit(ActionEvent event) throws IOException {
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
+    }
+
+    @FXML
+    void handleChangePassword(ActionEvent event) throws IOException {
+        SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangePasswordScreen.fxml", "Đổi mật khẩu");
     }
 
     void balanceAndDeposit(boolean isVisible) {

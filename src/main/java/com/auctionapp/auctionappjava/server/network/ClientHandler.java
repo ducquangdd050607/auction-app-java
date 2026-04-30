@@ -74,6 +74,7 @@ public class ClientHandler implements Runnable {
                                         dbUser.getUsername(),
                                         dbUser.getFullName(),
                                         dbUser.getRole().name(),     // "ADMIN", "SELLER" hoặc "BIDDER"
+                                        dbUser.getEmail(),
                                         balance
                                 );
 
