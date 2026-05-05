@@ -4,12 +4,20 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class AlertUtils {
     // Runnable cho phép hàm có thể chạy sau khi bấm nút OK
-    public static void SceneOffAlertController(ActionEvent event, String alertTitle, String alertHeader, String alertContent,
-                                               String announcementTitle, String announcementHeader, String announcementContent, Runnable onConfirm) {
+    public static void SceneOffAlertController(ActionEvent event,
+                                               String alertTitle,
+                                               String alertHeader,
+                                               String alertContent,
+                                               String announcementTitle,
+                                               String announcementHeader,
+                                               String announcementContent,
+                                               Runnable onConfirm,
+                                               ImageView announcementImage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(alertTitle);
         alert.setHeaderText(alertHeader);
@@ -29,6 +37,9 @@ public class AlertUtils {
                 successAlert.setTitle(announcementTitle);
                 successAlert.setHeaderText(announcementHeader);
                 successAlert.setContentText(announcementContent);
+                if (announcementImage != null) {
+                    successAlert.setGraphic(announcementImage);
+                }
                 successAlert.showAndWait();
 
                 Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();

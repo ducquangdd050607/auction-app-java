@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -29,17 +30,22 @@
 
             <!-- Role + username -->
             <HBox alignment="CENTER_LEFT" spacing="8">
-                <Label fx:id="lblRole" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số tiền cao nhất hiện tại: " />
+                <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số tiền cao nhất hiện tại: " />
+            <Label fx:id="lblBest" layoutX="10.0" layoutY="10.0" style="-fx-text-fill: white; -fx-font-size: 18;" text="360000" />
             </HBox>
+         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="8">
+            <children>
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Bước giá:" />
+               <Label fx:id="lblMinIncrement" layoutX="10.0" layoutY="10.0" style="-fx-text-fill: white; -fx-font-size: 18;" text="1000" />
+            </children>
+         </HBox>
 
             <!-- Personal info section -->
             <VBox spacing="10">
 
                 <HBox alignment="CENTER_LEFT" spacing="8">
-
-                    <HBox alignment="CENTER_LEFT" spacing="8" />
                     <Label prefHeight="34.0" prefWidth="220.0" style="-fx-text-fill: white; -fx-font-size: 23; -fx-font-weight: bold;" text="Số tiền muốn đặt:" />
-                    <TextField fx:id="txtSetPrice" focusTraversable="false" onAction="#handleTrueConfirm" prefHeight="26.0" prefWidth="195.0" promptText="Nhập giá tiền muốn đặt..." />
+                    <TextField fx:id="txtSetPrice" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập giá tiền muốn đặt..." />
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="0.0" prefWidth="360.0" spacing="26.0" VBox.vgrow="ALWAYS">
                     <children>
@@ -66,6 +72,18 @@
                 <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Số dư trong ví:" />
                 <Label fx:id="lblBalance" style="-fx-text-fill: #FFE066; -fx-font-size: 18; -fx-font-weight: bold;" text="36.000.000đ" />
             </HBox>
+         <HBox alignment="CENTER" spacing="8">
+            <children>
+               <Label prefHeight="25.0" prefWidth="113.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Auto-bidding:" />
+               <CheckBox fx:id="chboxAutoBidding" mnemonicParsing="false" onAction="#handleAutoBidding" prefHeight="28.0" prefWidth="20.0" />
+            </children>
+         </HBox>
+         <HBox fx:id="boxAutoBidding" alignment="CENTER" layoutX="10.0" layoutY="262.0" spacing="8" visible="false">
+            <children>
+               <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Bạn muốn tự động đặt: " />
+               <TextField fx:id="txtSetAuto" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập lượng tiền..." />
+            </children>
+         </HBox>
             <Pane prefHeight="84.0" prefWidth="471.0" />
          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="471.0">
             <children>

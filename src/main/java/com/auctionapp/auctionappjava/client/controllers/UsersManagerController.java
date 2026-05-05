@@ -123,7 +123,7 @@ public class UsersManagerController implements Initializable {
         String[] status = {"HOẠT DỘNG", "CHẶN", "XÓA"}; //trạng thái tài khoản
         cbFilterAccountStatus.getItems().addAll(status);
 
-        String[] routes = {"USER", "ADMIN"};// route
+        String[] routes = {"BIDDER", "ADMIN", "SELLER"};// route
         cbFilterRoute.getItems().addAll(routes);
 
         setupColumns();
@@ -178,7 +178,30 @@ public class UsersManagerController implements Initializable {
                 }
             });
         });
-
+//
+//    }
+//
+//    private void deleteUserFromServer() {
+//        Request req = new Request("DELETE_USER", null);
+//        CompletableFuture.supplyAsync(() -> {
+//            try {
+//                return Client.getInstance().sendRequest(req);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return new Response(false, "Lỗi kết nối Server", null);
+//            }
+//        }).thenAccept(response -> {
+//            Platform.runLater(() -> {
+//                if (response.success()) {
+//                    List<UserDetailResponse> listFromServer = (List<UserDetailResponse>) response.data();
+//                    usersData.setAll(listFromServer);
+//                } else {
+//                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+//                    alert.show();
+//                }
+//            });
+//        });
     }
 
     private void setupColumns() {

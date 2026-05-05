@@ -46,7 +46,8 @@ public class ChangeInformationController {
                     "Thông báo",
                     "",
                     "Đã thay đổi thành công!",
-                    pseudoMethod);
+                    pseudoMethod,
+                    null);
         }
     }
 

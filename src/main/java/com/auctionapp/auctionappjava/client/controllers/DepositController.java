@@ -67,7 +67,8 @@ public class DepositController {
                         "Thông báo",
                         "Đã nạp thành công!",
                         "Happy Gambling!",
-                        pseudoMethod);
+                        pseudoMethod,
+                        null);
             }
         }
     }

@@ -53,7 +53,8 @@ public class ChangePasswordController {
                     "Thông báo",
                     "",
                     "Đã thay đổi mật khẩu thành công!",
-                    pseudoMethod);
+                    pseudoMethod,
+                    null);
 
 
         }

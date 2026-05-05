@@ -5,6 +5,9 @@ import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -16,6 +19,14 @@ import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyF
 
 public class ConfirmBiddingController {
 
+    public static boolean isAutoBidding = false;
+
+    @FXML
+    private Button btnMore;
+
+    @FXML
+    private CheckBox chboxAutoBidding;
+
     @FXML
     private Label lblBalance;
 
@@ -23,20 +34,38 @@ public class ConfirmBiddingController {
     private Label lblError;
 
     @FXML
+    private HBox boxAutoBidding;
+
+    @FXML
+    private Label lblBest;
+
+    @FXML
+    private Label lblMinIncrement;
+
+    @FXML
+    private TextField txtSetAuto;
+
+    @FXML
     private TextField txtSetPrice;
 
     @FXML
-    private Button btnMore;
+    void handleAutoBidding(ActionEvent event) {
+        boxAutoBidding.setVisible(chboxAutoBidding.isSelected());
+        boxAutoBidding.setManaged(chboxAutoBidding.isSelected());
+        isAutoBidding = chboxAutoBidding.isSelected();
+    }
 
     @FXML
     public void initialize() {
         btnMore.setManaged(false);
         settingMoneyFormat(txtSetPrice);
+        settingMoneyFormat(txtSetAuto);
     }
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "pretendtobeatitle");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
+        isAutoBidding = false;
 
     }
 
@@ -59,29 +88,49 @@ public class ConfirmBiddingController {
 
     @FXML
     void handleTrueConfirm(ActionEvent event) {
+
+        btnMore.setManaged(false);
+        btnMore.setVisible(false);
+
         if (txtSetPrice.getText().isEmpty()) {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
+        } else if ((txtSetAuto.getText().isEmpty()) & (isAutoBidding)) {
+            lblError.setText("Hãy nhập giá tiền tự đặt cược.");
+            lblError.setTextFill(Color.web("#FF8A80"));
+
+        } else if (((purifyingText(lblBest.getText()).subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))) > 0) {
+            lblError.setText("Tiền cược nhỏ hơn hiện tại!");
+            lblError.setTextFill(Color.web("#FF8A80"));
+
         } else if (((purifyingText(lblBalance.getText()).subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))) < 0) {
-            //:((((((
 
             lblError.setText("Không đủ tiền trong số dư!");
             lblError.setTextFill(Color.web("#FF8A80"));
             btnMore.setManaged(true);
             btnMore.setVisible(true);
-        }
 
-//            elif (amount < minIncrement) {
-//                lblError.setText("Vui lòng nhiều hơn mức " + minIncrement + ".");
-//                lblError.setVisible(true);
-//                lblError.setTextFill(Color.web("#FF8A80"));
-//            }
+        } else if ((((purifyingText(txtSetPrice.getText())).subtract(purifyingText(lblBest.getText())))
+                // Lấy giá đặt trừ giá hiện tại
+                .compareTo(purifyingText(lblMinIncrement.getText()))) < 0) {
+                // So sánh MinIncre
+
+            lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
+            lblError.setVisible(true);
+            lblError.setTextFill(Color.web("#FF8A80"));
+            }
 
         else {
 
             // TODO: Nơi bạn gọi Service/DAO để trừ tiền vào Database
             // TODO: Cập nhật sàn đấu giá cho người đặt cược mới
+            // TODO: Nếu có chọn Auto-Bidding, lưu lại lựa chọn và tiền trong box
+
+            Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true); // Giữ nguyên tỉ lệ ảnh gốc
+            imageView.setFitWidth(500);       // Chỉ cần set chiều rộng, chiều cao sẽ tự nhảy theo
 
             Runnable pseudoMethod = () -> { //Test
                 System.out.println("PseudoMethod");
@@ -94,8 +143,9 @@ public class ConfirmBiddingController {
                     "",
                     "Thông báo",
                     "",
-                    "Đã thay đổi ĐặK CưỢk thành công!",
-                    pseudoMethod);
+                    "Đã ĐặK CưỢk thành công!",
+                    pseudoMethod,
+                    imageView);
 
         }
     }

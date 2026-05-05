@@ -125,7 +125,7 @@ public class NavigatorController implements Initializable {
 
     @FXML
     void handleGotoUsersManager(ActionEvent event) throws IOException {
-        NavigatorController.activateAccountButton();
+        NavigatorController.activateUserManager();
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManagerScreen.fxml");
     }
 
@@ -214,6 +214,12 @@ public class NavigatorController implements Initializable {
     public static void activateDashboardButton() {
         if (instance != null) {
             instance.setActiveButton(instance.btnDashboard);
+        }
+    }
+
+    public static void activateUserManager() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnGotoUsersManager);
         }
     }
 }
