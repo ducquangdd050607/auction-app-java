@@ -100,11 +100,18 @@ public class ConfirmBiddingController {
             lblError.setText("Hãy nhập giá tiền tự đặt cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (((purifyingText(lblBest.getText()).subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))) > 0) {
-            lblError.setText("Tiền cược nhỏ hơn hiện tại!");
+        } else if ((((purifyingText(txtSetAuto.getText()).subtract(purifyingText(lblMinIncrement.getText())))
+                .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
+            lblError.setText("Giá tiền tự đặt cược đang nhỏ hơn bước đặt");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (((purifyingText(lblBalance.getText()).subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))) < 0) {
+        } else if (((purifyingText(lblBest.getText()).subtract(purifyingText(txtSetPrice.getText())))
+                .compareTo(new BigDecimal(0))) > 0) {
+            lblError.setText("Tiền cược đang nhỏ hơn hiện tại!");
+            lblError.setTextFill(Color.web("#FF8A80"));
+
+        } else if (((purifyingText(lblBalance.getText()).subtract(purifyingText(txtSetPrice.getText())))
+                .compareTo(new BigDecimal(0))) < 0) {
 
             lblError.setText("Không đủ tiền trong số dư!");
             lblError.setTextFill(Color.web("#FF8A80"));
