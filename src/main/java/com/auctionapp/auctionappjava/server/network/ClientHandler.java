@@ -202,7 +202,7 @@ public class ClientHandler implements Runnable {
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
                                     newUser.getId(),
-                                    java.math.BigDecimal.ZERO
+                                    BigDecimal.ZERO
                             );
                             userDao.saveWallet(newWallet);
 
@@ -275,6 +275,28 @@ public class ClientHandler implements Runnable {
 
                     out.writeObject(response);
                     out.flush();
+                } else if("DEPOSIT".equals(request.action())) {
+                    DepositRequest depositRequest = (DepositRequest) request.payload();
+                    String userId = depositRequest.userId();
+                    BigDecimal amount = depositRequest.amount();
+
+                    try {
+
+                        // 2. Tìm ví của User (Sử dụng Optional để tránh NullPointerException)
+                        Wallet wallet = userDao.findWalletByUserId(UUID.fromString(userId))
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy ví cho người dùng này"));
+
+                        // 3. Cộng tiền (BigDecimal là immutable nên phải gán lại kết quả)
+                        BigDecimal newBalance = wallet.getBalance().add(amount);
+                        wallet.setBalance(newBalance);
+
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Định dạng UUID không hợp lệ");
+                    } catch (Exception e) {
+                        // Log lỗi và xử lý
+                        e.printStackTrace();
+                        throw e;
+                    }
                 }
             }
 

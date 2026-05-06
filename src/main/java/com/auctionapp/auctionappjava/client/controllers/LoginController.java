@@ -84,7 +84,6 @@ public class LoginController implements Initializable {
                                 e.printStackTrace();
                             }
 
-
                         } else if ("SELLER".equals(authUser.role())) {
                             try {
                                 adminRoute = false;

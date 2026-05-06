@@ -1,5 +1,10 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.DepositRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,8 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
@@ -30,10 +35,11 @@ public class DepositController {
     public void initialize() {
 
         settingMoneyFormat(txtAmount);
+        lblCurrentBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
 
     }
     @FXML
-    void handleDeposit(ActionEvent event) throws IOException {
+    void handleDeposit(ActionEvent event) {
         // TODO: Viết logic nhận tiền vào database ở đây
         String rawInput = txtAmount.getText();
 
@@ -54,11 +60,19 @@ public class DepositController {
                 lblMessage.setTextFill(Color.web("#FF8A80"));
             } else {
                 // TODO: Nơi bạn gọi Service/DAO để cộng tiền vào Database
+                // Test
 
-                Runnable pseudoMethod = () -> { //Test
-                    System.out.println("PseudoMethod");
+                Runnable pseudoMethod = () -> {
+                    DepositRequest payload = new DepositRequest(UserSession.getInstance().getCurrentUser().id(), purifyingText(txtAmount.getText()));
+                    Request depositRequest = new Request("DEPOSIT", payload);
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            return Client.getInstance().sendRequest(depositRequest);
+                        } catch (Exception e) {
+                            return new Response(false, "Lỗi kết nối máy chủ!", null);
+                        }
+                    });
                 };
-
 
                 AlertUtils.SceneOffAlertController(event,
                         "Chắc chưa?",
@@ -90,7 +104,7 @@ public class DepositController {
     }
 
     @FXML
-    void handleBack(ActionEvent event) throws IOException {
+    void handleBack(ActionEvent event) {
         Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         currentStage.close();
     }
