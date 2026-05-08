@@ -6,6 +6,7 @@ import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -13,6 +14,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -141,31 +144,49 @@ public class AddItemController implements Initializable {
                 description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2);
         Request addItemReq = new Request("ADD_ITEM", payload);
 
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                return Client.getInstance().sendRequest(addItemReq);
-            } catch (Exception e) {
-                return new Response(false, "Lỗi kết nối máy chủ!", null);
-            }
-        }).thenAccept(response -> {
-            Platform.runLater(() -> {
-                btnAddItem.setDisable(true);
-                btnCancel.setDisable(true);
+        Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
+        ImageView imageView = new ImageView(image);
+        imageView.setPreserveRatio(true); // Giữ nguyên tỉ lệ ảnh gốc
+        imageView.setFitWidth(500);       // Chỉ cần set chiều rộng, chiều cao sẽ tự nhảy theo
 
-                if (response.success()) {
-                    // TODO: Hiện 1 cái alert báo thêm sản phẩm thành công
-
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.close();
-                } else {
-                    lblError.setText(response.message());
-                    lblError.setVisible(true);
-                    lblError.setTextFill(Color.web("#FF8A80"));
+        Runnable mainMethod = () -> { //Test
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Client.getInstance().sendRequest(addItemReq);
+                } catch (Exception e) {
+                    return new Response(false, "Lỗi kết nối máy chủ!", null);
                 }
-                btnAddItem.setDisable(false);
-                btnCancel.setDisable(false);
+            }).thenAccept(response -> {
+                Platform.runLater(() -> {
+                    btnAddItem.setDisable(true);
+                    btnCancel.setDisable(true);
+
+                    if (response.success()) {
+                        // TODO: Hiện 1 cái alert báo thêm sản phẩm thành công
+
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.close();
+                    } else {
+                        lblError.setText(response.message());
+                        lblError.setVisible(true);
+                        lblError.setTextFill(Color.web("#FF8A80"));
+                    }
+                    btnAddItem.setDisable(false);
+                    btnCancel.setDisable(false);
+                });
             });
-        });
+        };
+
+
+        AlertUtils.SceneOffAlertController(event,
+                "Chắc chưa?",
+                "Bạn CHẮC muốn Thêm phiên đấu giá này không?",
+                "",
+                "Thông báo",
+                "",
+                "Đã thêm thành công!",
+                mainMethod,
+                imageView);
     }
 
     @Override

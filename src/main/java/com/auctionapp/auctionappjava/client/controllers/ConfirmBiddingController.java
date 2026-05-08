@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
 
-
 public class ConfirmBiddingController {
 
     public static boolean isAutoBidding = false;
@@ -66,6 +65,7 @@ public class ConfirmBiddingController {
     void handleBack(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
         isAutoBidding = false;
+        // TODO: SỬA LẠI CÁCH BACK HOẠT ĐỘNG
 
     }
 

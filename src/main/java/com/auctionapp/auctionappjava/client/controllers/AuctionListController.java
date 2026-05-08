@@ -140,10 +140,10 @@ public class AuctionListController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
         Parent root = loader.load();
 
-        AddItemController addCtrl = loader.getController();
-        addCtrl.setOnItemAdded(newItem -> {
-            loadAuctionsFromServer();
-        });
+//        AddItemController addCtrl = loader.getController();
+//        addCtrl.setOnItemAdded(newItem -> {
+//            loadAuctionsFromServer();
+//        });
 
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -157,8 +157,8 @@ public class AuctionListController implements Initializable {
         String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
         cbFilterStatus.getItems().addAll(statuses);
 
-
         String[] type = {};//manual-added
+
         cbType.getItems().addAll(type);
 
         try {
@@ -213,7 +213,7 @@ public class AuctionListController implements Initializable {
 
         // Nếu bạn có khai báo các cột này trong FXML, hãy map dữ liệu tương tự
         if (clmStatus != null) {
-            clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().status()));
+            clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().status())));
         }
         if (clmTime != null) {
             clmTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().timeLeft()));
@@ -227,7 +227,7 @@ public class AuctionListController implements Initializable {
         }
 
         if (clmMinIncrement != null) {
-            clmMinIncrement.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().minimunIncrement()));
+            clmMinIncrement.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().minimumIncrement()));
         }
 
         if (clmBidders != null) {
@@ -353,7 +353,6 @@ public class AuctionListController implements Initializable {
             stage.centerOnScreen();
             stage.showAndWait();
 
-            // NewSceneController(event,"/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml");
         }
     }
 }

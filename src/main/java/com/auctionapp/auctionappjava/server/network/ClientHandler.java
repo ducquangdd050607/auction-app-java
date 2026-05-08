@@ -17,11 +17,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.*;
+import static java.time.LocalDateTime.now;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -133,8 +135,8 @@ public class ClientHandler implements Runnable {
                                         item.getStartingPrice(),          // Giá khởi điểm từ Item
                                         auction.getCurrentPrice(),        // Giá hiện tại từ bảng Auction
                                         auction.getMinimumIncrement(),    // Bước giá
-                                        auction.getStatus().name(),       // Trạng thái từ bảng Auction
                                         timeLeftStr,
+                                        auction.getStatus(),              // Trạng thái từ bảng Auction
                                         bidderCount                       // Số lượt bid từ bảng Bids
                                 );
 
@@ -190,8 +192,8 @@ public class ClientHandler implements Runnable {
                             newUser.setEmail(registerRequest.email());
                             newUser.setRole(roleEnum);
                             newUser.setActive(true);
-                            newUser.setCreatedAt(LocalDateTime.now());
-                            newUser.setUpdatedAt(LocalDateTime.now());
+                            newUser.setCreatedAt(now());
+                            newUser.setUpdatedAt(now());
 
                             // 4. Gọi DAO để INSERT xuống database
                             userDao.save(newUser);
@@ -199,8 +201,8 @@ public class ClientHandler implements Runnable {
                             // 5. Tạo luôn một cái Ví (Wallet) 0 đồng cho tài khoản mới này
                             Wallet newWallet = new Wallet(
                                     UUID.randomUUID(),
-                                    LocalDateTime.now(),
-                                    LocalDateTime.now(),
+                                    now(),
+                                    now(),
                                     newUser.getId(),
                                     BigDecimal.ZERO
                             );
@@ -231,7 +233,7 @@ public class ClientHandler implements Runnable {
                                 ItemType.valueOf(data.itemType().toUpperCase()), // Ép kiểu chuỗi về Enum ItemType
                                 newItemId,
                                 data.openTime(),
-                                data.openTime(),
+                                data.endTime(),
                                 sellerId,
                                 data.title(),
                                 data.description(),
@@ -241,6 +243,19 @@ public class ClientHandler implements Runnable {
                         );
 
                         itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
+
+                        // 2.5 XÁC ĐỊNH TRẠNG THÁI PHIÊN ĐẤU
+                        AuctionStatus auctionStatus;
+
+                        if (now().isBefore(data.openTime())) {
+                            auctionStatus = AuctionStatus.OPEN;
+                        } else if (now().isBefore(data.endTime())) {
+                            auctionStatus = AuctionStatus.RUNNING;
+                        } else {
+                            auctionStatus = AuctionStatus.FINISHED;
+                        }
+
+                        System.out.println("DEBUG: Auction Status determined as: " + auctionStatus);
 
                         // 3. KHỞI TẠO VÀ LƯU PHIÊN ĐẤU GIÁ LIÊN KẾT VỚI VẬT PHẨM ĐÓ
                         Auction newAuction = new Auction(
@@ -253,7 +268,7 @@ public class ClientHandler implements Runnable {
                                 null,                // Chưa có ai đấu giá (Leading Bidder = null)
                                 data.openTime(), // Bắt đầu đấu giá ngay lập tức
                                 data.endTime(), // Kết thúc sau X ngày
-                                AuctionStatus.OPEN,  // Trạng thái phiên
+                                auctionStatus,  // Trạng thái phiên
                                 data.minIncrement(), // Bước giá tối thiểu
                                 null                 // Chưa có người chiến thắng
                         );

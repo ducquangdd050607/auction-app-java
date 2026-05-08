@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.common.dto;
 
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -10,8 +12,8 @@ public record AuctionSummaryResponse(
         /*String imagePath,*/ // Đường dẫn ảnh thu nhỏ (kbt có cần hay không nên cmt lại)
         BigDecimal currentPrice,   // Giá hiện tại
         BigDecimal startPrice,     // Khởi đầu
-        BigDecimal minimunIncrement,    // Bước giá
+        BigDecimal minimumIncrement,    // Bước giá
         /*long*/String timeLeft, // Thời gian còn lại (tạm để String test Socket trước)
-        String status,
+        AuctionStatus status,
         int bidderCount  // Số bidder quan tâm
 ) implements Serializable {}

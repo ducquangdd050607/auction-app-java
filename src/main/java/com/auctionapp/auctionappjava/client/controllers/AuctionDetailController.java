@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
@@ -55,9 +56,10 @@ public class AuctionDetailController {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
         lblCurrentPrice.setText(auction.currentPrice().toString());
-        lblMinIncrement.setText(auction.minimunIncrement().toString());
+        lblMinIncrement.setText(auction.minimumIncrement().toString());
         lblStartingPrice.setText(auction.startPrice().toString());
-        lblStatus.setText(auction.status());
+        lblStatus.setText(String.valueOf(auction.status()));
+        //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
     }
 
     @FXML
@@ -69,7 +71,7 @@ public class AuctionDetailController {
     @FXML
     void handleBidding(ActionEvent event) throws IOException {
 
-        if (lblStatus.getText().equals("RUNNING")) {
+        if (AuctionStatus.RUNNING.equals(AuctionStatus.valueOf(lblStatus.getText()))) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {
             Runnable unableToGamble = () -> {
