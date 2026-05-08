@@ -224,22 +224,20 @@ public class ClientHandler implements Runnable {
                     try {
                         // 1. Tạo ID ngẫu nhiên cho vật phẩm mới
                         UUID newItemId = UUID.randomUUID();
-                        UUID sellerUuid = UUID.fromString(data.sellerId());
+                        UUID sellerId = UUID.fromString(data.sellerId());
 
                         // 2. KHỞI TẠO VÀ LƯU VẬT PHẨM (Sử dụng AuctionItemFactory giống trong JdbcAuctionItemDao)
-                        // Lưu ý: Tùy thuộc vào thiết kế Factory của nhóm, các tham số có thể cần điều chỉnh thứ tự
                         Item newItem = AuctionItemFactory.create(
                                 ItemType.valueOf(data.itemType().toUpperCase()), // Ép kiểu chuỗi về Enum ItemType
                                 newItemId,
-                                LocalDateTime.now(),
-                                LocalDateTime.now(),
-                                sellerUuid,
+                                data.openTime(),
+                                data.openTime(),
+                                sellerId,
                                 data.title(),
                                 data.description(),
                                 data.startPrice(),
-                                // TODO: Cập nhật 2 thuộc tính bên dưới
-                                "N/A", // Thuộc tính 1 (Có thể cập nhật sau)
-                                "N/A"  // Thuộc tính 2 (Có thể cập nhật sau)
+                                data.attribute1(),
+                                data.attribute2()
                         );
 
                         itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
@@ -247,21 +245,20 @@ public class ClientHandler implements Runnable {
                         // 3. KHỞI TẠO VÀ LƯU PHIÊN ĐẤU GIÁ LIÊN KẾT VỚI VẬT PHẨM ĐÓ
                         Auction newAuction = new Auction(
                                 UUID.randomUUID(), // ID phiên đấu giá
-                                LocalDateTime.now(), // Thời gian tạo
-                                LocalDateTime.now(), // Thời gian cập nhật
+                                data.openTime(), // Thời gian tạo
+                                data.openTime(), // Thời gian cập nhật
                                 newItemId,           // Liên kết khóa ngoại với ID vật phẩm vừa tạo
-                                sellerUuid,          // ID người bán
+                                sellerId,          // ID người bán
                                 data.startPrice(),   // Giá hiện tại lúc bắt đầu chính là giá khởi điểm
                                 null,                // Chưa có ai đấu giá (Leading Bidder = null)
-                                // TODO: Check để sửa phần dưới này cho phù hợp với UI
-                                LocalDateTime.now(), // Bắt đầu đấu giá ngay lập tức
-                                LocalDateTime.now().plusDays(data.durationDays()), // Kết thúc sau X ngày
+                                data.openTime(), // Bắt đầu đấu giá ngay lập tức
+                                data.endTime(), // Kết thúc sau X ngày
                                 AuctionStatus.OPEN,  // Trạng thái phiên
-                                new BigDecimal("50000"), // Bước giá tối thiểu (ví dụ fix cứng 50k)
+                                data.minIncrement(), // Bước giá tối thiểu
                                 null                 // Chưa có người chiến thắng
                         );
 
-                        auctionDao.save(newAuction); // Gọi lệnh INSERT xuống bảng auctions[cite: 1, 6]
+                        auctionDao.save(newAuction); // Gọi lệnh INSERT xuống bảng auctions
 
                         // 4. Báo cáo thành công
                         response = new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);

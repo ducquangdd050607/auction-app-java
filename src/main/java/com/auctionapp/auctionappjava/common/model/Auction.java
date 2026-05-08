@@ -5,7 +5,6 @@ import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-//Một phiên đấu giá (auction) với trạng thái, thời gian, giá và người thắng
 public class Auction extends BaseEntity {
     private UUID itemId;
     private UUID sellerId;

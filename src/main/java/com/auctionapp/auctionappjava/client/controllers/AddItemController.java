@@ -1,17 +1,20 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-import com.auctionapp.auctionappjava.common.model.ArtItem;
-import com.auctionapp.auctionappjava.common.model.ElectronicsItem;
-import com.auctionapp.auctionappjava.common.model.Item;
-import com.auctionapp.auctionappjava.common.model.VehicleItem;
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.util.MoneyUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
@@ -19,8 +22,9 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class AddItemController implements Initializable {
 
@@ -28,17 +32,25 @@ public class AddItemController implements Initializable {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @FXML
+    private RowConstraints extra1;
+    @FXML
+    private RowConstraints extra2;
+    @FXML
     private ComboBox<String> cbCategory;
     @FXML
     private Label lblError;
     @FXML
-    private Label lblExtraInfo;
+    private Label lblExtraInfo1;
     @FXML
-    private TextArea txtDescription;
+    private Label lblExtraInfo2;
+    @FXML
+    private TextField txtDescription;
     @FXML
     private TextField txtEndDate;
     @FXML
-    private TextField txtExtraInfo;
+    private TextField txtExtraInfo1;
+    @FXML
+    private TextField txtExtraInfo2;
     @FXML
     private TextField txtItemName;
     @FXML
@@ -47,12 +59,23 @@ public class AddItemController implements Initializable {
     private TextField txtStartingPrice;
     @FXML
     private TextField txtMinIncrement;
+    @FXML
+    private Button btnAddItem;
+    @FXML
+    private Button btnCancel;
 
-    private java.util.function.Consumer<Item> onItemAdded;
+    /*private void toggleExtraRows(boolean show) {
+        lblExtraInfo1.setVisible(show);
+        lblExtraInfo1.setManaged(show);
+        txtExtraInfo1.setVisible(show);
+        txtExtraInfo1.setManaged(show);
 
-    public void setOnItemAdded(java.util.function.Consumer<Item> callback) {
-        this.onItemAdded = callback;
-    }
+        lblExtraInfo2.setVisible(show);
+        lblExtraInfo2.setManaged(show);
+        txtExtraInfo2.setVisible(show);
+        txtExtraInfo2.setManaged(show);
+    }*/
+
 
     @FXML
     void handleAddItem(ActionEvent event) {
@@ -64,11 +87,12 @@ public class AddItemController implements Initializable {
         String openDateText = txtOpenDate.getText().trim();
         String endDateText = txtEndDate.getText().trim();
         String category = cbCategory.getValue();
-        String extraInfo = txtExtraInfo.getText().trim();
+        String attribute1 = txtExtraInfo1.getText().trim();
+        String attribute2 = txtExtraInfo2.getText().trim();
         String minIncrement = txtMinIncrement.getText().trim();
 
         if (name.isEmpty() || priceText.isEmpty() || openDateText.isEmpty()
-                || endDateText.isEmpty() || category == null) {
+                || endDateText.isEmpty() || minIncrement.isEmpty() || category == null) {
             lblError.setText("Vui lòng điền đầy đủ thông tin bắt buộc.");
             return;
         }
@@ -83,64 +107,70 @@ public class AddItemController implements Initializable {
             return;
         }
 
-        LocalDateTime openDate, endDate;
+        LocalDateTime openTime, endTime;
         try {
-            openDate = LocalDateTime.parse(openDateText, DATE_FORMATTER);
-            endDate = LocalDateTime.parse(endDateText, DATE_FORMATTER);
+            openTime = LocalDateTime.parse(openDateText, DATE_FORMATTER);
+            endTime = LocalDateTime.parse(endDateText, DATE_FORMATTER);
         } catch (DateTimeParseException e) {
             lblError.setText("Định dạng ngày phải là: dd/MM/yyyy HH:mm");
             return;
         }
 
-        if (!endDate.isAfter(openDate)) {
+        if (!endTime.isAfter(openTime)) {
             lblError.setText("Ngày kết thúc phải sau ngày mở.");
             return;
         }
 
-        // --- Tạo Item theo loại ---
-        // UUID dùng random
-        UUID sellerId = UUID.randomUUID();
-        UUID id = UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
+        // Các thuộc tính
+        String type = null;
+        long duration = ChronoUnit.MINUTES.between(openTime, endTime);
 
-        Item newItem;
         switch (category) {
             case "Nghệ thuật":
-                newItem = new ArtItem(id, now, now, sellerId,
-                        name, description, startingPrice,
-                        extraInfo,   // artist
-                        "");         // medium – có thể thêm field sau
+                type = ItemType.ART.name();
                 break;
             case "Điện tử":
-                newItem = new ElectronicsItem(id, now, now, sellerId,
-                        name, description, startingPrice,
-                        extraInfo,   // brand
-                        "");         // model
+                type = ItemType.ELECTRONICS.name();
                 break;
             case "Phương tiện":
-                newItem = new VehicleItem(id, now, now, sellerId,
-                        name, description, startingPrice,
-                        extraInfo,   // brand
-                        "");         // regist-cáijđấy
+                type = ItemType.VEHICLE.name();
                 break;
-
-
-            default:
-                // Tạo lỗi Item lạ
-                lblError.setText("Loại sản phẩm chưa được hỗ trợ: " + category);
-                return;
         }
 
-        if (onItemAdded != null) {
-            onItemAdded.accept(newItem);
-        }
+        AddItemRequest payload = new AddItemRequest(UserSession.getInstance().getCurrentUser().id(), name,
+                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2);
+        Request addItemReq = new Request("ADD_ITEM", payload);
 
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(addItemReq);
+            } catch (Exception e) {
+                return new Response(false, "Lỗi kết nối máy chủ!", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                btnAddItem.setDisable(true);
+                btnCancel.setDisable(true);
+
+                if (response.success()) {
+                    // TODO: Hiện 1 cái alert báo thêm sản phẩm thành công
+
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.close();
+                } else {
+                    lblError.setText(response.message());
+                    lblError.setVisible(true);
+                    lblError.setTextFill(Color.web("#FF8A80"));
+                }
+                btnAddItem.setDisable(false);
+                btnCancel.setDisable(false);
+            });
+        });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        /*toggleExtraRows(false);*/
 
         // Populate category dropdown từ ItemType hoặc danh sách cố định
         cbCategory.getItems().addAll("Nghệ thuật", "Điện tử", "Phương tiện"); // mở rộng theo ItemType
@@ -151,20 +181,27 @@ public class AddItemController implements Initializable {
             if (selected == null) return;
             switch (selected) {
                 case "Nghệ thuật":
-                    lblExtraInfo.setText("Tên nghệ sĩ:");
-                    txtExtraInfo.setPromptText("Ví dụ: Nguyễn Văn A");
+                    /*toggleExtraRows(true);*/
+                    lblExtraInfo1.setText("Tên nghệ sĩ:");
+                    txtExtraInfo1.setPromptText("Ví dụ: Nguyễn Văn A");
+                    lblExtraInfo2.setText("Thể loại:");
+                    txtExtraInfo2.setPromptText("Ví dụ: tranh vẽ, ảnh chụp,...");
                     break;
                 case "Điện tử":
-                    lblExtraInfo.setText("Thương hiệu:");
-                    txtExtraInfo.setPromptText("Ví dụ: Samsung");
+                    lblExtraInfo1.setText("Thương hiệu:");
+                    txtExtraInfo1.setPromptText("Ví dụ: Samsung,...");
+                    lblExtraInfo2.setText("Loại sản phẩm:");
+                    txtExtraInfo2.setPromptText("Ví dụ: smartphone, laptop,...");
                     break;
                 case "Phương tiện":
-                    lblExtraInfo.setText("Thương hiệu:");
-                    txtExtraInfo.setPromptText("Ví dụ: Nissan");
+                    lblExtraInfo1.setText("Nhà sản xuất:");
+                    txtExtraInfo1.setPromptText("Ví dụ: Nissan,...");
+                    lblExtraInfo2.setText("Registration Hint:");  // TODO: chỉnh lại tên
+                    txtExtraInfo2.setPromptText("Ví dụ: ...");
                     break;
 
                 default:
-                    lblExtraInfo.setText("Thông tin thêm:");
+                    lblExtraInfo1.setText("Thông tin thêm:");
             }
         });
     }
