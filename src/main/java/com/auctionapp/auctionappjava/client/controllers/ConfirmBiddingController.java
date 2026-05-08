@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
@@ -145,7 +146,8 @@ public class ConfirmBiddingController {
 
             // 2. Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
-                    currentAuctionId, // ID phiên đấu giá lấy từ biến ở trên
+                    // TODO: Hiện để random dưới đây, phải tìm cách lôi đc auctionID ra từ AuctionDetailController ra đây
+                    UUID.randomUUID(), // ID phiên đấu giá lấy từ biến ở trên
                     UserSession.getInstance().getCurrentUser().id(), // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược
             );
