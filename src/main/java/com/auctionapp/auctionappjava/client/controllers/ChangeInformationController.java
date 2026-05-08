@@ -1,5 +1,10 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.ChangeInformationRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class ChangeInformationController {
 
@@ -36,7 +42,18 @@ public class ChangeInformationController {
 
             Runnable pseudoMethod = () -> { //Test
                 System.out.println("PseudoMethod");
+
+                ChangeInformationRequest payload = new ChangeInformationRequest(UserSession.getInstance().getCurrentUser().id(), txtFullname.getText() , txtEmail.getText());
+                Request changeInformationRequest = new Request("CHANGE_INFORMATION", payload);
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return Client.getInstance().sendRequest(changeInformationRequest);
+                    } catch (Exception e) {
+                        return new Response(false, "Lỗi kết nối máy chủ!", null);
+                    }
+                });
             };
+
 
 
             AlertUtils.SceneOffAlertController(event,
