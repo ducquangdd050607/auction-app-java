@@ -50,9 +50,13 @@ public class AuctionDetailController {
     @FXML
     private Label txtDescription;
 
-    //TODO: Truy cập thông tin vật phẩm
+    //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k
+    public String currentAuctionId;
 
     void setAuction(AuctionSummaryResponse auction) {
+        //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k
+        this.currentAuctionId = auction.auctionId();
+
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
         lblCurrentPrice.setText(auction.currentPrice().toString());
@@ -70,7 +74,6 @@ public class AuctionDetailController {
 
     @FXML
     void handleBidding(ActionEvent event) throws IOException {
-
         if (AuctionStatus.RUNNING.equals(AuctionStatus.valueOf(lblStatus.getText()))) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {

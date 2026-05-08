@@ -1,7 +1,13 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -12,6 +18,7 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
@@ -129,31 +136,65 @@ public class ConfirmBiddingController {
             }
 
         else {
+            // 1. Lấy số tiền người dùng chốt đặt
+            BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
 
-            // TODO: Nơi bạn gọi Service/DAO để trừ tiền vào Database
-            // TODO: Cập nhật sàn đấu giá cho người đặt cược mới
-            // TODO: Nếu có chọn Auto-Bidding, lưu lại lựa chọn và tiền trong box
+            // ⚠️ LƯU Ý QUAN TRỌNG: Bạn cần có ID của phiên đấu giá!
+            // Tùy thuộc vào cách bạn truyền dữ liệu giữa các màn hình, hãy thay thế biến này cho đúng.
+            // UUID currentAuctionId = DataStorage.getInstance().getCurrentAuction().getId();
 
+            // 2. Gói hàng gửi đi
+            PlaceBidRequest payload = new PlaceBidRequest(
+                    currentAuctionId, // ID phiên đấu giá lấy từ biến ở trên
+                    UserSession.getInstance().getCurrentUser().id(), // ID người dùng hiện tại
+                    finalBidAmount // Số tiền cược
+            );
+            Request bidReq = new Request("PLACE_BID", payload);
+
+            // Chuẩn bị hình ảnh cho Alert
             Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
             ImageView imageView = new ImageView(image);
-            imageView.setPreserveRatio(true); // Giữ nguyên tỉ lệ ảnh gốc
-            imageView.setFitWidth(500);       // Chỉ cần set chiều rộng, chiều cao sẽ tự nhảy theo
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(500);
 
-            Runnable pseudoMethod = () -> { //Test
-                System.out.println("PseudoMethod");
+            // 3. Viết hàm thực thi thật (thay thế cho pseudoMethod)
+            Runnable mainMethod = () -> {
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return Client.getInstance().sendRequest(bidReq);
+                    } catch (Exception e) {
+                        return new Response(false, "Lỗi kết nối máy chủ!", null);
+                    }
+                }).thenAccept(response -> {
+                    Platform.runLater(() -> {
+                        if (response.success()) {
+                            // Thành công: Đóng cửa sổ Confirm và (có thể) tải lại màn hình Detail
+                            System.out.println("Đặt giá thành công!");
+                            // Nếu AlertUtils của bạn tự đóng scene rồi thì không cần stage.close() nữa
+                        } else {
+                            // Thất bại (VD: Server check thấy giá vừa bị người khác nẫng tay trên)
+                            lblError.setText(response.message());
+                            lblError.setVisible(true);
+                            lblError.setTextFill(Color.web("#FF8A80"));
+
+                            // Hiện lại nút bấm để người dùng có thể thao tác lại
+                            btnMore.setManaged(true);
+                            btnMore.setVisible(true);
+                        }
+                    });
+                });
             };
 
-
+            // Gọi hàm tạo Alert và truyền mainMethod vào để thực thi khi user ấn OK
             AlertUtils.SceneOffAlertController(event,
                     "Chắc chưa?",
-                    "Bạn CHẮC muốn ĐặK CưỢk không?",
+                    "Bạn CHẮC muốn đặt giá với số tiền " + txtSetPrice.getText() + " đ không?",
                     "",
                     "Thông báo",
                     "",
-                    "Đã ĐặK CưỢk thành công!",
-                    pseudoMethod,
+                    "Đã đặt giá thành công!",
+                    mainMethod,
                     imageView);
-
         }
     }
 

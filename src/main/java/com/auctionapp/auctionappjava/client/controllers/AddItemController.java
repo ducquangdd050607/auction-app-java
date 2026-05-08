@@ -79,6 +79,7 @@ public class AddItemController implements Initializable {
         txtExtraInfo2.setManaged(show);
     }*/
 
+    private Image alertImage;
 
     @FXML
     void handleAddItem(ActionEvent event) {
@@ -144,12 +145,16 @@ public class AddItemController implements Initializable {
                 description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2);
         Request addItemReq = new Request("ADD_ITEM", payload);
 
-        Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
-        ImageView imageView = new ImageView(image);
+        ImageView imageView = new ImageView(alertImage);
         imageView.setPreserveRatio(true); // Giữ nguyên tỉ lệ ảnh gốc
         imageView.setFitWidth(500);       // Chỉ cần set chiều rộng, chiều cao sẽ tự nhảy theo
 
         Runnable mainMethod = () -> { //Test
+            // Khóa nút ngay lập tức trước khi gọi mạng
+            Platform.runLater(() -> {
+                btnAddItem.setDisable(true);
+                btnCancel.setDisable(true);
+            });
             CompletableFuture.supplyAsync(() -> {
                 try {
                     return Client.getInstance().sendRequest(addItemReq);
@@ -158,18 +163,16 @@ public class AddItemController implements Initializable {
                 }
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
-                    btnAddItem.setDisable(true);
-                    btnCancel.setDisable(true);
-
                     if (response.success()) {
-                        // TODO: Hiện 1 cái alert báo thêm sản phẩm thành công
-
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
                     } else {
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                         lblError.setTextFill(Color.web("#FF8A80"));
+
+                        btnAddItem.setDisable(true);
+                        btnCancel.setDisable(true);
                     }
                     btnAddItem.setDisable(false);
                     btnCancel.setDisable(false);
@@ -192,6 +195,8 @@ public class AddItemController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         /*toggleExtraRows(false);*/
+
+        alertImage = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
 
         // Populate category dropdown từ ItemType hoặc danh sách cố định
         cbCategory.getItems().addAll("Nghệ thuật", "Điện tử", "Phương tiện"); // mở rộng theo ItemType
