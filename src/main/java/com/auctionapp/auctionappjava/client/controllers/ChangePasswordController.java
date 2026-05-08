@@ -1,5 +1,10 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.ChangePasswordRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ChangePasswordController {
 
@@ -43,6 +50,16 @@ public class ChangePasswordController {
 
             Runnable pseudoMethod = () -> { //Test
                 System.out.println("PseudoMethod");
+
+                ChangePasswordRequest payload = new ChangePasswordRequest(UserSession.getInstance().getCurrentUser().id(), txtNewPassword.getText());
+                Request changePasswordRequest = new Request("CHANGE_PASSWORD", payload);
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return Client.getInstance().sendRequest(changePasswordRequest);
+                    } catch (Exception e) {
+                        return new Response(false, "Lỗi kết nối máy chủ!", null);
+                    }
+                });
             };
 
 

@@ -276,6 +276,7 @@ public class ClientHandler implements Runnable {
                     DepositRequest depositRequest = (DepositRequest) request.payload();
                     String userId = depositRequest.userId();
                     BigDecimal amount = depositRequest.amount();
+                    Response response;
 
                     try {
 
@@ -286,14 +287,69 @@ public class ClientHandler implements Runnable {
                         // 3. Cộng tiền (BigDecimal là immutable nên phải gán lại kết quả)
                         BigDecimal newBalance = wallet.getBalance().add(amount);
                         wallet.setBalance(newBalance);
+                        userDao.saveWallet(wallet);
 
-                    } catch (IllegalArgumentException e) {
-                        throw new RuntimeException("Định dạng UUID không hợp lệ");
+                        response = new Response(true, "Nạp thành gay", null);
+
                     } catch (Exception e) {
                         // Log lỗi và xử lý
                         e.printStackTrace();
-                        throw e;
+                        response = new Response(false, "Nạp thất bại", null);
                     }
+
+                    out.writeObject(response);
+                    out.flush();
+
+                } else if ("CHANGE_INFORMATION".equals(request.action())) {
+                    ChangeInformationRequest data = (ChangeInformationRequest) request.payload();
+                    String userId = data.userId();
+                    String newFullName = data.fullName();
+                    String newEmail = data.email();
+                    Response response;
+
+                    try {
+                        // 1. Tìm User đó
+                        User user = userDao.findById(UUID.fromString(userId))
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
+                        // 2. Thay đổi dữ liệu
+
+                        user.setFullName(newFullName);
+                        user.setEmail(newEmail);
+                        userDao.save(user);
+
+                        response = new Response(true, "Thay đổi thành công", null);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response = new Response(false, "Lỗi máy chủ khi thay đổi thông tin", null);
+                    }
+
+                    out.writeObject(response);
+                    out.flush();
+
+                } else if ("CHANGE_PASSWORD".equals(request.action())) {
+                    ChangePasswordRequest data =  (ChangePasswordRequest) request.payload();
+                    String userId = data.userId();
+                    String newPassword = data.newPassword();
+                    Response response;
+
+                    try {
+                        User user = userDao.findById(UUID.fromString(userId))
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
+
+                        user.setPasswordSalt(PasswordUtils.generateSalt());
+                        user.setPasswordHash(PasswordUtils.hashPassword(newPassword, user.getPasswordSalt()));
+
+                        userDao.save(user);
+
+                        response = new Response(true, "Đổi mật khẩu thành công", null);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response = new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
+                    }
+                    out.writeObject(response);
+                    out.flush();
                 }
             }
 
