@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static com.auctionapp.auctionappjava.client.controllers.AuctionDetailController.currentAuctionId;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
 
@@ -30,9 +29,12 @@ public class ConfirmBiddingController {
 
     public static boolean isAutoBidding = false;
 
-    private BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
-    private BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
-    private BigDecimal balance = UserSession.getInstance().getCurrentUser().walletBalance();
+    private final BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
+    private final BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
+    private final BigDecimal balance = UserSession.getInstance().getCurrentUser().walletBalance();
+    private final String userId = UserSession.getInstance().getCurrentUser().id();
+    private final String currentAuctionId = AuctionSession.getInstance().getCurrentAuction().auctionId();
+
     @FXML
     private Button btnMore;
 
@@ -61,6 +63,9 @@ public class ConfirmBiddingController {
     private TextField txtSetPrice;
 
     @FXML
+    private Button btnConfirm;
+
+    @FXML
     void handleAutoBidding(ActionEvent event) {
         boxAutoBidding.setVisible(chboxAutoBidding.isSelected());
         boxAutoBidding.setManaged(chboxAutoBidding.isSelected());
@@ -69,6 +74,8 @@ public class ConfirmBiddingController {
 
     @FXML
     public void initialize() {
+        btnMore.setManaged(false);
+        btnMore.setVisible(false);
         lblBalance.setText(balance.toPlainString());
         lblBest.setText(best.toPlainString());
         lblMinIncrement.setText(minIncrement.toPlainString());
@@ -104,10 +111,6 @@ public class ConfirmBiddingController {
 
     @FXML
     void handleTrueConfirm(ActionEvent event) {
-
-        btnMore.setManaged(false);
-        btnMore.setVisible(false);
-
         if (txtSetPrice.getText().isEmpty()) {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
@@ -138,22 +141,20 @@ public class ConfirmBiddingController {
                 // Lấy giá đặt trừ giá hiện tại
                 .compareTo(minIncrement)) < 0) {
             // So sánh MinIncre
-
             lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
             lblError.setVisible(true);
             lblError.setTextFill(Color.web("#FF8A80"));
         } else {
-            // 1. Lấy số tiền người dùng chốt đặt
+            // Khóa nút đặt giá
+            btnConfirm.setDisable(true);
+
+            // Lấy số tiền người dùng chốt đặt
             BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
 
-            // ⚠️ LƯU Ý QUAN TRỌNG: Bạn cần có ID của phiên đấu giá!
-            // Tùy thuộc vào cách bạn truyền dữ liệu giữa các màn hình, hãy thay thế biến này cho đúng.
-            // UUID currentAuctionId = DataStorage.getInstance().getCurrentAuction().getId();
-
-            // 2. Gói hàng gửi đi
+            // Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
                     UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
-                    UserSession.getInstance().getCurrentUser().id(), // ID người dùng hiện tại
+                    userId, // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược
             );
             Request bidReq = new Request("PLACE_BID", payload);
@@ -188,10 +189,9 @@ public class ConfirmBiddingController {
                         lblError.setTextFill(Color.web("#FF8A80"));
 
                         // Hiện lại nút bấm để người dùng có thể thao tác lại
+                        btnConfirm.setDisable(false);
                         btnMore.setManaged(true);
                         btnMore.setVisible(true);
-
-
                     }
                 });
             });
