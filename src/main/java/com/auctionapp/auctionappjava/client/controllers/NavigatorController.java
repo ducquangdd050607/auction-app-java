@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
@@ -138,6 +139,7 @@ public class NavigatorController implements Initializable {
             try {
                 // Xóa thông tin user trong session này
                 UserSession.getInstance().cleanUserSession();
+                AuctionSession.getInstance().cleanAuctionSession();
                 RegisterController.isRegister = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
             } catch (IOException e) {
