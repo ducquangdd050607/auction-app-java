@@ -50,13 +50,7 @@ public class AuctionDetailController {
     @FXML
     private Label txtDescription;
 
-    //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k - đặt static cho phép Confirm đọc đc AuctionId
-    public static String currentAuctionId;
-
     void setAuction(AuctionSummaryResponse auction) {
-        //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k - để đó
-        currentAuctionId = auction.auctionId();
-
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
         lblStartingPrice.setText(auction.startPrice().toString());
@@ -80,7 +74,6 @@ public class AuctionDetailController {
             Runnable unableToGamble = () -> {
                 btnGamble.setDisable(true);
             };
-
             AlertUtils.ConfirmAlertController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
@@ -89,6 +82,4 @@ public class AuctionDetailController {
     void handleRanking(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng");
     }
-
-
 }
