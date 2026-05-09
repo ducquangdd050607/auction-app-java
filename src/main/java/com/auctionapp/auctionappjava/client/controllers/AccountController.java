@@ -32,15 +32,17 @@ public class AccountController implements Initializable {
     @FXML
     private Label lblFullname;
 
-    //TODO: Truy cập tài khoản từ DB lấy thông tin User
+    public void loadAccountData() {
+        lblFullname.setText(UserSession.getInstance().getCurrentUser().fullName());
+        lblRoute.setText(UserSession.getInstance().getCurrentUser().role());
+        lblEmail.setText(UserSession.getInstance().getCurrentUser().email());
+        lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            lblFullname.setText(UserSession.getInstance().getCurrentUser().fullName());
-            lblRoute.setText(UserSession.getInstance().getCurrentUser().role());
-            lblEmail.setText(UserSession.getInstance().getCurrentUser().email());
-            lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
+            loadAccountData();
             show();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -50,11 +52,13 @@ public class AccountController implements Initializable {
     @FXML
     void handleChangingInformation(ActionEvent event) throws IOException {
         SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/ChangeInformationScreen.fxml", "Thay đổi thông tin");
+        loadAccountData();
     }
 
     @FXML
     void handleDeposit(ActionEvent event) throws IOException {
         SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "Nạp tiền");
+        loadAccountData();
     }
 
     @FXML

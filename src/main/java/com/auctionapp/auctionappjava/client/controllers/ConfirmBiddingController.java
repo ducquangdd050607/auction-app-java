@@ -172,10 +172,7 @@ public class ConfirmBiddingController {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
-                        // Thành công: Đóng cửa sổ Confirm và tải lại màn hình Detail - nhó là 'tải lại'
-                        System.out.println("Đặt giá thành công!");
-
-                        // Cập nhật lại auction session
+                        // Cập nhật lại AuctionSession
                         AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
                         AuctionSummaryResponse updatedData = new AuctionSummaryResponse(
                                 oldData.auctionId(),

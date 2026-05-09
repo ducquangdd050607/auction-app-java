@@ -3,9 +3,11 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.DepositRequest;
+import com.auctionapp.auctionappjava.common.dto.LoginResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -33,14 +35,12 @@ public class DepositController {
 
     @FXML
     public void initialize() {
-
         settingMoneyFormat(txtAmount);
         lblCurrentBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
-
     }
+
     @FXML
     void handleDeposit(ActionEvent event) {
-        // TODO: Viết logic nhận tiền vào database ở đây
         String rawInput = txtAmount.getText();
 
         // Kiểm tra rỗng
@@ -59,10 +59,7 @@ public class DepositController {
                 lblMessage.setVisible(true);
                 lblMessage.setTextFill(Color.web("#FF8A80"));
             } else {
-                // TODO: Nơi bạn gọi Service/DAO để cộng tiền vào Database
-                // Test
-
-                Runnable pseudoMethod = () -> {
+                Runnable depositMethod = () -> {
                     DepositRequest payload = new DepositRequest(UserSession.getInstance().getCurrentUser().id(), purifyingText(txtAmount.getText()));
                     Request depositRequest = new Request("DEPOSIT", payload);
                     CompletableFuture.supplyAsync(() -> {
@@ -71,7 +68,27 @@ public class DepositController {
                         } catch (Exception e) {
                             return new Response(false, "Lỗi kết nối máy chủ!", null);
                         }
-                    });
+                    }).thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            if (response.success()) {
+                                // Cập nhật lại UserSession
+                                LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
+                                LoginResponse updatedUser = new LoginResponse(
+                                        oldUser.id(),
+                                        oldUser.username(),
+                                        oldUser.fullName(),
+                                        oldUser.role(),
+                                        oldUser.email(),
+                                        oldUser.walletBalance().add(amount)   // Cộng thêm tiền nạp vào
+                                );
+                                UserSession.getInstance().setCurrentUser(updatedUser);
+                            } else {
+                                lblMessage.setText(response.message());
+                                lblMessage.setVisible(true);
+                                lblMessage.setTextFill(Color.web("#FF8A80"));
+                            }
+                        });
+                    });;
                 };
 
                 AlertUtils.SceneOffAlertController(event,
@@ -81,7 +98,7 @@ public class DepositController {
                         "Thông báo",
                         "Đã nạp thành công!",
                         "Happy Gambling!",
-                        pseudoMethod,
+                        depositMethod,
                         null);
             }
         }
