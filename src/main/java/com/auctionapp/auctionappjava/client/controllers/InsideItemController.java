@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,10 +11,14 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class InsideItemController {
 
-    private Stage stage;
+    private BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
+    private BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
+    private BigDecimal start = AuctionSession.getInstance().getCurrentAuction().startPrice();
+    //private String bestBidder =
 
     @FXML
     private Button btnBack;
@@ -32,6 +37,9 @@ public class InsideItemController {
 
     @FXML
     private TableColumn<?, ?> colUsername;
+
+    @FXML
+    private Label lblMinIncrement;
 
     @FXML
     private Label lblCategory;
@@ -55,6 +63,16 @@ public class InsideItemController {
     private TableView<?> tableBidders;
 
     @FXML
+    void initialize() {
+        lblStartingPrice.setText(start.toPlainString());
+        lblTopBid.setText(best.toPlainString());
+        lblMinIncrement.setText(minIncrement.toPlainString());
+        lblCategory.setText(AuctionSession.getInstance().getCurrentAuction().category());
+        lblItemName.setText(AuctionSession.getInstance().getCurrentAuction().itemName());
+        lblStatus.setText(AuctionSession.getInstance().getCurrentAuction().status().toString());
+    }
+
+    @FXML
     void handleRemove(ActionEvent event) {
         if (LoginController.adminRoute) {
             // force-remove
@@ -72,7 +90,7 @@ public class InsideItemController {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
 
         } else {
-            stage = (Stage) btnBack.getScene().getWindow();
+            Stage stage = (Stage) btnBack.getScene().getWindow();
             stage.close();
         }
     }

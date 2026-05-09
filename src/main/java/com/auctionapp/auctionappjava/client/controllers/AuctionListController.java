@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
@@ -310,6 +311,7 @@ public class AuctionListController implements Initializable {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
 
                     try {
+                        AuctionSession.getInstance().setCurrentAuction(row.getItem());
                         openAuctionDetail(row.getItem());
                     } catch (IOException e) {
                         throw new RuntimeException(e);

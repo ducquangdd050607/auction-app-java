@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
@@ -29,6 +30,9 @@ public class ConfirmBiddingController {
 
     public static boolean isAutoBidding = false;
 
+    private BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
+    private BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
+    private BigDecimal balance = UserSession.getInstance().getCurrentUser().walletBalance();
     @FXML
     private Button btnMore;
 
@@ -65,7 +69,9 @@ public class ConfirmBiddingController {
 
     @FXML
     public void initialize() {
-        lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString());
+        lblBalance.setText(balance.toPlainString());
+        lblBest.setText(best.toPlainString());
+        lblMinIncrement.setText(minIncrement.toPlainString());
         btnMore.setManaged(false);
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
@@ -110,27 +116,27 @@ public class ConfirmBiddingController {
             lblError.setText("Hãy nhập giá tiền tự đặt cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if ((((purifyingText(txtSetAuto.getText()).subtract(purifyingText(lblMinIncrement.getText())))
+        } else if ((((purifyingText(txtSetAuto.getText()).subtract(minIncrement))
                 .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
             lblError.setText("Giá tiền tự đặt cược đang nhỏ hơn bước đặt");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (((purifyingText(lblBest.getText()).subtract(purifyingText(txtSetPrice.getText())))
-                .compareTo(new BigDecimal(0))) > 0) {
+        } else if ((best.subtract(purifyingText(txtSetPrice.getText())))
+                .compareTo(new BigDecimal(0)) > 0) {
             lblError.setText("Tiền cược đang nhỏ hơn hiện tại!");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (((purifyingText(lblBalance.getText()).subtract(purifyingText(txtSetPrice.getText())))
-                .compareTo(new BigDecimal(0))) < 0) {
+        } else if (balance.subtract(purifyingText(txtSetPrice.getText()))
+                .compareTo(new BigDecimal(0)) < 0) {
 
             lblError.setText("Không đủ tiền trong số dư!");
             lblError.setTextFill(Color.web("#FF8A80"));
             btnMore.setManaged(true);
             btnMore.setVisible(true);
 
-        } else if ((((purifyingText(txtSetPrice.getText())).subtract(purifyingText(lblBest.getText())))
+        } else if ((((purifyingText(txtSetPrice.getText())).subtract(best))
                 // Lấy giá đặt trừ giá hiện tại
-                .compareTo(purifyingText(lblMinIncrement.getText()))) < 0) {
+                .compareTo(minIncrement)) < 0) {
             // So sánh MinIncre
 
             lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
@@ -146,7 +152,6 @@ public class ConfirmBiddingController {
 
             // 2. Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
-                    // TODO: Hiện để random dưới đây, phải tìm cách lôi đc auctionID ra từ AuctionDetailController ra đây - done
                     UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
                     UserSession.getInstance().getCurrentUser().id(), // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược

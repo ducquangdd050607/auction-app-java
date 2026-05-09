@@ -31,6 +31,8 @@
                 <Label fx:id="lblStartingPrice" style="-fx-text-fill: white; -fx-font-size: 13;" />
                 <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="  |  Giá cao nhất:" />
                 <Label fx:id="lblTopBid" style="-fx-text-fill: #FFE066; -fx-font-size: 13; -fx-font-weight: bold;" />
+            <Label layoutX="117.0" layoutY="10.0" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="  |  Bước giá:" />
+            <Label fx:id="lblMinIncrement" layoutX="221.0" layoutY="10.0" style="-fx-text-fill: #FFE066; -fx-font-size: 13; -fx-font-weight: bold;" />
                 <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="  |  Người dẫn đầu:" />
                 <Label fx:id="lblTopBidder" style="-fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold;" />
             </HBox>
