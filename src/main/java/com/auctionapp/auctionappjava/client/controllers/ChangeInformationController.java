@@ -61,24 +61,33 @@ public class ChangeInformationController {
                                     oldUser.walletBalance()
                             );
                             UserSession.getInstance().setCurrentUser(updatedUser);
+
+                            Runnable closeForm = () -> {
+                                Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                                currentStage.close();
+                            };
+
+                            AlertUtils.ConfirmAlertController(
+                                    "Thông báo",
+                                    "Đã thay đổi thành công!",
+                                    closeForm,
+                                    null // TODO: Mari-chan :))
+                            );
                         } else {
                             lblError.setText(response.message());
                             lblError.setVisible(true);
                             lblError.setTextFill(Color.web("#FF8A80"));
                         }
                     });
-                });;
+                });
             };
 
-            AlertUtils.SceneOffAlertController(event,
+            AlertUtils.ConfirmAlertController(
                     "Chắc chưa?",
                     "Bạn có muốn đổi thông tin không?",
-                    "",
-                    "Thông báo",
-                    "",
-                    "Đã thay đổi thành công!",
                     changeInformationMethod,
-                    null);
+                    null
+            );
         }
     }
 

@@ -82,24 +82,33 @@ public class DepositController {
                                         oldUser.walletBalance().add(amount)   // Cộng thêm tiền nạp vào
                                 );
                                 UserSession.getInstance().setCurrentUser(updatedUser);
+
+                                Runnable closeForm = () -> {
+                                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                                    currentStage.close();
+                                };
+
+                                AlertUtils.ConfirmAlertController(
+                                        "Thông báo",
+                                        "Đã nạp tiền thành công!",
+                                        closeForm,
+                                        null // TODO: Mari-chan :))
+                                );
                             } else {
                                 lblMessage.setText(response.message());
                                 lblMessage.setVisible(true);
                                 lblMessage.setTextFill(Color.web("#FF8A80"));
                             }
                         });
-                    });;
+                    });
                 };
 
-                AlertUtils.SceneOffAlertController(event,
+                AlertUtils.ConfirmAlertController(
                         "Chắc chưa?",
-                        "Bạn CHẮC muốn NẠP TIỀN không?",
-                        "Một khi vào, không thể rứt ra:>>",
-                        "Thông báo",
-                        "Đã nạp thành công!",
-                        "Happy Gambling!",
+                        "Bạn có chắc muốn nạp tiền không?",
                         depositMethod,
-                        null);
+                        null
+                );
             }
         }
     }
@@ -113,10 +122,8 @@ public class DepositController {
 
         if (txtAmount.getText().isEmpty()) {
             txtAmount.setText(String.valueOf(amount));
-
         } else {
             txtAmount.setText(String.valueOf(purifyingText(txtAmount.getText()).add(amount)));
-
         }
     }
 
