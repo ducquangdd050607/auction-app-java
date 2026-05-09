@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
@@ -50,7 +51,16 @@ public class AuctionDetailController {
     @FXML
     private Label txtDescription;
 
-    void setAuction(AuctionSummaryResponse auction) {
+    @FXML
+    public void initialize() {
+        // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
+        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
+        if (currentAuction != null) {
+            loadAuctionData(currentAuction);
+        }
+    }
+
+    void loadAuctionData(AuctionSummaryResponse auction) {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
         lblStartingPrice.setText(auction.startPrice().toString());

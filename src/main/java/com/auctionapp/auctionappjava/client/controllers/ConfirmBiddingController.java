@@ -3,6 +3,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
@@ -137,10 +138,7 @@ public class ConfirmBiddingController {
             btnMore.setManaged(true);
             btnMore.setVisible(true);
 
-        } else if ((((purifyingText(txtSetPrice.getText())).subtract(best))
-                // Lấy giá đặt trừ giá hiện tại
-                .compareTo(minIncrement)) < 0) {
-            // So sánh MinIncre
+        } else if ((((purifyingText(txtSetPrice.getText())).subtract(best)).compareTo(minIncrement)) < 0) {
             lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
             lblError.setVisible(true);
             lblError.setTextFill(Color.web("#FF8A80"));
@@ -174,24 +172,48 @@ public class ConfirmBiddingController {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
-                        // Thành công: Đóng cửa sổ Confirm và (có thể) tải lại màn hình Detail
+                        // Thành công: Đóng cửa sổ Confirm và tải lại màn hình Detail - nhó là 'tải lại'
                         System.out.println("Đặt giá thành công!");
 
+                        // Cập nhật lại auction session
+                        AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
+                        AuctionSummaryResponse updatedData = new AuctionSummaryResponse(
+                                oldData.auctionId(),
+                                oldData.category(),
+                                oldData.itemName(),
+                                oldData.startPrice(),
+                                finalBidAmount, // Thay currentprice bằng giá vừa đặt thành công
+                                oldData.minimumIncrement(),
+                                oldData.timeLeft(),
+                                oldData.status(),
+                                oldData.bidderCount() + 1
+                        );
+                        AuctionSession.getInstance().setCurrentAuction(updatedData);
+
+                        // Định nghĩa hành động sẽ xảy ra khi người dùng bấm nút OK trên Alert
+                        Runnable goBackToDetail = () -> {
+                            try {
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        };
+
+                        // Hiển thị Alert, truyền Runnable vào để khi tắt Alert nó tự nhảy trang
                         AlertUtils.ConfirmAlertController(
                                 "Thông báo",
                                 "Đã đặt giá thành công!",
-                                null,
+                                goBackToDetail, // Gọi hàm chuyển trang
                                 imageView);
                     } else {
-                        // Thất bại (VD: Server check thấy giá vừa bị người khác nẫng tay trên)
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                         lblError.setTextFill(Color.web("#FF8A80"));
 
                         // Hiện lại nút bấm để người dùng có thể thao tác lại
                         btnConfirm.setDisable(false);
-                        btnMore.setManaged(true);
-                        btnMore.setVisible(true);
+                        /*btnMore.setManaged(true);
+                        btnMore.setVisible(true);*/
                     }
                 });
             });
