@@ -182,6 +182,11 @@ public class AuctionListController implements Initializable {
 
     // Luồng xử lý ngầm gọi Server
     private void loadAuctionsFromServer() {
+        ProgressIndicator loadingSpinner = new ProgressIndicator();
+        loadingSpinner.setMaxSize(50, 50);
+        listAuctions.setPlaceholder(loadingSpinner);
+        auctionData.clear(); // Xóa sạch dữ liệu cũ trong lúc chờ tải mới
+
         Request req = new Request("GET_ALL_AUCTIONS", null);
 
         CompletableFuture.supplyAsync(() -> {
@@ -202,6 +207,13 @@ public class AuctionListController implements Initializable {
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
                     alert.show();
+                }
+
+                // Nếu tải xong mà danh sách vẫn trống trơn, đổi vòng xoay thành dòng chữ
+                if (auctionData.isEmpty()) {
+                    Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
+                    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                    listAuctions.setPlaceholder(noDataLabel);
                 }
             });
         });
@@ -331,7 +343,7 @@ public class AuctionListController implements Initializable {
 
             // Truyền dữ liệu sang màn hình con
             AuctionDetailController ctrl = loader.getController();
-            ctrl.setAuction(auction);
+            ctrl.loadAuctionData(auction);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
