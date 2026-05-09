@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.*;
 import static java.time.LocalDateTime.now;
 
 public class ClientHandler implements Runnable {
@@ -395,7 +394,7 @@ public class ClientHandler implements Runnable {
                                             LocalDateTime.now(),
                                             LocalDateTime.now(),
                                             data.auctionId(),     // ID phiên
-                                            data.userId(),        // ID người đặt
+                                            UUID.fromString(data.userId()),        // ID người đặt
                                             data.amount(),        // Số tiền đặt
                                             false,
                                             null                  // :))? Note để làm gì?
@@ -404,11 +403,12 @@ public class ClientHandler implements Runnable {
 
                                     // 5. Cập nhật lại trạng thái của phiên đấu giá trong bảng `auctions`
                                     auction.setCurrentPrice(data.amount());         // Cập nhật giá cao nhất mới
-                                    auction.setLeadingBidderId(data.userId());      // Cập nhật người đang dẫn đầu
+                                    auction.setLeadingBidderId(UUID.fromString(data.userId()));      // Cập nhật người đang dẫn đầu
 
-                                    if (auction.getStatus() == AuctionStatus.OPEN) {
-                                        auction.setStatus(AuctionStatus.RUNNING);  // Nếu là cú bid đầu tiên, chuyển trạng thái sang Đang chạy
-                                    }
+//                                    if (auction.getStatus() == AuctionStatus.OPEN) {
+//                                        auction.setStatus(AuctionStatus.RUNNING);  // Nếu là cú bid đầu tiên, chuyển trạng thái sang Đang chạy ??????
+//                                    }
+                                    // Sai mục đích
 
                                     auctionDao.save(auction); // Chạy lệnh UPDATE xuống database
 

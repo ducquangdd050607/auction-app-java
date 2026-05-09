@@ -50,18 +50,18 @@ public class AuctionDetailController {
     @FXML
     private Label txtDescription;
 
-    //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k
-    public String currentAuctionId;
+    //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k - đặt static cho phép Confirm đọc đc AuctionId
+    public static String currentAuctionId;
 
     void setAuction(AuctionSummaryResponse auction) {
-        //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k
-        this.currentAuctionId = auction.auctionId();
+        //TODO: Đây đang để tạm 1 cái biến trữ auctionID, xem xem có cách nào clean code hơn k - để đó
+        currentAuctionId = auction.auctionId();
 
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
-        lblCurrentPrice.setText(auction.currentPrice().toString());
-        lblMinIncrement.setText(auction.minimumIncrement().toString());
         lblStartingPrice.setText(auction.startPrice().toString());
+        lblMinIncrement.setText(auction.minimumIncrement().toString());
+        lblCurrentPrice.setText(auction.currentPrice().toString());
         lblStatus.setText(String.valueOf(auction.status()));
         //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
     }
@@ -81,13 +81,13 @@ public class AuctionDetailController {
                 btnGamble.setDisable(true);
             };
 
-            AlertUtils.ConfirmExitController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble);
+            AlertUtils.ConfirmAlertController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng:))");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng");
     }
 
 

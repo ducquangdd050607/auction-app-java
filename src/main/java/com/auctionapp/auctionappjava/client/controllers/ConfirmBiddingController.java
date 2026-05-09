@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static com.auctionapp.auctionappjava.client.controllers.AuctionDetailController.currentAuctionId;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
 
@@ -64,6 +65,7 @@ public class ConfirmBiddingController {
 
     @FXML
     public void initialize() {
+        lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString());
         btnMore.setManaged(false);
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
@@ -129,14 +131,12 @@ public class ConfirmBiddingController {
         } else if ((((purifyingText(txtSetPrice.getText())).subtract(purifyingText(lblBest.getText())))
                 // Lấy giá đặt trừ giá hiện tại
                 .compareTo(purifyingText(lblMinIncrement.getText()))) < 0) {
-                // So sánh MinIncre
+            // So sánh MinIncre
 
             lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
             lblError.setVisible(true);
             lblError.setTextFill(Color.web("#FF8A80"));
-            }
-
-        else {
+        } else {
             // 1. Lấy số tiền người dùng chốt đặt
             BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
 
@@ -146,8 +146,8 @@ public class ConfirmBiddingController {
 
             // 2. Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
-                    // TODO: Hiện để random dưới đây, phải tìm cách lôi đc auctionID ra từ AuctionDetailController ra đây
-                    UUID.randomUUID(), // ID phiên đấu giá lấy từ biến ở trên
+                    // TODO: Hiện để random dưới đây, phải tìm cách lôi đc auctionID ra từ AuctionDetailController ra đây - done
+                    UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
                     UserSession.getInstance().getCurrentUser().id(), // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược
             );
@@ -159,48 +159,39 @@ public class ConfirmBiddingController {
             imageView.setPreserveRatio(true);
             imageView.setFitWidth(500);
 
-            // 3. Viết hàm thực thi thật (thay thế cho pseudoMethod)
-            Runnable mainMethod = () -> {
-                CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return Client.getInstance().sendRequest(bidReq);
-                    } catch (Exception e) {
-                        return new Response(false, "Lỗi kết nối máy chủ!", null);
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Client.getInstance().sendRequest(bidReq);
+                } catch (Exception e) {
+                    return new Response(false, "Lỗi kết nối máy chủ!", null);
+                }
+            }).thenAccept(response -> {
+                Platform.runLater(() -> {
+                    if (response.success()) {
+                        // Thành công: Đóng cửa sổ Confirm và (có thể) tải lại màn hình Detail
+                        System.out.println("Đặt giá thành công!");
+
+                        AlertUtils.ConfirmAlertController(
+                                "Thông báo",
+                                "Đã đặt giá thành công!",
+                                null,
+                                imageView);
+                    } else {
+                        // Thất bại (VD: Server check thấy giá vừa bị người khác nẫng tay trên)
+                        lblError.setText(response.message());
+                        lblError.setVisible(true);
+                        lblError.setTextFill(Color.web("#FF8A80"));
+
+                        // Hiện lại nút bấm để người dùng có thể thao tác lại
+                        btnMore.setManaged(true);
+                        btnMore.setVisible(true);
+
+
                     }
-                }).thenAccept(response -> {
-                    Platform.runLater(() -> {
-                        if (response.success()) {
-                            // Thành công: Đóng cửa sổ Confirm và (có thể) tải lại màn hình Detail
-                            System.out.println("Đặt giá thành công!");
-                            // Nếu AlertUtils của bạn tự đóng scene rồi thì không cần stage.close() nữa
-                        } else {
-                            // Thất bại (VD: Server check thấy giá vừa bị người khác nẫng tay trên)
-                            lblError.setText(response.message());
-                            lblError.setVisible(true);
-                            lblError.setTextFill(Color.web("#FF8A80"));
-
-                            // Hiện lại nút bấm để người dùng có thể thao tác lại
-                            btnMore.setManaged(true);
-                            btnMore.setVisible(true);
-                        }
-                    });
                 });
-            };
-
-            // Gọi hàm tạo Alert và truyền mainMethod vào để thực thi khi user ấn OK
-            AlertUtils.SceneOffAlertController(event,
-                    "Chắc chưa?",
-                    "Bạn CHẮC muốn đặt giá với số tiền " + txtSetPrice.getText() + " đ không?",
-                    "",
-                    "Thông báo",
-                    "",
-                    "Đã đặt giá thành công!",
-                    mainMethod,
-                    imageView);
+            });
         }
     }
-
-
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
 

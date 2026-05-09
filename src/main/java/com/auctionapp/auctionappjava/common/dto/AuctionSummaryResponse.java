@@ -10,8 +10,8 @@ public record AuctionSummaryResponse(
         String category,
         String itemName,
         /*String imagePath,*/ // Đường dẫn ảnh thu nhỏ (kbt có cần hay không nên cmt lại)
-        BigDecimal currentPrice,   // Giá hiện tại
         BigDecimal startPrice,     // Khởi đầu
+        BigDecimal currentPrice,   // Giá hiện tại
         BigDecimal minimumIncrement,    // Bước giá
         /*long*/String timeLeft, // Thời gian còn lại (tạm để String test Socket trước)
         AuctionStatus status,

@@ -145,10 +145,11 @@ public class NavigatorController implements Initializable {
             }
         };
 
-        AlertUtils.ConfirmExitController(
+        AlertUtils.ConfirmAlertController(
                 "Chắc chưa?",
                 "Bạn có chắc muốn đăng xuất không?",
-                switchScene);
+                switchScene,
+                null);
     }
 
 
@@ -161,10 +162,11 @@ public class NavigatorController implements Initializable {
             stage.close();
         };
 
-        AlertUtils.ConfirmExitController(
+        AlertUtils.ConfirmAlertController(
                 "Xác nhận thoát",
                 "Bạn có chắc chắn muốn thoát ứng dụng không?",
-                closeStage);
+                closeStage,
+                null);
     }
 
     private Button currentActiveButton = null;

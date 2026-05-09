@@ -50,11 +50,16 @@ public class AlertUtils {
         });
     }
 
-    public static void ConfirmExitController(String title, String header, Runnable onConfirm) {
+    public static void ConfirmAlertController(String title,
+                                              String header,
+                                              Runnable onConfirm,
+                                              ImageView announcementImage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(header);
-
+        if (announcementImage != null) {
+            alert.setGraphic(announcementImage);
+        }
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 if (onConfirm != null) {
