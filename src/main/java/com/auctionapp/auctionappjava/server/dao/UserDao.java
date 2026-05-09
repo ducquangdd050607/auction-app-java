@@ -9,11 +9,20 @@ import java.util.UUID;
 
 public interface UserDao {
     User save(User u);
+
     Optional<User> findById(UUID id);
+
     Optional<User> findByName(String name);
+
     void updateRole(UUID id, Role role);
+
     void updateProfile(UUID id, String fullName, String email);
+
     void updatePassword(UUID id, String hash, String salt);
+
+    void updateActiveStatus(UUID id, boolean isActive);
+
     Wallet saveWallet(Wallet wallet);
+
     Optional<Wallet> findWalletByUserId(UUID userId);
 }

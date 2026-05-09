@@ -91,6 +91,23 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
         update("UPDATE users SET password_hash=?,password_salt=?,updated_at=NOW() WHERE id=?", hash, salt, uuid(id));
     }
 
+    @Override
+    public void updateActiveStatus(UUID id, boolean isActive) {
+        // Cập nhật cột active và tự động làm mới thời gian updated_at
+        String sql = "UPDATE users SET active = ?, updated_at = NOW() WHERE id = ?";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setBoolean(1, isActive); // Bật (true) hoặc Tắt (false)
+            statement.setString(2, uuid(id));  // Gọi hàm uuid() từ JdbcDaoSupport để parse UUID sang String
+
+            statement.executeUpdate();
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong cap nhat duoc trang thai active cua user", exception);
+        }
+    }
     private Optional<User> findUser(String sql, String value) {
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, value);
