@@ -157,14 +157,38 @@ public class ClientHandler implements Runnable {
                 } // TODO: thêm lệnh nhận về ở đây
 
                 else if ("GET_USERS".equals(request.action())) {
-                    List<UserDetailResponse> userDetailList = new ArrayList<>();
+                    try {
+                        // 1. Kéo toàn bộ danh sách từ Database lên
+                        List<User> dbUsers = userDao.findAll();
 
-                    userDetailList.add(new UserDetailResponse("gay", "gaylo", "USER", new BigDecimal(3600000), "ACTIVE", 12));
-                    userDetailList.add(new UserDetailResponse("quang", "Quang", "USER", new BigDecimal(3600000), "ACTIVE", 36));
+                        // 2. Chuẩn bị một chiếc hộp rỗng để chứa các DTO gửi về Client
+                        List<UserDetailResponse> responseList = new ArrayList<>();
 
-                    Response response = new Response(true, "Lấy danh sách thành công", userDetailList);
-                    out.writeObject(response);
-                    out.flush();
+                        // 3. Triển khai lắp ráp mỗi hàng
+                        for (User user : dbUsers) {
+                            UserDetailResponse dto = new UserDetailResponse(
+                                    user.getUsername(),
+                                    user.getFullName(),
+                                    user.getRole().name(),
+                                    userDao.findWalletByUserId(user.getId()).get().getBalance(),
+                                    "ACTIVE",
+                                    0
+                                );
+                                // Bỏ DTO vào hộp
+                                responseList.add(dto);
+                            }
+
+                        // 4. Gói ghém cẩn thận và ném qua Socket về cho màn hình JavaFX
+                        Response response = new Response(true, "Tải dữ liệu thành công!", responseList);
+                        out.writeObject(response);
+                        out.flush();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // Báo lỗi nếu đứt mạng hoặc sập TiDB
+                        out.writeObject(new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null));
+                        out.flush();
+                    }
                 }
                 // ... (code xử lý LOGIN) ...
 

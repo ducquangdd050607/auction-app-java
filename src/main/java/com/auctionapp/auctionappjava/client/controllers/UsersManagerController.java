@@ -24,8 +24,8 @@ import java.util.concurrent.CompletableFuture;
 
 // Giải thích:
 // HOẠT ĐỘNG(ACTIVE): acc còn khỏe, còn chơi được
-// CHẶN(BAN): acc vi phạm luật lệ bị cảnh cáo và cấm đăng nhập trong 1 thời gian
-// XÓA(REMOVE): acc vi phạm nghiêm trọng/lặp lại nhiều lần sẽ bị tùng xẻo
+// CHẶN(BAN): acc cấm đăng nhập
+
 
 public class UsersManagerController implements Initializable {
 
@@ -43,10 +43,6 @@ public class UsersManagerController implements Initializable {
     private Button btnCancel;
     @FXML
     private Button btnConfirm;
-    @FXML
-    private Button btnPromoteAdmin;
-    @FXML
-    private Button btnRemove;
     @FXML
     private ComboBox<String> cbFilterAccountStatus;
     @FXML
@@ -76,13 +72,6 @@ public class UsersManagerController implements Initializable {
         orConfirm(true);
         ban = true;
         remove = false;
-    }
-
-    @FXML
-    void handleRemove(ActionEvent event) {
-        orConfirm(true);
-        remove = true;
-        ban = false;
     }
 
     @FXML
@@ -147,9 +136,7 @@ public class UsersManagerController implements Initializable {
         btnCancel.setVisible(choose);
         btnCancel.setManaged(choose);
         btnBan.setManaged(!choose);
-        btnRemove.setManaged(!choose);
         btnBan.setVisible(!choose);
-        btnRemove.setVisible(!choose);
     }
 
     public void show() throws IOException {

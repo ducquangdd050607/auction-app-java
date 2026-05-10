@@ -381,5 +381,18 @@ public class AuctionListController implements Initializable {
             stage.showAndWait();
 
         }
+//    } private void getStatus(AuctionSummaryResponse auction) {
+//        // Tái xác định trạng thái phiên đấu giá
+//        AuctionStatus auctionStatus;
+//
+//        if (now().isBefore(data.openTime())) {
+//            auctionStatus = AuctionStatus.OPEN;
+//        } else if (now().isBefore(data.endTime())) {
+//            auctionStatus = AuctionStatus.RUNNING;
+//        } else {
+//            auctionStatus = AuctionStatus.FINISHED;
+//        }
+//
+//        System.out.println("DEBUG: Auction Status determined as: " + auctionStatus);
     }
 }
