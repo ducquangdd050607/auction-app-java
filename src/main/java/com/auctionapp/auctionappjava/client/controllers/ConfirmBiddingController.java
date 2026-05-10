@@ -3,12 +3,10 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import com.mysql.cj.log.Log;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +18,7 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -152,13 +151,13 @@ public class ConfirmBiddingController {
             // Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
                     UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
-                    userId, // ID người dùng hiện tại
+                    UUID.fromString(userId), // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược
             );
             Request bidReq = new Request("PLACE_BID", payload);
 
             // Chuẩn bị hình ảnh cho Alert
-            Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg")));
             ImageView imageView = new ImageView(image);
             imageView.setPreserveRatio(true);
             imageView.setFitWidth(500);
@@ -172,6 +171,18 @@ public class ConfirmBiddingController {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
+                        // Cập nhật lại UserSession
+                        LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
+                        LoginResponse updatedUser = new LoginResponse(
+                                oldUser.id(),
+                                oldUser.username(),
+                                oldUser.fullName(),
+                                oldUser.role(),
+                                oldUser.email(),
+                                oldUser.walletBalance().subtract(finalBidAmount)
+                        );
+                        UserSession.getInstance().setCurrentUser(updatedUser);
+
                         // Cập nhật lại AuctionSession
                         AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
                         AuctionSummaryResponse updatedData = new AuctionSummaryResponse(

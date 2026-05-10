@@ -5,6 +5,6 @@ import java.util.UUID;
 
 public record PlaceBidRequest(
         UUID auctionId,    // ID của phiên đấu giá đang tham gia
-        String userId,       // ID của người dùng đang bấm nút đặt giá
+        UUID userId,       // ID của người dùng đang bấm nút đặt giá
         BigDecimal amount  // Số tiền họ muốn đặt
 ) implements Serializable {}
