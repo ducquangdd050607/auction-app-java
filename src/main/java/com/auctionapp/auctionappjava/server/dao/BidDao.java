@@ -15,6 +15,8 @@ public interface BidDao {
 
     long countByBidderId(UUID bidderId); //đếm số lượng đặt bid của 1 người
 
+    long countBiddersByAuctionId(UUID auctionId);
+
     Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId);
 
     void deleteByAuctionId(UUID auctionId); // xóa lịch sử đấu giá của 1 phiên
