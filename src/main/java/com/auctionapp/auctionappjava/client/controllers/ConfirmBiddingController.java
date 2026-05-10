@@ -6,6 +6,10 @@ import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import com.auctionapp.auctionappjava.server.dao.AuctionDao;
+import com.auctionapp.auctionappjava.server.dao.BidDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,6 +38,8 @@ public class ConfirmBiddingController {
     private final BigDecimal balance = UserSession.getInstance().getCurrentUser().walletBalance();
     private final String userId = UserSession.getInstance().getCurrentUser().id();
     private final String currentAuctionId = AuctionSession.getInstance().getCurrentAuction().auctionId();
+    private final BidDao bidDao = new JdbcBidDao();
+    private final AuctionDao auctionDao = new JdbcAuctionDao();
 
     @FXML
     private Button btnMore;
@@ -191,6 +197,9 @@ public class ConfirmBiddingController {
                         );
                         UserSession.getInstance().setCurrentUser(updatedUser);
 
+                        // Cập nhật số bidders
+                        long bidders = bidDao.countBiddersByAuctionId(UUID.fromString(currentAuctionId));
+
                         // Cập nhật lại AuctionSession
                         AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
                         AuctionSummaryResponse updatedData = new AuctionSummaryResponse(
@@ -202,7 +211,7 @@ public class ConfirmBiddingController {
                                 oldData.minimumIncrement(),
                                 oldData.timeLeft(),
                                 oldData.status(),
-                                oldData.bidderCount() + 1
+                                (int) bidders
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
 

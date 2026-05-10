@@ -119,7 +119,7 @@ public class ClientHandler implements Runnable {
                                 Item item = itemOptional.get();
 
                                 // Chui vào bảng bids để đếm xem có bao nhiêu lượt đặt giá cho phiên này
-                                int bidderCount = (int) bidDao.countByAuctionId(auction.getId());
+                                int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
 
                                 // TODO: Xử lý thời gian còn lại (timeLeft)
                                 // Tạm thời để một chuỗi text, sau này bạn có thể viết hàm trừ EndTime cho Time.now()
