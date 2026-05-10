@@ -74,6 +74,25 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
     }
 
     @Override
+    public long countAll() {
+        String sql = "SELECT COUNT(*) FROM auctions";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+            return 0L;
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc tong so luong auction", exception);
+        }
+    }
+
+
+    @Override
     public List<Auction> findBySellerId(UUID sellerId) {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);
     }

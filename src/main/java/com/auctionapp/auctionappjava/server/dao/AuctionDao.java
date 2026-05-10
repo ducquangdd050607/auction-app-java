@@ -15,6 +15,8 @@ public interface AuctionDao {
 
     List<Auction> findAll();
 
+    long countAll();
+
     List<Auction> findBySellerId(UUID sellerId);
 
     void deleteById(UUID auctionId);
