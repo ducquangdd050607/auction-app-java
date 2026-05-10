@@ -161,7 +161,8 @@ public class ConfirmBiddingController {
 
             // Lấy số tiền người dùng chốt đặt
             BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
-
+            // Cập nhật số bidders
+            long bidders = bidDao.countBiddersByAuctionId(UUID.fromString(currentAuctionId));
             // Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
                     UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
@@ -197,8 +198,7 @@ public class ConfirmBiddingController {
                         );
                         UserSession.getInstance().setCurrentUser(updatedUser);
 
-                        // Cập nhật số bidders
-                        long bidders = bidDao.countBiddersByAuctionId(UUID.fromString(currentAuctionId));
+
 
                         // Cập nhật lại AuctionSession
                         AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();

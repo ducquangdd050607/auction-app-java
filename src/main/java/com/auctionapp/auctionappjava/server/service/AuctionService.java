@@ -33,7 +33,7 @@ public class AuctionService {
                 Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
                 if (itemOpt.isPresent()) {
                     Item item = itemOpt.get();
-                    int bidderCount = (int) bidDao.countByAuctionId(auction.getId());
+                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
 
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
@@ -124,6 +124,7 @@ public class AuctionService {
                                 // Cập nhật lại auction trong database
                                 auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
                                 auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
+                                auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
                                 auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
                                 return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
