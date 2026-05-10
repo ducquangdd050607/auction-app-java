@@ -87,20 +87,22 @@ public class AuctionService {
                                 // Hoàn tiền người dẫn đầu cũ (nếu có)
                                 UUID oldLeaderId = auction.getLeadingBidderId();
 
-                                // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
-                                if (oldLeaderId.equals(currentBidderId)) {
-                                    // Hoàn tiền cũ lại vào ví của chính họ
-                                    BigDecimal refundedBalance = currentBidderWallet.getBalance().add(auction.getCurrentPrice());
-                                    currentBidderWallet.setBalance(refundedBalance);
-                                } else {
-                                    // Hoàn tiền cho người khác
-                                    Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
-                                    if (oldLeaderWalletOpt.isPresent()) {
-                                        Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
-                                        // Cộng trả lại số tiền họ đã cược (chính là currentPrice của phiên hiện tại)
-                                        BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
-                                        oldLeaderWallet.setBalance(refundedBalance);
-                                        userDao.saveWallet(oldLeaderWallet);
+                                if (oldLeaderId != null) {
+                                    // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
+                                    if (oldLeaderId.equals(currentBidderId)) {
+                                        // Hoàn tiền cũ lại vào ví của chính họ
+                                        BigDecimal refundedBalance = currentBidderWallet.getBalance().add(auction.getCurrentPrice());
+                                        currentBidderWallet.setBalance(refundedBalance);
+                                    } else {
+                                        // Hoàn tiền cho người khác
+                                        Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
+                                        if (oldLeaderWalletOpt.isPresent()) {
+                                            Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
+                                            // Cộng trả lại số tiền họ đã cược (chính là currentPrice của phiên hiện tại)
+                                            BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
+                                            oldLeaderWallet.setBalance(refundedBalance);
+                                            userDao.saveWallet(oldLeaderWallet);
+                                        }
                                     }
                                 }
 
