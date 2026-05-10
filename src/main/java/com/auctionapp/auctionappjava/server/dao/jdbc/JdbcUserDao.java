@@ -13,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
+
 
 public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
     @Override
@@ -116,6 +119,27 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Khong doc duoc user", exception);
+        }
+    }
+
+    @Override
+    public List<User> findAll() {
+        return queryUsers("SELECT * FROM users ORDER BY created_at");
+    }
+
+    private List<User> queryUsers(String sql) {
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+            return users;
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach user", exception);
         }
     }
 
