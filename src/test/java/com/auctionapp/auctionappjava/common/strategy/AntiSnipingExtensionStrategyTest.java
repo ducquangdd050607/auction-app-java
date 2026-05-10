@@ -40,7 +40,7 @@ class AntiSnipingExtensionStrategyTest {
         );
     }
 
-    // ================================================================ shouldExtend
+    //shouldExtend
     @Test
     @DisplayName("shouldExtend — đặt giá khi còn 10 giây → phải gia hạn")
     void shouldExtend_whenBidWithin10Seconds_returnsTrue() {
