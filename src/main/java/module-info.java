@@ -2,6 +2,7 @@ module com.auctionapp.auctionappjava {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires mysql.connector.j;
 
 
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
