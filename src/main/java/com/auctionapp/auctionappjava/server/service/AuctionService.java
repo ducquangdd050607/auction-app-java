@@ -122,19 +122,23 @@ public class AuctionService {
             List<BidTransaction> history = bidDao.findAll();
             List<BidHistoryResponse> responseList = new ArrayList<>();
 
-            for (BidTransaction auction : history) {
-                Optional<Item> itemOpt = itemDao.findById(auction.getAuctionId());
-                if (itemOpt.isPresent()) {
-                    Item item = itemOpt.get();
+            for (BidTransaction bid : history) {
+                Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+                if (auctionOpt.isPresent()) {
+                    Auction auction = auctionOpt.get();
 
-                    responseList.add(new BidHistoryResponse(
-                            userDao.findById(auction.getBidderId()).get().getFullName(),
-                            item.getTitle(),
-                            item.getStartingPrice(),
-                            auction.getAmount(),
-                            RUNNING,
-                            "Đang diễn ra"
-                    ));
+                    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                    if (itemOpt.isPresent()) {
+                        Item item = itemOpt.get();
+                        responseList.add(new BidHistoryResponse(
+                                userDao.findById(bid.getBidderId()).get().getFullName(),
+                                item.getTitle(),               // Lấy tên sản phẩm
+                                item.getStartingPrice(),       // Lấy giá bắt đầu
+                                bid.getAmount(),               // Lấy giá tiền đã cược
+                                RUNNING,                       // WIP
+                                "Đang diễn ra"));              // WIP
+                    }
                 }
             }
             return new Response(true, "Tải dữ liệu thành công!", responseList);
