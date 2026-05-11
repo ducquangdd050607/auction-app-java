@@ -11,7 +11,9 @@ public interface BidDao {
 
     List<BidTransaction> findByAuctionId(UUID auctionId); // in tất cả lịch sử trả giá trong 1 phiên
 
-    List<BidTransaction>  findByBidderId(UUID bidderId);
+    List<BidTransaction> findByBidderId(UUID bidderId);
+
+    List<BidTransaction> findAll(); // in tất cả giao dịch của TẤT CẢ bidders(WIP)
 
     long countByAuctionId(UUID auctionId); // đếm số lượng trả giá trong 1 phiên
 

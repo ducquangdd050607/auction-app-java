@@ -90,6 +90,25 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Không thể tải lịch sử đặt giá của bidder: " + bidderId, exception);
         }
     }
+
+    @Override
+    public List<BidTransaction> findAll() {
+        String sql = "SELECT * FROM bids ORDER BY created_at";
+
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<BidTransaction> transactions = new ArrayList<>();
+                while (resultSet.next()) {
+                    transactions.add(mapBid(resultSet));
+                }
+                return transactions;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach auction", exception);
+        }
+    }
+
     @Override
     public long countByAuctionId(UUID auctionId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE auction_id = ?", uuid(auctionId));
