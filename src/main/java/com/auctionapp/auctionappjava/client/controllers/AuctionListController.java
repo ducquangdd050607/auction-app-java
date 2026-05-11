@@ -313,7 +313,7 @@ public class AuctionListController implements Initializable {
 
         } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Manager");
-                    }
+        }
     }
 
     private void setupRowDoubleClick() {

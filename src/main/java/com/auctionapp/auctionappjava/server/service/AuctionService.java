@@ -10,10 +10,7 @@ import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
 import static java.time.LocalDateTime.now;
@@ -120,6 +117,7 @@ public class AuctionService {
     public Response handleGetAllBiddedAuctions(BidManagerAndHistoryRequest data) {
         try {
             List<BidTransaction> history = bidDao.findAll();
+
             List<BidHistoryResponse> responseList = new ArrayList<>();
 
             for (BidTransaction bid : history) {
@@ -301,6 +299,70 @@ public class AuctionService {
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi lưu sản phẩm: " + e.getMessage(), null);
+        }
+    }
+
+    public Response handleGetUsers() {
+        try {
+            // 1. Lấy danh sách user
+            List<User> dbUsers = userDao.findAll();
+            List<UserDetailResponse> responseList = new ArrayList<>();
+
+            // 2. Lặp qua từng user
+            for (User user : dbUsers) {
+                // Lấy bid mới nhất của user này
+                Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
+
+                String latestItemTitle = "";
+
+                if (transactionOpt.isPresent()) {
+                    // Nếu có bid, tìm tên Item tương ứng
+                    BidTransaction bid = transactionOpt.get();
+
+                    // Mẫu gốc:
+                    // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
+
+                    Optional<Auction> auctionOpt = auctionDao.findById(bid.getId());
+
+                    if (auctionOpt.isPresent()) {
+                        Auction auction = auctionOpt.get();
+                        Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                        if (itemOpt.isPresent()) {
+                            Item item = itemOpt.get();
+                            latestItemTitle = item.getTitle();
+                        }
+                    } else {
+                        // Trường hợp phiên bị xóa.
+                        latestItemTitle = "Phiên đấu đã bị xóa";
+                    }
+
+                    // - You messed up again.
+                    // - Fuck.
+
+                } else {
+                    // Nếu không có bid:
+                    latestItemTitle = "Acc mới chưa cược";
+                }
+
+                // Tạo DTO
+                UserDetailResponse dto = new UserDetailResponse(
+                        latestItemTitle,
+                        user.getFullName(),
+                        user.getRole().name(),
+                        userDao.findWalletByUserId(user.getId()).get().getBalance(),
+                        "ACTIVE",
+                        (int) bidDao.countBidsByBidderId(user.getId())
+                );
+
+                responseList.add(dto);
+            }
+
+            return new Response(true, "Tải dữ liệu thành công!", responseList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
         }
     }
 }
