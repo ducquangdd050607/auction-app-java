@@ -20,8 +20,8 @@ import java.util.ResourceBundle;
 public class NavigatorController implements Initializable {
 
     private Stage stage;
-    protected static String modeName;
     private static NavigatorController instance;
+    public static String modeName;
 
     @FXML
     private Button btnDashboard;
@@ -95,13 +95,13 @@ public class NavigatorController implements Initializable {
             groupSeller.setVisible(true);
             groupSeller.setManaged(true);
             identity.setText("SELLER");
-            identity.setDisable(false);
+            identity.setDisable(true);
 
         } else if (LoginController.bidderRoute) {
             groupBidder.setVisible(true);
             groupBidder.setManaged(true);
             identity.setText("BIDDER");
-            identity.setDisable(false);
+            identity.setDisable(true);
         }
     }
 
@@ -116,6 +116,12 @@ public class NavigatorController implements Initializable {
         modeName = ((Button) event.getSource()).getText();
         setActiveButton((Button) event.getSource());
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+    }
+
+    @FXML
+    void handleHistory(ActionEvent event) throws IOException {
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
+        activateHistory();
     }
 
     @FXML

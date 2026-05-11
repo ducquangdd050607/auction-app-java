@@ -15,6 +15,7 @@ public class Auction extends BaseEntity {
     private AuctionStatus status;
     private BigDecimal minimumIncrement;
     private UUID winnerId;
+    private int biddersCount;
 
     public Auction() {
         super();
@@ -126,5 +127,13 @@ public class Auction extends BaseEntity {
 
     public boolean isAcceptingBids(LocalDateTime now) {
         return status == AuctionStatus.RUNNING && hasStarted(now) && !hasEnded(now);
+    }
+
+    public int getBiddersCount() {
+        return biddersCount;
+    }
+
+    public void setBiddersCount(int biddersCount) {
+        this.biddersCount = biddersCount;
     }
 }

@@ -2,7 +2,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
-import java.math.BigDecimal;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,6 +53,30 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Khong doc duoc danh sach bid", exception);
         }
     }
+
+    @Override
+    public Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId) {
+        String sql = """
+        SELECT * FROM bids 
+        WHERE bidder_id = ? 
+        ORDER BY created_at DESC 
+        LIMIT 1
+        """;
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapBid(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong tim duoc bid moi nhat cua bidder: " + bidderId, exception);
+        }
+    }
+
+
     @Override
     public Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId) {
         // Sắp xếp amount giảm dần (DESC) và lấy 1 kết quả đầu tiên
@@ -69,6 +93,46 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Khong tim thay bid cao nhat cua phien dau gia", exception);
         }
     }
+
+    @Override
+    public List<BidTransaction> findByBidderId(UUID bidderId) {
+        String sql = "SELECT * FROM bids WHERE bidder_id = ? ORDER BY created_at DESC";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<BidTransaction> bidHistory = new ArrayList<>();
+                while (resultSet.next()) {
+                    bidHistory.add(mapBid(resultSet));
+                }
+                return bidHistory;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Không thể tải lịch sử đặt giá của bidder: " + bidderId, exception);
+        }
+    }
+
+    @Override
+    public List<BidTransaction> findAll() {
+        String sql = "SELECT * FROM bids ORDER BY created_at";
+
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<BidTransaction> transactions = new ArrayList<>();
+                while (resultSet.next()) {
+                    transactions.add(mapBid(resultSet));
+                }
+                return transactions;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach auction", exception);
+        }
+    }
+
     @Override
     public long countByAuctionId(UUID auctionId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE auction_id = ?", uuid(auctionId));
@@ -77,6 +141,29 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
     @Override
     public long countByBidderId(UUID bidderId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE bidder_id = ?", uuid(bidderId));
+    }
+
+    @Override
+    public long countBiddersByAuctionId(UUID auctionId) {
+        // Dùng DISTINCT để đảm bảo 1 người dù đặt 10 lần thì cũng chỉ đếm là 1 người
+        String sql = "SELECT COUNT(DISTINCT bidder_id) FROM bids WHERE auction_id = ?";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // Set giá trị id của phiên đấu giá (nhớ parse UUID sang String vì DB bạn dùng VARCHAR(36))
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1); // Lấy kết quả đếm được trả về
+                }
+                return 0L; // Trả về 0 nếu chưa có ai đặt giá
+            }
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc so luong  bidder cho auction_id: " + auctionId, exception);
+        }
     }
 
     @Override

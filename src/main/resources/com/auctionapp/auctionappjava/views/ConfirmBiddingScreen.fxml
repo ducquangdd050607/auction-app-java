@@ -78,12 +78,22 @@
                <CheckBox fx:id="chboxAutoBidding" mnemonicParsing="false" onAction="#handleAutoBidding" prefHeight="28.0" prefWidth="20.0" />
             </children>
          </HBox>
-         <HBox fx:id="boxAutoBidding" alignment="CENTER" layoutX="10.0" layoutY="262.0" spacing="8" visible="false">
+         <VBox fx:id="boxAutoBidding" prefHeight="200.0" prefWidth="100.0" spacing="18.0" visible="false">
             <children>
-               <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Bạn muốn tự động đặt: " />
-               <TextField fx:id="txtSetAuto" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập lượng tiền..." />
+               <HBox alignment="CENTER" spacing="8">
+                  <children>
+                     <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Bạn muốn tự động đặt: " />
+                     <TextField fx:id="txtSetAuto" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập lượng tiền..." />
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="8">
+                  <children>
+                     <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Mức tiền tối đa:" />
+                     <TextField fx:id="txtSetMaxAuto" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập lượng tiền..." />
+                  </children>
+               </HBox>
             </children>
-         </HBox>
+         </VBox>
             <Pane prefHeight="84.0" prefWidth="471.0" />
          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="471.0">
             <children>

@@ -73,6 +73,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         return queryAuctions("SELECT * FROM auctions ORDER BY created_at", null);
     }
 
+
     @Override
     public List<Auction> findBySellerId(UUID sellerId) {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);

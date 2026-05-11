@@ -173,10 +173,8 @@ public class DashboardController implements Initializable {
 
     @FXML
     void handleHistory(ActionEvent event) throws IOException {
-        NavigatorController.modeName = "Lịch sử đấu giá";
+        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
         NavigatorController.activateHistory();
-        NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
-
     }
 
     @FXML
@@ -204,7 +202,6 @@ public class DashboardController implements Initializable {
 
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
     }
-    //TODO: Tách hàm.
 
     @FXML
     void handleWallet(ActionEvent event) throws IOException{
