@@ -197,6 +197,7 @@ public class UsersManagerController implements Initializable {
         clmRoute.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().role()));
         clmBids.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bids()));
         clmBalance.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().balance()));
+        clmRecentBid.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().latestBid()));
 
     }
 }

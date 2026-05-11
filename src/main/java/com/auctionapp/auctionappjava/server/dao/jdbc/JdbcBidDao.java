@@ -144,6 +144,28 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
     }
 
     @Override
+    public long countBidsByBidderId(UUID bidderId) {
+        String sql = "SELECT COUNT(DISTINCT auction_id) FROM bids WHERE bidder_id = ?";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // Set giá trị id của phiên đấu giá (nhớ parse UUID sang String vì DB bạn dùng VARCHAR(36))
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1); // Lấy kết quả đếm được trả về
+                }
+                return 0L; // Trả về 0 nếu chưa có ai đặt giá
+            }
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc so luong auction cho bidder_id: " + bidderId, exception);
+        }
+    }
+
+    @Override
     public long countBiddersByAuctionId(UUID auctionId) {
         // Dùng DISTINCT để đảm bảo 1 người dù đặt 10 lần thì cũng chỉ đếm là 1 người
         String sql = "SELECT COUNT(DISTINCT bidder_id) FROM bids WHERE auction_id = ?";
