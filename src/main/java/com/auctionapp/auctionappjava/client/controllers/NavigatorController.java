@@ -119,6 +119,12 @@ public class NavigatorController implements Initializable {
     }
 
     @FXML
+    void handleHistory(ActionEvent event) throws IOException {
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
+        activateHistory();
+    }
+
+    @FXML
     void handleBackToDash(ActionEvent event) throws IOException {
         activateDashboardButton();
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/DashboardScreen.fxml");
