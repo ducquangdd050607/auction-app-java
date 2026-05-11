@@ -13,6 +13,8 @@ public interface BidDao {
 
     List<BidTransaction> findByBidderId(UUID bidderId);
 
+    Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId); // Lấy bid mới nhất của bidder
+
     List<BidTransaction> findAll(); // in tất cả giao dịch của TẤT CẢ bidders(WIP)
 
     long countByAuctionId(UUID auctionId); // đếm số lượng trả giá trong 1 phiên

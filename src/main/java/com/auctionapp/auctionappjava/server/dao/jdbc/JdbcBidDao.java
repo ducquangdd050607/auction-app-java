@@ -53,6 +53,30 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Khong doc duoc danh sach bid", exception);
         }
     }
+
+    @Override
+    public Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId) {
+        String sql = """
+        SELECT * FROM bids 
+        WHERE bidder_id = ? 
+        ORDER BY created_at DESC 
+        LIMIT 1
+        """;
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapBid(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong tim duoc bid moi nhat cua bidder: " + bidderId, exception);
+        }
+    }
+
+
     @Override
     public Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId) {
         // Sắp xếp amount giảm dần (DESC) và lấy 1 kết quả đầu tiên
