@@ -40,6 +40,8 @@ public class NavigatorController implements Initializable {
     @FXML
     private Button btnItemManager;
     @FXML
+    private Button btnTransactionList;
+    @FXML
     private Button btnSignout;
     @FXML
     private VBox groupAccount;

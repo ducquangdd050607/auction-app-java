@@ -62,6 +62,8 @@ public class HistoryListController implements Initializable {
 
         cbType.getItems().addAll(type);
 
+        show();
+
         // Khởi tạo các cột và set data vào bảng
         setupColumns();
         historyTable.setItems(historyDataList);
@@ -134,5 +136,17 @@ public class HistoryListController implements Initializable {
 
         clmBiddingMoney.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().amount()));
 
+    }
+
+    void show() {
+        if (LoginController.bidderRoute) {
+            txtHistory.setVisible(true);
+            txtHistory.setText("Lịch sử đặt cược");
+        }
+
+        else if  (LoginController.adminRoute) {
+            txtHistory.setVisible(true);
+            txtHistory.setText("Danh sách đặt cược");
+        }
     }
 }
