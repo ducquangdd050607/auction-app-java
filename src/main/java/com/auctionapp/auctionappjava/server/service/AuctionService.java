@@ -322,7 +322,7 @@ public class AuctionService {
                     // Mẫu gốc:
                     // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
 
-                    Optional<Auction> auctionOpt = auctionDao.findById(bid.getId());
+                    Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
 
                     if (auctionOpt.isPresent()) {
                         Auction auction = auctionOpt.get();
@@ -331,14 +331,14 @@ public class AuctionService {
                         if (itemOpt.isPresent()) {
                             Item item = itemOpt.get();
                             latestItemTitle = item.getTitle();
+                        } else {
+                            // Trường hợp phiên bị xóa.(WIP)
+                            latestItemTitle = "Phiên đấu đã bị xóa";
                         }
-                    } else {
-                        // Trường hợp phiên bị xóa.
-                        latestItemTitle = "Phiên đấu đã bị xóa";
                     }
 
-                    // - You messed up again.
-                    // - Fuck.
+                    // - You messed up again. And again
+                    // - C*nt.
 
                 } else {
                     // Nếu không có bid:
