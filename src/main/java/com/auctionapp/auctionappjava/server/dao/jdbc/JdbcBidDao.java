@@ -2,7 +2,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
-import java.math.BigDecimal;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,6 +67,27 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Khong tim thay bid cao nhat cua phien dau gia", exception);
+        }
+    }
+
+    @Override
+    public List<BidTransaction> findByBidderId(UUID bidderId) {
+        String sql = "SELECT * FROM bids WHERE bidder_id = ? ORDER BY created_at DESC";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<BidTransaction> bidHistory = new ArrayList<>();
+                while (resultSet.next()) {
+                    bidHistory.add(mapBid(resultSet));
+                }
+                return bidHistory;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Không thể tải lịch sử đặt giá của bidder: " + bidderId, exception);
         }
     }
     @Override
