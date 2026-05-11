@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
 import static java.time.LocalDateTime.now;
 
 public class AuctionService {
@@ -49,9 +50,9 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllUploadedAuctions(BidManagerRequest data) {
+    public Response handleGetAllUploadedAuctions(BidManagerAndHistoryRequest data) {
         try {
-            List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.sellerId()));
+            List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.userId()));
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
 
             for (Auction auction : dbAuctions) {
@@ -74,30 +75,74 @@ public class AuctionService {
         }
     }
 
-//    public Response handleGetAllBiddedAuctions() {
-//        try {
-//            List<BidTransaction> dbAuctions = bidDao.findByBidderId(UUID.fromString(UserSession.getInstance().getCurrentUser().id()));
-//            List<AuctionSummaryResponse> responseList = new ArrayList<>();
-//
-//            for (BidTransaction auction : dbAuctions) {
-//                Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
-//                if (itemOpt.isPresent()) {
-//                    Item item = itemOpt.get();
-//                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
-//
-//                    responseList.add(new AuctionSummaryResponse(
-//                            auction.getId().toString(), item.getItemType().name(), item.getTitle(),
-//                            item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-//                            "Đang diễn ra", auction.getStatus(), bidderCount
-//                    ));
-//                }
-//            }
-//            return new Response(true, "Tải dữ liệu thành công!", responseList);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
-//        }
-//    }
+    public Response handleGetAllPersonalBiddedAuctions(BidManagerAndHistoryRequest data) {
+        // #FckNowImHungry
+        try {
+            List<BidTransaction> history = bidDao.findByBidderId(UUID.fromString(data.userId()));
+
+            // Hàm mới của Bình: Cho phép tìm Transaction của riêng Bidders
+
+            List<BidHistoryResponse> responseList = new ArrayList<>();
+
+            // Tạo ArrayList chuẩn bị chuyền dữ liệu vào
+
+            for (BidTransaction bid : history) {
+                Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+
+                // Lấy thông tin của Auction qua AuctionId của Cái Transaction
+
+                if (auctionOpt.isPresent()) {
+                    Auction auction = auctionOpt.get();
+
+                    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                    // Lấy thông tin của Item qua Auction trên
+
+                    if (itemOpt.isPresent()) {
+                        Item item = itemOpt.get();
+                        responseList.add(new BidHistoryResponse(
+                                null,               // Hiện tại chỉ lịch sử của 1 người: You
+                                item.getTitle(),               // Lấy tên sản phẩm
+                                item.getStartingPrice(),       // Lấy giá bắt đầu
+                                bid.getAmount(),               // Lấy giá tiền đã cược
+                                RUNNING,                       // WIP
+                                "Đang diễn ra"));              // WIP
+                    }
+                }
+            }
+            return new Response(true, "Tải dữ liệu thành công!", responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+        }
+    }
+
+    public Response handleGetAllBiddedAuctions(BidManagerAndHistoryRequest data) {
+        try {
+            List<BidTransaction> history = bidDao.findAll();
+            List<BidHistoryResponse> responseList = new ArrayList<>();
+
+            for (BidTransaction auction : history) {
+                Optional<Item> itemOpt = itemDao.findById(auction.getAuctionId());
+                if (itemOpt.isPresent()) {
+                    Item item = itemOpt.get();
+
+                    responseList.add(new BidHistoryResponse(
+                            userDao.findById(auction.getBidderId()).get().getFullName(),
+                            item.getTitle(),
+                            item.getStartingPrice(),
+                            auction.getAmount(),
+                            RUNNING,
+                            "Đang diễn ra"
+                    ));
+                }
+            }
+            return new Response(true, "Tải dữ liệu thành công!", responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+        }
+    }
 
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
         try {
@@ -110,7 +155,7 @@ public class AuctionService {
                 Auction auction = auctionOpt.get();
 
                 // 2. Validate 1: Phiên đấu giá có đang mở cửa không?
-                if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != AuctionStatus.RUNNING) {
+                if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != RUNNING) {
                     return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
                 }
                 // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
@@ -219,7 +264,7 @@ public class AuctionService {
             if (now().isBefore(data.openTime())) {
                 auctionStatus = AuctionStatus.OPEN;
             } else if (now().isBefore(data.endTime())) {
-                auctionStatus = AuctionStatus.RUNNING;
+                auctionStatus = RUNNING;
             } else {
                 auctionStatus = AuctionStatus.FINISHED;
             }

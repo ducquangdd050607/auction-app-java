@@ -4,7 +4,7 @@ import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.BidManagerRequest;
+import com.auctionapp.auctionappjava.common.dto.BidManagerAndHistoryRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
@@ -30,7 +30,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.client.controllers.NavigatorController.modeName;
@@ -190,11 +189,9 @@ public class AuctionListController implements Initializable {
             req = new Request("GET_ALL_AUCTIONS", null);
 
         } else if (modeName.equals("Quản lý vật phẩm")) {
-            BidManagerRequest bidReq = new BidManagerRequest(UserSession.getInstance().getCurrentUser().id().toString());
+            BidManagerAndHistoryRequest bidReq = new BidManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
             req = new Request("GET_ALL_UPLOADED_AUCTIONS", bidReq);
 
-//        } else if (modeName.equals("Lịch sử đấu giá")) {
-//            req = new Request("GET_ALL_AUCTIONS", null);
         }
 
 
@@ -316,15 +313,7 @@ public class AuctionListController implements Initializable {
 
         } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Manager");
-
-        } else if (Objects.equals(mode, "Lịch sử đấu giá")) {
-            txtVersatile.setText("Bét88 History");
-            clmBiddedTime.setVisible(true);
-            clmBiddingMoney.setVisible(true);
-            clmStartPrice.setVisible(false);
-            clmBidders.setVisible(false);
-
-        }
+                    }
     }
 
     private void setupRowDoubleClick() {
