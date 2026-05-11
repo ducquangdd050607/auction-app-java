@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.network;
 
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.server.service.AuctionService;
 import com.auctionapp.auctionappjava.server.service.UserService;
@@ -7,6 +8,7 @@ import com.auctionapp.auctionappjava.server.service.UserService;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.UUID;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -57,6 +59,9 @@ public class ClientHandler implements Runnable {
                     // Case thuộc auction
                     case "GET_ALL_AUCTIONS":
                         response = auctionService.handleGetAllAuctions();
+                        break;
+                    case "GET_ALL_UPLOADED_AUCTIONS":
+                        response = auctionService.handleGetAllUploadedAuctions((BidManagerRequest) request.payload());
                         break;
                     case "ADD_ITEM":
                         response = auctionService.handleAddItem((AddItemRequest) request.payload());

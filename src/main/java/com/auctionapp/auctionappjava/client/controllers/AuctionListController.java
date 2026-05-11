@@ -2,7 +2,9 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.BidManagerRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
@@ -28,7 +30,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import static com.auctionapp.auctionappjava.client.controllers.NavigatorController.modeName;
 
 public class AuctionListController implements Initializable {
 
@@ -140,12 +145,6 @@ public class AuctionListController implements Initializable {
     void handleAdd(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
         Parent root = loader.load();
-
-//        AddItemController addCtrl = loader.getController();
-//        addCtrl.setOnItemAdded(newItem -> {
-//            loadAuctionsFromServer();
-//        });
-
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(new Scene(root));
@@ -164,7 +163,7 @@ public class AuctionListController implements Initializable {
 
         try {
             show();// kiểm tra kiểu người dùng
-            setMode(NavigatorController.modeName);// thay đổi trong AutionListScreen
+            setMode(modeName);// thay đổi trong AutionListScreen
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -186,12 +185,23 @@ public class AuctionListController implements Initializable {
         loadingSpinner.setMaxSize(50, 50);
         listAuctions.setPlaceholder(loadingSpinner);
         auctionData.clear(); // Xóa sạch dữ liệu cũ trong lúc chờ tải mới
-
         Request req = new Request("GET_ALL_AUCTIONS", null);
+        if ((modeName.equals("Danh sách đấu giá")) || (modeName.equals("Quản lý phiên đấu giá"))) {
+            req = new Request("GET_ALL_AUCTIONS", null);
 
+        } else if (modeName.equals("Quản lý vật phẩm")) {
+            BidManagerRequest bidReq = new BidManagerRequest(UserSession.getInstance().getCurrentUser().id().toString());
+            req = new Request("GET_ALL_UPLOADED_AUCTIONS", bidReq);
+
+//        } else if (modeName.equals("Lịch sử đấu giá")) {
+//            req = new Request("GET_ALL_AUCTIONS", null);
+        }
+
+
+        Request finalReq = req;
         CompletableFuture.supplyAsync(() -> {
             try {
-                return Client.getInstance().sendRequest(req);
+                return Client.getInstance().sendRequest(finalReq);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new Response(false, "Lỗi kết nối Server", null);
@@ -247,6 +257,8 @@ public class AuctionListController implements Initializable {
             // Lambda sẽ tự động autoboxing int thành Integer cho TableColumn
             clmBidders.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bidderCount()));
         }
+//
+//        clmBiddingMoney.setCellValueFactory(cell -> new S);
     }
 
     public void show() throws IOException {
@@ -309,8 +321,9 @@ public class AuctionListController implements Initializable {
             txtVersatile.setText("Bét88 History");
             clmBiddedTime.setVisible(true);
             clmBiddingMoney.setVisible(true);
-            clmCurrentPrice.setVisible(false);
+            clmStartPrice.setVisible(false);
             clmBidders.setVisible(false);
+
         }
     }
 

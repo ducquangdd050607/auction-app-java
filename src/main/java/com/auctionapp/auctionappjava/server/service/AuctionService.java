@@ -49,6 +49,56 @@ public class AuctionService {
         }
     }
 
+    public Response handleGetAllUploadedAuctions(BidManagerRequest data) {
+        try {
+            List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.sellerId()));
+            List<AuctionSummaryResponse> responseList = new ArrayList<>();
+
+            for (Auction auction : dbAuctions) {
+                Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                if (itemOpt.isPresent()) {
+                    Item item = itemOpt.get();
+                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
+
+                    responseList.add(new AuctionSummaryResponse(
+                            auction.getId().toString(), item.getItemType().name(), item.getTitle(),
+                            item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
+                            "Đang diễn ra", auction.getStatus(), bidderCount
+                    ));
+                }
+            }
+            return new Response(true, "Tải dữ liệu thành công!", responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+        }
+    }
+
+//    public Response handleGetAllBiddedAuctions() {
+//        try {
+//            List<BidTransaction> dbAuctions = bidDao.findByBidderId(UUID.fromString(UserSession.getInstance().getCurrentUser().id()));
+//            List<AuctionSummaryResponse> responseList = new ArrayList<>();
+//
+//            for (BidTransaction auction : dbAuctions) {
+//                Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+//                if (itemOpt.isPresent()) {
+//                    Item item = itemOpt.get();
+//                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
+//
+//                    responseList.add(new AuctionSummaryResponse(
+//                            auction.getId().toString(), item.getItemType().name(), item.getTitle(),
+//                            item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
+//                            "Đang diễn ra", auction.getStatus(), bidderCount
+//                    ));
+//                }
+//            }
+//            return new Response(true, "Tải dữ liệu thành công!", responseList);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+//        }
+//    }
+
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
         try {
             // 1. Kiểm tra phiên đấu giá có tồn tại không
