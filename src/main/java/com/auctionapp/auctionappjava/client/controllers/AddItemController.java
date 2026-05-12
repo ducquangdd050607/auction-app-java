@@ -121,7 +121,12 @@ public class AddItemController implements Initializable {
         }
 
         if (!endTime.isAfter(openTime)) {
-            lblError.setText("Ngày kết thúc phải sau ngày mở.");
+            lblError.setText("Thời điểm kết thúc phải sau thời điểm mở.");
+            return;
+        }
+
+        if (!endTime.isAfter(LocalDateTime.now())) {
+            lblError.setText("Thời điểm kết thúc phải sau thời điểm hiện tại.");
             return;
         }
 

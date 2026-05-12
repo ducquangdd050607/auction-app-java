@@ -260,19 +260,6 @@ public class AuctionService {
 
             itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
 
-            // 2.5 XÁC ĐỊNH TRẠNG THÁI PHIÊN ĐẤU
-            AuctionStatus auctionStatus;
-
-            if (now().isBefore(data.openTime())) {
-                auctionStatus = AuctionStatus.OPEN;
-            } else if (now().isBefore(data.endTime())) {
-                auctionStatus = RUNNING;
-            } else {
-                auctionStatus = AuctionStatus.FINISHED;
-            }
-
-            /*System.out.println("DEBUG: Auction Status determined as: " + auctionStatus);*/
-
             // 3. KHỞI TẠO VÀ LƯU PHIÊN ĐẤU GIÁ LIÊN KẾT VỚI VẬT PHẨM ĐÓ
             Auction newAuction = new Auction(
                     UUID.randomUUID(), // ID phiên đấu giá
@@ -284,12 +271,15 @@ public class AuctionService {
                     null,                // Chưa có ai đấu giá (Leading Bidder = null)
                     data.openTime(), // Bắt đầu đấu giá ngay lập tức
                     data.endTime(), // Kết thúc sau X ngày
-                    auctionStatus,  // Trạng thái phiên
+                    AuctionStatus.OPEN,  // Trạng thái phiên mới tạo là OPEN
                     data.minIncrement(), // Bước giá tối thiểu
                     null                 // Chưa có người chiến thắng
             );
 
             auctionDao.save(newAuction); // Gọi lệnh INSERT xuống bảng auctions
+
+            // Chủ động đẩy Auction này vào bộ đếm giờ đóng/mở bid
+            AuctionStatusService.scheduleAuctionEvents(newAuction);
 
             // 4. Báo cáo thành công
             return new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);
