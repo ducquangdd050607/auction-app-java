@@ -3,10 +3,8 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.BidManagerAndHistoryRequest;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -37,6 +36,7 @@ import static com.auctionapp.auctionappjava.client.controllers.NavigatorControll
 public class AuctionListController implements Initializable {
 
     private ObservableList<AuctionSummaryResponse> auctionData = FXCollections.observableArrayList();
+    private boolean removeAuction = false;
 
     @FXML
     private HBox box;
@@ -99,17 +99,30 @@ public class AuctionListController implements Initializable {
     @FXML
     void handleRemove(ActionEvent event) throws IOException {
         // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
+        btnRemove.setDisable(true);
         removeBehaviour(true);
+
+        Runnable enableRemove = () -> {
+            removeAuction = true;
+        };
+        AlertUtils.ConfirmAlertController(
+                "CẢNH BÁO!",
+                "PHIÊN ĐẤU SẼ BỊ XÓA - Chọn phiên muốn xóa bằng cách bấm đúp vào phiên.",
+                enableRemove,
+                null);
     }
 
     @FXML
     void handleCancel(ActionEvent event) throws IOException {
         // hủy và khôi phục trạng thái ban đầu sau khi xóa (admin)
+        btnRemove.setDisable(false);
         removeBehaviour(false);
+        removeAuction = false;
     }
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException {
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Chắc chưa?");
         alert.setHeaderText("Bạn có muốn xóa sản phẩm không?");
@@ -117,15 +130,17 @@ public class AuctionListController implements Initializable {
         alert.showAndWait().ifPresent(response -> {
 
             if (response == ButtonType.OK) {
-                alert.close();
 
                 //xử lý xóa...
 
                 removeBehaviour(false);
+                alert.close();
+                btnRemove.setDisable(false);
 
             } else {
                 //xử lý hủy(chắc chỉ thế này)
                 alert.close();
+                btnRemove.setDisable(false);
 
             }
         });
@@ -194,7 +209,6 @@ public class AuctionListController implements Initializable {
 
         }
 
-
         Request finalReq = req;
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -217,6 +231,39 @@ public class AuctionListController implements Initializable {
                 }
 
                 // Nếu tải xong mà danh sách vẫn trống trơn, đổi vòng xoay thành dòng chữ
+                if (auctionData.isEmpty()) {
+                    Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
+                    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                    listAuctions.setPlaceholder(noDataLabel);
+                }
+            });
+        });
+    }
+
+    private void handleRemoveAuction(AuctionSummaryResponse auction) throws IOException {
+
+        RemoveAuctionRequest removeReq = new RemoveAuctionRequest(auction.auctionId());
+        Request req = new Request("REMOVE_AUCTION", removeReq);
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(req);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Response(false, "Lỗi kết nối Server", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response.success()) {
+                    // Tái sử dụng func trên(WIP)
+                    List<AuctionSummaryResponse> listFromServer = (List<AuctionSummaryResponse>) response.data();
+                    auctionData.remove(auction);
+
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+                    alert.show();
+                }
+
                 if (auctionData.isEmpty()) {
                     Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
                     noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
@@ -326,7 +373,14 @@ public class AuctionListController implements Initializable {
 
                     try {
                         AuctionSession.getInstance().setCurrentAuction(row.getItem());
-                        openAuctionDetail(row.getItem());
+                        if (removeAuction) {
+                            handleRemoveAuction(row.getItem());
+                        } else {
+                            openAuctionDetail(row.getItem());
+                        }
+
+
+
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -383,18 +437,6 @@ public class AuctionListController implements Initializable {
             stage.showAndWait();
 
         }
-//    } private void getStatus(AuctionSummaryResponse auction) {
-//        // Tái xác định trạng thái phiên đấu giá
-//        AuctionStatus auctionStatus;
-//
-//        if (now().isBefore(data.openTime())) {
-//            auctionStatus = AuctionStatus.OPEN;
-//        } else if (now().isBefore(data.endTime())) {
-//            auctionStatus = AuctionStatus.RUNNING;
-//        } else {
-//            auctionStatus = AuctionStatus.FINISHED;
-//        }
-//
-//        System.out.println("DEBUG: Auction Status determined as: " + auctionStatus);
     }
+
 }

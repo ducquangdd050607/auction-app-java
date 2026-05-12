@@ -355,4 +355,17 @@ public class AuctionService {
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
         }
     }
+
+    public Response handleRemoveAuction(RemoveAuctionRequest data) {
+        try {
+            auctionDao.deleteById(UUID.fromString(data.auctionId()));
+            return new Response(true, "Đã xóa phiên đấu giá", null);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+
+            // - Good luck.
+        }
+    }
 }
