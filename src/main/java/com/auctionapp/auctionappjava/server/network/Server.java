@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 public class Server {
     public static void startServer(int port, int maxClients) {
         System.out.println("Khởi động Server");
-        /*AuctionStatusService.recoverAndScheduleAll();*/
+        AuctionStatusService.recoverAndScheduleAll();
         ExecutorService threadPool = Executors.newFixedThreadPool(maxClients);
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -33,7 +33,7 @@ public class Server {
             if (!threadPool.isShutdown()) {
                 threadPool.shutdown();
             }
-            /*AuctionStatusService.shutdown();*/
+            AuctionStatusService.shutdown();
         }
     }
 }

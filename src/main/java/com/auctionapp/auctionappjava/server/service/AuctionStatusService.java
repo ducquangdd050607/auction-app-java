@@ -52,14 +52,14 @@ public class AuctionStatusService {
             if (auction != null && auction.getStatus() == AuctionStatus.OPEN) {
 
                 // 1. Tính toán thời gian còn thiếu
-                long remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getEndTime());
+                long remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getStartTime());
 
                 // 2. VÒNG LẶP CHỐNG THỨC SỚM
                 while (remainingMillis > 0) {
                     Thread.sleep(remainingMillis);
 
                     // NẾU BỊ ĐÁNH THỨC, TÍNH LẠI XEM CÒN THIẾU BAO NHIÊU ĐỂ NGỦ TIẾP
-                    remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getEndTime());
+                    remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getStartTime());
                 }
 
                 // 3. TIẾN HÀNH MỞ PHIÊN (Lúc này CHẮC CHẮN 1000% đã qua giờ)

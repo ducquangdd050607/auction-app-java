@@ -132,7 +132,6 @@ public class AddItemController implements Initializable {
 
         // Các thuộc tính
         String type = null;
-        long duration = ChronoUnit.MINUTES.between(openTime, endTime);
 
         switch (category) {
             case "Nghệ thuật":
