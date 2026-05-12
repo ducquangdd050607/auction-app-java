@@ -63,7 +63,8 @@ public class ChangePasswordController {
             };
 
 
-            AlertUtils.SceneOffAlertController(event,
+            AlertUtils.ConfirmAlertController(
+                    event,
                     "Chắc chưa?",
                     "Bạn có muốn đổi mật khẩu không?",
                     "",

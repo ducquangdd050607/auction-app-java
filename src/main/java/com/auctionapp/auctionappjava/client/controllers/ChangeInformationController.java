@@ -67,7 +67,7 @@ public class ChangeInformationController {
                                 currentStage.close();
                             };
 
-                            AlertUtils.ConfirmAlertController(
+                            AlertUtils.AnnouncementController(
                                     "Thông báo",
                                     "Đã thay đổi thành công!",
                                     closeForm,
@@ -82,7 +82,7 @@ public class ChangeInformationController {
                 });
             };
 
-            AlertUtils.ConfirmAlertController(
+            AlertUtils.AnnouncementController(
                     "Chắc chưa?",
                     "Bạn có muốn đổi thông tin không?",
                     changeInformationMethod,

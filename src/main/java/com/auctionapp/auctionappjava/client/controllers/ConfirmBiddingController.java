@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -225,7 +224,7 @@ public class ConfirmBiddingController {
                         };
 
                         // Hiển thị Alert, truyền Runnable vào để khi tắt Alert nó tự nhảy trang
-                        AlertUtils.ConfirmAlertController(
+                        AlertUtils.AnnouncementController(
                                 "Thông báo",
                                 "Đã đặt giá thành công!",
                                 goBackToDetail, // Gọi hàm chuyển trang

@@ -88,7 +88,7 @@ public class DepositController {
                                     currentStage.close();
                                 };
 
-                                AlertUtils.ConfirmAlertController(
+                                AlertUtils.AnnouncementController(
                                         "Thông báo",
                                         "Đã nạp tiền thành công!",
                                         closeForm,
@@ -103,7 +103,7 @@ public class DepositController {
                     });
                 };
 
-                AlertUtils.ConfirmAlertController(
+                AlertUtils.AnnouncementController(
                         "Chắc chưa?",
                         "Bạn có chắc muốn nạp tiền không?",
                         depositMethod,

@@ -84,7 +84,7 @@ public class AuctionDetailController {
             Runnable unableToGamble = () -> {
                 btnGamble.setDisable(true);
             };
-            AlertUtils.ConfirmAlertController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
+            AlertUtils.AnnouncementController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
 
