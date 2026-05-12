@@ -47,7 +47,7 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllUploadedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllUploadedAuctions(ManagerAndHistoryRequest data) {
         try {
             List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.userId()));
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
@@ -72,7 +72,7 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllPersonalBiddedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllPersonalBiddedAuctions(ManagerAndHistoryRequest data) {
         // #FckNowImHungry
         try {
             List<BidTransaction> history = bidDao.findByBidderId(UUID.fromString(data.userId()));
@@ -114,7 +114,7 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllBiddedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllBiddedAuctions(ManagerAndHistoryRequest data) {
         try {
             List<BidTransaction> history = bidDao.findAll();
 
@@ -337,11 +337,12 @@ public class AuctionService {
 
                 // Tạo DTO
                 UserDetailResponse dto = new UserDetailResponse(
+                        String.valueOf(user.getId()),
                         latestItemTitle,
                         user.getFullName(),
                         user.getRole().name(),
                         userDao.findWalletByUserId(user.getId()).get().getBalance(),
-                        "ACTIVE",
+                        userDao.findById(user.getId()).get().isActive(),
                         (int) bidDao.countBidsByBidderId(user.getId())
                 );
 
@@ -358,7 +359,10 @@ public class AuctionService {
 
     public Response handleRemoveAuction(RemoveAuctionRequest data) {
         try {
+            // Chưa có liên kết giữa Item và Auction -> ??
+            // TODO: Liên kết giữa Item và Auction
             auctionDao.deleteById(UUID.fromString(data.auctionId()));
+            //itemDao.nookzzAll();                                  //:skull
             return new Response(true, "Đã xóa phiên đấu giá", null);
 
         } catch(Exception e) {
@@ -366,6 +370,21 @@ public class AuctionService {
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
 
             // - Good luck.
+        }
+    }
+
+    public Response handleBanUser(ManagerAndHistoryRequest data) {
+        try {
+
+            userDao.updateActiveStatus(UUID.fromString(data.userId()), false);
+
+            return new Response(true, "Đã Ban người này", null);
+        }  catch(Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+
+            // - Good luck.
+            // - Fuck you whore.
         }
     }
 }

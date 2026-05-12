@@ -168,8 +168,11 @@ public class AddItemController implements Initializable {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
+                        btnAddItem.setDisable(false);
+                        btnCancel.setDisable(false);
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
+
                     } else {
                         lblError.setText(response.message());
                         lblError.setVisible(true);
@@ -185,7 +188,8 @@ public class AddItemController implements Initializable {
         };
 
 
-        AlertUtils.SceneOffAlertController(event,
+        AlertUtils.ConfirmAlertController(
+                event,
                 "Chắc chưa?",
                 "Bạn CHẮC muốn Thêm phiên đấu giá này không?",
                 "",

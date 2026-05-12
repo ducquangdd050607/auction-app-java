@@ -15,10 +15,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -105,7 +106,7 @@ public class AuctionListController implements Initializable {
         Runnable enableRemove = () -> {
             removeAuction = true;
         };
-        AlertUtils.ConfirmAlertController(
+        AlertUtils.AnnouncementController(
                 "CẢNH BÁO!",
                 "PHIÊN ĐẤU SẼ BỊ XÓA - Chọn phiên muốn xóa bằng cách bấm đúp vào phiên.",
                 enableRemove,
@@ -121,7 +122,7 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    void handleConfirm(ActionEvent event) throws IOException {
+    void handleConfirm(ActionEvent event) throws IOException { //WIP
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Chắc chưa?");
@@ -130,8 +131,6 @@ public class AuctionListController implements Initializable {
         alert.showAndWait().ifPresent(response -> {
 
             if (response == ButtonType.OK) {
-
-                //xử lý xóa...
 
                 removeBehaviour(false);
                 alert.close();
@@ -204,7 +203,7 @@ public class AuctionListController implements Initializable {
             req = new Request("GET_ALL_AUCTIONS", null);
 
         } else if (modeName.equals("Quản lý vật phẩm")) {
-            BidManagerAndHistoryRequest bidReq = new BidManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
+            ManagerAndHistoryRequest bidReq = new ManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
             req = new Request("GET_ALL_UPLOADED_AUCTIONS", bidReq);
 
         }
@@ -255,8 +254,7 @@ public class AuctionListController implements Initializable {
         }).thenAccept(response -> {
             Platform.runLater(() -> {
                 if (response.success()) {
-                    // Tái sử dụng func trên(WIP)
-                    List<AuctionSummaryResponse> listFromServer = (List<AuctionSummaryResponse>) response.data();
+                    // XÓA LUÔN TRÊN MÀN HÌNH
                     auctionData.remove(auction);
 
                 } else {
@@ -301,8 +299,6 @@ public class AuctionListController implements Initializable {
             // Lambda sẽ tự động autoboxing int thành Integer cho TableColumn
             clmBidders.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bidderCount()));
         }
-//
-//        clmBiddingMoney.setCellValueFactory(cell -> new S);
     }
 
     public void show() throws IOException {
@@ -374,12 +370,28 @@ public class AuctionListController implements Initializable {
                     try {
                         AuctionSession.getInstance().setCurrentAuction(row.getItem());
                         if (removeAuction) {
-                            handleRemoveAuction(row.getItem());
+
+                            Runnable finalWarning = () -> {
+                                try {
+                                    handleRemoveAuction(row.getItem());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            };
+
+                            AlertUtils.ConfirmAlertController(
+                                    null,
+                                    "CẢNH BÁO!",
+                                    "PHIÊN ĐẤU SẼ BỊ XÓA",
+                                    "BẠN CÓ MUỐN XÓA PHIÊN ĐẤU NÀY KHÔNG?",
+                                    "ĐÃ XONG",
+                                    "PHIÊN ĐẤU ĐÃ BỊ XÓA",
+                                    "",
+                                    finalWarning,
+                                    getWarningView());
                         } else {
                             openAuctionDetail(row.getItem());
                         }
-
-
 
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -437,6 +449,12 @@ public class AuctionListController implements Initializable {
             stage.showAndWait();
 
         }
+    } private ImageView getWarningView() throws IOException {
+        Image warningImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Koconut.png")));
+        ImageView warningView = new ImageView(warningImage);
+        warningView.setPreserveRatio(true);
+        warningView.setFitWidth(80);
+        return warningView;
     }
 
 }

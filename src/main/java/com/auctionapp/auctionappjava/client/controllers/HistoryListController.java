@@ -83,7 +83,7 @@ public class HistoryListController implements Initializable {
 
         Request req = new Request("GET_HISTORY", null);
         if (LoginController.bidderRoute) {
-            BidManagerAndHistoryRequest bidReq = new BidManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
+            ManagerAndHistoryRequest bidReq = new ManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
             req = new Request("GET_HISTORY", bidReq);
         // Trước mắt là GET_HISTORY trước
 

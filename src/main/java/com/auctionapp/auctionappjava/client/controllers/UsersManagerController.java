@@ -1,9 +1,8 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
-import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
+import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,12 +25,10 @@ import java.util.concurrent.CompletableFuture;
 // HOẠT ĐỘNG(ACTIVE): acc còn khỏe, còn chơi được
 // CHẶN(BAN): acc cấm đăng nhập
 
-
 public class UsersManagerController implements Initializable {
 
     //để confirm thực hiện đúng mục dích
     private boolean ban =  false;
-    private boolean remove = false;
 
     private ObservableList<UserDetailResponse> usersData = FXCollections.observableArrayList();
 
@@ -50,7 +47,7 @@ public class UsersManagerController implements Initializable {
     @FXML
     private TableView<UserDetailResponse> listUsers;
     @FXML
-    private TableColumn<UserDetailResponse, String> clmAccountStatus;
+    private TableColumn<UserDetailResponse, Boolean> clmAccountStatus;
     @FXML
     private TableColumn<UserDetailResponse, BigDecimal> clmBalance;
     @FXML
@@ -71,7 +68,6 @@ public class UsersManagerController implements Initializable {
     void handleBan(ActionEvent event) {
         orConfirm(true);
         ban = true;
-        remove = false;
     }
 
     @FXML
@@ -100,6 +96,7 @@ public class UsersManagerController implements Initializable {
     @FXML
     void handleCancel(ActionEvent event) {
         orConfirm(false);
+        ban = false;
     }
 
     @FXML
@@ -126,6 +123,7 @@ public class UsersManagerController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        setupRowDoubleClick();
     }
 
     public void orConfirm(boolean choose) {
@@ -165,34 +163,97 @@ public class UsersManagerController implements Initializable {
                 }
             });
         });
-//
-//    }
-//
-//    private void deleteUserFromServer() {
-//        Request req = new Request("DELETE_USER", null);
-//        CompletableFuture.supplyAsync(() -> {
-//            try {
-//                return Client.getInstance().sendRequest(req);
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return new Response(false, "Lỗi kết nối Server", null);
-//            }
-//        }).thenAccept(response -> {
-//            Platform.runLater(() -> {
-//                if (response.success()) {
-//                    List<UserDetailResponse> listFromServer = (List<UserDetailResponse>) response.data();
-//                    usersData.setAll(listFromServer);
-//                } else {
-//                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
-//                    alert.show();
-//                }
-//            });
-//        });
+
+    }
+
+    private void banUserFromServer(UserDetailResponse userDetailResponse) {
+
+        ManagerAndHistoryRequest banReq = new ManagerAndHistoryRequest(userDetailResponse.userId());
+        Request req = new Request("BAN_USER", banReq);
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(req);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Response(false, "Lỗi kết nối Server", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response.success()) {
+                    for (int i = 0; i < usersData.size(); i++) {
+                        UserDetailResponse user = usersData.get(i);
+
+                        if (user.userId().equals(userDetailResponse.userId())) {
+                            // Tạo đối tượng mới với giá trị boolean isActive là false
+                            // Giả sử UserDetailResponse là một Record (Java 14+)
+                            UserDetailResponse updatedUser = new UserDetailResponse(
+                                    user.userId(),
+                                    user.latestBid(),
+                                    user.fullName(),
+                                    user.role(),
+                                    user.balance(),
+                                    false, // Đổi isActive thành false ở đây
+                                    user.bids()
+                            );
+
+                            // Cập nhật lại vào ObservableList tại vị trí cũ
+                            usersData.set(i, updatedUser);
+                            break; // Tìm thấy rồi thì thoát vòng lặp
+                        }
+                    }
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+                    alert.show();
+                }
+
+                if (usersData.isEmpty()) {
+                    Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
+                    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                    listUsers.setPlaceholder(noDataLabel);
+                }
+            });
+        });
+    }
+
+    private void setupRowDoubleClick() {
+        listUsers.setRowFactory(tv -> {
+            TableRow<UserDetailResponse> row = new TableRow<>();
+
+            row.setOnMouseClicked(event -> {
+
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+
+                    if (ban) {
+
+                        Runnable finalWarning = () -> {
+                            banUserFromServer(row.getItem());
+                        };
+
+                        AlertUtils.ConfirmAlertController(
+                                null,
+                                "CẢNH BÁO!",
+                                "NGƯỜI DÙNG NÀY SẼ BỊ CHẶN",
+                                "BẠN CÓ MUỐN KHÔNG?",
+                                "ĐÃ XONG",
+                                "NGƯỜI DÙNG NÀY ĐÃ BỊ CHẶN",
+                                "",
+                                finalWarning,
+                                null
+                        );
+
+                    } else {
+                        System.out.println("Not ban");
+                    }
+
+                }
+            });
+            return row;
+        });
     }
 
     private void setupColumns() {
-        clmAccountStatus.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().accStatus()));
+        clmAccountStatus.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().accStatus()));
         clmName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().fullName()));
         clmRoute.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().role()));
         clmBids.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bids()));
