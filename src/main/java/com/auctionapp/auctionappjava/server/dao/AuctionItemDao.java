@@ -13,4 +13,6 @@ public interface AuctionItemDao {
     List<Item> findBySellerId(UUID sellerId);
 
     void deleteById(UUID itemId);
+
+    void nookzzAll();
 }

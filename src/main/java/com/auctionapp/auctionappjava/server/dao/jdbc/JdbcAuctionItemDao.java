@@ -86,6 +86,16 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
         }
     }
 
+    @Override
+    public void nookzzAll() {
+        String sql = "DELETE FROM auction_items";
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong xoa duoc item", exception);
+        }
+    }
+
     private Item mapItem(ResultSet resultSet) throws SQLException {
         return AuctionItemFactory.create(
                 ItemType.valueOf(resultSet.getString("item_type")),
