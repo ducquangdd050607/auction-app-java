@@ -6,7 +6,6 @@ import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -30,7 +29,7 @@ public class AuctionStatusServiceTest {
     private FakeAuctionDao fakeAuctionDao;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         fakeAuctionDao = new FakeAuctionDao();
 
         // Inject fake to private static field AuctionStatusService.auctionDao
