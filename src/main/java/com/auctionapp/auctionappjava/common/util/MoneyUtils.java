@@ -1,10 +1,13 @@
 package com.auctionapp.auctionappjava.common.util;
 
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -108,5 +111,34 @@ public final class MoneyUtils {
             return BigDecimal.ZERO;
         }
         return new BigDecimal(cleanString);
+    }
+
+    public static String formatMoney(BigDecimal amount) {
+        if (amount == null) {
+            return "0";
+        }
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.'); // Dùng dấu chấm ngăn cách hàng nghìn
+
+        DecimalFormat df = new DecimalFormat("#,###", symbols);
+        return df.format(amount);
+    }
+
+    // Setup lại giá tiền trên UI nhìn cho đẹp
+    // Thêm <T> đại diện cho BẤT KỲ loại đối tượng (Response) nào chứa trong dòng của bảng
+    public static <T> void formatPriceColumn(TableColumn<T, BigDecimal> column) {
+        column.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(BigDecimal price, boolean empty) {
+                super.updateItem(price, empty);
+                if (empty || price == null) {
+                    setText(null);
+                } else {
+                    // Gọi hàm đa năng MoneyUtils ta vừa tạo lúc nãy
+                    setText(MoneyUtils.formatMoney(price));
+                }
+            }
+        });
     }
 }

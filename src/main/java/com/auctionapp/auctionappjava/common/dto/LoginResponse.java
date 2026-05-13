@@ -9,5 +9,6 @@ public record LoginResponse(
         String fullName,
         String role,
         String email,
-        BigDecimal walletBalance
+        BigDecimal walletBalance,
+        boolean accStatus
 ) implements Serializable {}

@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 public class AlertUtils {
     // Runnable cho phép hàm có thể chạy sau khi bấm nút OK
-    public static void SceneOffAlertController(ActionEvent event,
+    public static void ConfirmAlertController( ActionEvent event,
                                                String alertTitle,
                                                String alertHeader,
                                                String alertContent,
@@ -41,16 +41,17 @@ public class AlertUtils {
                     successAlert.setGraphic(announcementImage);
                 }
                 successAlert.showAndWait();
-
-                Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                currentStage.close();
+                if (event != null) {
+                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    currentStage.close();
+                }
             } else {
                 alert.close();
             }
         });
     }
 
-    public static void ConfirmAlertController(String title,
+    public static void AnnouncementController(String title,
                                               String header,
                                               Runnable onConfirm,
                                               ImageView announcementImage) {

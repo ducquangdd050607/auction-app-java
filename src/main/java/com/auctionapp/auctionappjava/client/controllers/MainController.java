@@ -43,7 +43,7 @@ public class MainController {
             stage.close();
         };
 
-        AlertUtils.ConfirmAlertController(
+        AlertUtils.AnnouncementController(
                 "Xác nhận thoát",
                 "Bạn có chắc chắn muốn thoát ứng dụng không?",
                 closeStage,

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -38,14 +39,27 @@
    <center>
       <TableView fx:id="listUsers" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn prefWidth="26.4000244140625" text="STT" />
-            <TableColumn fx:id="clmName" prefWidth="120.79998779296875" text="Tên" />
-            <TableColumn fx:id="clmRoute" prefWidth="70.39996337890625" text="Vai trò" />
-            <TableColumn fx:id="clmBalance" prefWidth="127.20001220703125" text="Số dư Ví" />
-            <TableColumn fx:id="clmRecentBid" prefWidth="167.20004272460938" text="Phiên đấu gía gần đây" />
-            <TableColumn fx:id="clmBids" prefWidth="112.0" text="Số phiên tham gia" />
-            <TableColumn fx:id="clmAccountStatus" prefWidth="134.4000244140625" text="Trạng thái tài khoản" />
-            <TableColumn fx:id="clmChoose" minWidth="0.0" prefWidth="27.199951171875">
+            <TableColumn fx:id="clmName" prefWidth="134.0" text="Tên" />
+            <TableColumn fx:id="clmRoute" prefWidth="71.0" text="Vai trò" />
+            <TableColumn fx:id="clmBalance" prefWidth="119.0" text="Số dư Ví" />
+            <TableColumn fx:id="clmRecentBid" prefWidth="166.0" text="Phiên đấu gía gần đây">
+               <graphic>
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="13.0" prefWidth="5.0" style="-fx-border-style: circle;" text="?">
+                     <tooltip>
+                        <Tooltip text="Hiển thị Các phiên đấu giá tham gia gần đây của BIDDER và Các phiên được tạo ra bởi SELLER" />
+                     </tooltip>
+                  </Button>
+               </graphic></TableColumn>
+            <TableColumn fx:id="clmBids" prefWidth="180.0" text="Số phiên tham gia/Tạo ra">
+               <graphic>
+                  <Button mnemonicParsing="false" text="?">
+                     <tooltip>
+                        <Tooltip text="Các phiên BIDDER tham gia và Các phiên tạo ra bởi SELLER" />
+                     </tooltip>
+                  </Button>
+               </graphic></TableColumn>
+            <TableColumn fx:id="clmAccountStatus" prefWidth="127.0" text="Trạng thái tài khoản" />
+            <TableColumn fx:id="clmChoose" minWidth="0.0" prefWidth="21.0">
                <graphic>
                   <CheckBox mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" />
                </graphic>
@@ -65,7 +79,6 @@
             <HBox alignment="CENTER" prefHeight="35.0" prefWidth="414.0" spacing="20.0" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12;">
                <children>
                   <Button fx:id="btnBan" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleBan" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Chặn người dùng" />
-                  <Button fx:id="btnRemove" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xóa tài khoản" />
                   <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Hủy bỏ" />
                </children>

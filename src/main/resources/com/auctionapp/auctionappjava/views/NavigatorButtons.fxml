@@ -25,7 +25,7 @@
             <VBox fx:id="groupBidder" alignment="CENTER" prefHeight="17.0" prefWidth="195.0">
                <children>
                   <Button fx:id="btnItemListBidder" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
-                  <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="0.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
+                  <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleHistory" prefHeight="0.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>
@@ -33,6 +33,7 @@
                <children>
                   <Button fx:id="btnItemListAdmin" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="6.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
                   <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý Users" />
+                  <Button fx:id="btnTransactionList" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleHistory" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đặt cược" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>

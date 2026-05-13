@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
+
 public class AccountController implements Initializable {
 
     @FXML
@@ -36,7 +38,7 @@ public class AccountController implements Initializable {
         lblFullname.setText(UserSession.getInstance().getCurrentUser().fullName());
         lblRoute.setText(UserSession.getInstance().getCurrentUser().role());
         lblEmail.setText(UserSession.getInstance().getCurrentUser().email());
-        lblBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
+        lblBalance.setText(formatMoney(UserSession.getInstance().getCurrentUser().walletBalance()) + " VND");
     }
 
     @Override

@@ -121,13 +121,17 @@ public class AddItemController implements Initializable {
         }
 
         if (!endTime.isAfter(openTime)) {
-            lblError.setText("Ngày kết thúc phải sau ngày mở.");
+            lblError.setText("Thời điểm kết thúc phải sau thời điểm mở.");
+            return;
+        }
+
+        if (!endTime.isAfter(LocalDateTime.now())) {
+            lblError.setText("Thời điểm kết thúc phải sau thời điểm hiện tại.");
             return;
         }
 
         // Các thuộc tính
         String type = null;
-        long duration = ChronoUnit.MINUTES.between(openTime, endTime);
 
         switch (category) {
             case "Nghệ thuật":
@@ -164,8 +168,11 @@ public class AddItemController implements Initializable {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
+                        btnAddItem.setDisable(false);
+                        btnCancel.setDisable(false);
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
+
                     } else {
                         lblError.setText(response.message());
                         lblError.setVisible(true);
@@ -181,7 +188,8 @@ public class AddItemController implements Initializable {
         };
 
 
-        AlertUtils.SceneOffAlertController(event,
+        AlertUtils.ConfirmAlertController(
+                event,
                 "Chắc chưa?",
                 "Bạn CHẮC muốn Thêm phiên đấu giá này không?",
                 "",

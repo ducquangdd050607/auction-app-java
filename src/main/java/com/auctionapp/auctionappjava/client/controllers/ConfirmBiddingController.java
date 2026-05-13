@@ -3,28 +3,31 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import com.auctionapp.auctionappjava.server.dao.AuctionDao;
+import com.auctionapp.auctionappjava.server.dao.BidDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 public class ConfirmBiddingController {
 
@@ -35,6 +38,8 @@ public class ConfirmBiddingController {
     private final BigDecimal balance = UserSession.getInstance().getCurrentUser().walletBalance();
     private final String userId = UserSession.getInstance().getCurrentUser().id();
     private final String currentAuctionId = AuctionSession.getInstance().getCurrentAuction().auctionId();
+    private final BidDao bidDao = new JdbcBidDao();
+    private final AuctionDao auctionDao = new JdbcAuctionDao();
 
     @FXML
     private Button btnMore;
@@ -49,7 +54,7 @@ public class ConfirmBiddingController {
     private Label lblError;
 
     @FXML
-    private HBox boxAutoBidding;
+    private VBox boxAutoBidding;
 
     @FXML
     private Label lblBest;
@@ -59,6 +64,9 @@ public class ConfirmBiddingController {
 
     @FXML
     private TextField txtSetAuto;
+
+    @FXML
+    private TextField txtSetMaxAuto;
 
     @FXML
     private TextField txtSetPrice;
@@ -77,10 +85,9 @@ public class ConfirmBiddingController {
     public void initialize() {
         btnMore.setManaged(false);
         btnMore.setVisible(false);
-        lblBalance.setText(balance.toPlainString());
-        lblBest.setText(best.toPlainString());
-        lblMinIncrement.setText(minIncrement.toPlainString());
-        btnMore.setManaged(false);
+        lblBalance.setText(formatMoney(balance) + " VND");
+        lblBest.setText(formatMoney(best) + " VND");
+        lblMinIncrement.setText(formatMoney(minIncrement) + " VND");
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
     }
@@ -116,14 +123,19 @@ public class ConfirmBiddingController {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if ((txtSetAuto.getText().isEmpty()) & (isAutoBidding)) {
+        } else if (((txtSetAuto.getText().isEmpty()) || (txtSetMaxAuto.getText().isEmpty())) & (isAutoBidding)) {
             lblError.setText("Hãy nhập giá tiền tự đặt cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
         } else if ((((purifyingText(txtSetAuto.getText()).subtract(minIncrement))
                 .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
-            lblError.setText("Giá tiền tự đặt cược đang nhỏ hơn bước đặt");
+            lblError.setText("Bước tiền tự đặt cược đang nhỏ hơn bước đặt");
             lblError.setTextFill(Color.web("#FF8A80"));
+
+        } else if ((((purifyingText(txtSetMaxAuto.getText()).subtract(purifyingText(txtSetPrice.getText())))
+                    .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
+                lblError.setText("Tiền tự đặt cược tối đa đang nhỏ hơn giá hiện tại");
+                lblError.setTextFill(Color.web("#FF8A80"));
 
         } else if ((best.subtract(purifyingText(txtSetPrice.getText())))
                 .compareTo(new BigDecimal(0)) > 0) {
@@ -152,13 +164,13 @@ public class ConfirmBiddingController {
             // Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
                     UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
-                    userId, // ID người dùng hiện tại
+                    UUID.fromString(userId), // ID người dùng hiện tại
                     finalBidAmount // Số tiền cược
             );
             Request bidReq = new Request("PLACE_BID", payload);
 
             // Chuẩn bị hình ảnh cho Alert
-            Image image = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg")));
             ImageView imageView = new ImageView(image);
             imageView.setPreserveRatio(true);
             imageView.setFitWidth(500);
@@ -172,6 +184,22 @@ public class ConfirmBiddingController {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
+                        // Cập nhật lại UserSession
+                        LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
+                        LoginResponse updatedUser = new LoginResponse(
+                                oldUser.id(),
+                                oldUser.username(),
+                                oldUser.fullName(),
+                                oldUser.role(),
+                                oldUser.email(),
+                                oldUser.walletBalance().subtract(finalBidAmount),
+                                oldUser.accStatus()
+                        );
+                        UserSession.getInstance().setCurrentUser(updatedUser);
+
+                        // Cập nhật số bidders
+                        long bidders = bidDao.countBiddersByAuctionId(UUID.fromString(currentAuctionId));
+
                         // Cập nhật lại AuctionSession
                         AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
                         AuctionSummaryResponse updatedData = new AuctionSummaryResponse(
@@ -183,7 +211,7 @@ public class ConfirmBiddingController {
                                 oldData.minimumIncrement(),
                                 oldData.timeLeft(),
                                 oldData.status(),
-                                oldData.bidderCount() + 1
+                                (int) bidders
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
 
@@ -197,7 +225,7 @@ public class ConfirmBiddingController {
                         };
 
                         // Hiển thị Alert, truyền Runnable vào để khi tắt Alert nó tự nhảy trang
-                        AlertUtils.ConfirmAlertController(
+                        AlertUtils.AnnouncementController(
                                 "Thông báo",
                                 "Đã đặt giá thành công!",
                                 goBackToDetail, // Gọi hàm chuyển trang

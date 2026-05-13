@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 public class DepositController {
 
@@ -36,7 +37,7 @@ public class DepositController {
     @FXML
     public void initialize() {
         settingMoneyFormat(txtAmount);
-        lblCurrentBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
+        lblCurrentBalance.setText(formatMoney(UserSession.getInstance().getCurrentUser().walletBalance()) + " VND");
     }
 
     @FXML
@@ -79,7 +80,8 @@ public class DepositController {
                                         oldUser.fullName(),
                                         oldUser.role(),
                                         oldUser.email(),
-                                        oldUser.walletBalance().add(amount)   // Cộng thêm tiền nạp vào
+                                        oldUser.walletBalance().add(amount), // Cộng thêm tiền nạp vào
+                                        oldUser.accStatus()
                                 );
                                 UserSession.getInstance().setCurrentUser(updatedUser);
 
@@ -88,7 +90,7 @@ public class DepositController {
                                     currentStage.close();
                                 };
 
-                                AlertUtils.ConfirmAlertController(
+                                AlertUtils.AnnouncementController(
                                         "Thông báo",
                                         "Đã nạp tiền thành công!",
                                         closeForm,
@@ -103,7 +105,7 @@ public class DepositController {
                     });
                 };
 
-                AlertUtils.ConfirmAlertController(
+                AlertUtils.AnnouncementController(
                         "Chắc chưa?",
                         "Bạn có chắc muốn nạp tiền không?",
                         depositMethod,

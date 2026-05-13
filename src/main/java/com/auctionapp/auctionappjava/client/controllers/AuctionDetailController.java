@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
+
 public class AuctionDetailController {
 
     @FXML
@@ -63,15 +65,15 @@ public class AuctionDetailController {
     void loadAuctionData(AuctionSummaryResponse auction) {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
-        lblStartingPrice.setText(auction.startPrice().toString());
-        lblMinIncrement.setText(auction.minimumIncrement().toString());
-        lblCurrentPrice.setText(auction.currentPrice().toString());
+        lblStartingPrice.setText(formatMoney(auction.startPrice()) + " VND");
+        lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
+        lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
         //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
     }
 
     @FXML
-    void handleBack(ActionEvent event) throws IOException {
+    void handleBack(ActionEvent event) {
         Stage stage = (Stage) btnBack.getScene().getWindow();
         stage.close();
     }
@@ -84,7 +86,7 @@ public class AuctionDetailController {
             Runnable unableToGamble = () -> {
                 btnGamble.setDisable(true);
             };
-            AlertUtils.ConfirmAlertController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
+            AlertUtils.AnnouncementController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
 

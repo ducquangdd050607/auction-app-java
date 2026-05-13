@@ -6,6 +6,7 @@ import com.auctionapp.auctionappjava.common.model.Wallet;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 public interface UserDao {
     User save(User u);
@@ -13,6 +14,8 @@ public interface UserDao {
     Optional<User> findById(UUID id);
 
     Optional<User> findByName(String name);
+
+    List<User> findAll();
 
     void updateRole(UUID id, Role role);
 
