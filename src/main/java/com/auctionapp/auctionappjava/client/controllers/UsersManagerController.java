@@ -142,6 +142,12 @@ public class UsersManagerController implements Initializable {
     }
 
     private void loadUserFromServer() {
+
+        ProgressIndicator loadingSpinner = new ProgressIndicator();
+        loadingSpinner.setMaxSize(50, 50);
+        listUsers.setPlaceholder(loadingSpinner);
+        usersData.clear();
+
         Request req = new Request("GET_USERS", null);
 
         CompletableFuture.supplyAsync(() -> {
@@ -166,10 +172,10 @@ public class UsersManagerController implements Initializable {
 
     }
 
-    private void banUserFromServer(UserDetailResponse userDetailResponse) {
+    private void setUserStatusFromServer(UserDetailResponse userDetailResponse) {
 
         ManagerAndHistoryRequest banReq = new ManagerAndHistoryRequest(userDetailResponse.userId());
-        Request req = new Request("BAN_USER", banReq);
+        Request req = new Request("DECIDE_STATUS", banReq);
         CompletableFuture.supplyAsync(() -> {
             try {
                 return Client.getInstance().sendRequest(req);
@@ -181,19 +187,21 @@ public class UsersManagerController implements Initializable {
         }).thenAccept(response -> {
             Platform.runLater(() -> {
                 if (response.success()) {
+                    // Phần này chịu trách nhiệm hot-switch status
                     for (int i = 0; i < usersData.size(); i++) {
                         UserDetailResponse user = usersData.get(i);
 
+                        boolean status = user.accStatus();
+
                         if (user.userId().equals(userDetailResponse.userId())) {
-                            // Tạo đối tượng mới với giá trị boolean isActive là false
-                            // Giả sử UserDetailResponse là một Record (Java 14+)
+
                             UserDetailResponse updatedUser = new UserDetailResponse(
                                     user.userId(),
                                     user.latestBid(),
                                     user.fullName(),
                                     user.role(),
                                     user.balance(),
-                                    false, // Đổi isActive thành false ở đây
+                                    !status, // Đổi isActive thành cái gì đó ở đây
                                     user.bids()
                             );
 
@@ -208,7 +216,7 @@ public class UsersManagerController implements Initializable {
                 }
 
                 if (usersData.isEmpty()) {
-                    Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
+                    Label noDataLabel = new Label("Hiện tại chưa có user nào.");
                     noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
                     listUsers.setPlaceholder(noDataLabel);
                 }
@@ -227,21 +235,42 @@ public class UsersManagerController implements Initializable {
                     if (ban) {
 
                         Runnable finalWarning = () -> {
-                            banUserFromServer(row.getItem());
+                            setUserStatusFromServer(row.getItem());
                         };
 
-                        AlertUtils.ConfirmAlertController(
-                                null,
-                                "CẢNH BÁO!",
-                                "NGƯỜI DÙNG NÀY SẼ BỊ CHẶN",
-                                "BẠN CÓ MUỐN KHÔNG?",
-                                "ĐÃ XONG",
-                                "NGƯỜI DÙNG NÀY ĐÃ BỊ CHẶN",
-                                "",
-                                finalWarning,
-                                null
-                        );
-
+                        if (row.getItem().accStatus()) {
+                            if (row.getItem().role().equals("ADMIN")) {
+                                AlertUtils.AnnouncementController(
+                                        "KHÔNG ĐƯỢC CHẶN ADMIN",
+                                        "ADMIN KHÔNG THỂ BỊ CHẶN",
+                                        null,
+                                        null);
+                            } else {
+                                AlertUtils.ConfirmAlertController(
+                                        null,
+                                        "CẢNH BÁO!",
+                                        "NGƯỜI DÙNG NÀY SẼ BỊ CHẶN",
+                                        "BẠN CÓ MUỐN KHÔNG?",
+                                        "ĐÃ XONG",
+                                        "NGƯỜI DÙNG NÀY ĐÃ BỊ CHẶN",
+                                        "",
+                                        finalWarning,
+                                        null
+                                );
+                            }
+                        } else {
+                            AlertUtils.ConfirmAlertController(
+                                    null,
+                                    "CẢNH BÁO!",
+                                    "NGƯỜI DÙNG NÀY SẼ ĐƯỢC GỠ CHẶN",
+                                    "BẠN CÓ MUỐN KHÔNG?",
+                                    "ĐÃ XONG",
+                                    "NGƯỜI DÙNG NÀY ĐÃ ĐƯỢC GỠ CHẶN",
+                                    "",
+                                    finalWarning,
+                                    null
+                            );
+                        }
                     } else {
                         System.out.println("Not ban");
                     }

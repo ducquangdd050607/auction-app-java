@@ -79,8 +79,8 @@ public class ClientHandler implements Runnable {
                     case "REMOVE_AUCTION":
                         response = auctionService.handleRemoveAuction((RemoveAuctionRequest) request.payload());
                         break;
-                    case "BAN_USER":
-                        response = auctionService.handleBanUser((ManagerAndHistoryRequest) request.payload());
+                    case "DECIDE_STATUS":
+                        response = auctionService.handleSetUserStatus((ManagerAndHistoryRequest) request.payload());
                         break;
                     default:
                         response = new Response(false, "Hành động không hợp lệ: " + request.action(), null);

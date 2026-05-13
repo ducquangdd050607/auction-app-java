@@ -9,7 +9,6 @@ import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
@@ -210,8 +209,8 @@ public class AuctionService {
 
                                 BidTransaction newBid = new BidTransaction(
                                         UUID.randomUUID(),    // ID tự sinh
-                                        LocalDateTime.now(),  // createdAt
-                                        LocalDateTime.now(),  // updatedAt
+                                        now(),  // createdAt
+                                        now(),  // updatedAt
                                         placeBidData.auctionId(),     // ID phiên
                                         placeBidData.userId(),        // ID người đặt
                                         placeBidData.amount(),        // Số tiền đặt
@@ -303,6 +302,8 @@ public class AuctionService {
                 // Lấy bid mới nhất của user này
                 Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
 
+                // TODO: THÊM FUNC XÁC ĐỊNH AUCTION MỚI CỦA
+
                 String latestItemTitle = "";
 
                 if (transactionOpt.isPresent()) {
@@ -328,7 +329,7 @@ public class AuctionService {
                     }
 
                     // - You messed up again. And again
-                    // - C*nt.
+                    // - C*nt. Not Now
 
                 } else {
                     // Nếu không có bid:
@@ -373,12 +374,28 @@ public class AuctionService {
         }
     }
 
-    public Response handleBanUser(ManagerAndHistoryRequest data) {
+    public Response handleSetUserStatus(ManagerAndHistoryRequest data) {
         try {
 
-            userDao.updateActiveStatus(UUID.fromString(data.userId()), false);
+            Optional<User> user = userDao.findById(UUID.fromString(data.userId()));
 
-            return new Response(true, "Đã Ban người này", null);
+            boolean status = false;
+
+            if (user.isPresent()) {
+                if (user.get().getRole().isAdmin()) {
+                    // Không thể chặn Admin
+                    return new Response(false, "Không thể chặn Admin.", null);
+                }
+                status = user.get().isActive();
+            }
+
+            userDao.updateActiveStatus(UUID.fromString(data.userId()), !status);
+
+            if (status) {
+                return new Response(true, "Đã Ban người này", null);
+            } else {
+                return new Response(true, "Đã Unban người này", null);
+            }
         }  catch(Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);

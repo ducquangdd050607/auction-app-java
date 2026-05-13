@@ -28,8 +28,13 @@ public class UserService {
                     BigDecimal balance = userDao.findWalletByUserId(user.getId()).get().getBalance();
                     LoginResponse loginRes = new LoginResponse(
                             user.getId().toString(), user.getUsername(), user.getFullName(),
-                            user.getRole().name(), user.getEmail(), balance
+                            user.getRole().name(), user.getEmail(), balance, user.isActive()
                     );
+
+                    if (!user.isActive()) {
+                        return new Response(false, "Tài khoản đã bị chặn", null);
+                    }
+
                     return new Response(true, "Đăng nhập thành công!", loginRes);
                 } else {
                     return new Response(false, "Sai mật khẩu!", null);
