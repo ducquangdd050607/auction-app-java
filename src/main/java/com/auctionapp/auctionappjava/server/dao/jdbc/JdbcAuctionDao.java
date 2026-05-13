@@ -73,12 +73,27 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         return queryAuctions("SELECT * FROM auctions ORDER BY created_at", null);
     }
 
-
     @Override
     public List<Auction> findBySellerId(UUID sellerId) {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);
     }
 
+
+    @Override
+    public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {
+        String sql = "SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at DESC LIMIT 1";
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(sellerId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapAuction(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong tim duoc auction moi nhat cua seller: " + sellerId, exception);
+        }
+    }
 
     @Override
     public void deleteById(UUID auctionId) {

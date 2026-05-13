@@ -299,41 +299,60 @@ public class AuctionService {
 
             // 2. Lặp qua từng user
             for (User user : dbUsers) {
-                // Lấy bid mới nhất của user này
-                Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
-
-                // TODO: THÊM FUNC XÁC ĐỊNH AUCTION MỚI CỦA
-
                 String latestItemTitle = "";
+                if (user.getRole().isBidder()) {
+                    // Lấy bid mới nhất của user này
+                    Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
 
-                if (transactionOpt.isPresent()) {
-                    // Nếu có bid, tìm tên Item tương ứng
-                    BidTransaction bid = transactionOpt.get();
+                    if (transactionOpt.isPresent()) {
+                        // Nếu có bid, tìm tên Item tương ứng
+                        BidTransaction bid = transactionOpt.get();
 
-                    // Mẫu gốc:
-                    // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
+                        // Mẫu gốc:
+                        // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
 
-                    Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+                        Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
 
+                        if (auctionOpt.isPresent()) {
+                            Auction auction = auctionOpt.get();
+
+                            Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                            if (itemOpt.isPresent()) {
+                                Item item = itemOpt.get();
+                                latestItemTitle = item.getTitle();
+                            } else {
+                                // Trường hợp phiên bị xóa.(WIP)
+                                latestItemTitle = "Phiên đấu đã bị xóa";
+                            }
+                        } else {
+                            // Nếu không có bid:
+                            latestItemTitle = "Acc mới chưa cược";
+                        }
+                    }
+                    // - You messed up again. And again
+                    // - C*nt. Not Now
+
+                }
+
+                else if (user.getRole().isSeller()) {
+                    Optional<Auction> auctionOpt = auctionDao.findLatestAuctionCreatedBySellerId(user.getId());
                     if (auctionOpt.isPresent()) {
                         Auction auction = auctionOpt.get();
                         Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
-
                         if (itemOpt.isPresent()) {
                             Item item = itemOpt.get();
                             latestItemTitle = item.getTitle();
                         } else {
-                            // Trường hợp phiên bị xóa.(WIP)
                             latestItemTitle = "Phiên đấu đã bị xóa";
                         }
                     }
 
-                    // - You messed up again. And again
-                    // - C*nt. Not Now
-
+                    else {
+                        latestItemTitle = "Acc mới chưa tạo";
+                    }
                 } else {
-                    // Nếu không có bid:
-                    latestItemTitle = "Acc mới chưa cược";
+                    latestItemTitle = "Admin";
                 }
 
                 // Tạo DTO
@@ -360,10 +379,9 @@ public class AuctionService {
 
     public Response handleRemoveAuction(RemoveAuctionRequest data) {
         try {
-            // Chưa có liên kết giữa Item và Auction -> ??
-            // TODO: Liên kết giữa Item và Auction
-            auctionDao.deleteById(UUID.fromString(data.auctionId()));
-            //itemDao.nookzzAll();                                  //:skull
+            // Khi ta xóa Item đi, Auction, Transaction cũng bị xóa theo do...
+            itemDao.findByAuctionId(UUID.fromString(data.auctionId()));
+
             return new Response(true, "Đã xóa phiên đấu giá", null);
 
         } catch(Exception e) {
