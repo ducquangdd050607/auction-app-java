@@ -299,6 +299,7 @@ public class AuctionService {
 
             // 2. Lặp qua từng user
             for (User user : dbUsers) {
+                int counters = 0;
                 String latestItemTitle = "";
                 if (user.getRole().isBidder()) {
                     // Lấy bid mới nhất của user này
@@ -321,6 +322,7 @@ public class AuctionService {
                             if (itemOpt.isPresent()) {
                                 Item item = itemOpt.get();
                                 latestItemTitle = item.getTitle();
+                                counters = (int) bidDao.countBidsByBidderId(user.getId());
                             } else {
                                 // Trường hợp phiên bị xóa.(WIP)
                                 latestItemTitle = "Phiên đấu đã bị xóa";
@@ -343,6 +345,7 @@ public class AuctionService {
                         if (itemOpt.isPresent()) {
                             Item item = itemOpt.get();
                             latestItemTitle = item.getTitle();
+                            counters = (int) auctionDao.countAuctionsCreatedBySellerId(user.getId());
                         } else {
                             latestItemTitle = "Phiên đấu đã bị xóa";
                         }
@@ -363,9 +366,9 @@ public class AuctionService {
                         user.getRole().name(),
                         userDao.findWalletByUserId(user.getId()).get().getBalance(),
                         userDao.findById(user.getId()).get().isActive(),
-                        (int) bidDao.countBidsByBidderId(user.getId())
+                        counters
                 );
-
+                counters = 0;
                 responseList.add(dto);
             }
 

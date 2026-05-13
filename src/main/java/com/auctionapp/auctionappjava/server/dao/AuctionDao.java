@@ -19,6 +19,8 @@ public interface AuctionDao {
 
     Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
 
+    long countAuctionsCreatedBySellerId(UUID sellerId);
+
     void deleteById(UUID auctionId);
 
 }
