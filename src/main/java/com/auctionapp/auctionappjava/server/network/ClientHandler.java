@@ -59,13 +59,13 @@ public class ClientHandler implements Runnable {
                         response = auctionService.handleGetAllAuctions();
                         break;
                     case "GET_ALL_UPLOADED_AUCTIONS":
-                        response = auctionService.handleGetAllUploadedAuctions((BidManagerAndHistoryRequest) request.payload());
+                        response = auctionService.handleGetAllUploadedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
                     case "GET_HISTORY":
-                        response = auctionService.handleGetAllPersonalBiddedAuctions((BidManagerAndHistoryRequest) request.payload());
+                        response = auctionService.handleGetAllPersonalBiddedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
                     case "GET_TRANSACTIONS":
-                        response = auctionService.handleGetAllBiddedAuctions((BidManagerAndHistoryRequest) request.payload());
+                        response = auctionService.handleGetAllBiddedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
                     case "ADD_ITEM":
                         response = auctionService.handleAddItem((AddItemRequest) request.payload());
@@ -73,7 +73,15 @@ public class ClientHandler implements Runnable {
                     case "PLACE_BID":
                         response = auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
                         break;
-
+                    case "GET_USERS":
+                        response = auctionService.handleGetUsers();
+                        break;
+                    case "REMOVE_AUCTION":
+                        response = auctionService.handleRemoveAuction((RemoveAuctionRequest) request.payload());
+                        break;
+                    case "DECIDE_STATUS":
+                        response = auctionService.handleSetUserStatus((ManagerAndHistoryRequest) request.payload());
+                        break;
                     default:
                         response = new Response(false, "Hành động không hợp lệ: " + request.action(), null);
                         break;

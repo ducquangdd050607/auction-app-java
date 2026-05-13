@@ -73,10 +73,26 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         return queryAuctions("SELECT * FROM auctions ORDER BY created_at", null);
     }
 
-
     @Override
     public List<Auction> findBySellerId(UUID sellerId) {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);
+    }
+
+
+    @Override
+    public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {
+        String sql = "SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at ASC LIMIT 1";
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(sellerId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapAuction(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong tim duoc auction moi nhat cua seller: " + sellerId, exception);
+        }
     }
 
     @Override
@@ -87,6 +103,28 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             statement.executeUpdate();
         } catch (SQLException exception) {
             throw new IllegalStateException("Khong xoa duoc auction", exception);
+        }
+    }
+
+    @Override
+    public long countAuctionsCreatedBySellerId(UUID sellerId) {
+        String sql = "SELECT COUNT(DISTINCT item_id) FROM auctions WHERE seller_id = ?";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // Set giá trị id của phiên đấu giá (nhớ parse UUID sang String vì DB bạn dùng VARCHAR(36))
+            statement.setString(1, uuid(sellerId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1); // Lấy kết quả đếm được trả về
+                }
+                return 0L; // Trả về 0 nếu chưa có ai đặt giá
+            }
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc so luong auction cho seller: " + sellerId, exception);
         }
     }
 

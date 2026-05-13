@@ -62,6 +62,8 @@ public class HistoryListController implements Initializable {
 
         cbType.getItems().addAll(type);
 
+        show();
+
         // Khởi tạo các cột và set data vào bảng
         setupColumns();
         historyTable.setItems(historyDataList);
@@ -81,7 +83,7 @@ public class HistoryListController implements Initializable {
 
         Request req = new Request("GET_HISTORY", null);
         if (LoginController.bidderRoute) {
-            BidManagerAndHistoryRequest bidReq = new BidManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
+            ManagerAndHistoryRequest bidReq = new ManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
             req = new Request("GET_HISTORY", bidReq);
         // Trước mắt là GET_HISTORY trước
 
@@ -134,5 +136,17 @@ public class HistoryListController implements Initializable {
 
         clmBiddingMoney.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().amount()));
 
+    }
+
+    void show() {
+        if (LoginController.bidderRoute) {
+            txtHistory.setVisible(true);
+            txtHistory.setText("Lịch sử đặt cược");
+        }
+
+        else if  (LoginController.adminRoute) {
+            txtHistory.setVisible(true);
+            txtHistory.setText("Danh sách đặt cược");
+        }
     }
 }

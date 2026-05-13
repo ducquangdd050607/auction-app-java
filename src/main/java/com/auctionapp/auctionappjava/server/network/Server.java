@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.server.network;
 
+import com.auctionapp.auctionappjava.server.service.AuctionStatusService;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +11,7 @@ import java.net.ServerSocket;
 public class Server {
     public static void startServer(int port, int maxClients) {
         System.out.println("Khởi động Server");
+        AuctionStatusService.recoverAndScheduleAll();
         ExecutorService threadPool = Executors.newFixedThreadPool(maxClients);
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -30,6 +33,7 @@ public class Server {
             if (!threadPool.isShutdown()) {
                 threadPool.shutdown();
             }
+            AuctionStatusService.shutdown();
         }
     }
 }

@@ -58,7 +58,8 @@ public class ChangeInformationController {
                                     txtFullname.getText(),  // Tên mới
                                     oldUser.role(),
                                     txtEmail.getText(),     // Email mới
-                                    oldUser.walletBalance()
+                                    oldUser.walletBalance(),
+                                    oldUser.accStatus()
                             );
                             UserSession.getInstance().setCurrentUser(updatedUser);
 
@@ -67,7 +68,7 @@ public class ChangeInformationController {
                                 currentStage.close();
                             };
 
-                            AlertUtils.ConfirmAlertController(
+                            AlertUtils.AnnouncementController(
                                     "Thông báo",
                                     "Đã thay đổi thành công!",
                                     closeForm,
@@ -82,7 +83,7 @@ public class ChangeInformationController {
                 });
             };
 
-            AlertUtils.ConfirmAlertController(
+            AlertUtils.AnnouncementController(
                     "Chắc chưa?",
                     "Bạn có muốn đổi thông tin không?",
                     changeInformationMethod,

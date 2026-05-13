@@ -2,9 +2,7 @@ package com.auctionapp.auctionappjava.common.dto;
 
 import java.io.Serializable;
 
-public record BidManagerAndHistoryRequest(
-        String userId
-
+public record RemoveAuctionRequest(
+        String auctionId
 ) implements Serializable {
 }
-// 2-in-1, huh

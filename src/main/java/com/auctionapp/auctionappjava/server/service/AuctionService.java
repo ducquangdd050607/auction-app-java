@@ -9,11 +9,7 @@ import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
 import static java.time.LocalDateTime.now;
@@ -50,7 +46,7 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllUploadedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllUploadedAuctions(ManagerAndHistoryRequest data) {
         try {
             List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.userId()));
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
@@ -75,7 +71,7 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllPersonalBiddedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllPersonalBiddedAuctions(ManagerAndHistoryRequest data) {
         // #FckNowImHungry
         try {
             List<BidTransaction> history = bidDao.findByBidderId(UUID.fromString(data.userId()));
@@ -117,24 +113,29 @@ public class AuctionService {
         }
     }
 
-    public Response handleGetAllBiddedAuctions(BidManagerAndHistoryRequest data) {
+    public Response handleGetAllBiddedAuctions(ManagerAndHistoryRequest data) {
         try {
             List<BidTransaction> history = bidDao.findAll();
+
             List<BidHistoryResponse> responseList = new ArrayList<>();
 
-            for (BidTransaction auction : history) {
-                Optional<Item> itemOpt = itemDao.findById(auction.getAuctionId());
-                if (itemOpt.isPresent()) {
-                    Item item = itemOpt.get();
+            for (BidTransaction bid : history) {
+                Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+                if (auctionOpt.isPresent()) {
+                    Auction auction = auctionOpt.get();
 
-                    responseList.add(new BidHistoryResponse(
-                            userDao.findById(auction.getBidderId()).get().getFullName(),
-                            item.getTitle(),
-                            item.getStartingPrice(),
-                            auction.getAmount(),
-                            RUNNING,
-                            "Đang diễn ra"
-                    ));
+                    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                    if (itemOpt.isPresent()) {
+                        Item item = itemOpt.get();
+                        responseList.add(new BidHistoryResponse(
+                                userDao.findById(bid.getBidderId()).get().getFullName(),
+                                item.getTitle(),               // Lấy tên sản phẩm
+                                item.getStartingPrice(),       // Lấy giá bắt đầu
+                                bid.getAmount(),               // Lấy giá tiền đã cược
+                                RUNNING,                       // WIP
+                                "Đang diễn ra"));              // WIP
+                    }
                 }
             }
             return new Response(true, "Tải dữ liệu thành công!", responseList);
@@ -208,8 +209,8 @@ public class AuctionService {
 
                                 BidTransaction newBid = new BidTransaction(
                                         UUID.randomUUID(),    // ID tự sinh
-                                        LocalDateTime.now(),  // createdAt
-                                        LocalDateTime.now(),  // updatedAt
+                                        now(),  // createdAt
+                                        now(),  // updatedAt
                                         placeBidData.auctionId(),     // ID phiên
                                         placeBidData.userId(),        // ID người đặt
                                         placeBidData.amount(),        // Số tiền đặt
@@ -258,19 +259,6 @@ public class AuctionService {
 
             itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
 
-            // 2.5 XÁC ĐỊNH TRẠNG THÁI PHIÊN ĐẤU
-            AuctionStatus auctionStatus;
-
-            if (now().isBefore(data.openTime())) {
-                auctionStatus = AuctionStatus.OPEN;
-            } else if (now().isBefore(data.endTime())) {
-                auctionStatus = RUNNING;
-            } else {
-                auctionStatus = AuctionStatus.FINISHED;
-            }
-
-            /*System.out.println("DEBUG: Auction Status determined as: " + auctionStatus);*/
-
             // 3. KHỞI TẠO VÀ LƯU PHIÊN ĐẤU GIÁ LIÊN KẾT VỚI VẬT PHẨM ĐÓ
             Auction newAuction = new Auction(
                     UUID.randomUUID(), // ID phiên đấu giá
@@ -282,12 +270,15 @@ public class AuctionService {
                     null,                // Chưa có ai đấu giá (Leading Bidder = null)
                     data.openTime(), // Bắt đầu đấu giá ngay lập tức
                     data.endTime(), // Kết thúc sau X ngày
-                    auctionStatus,  // Trạng thái phiên
+                    AuctionStatus.OPEN,  // Trạng thái phiên mới tạo là OPEN
                     data.minIncrement(), // Bước giá tối thiểu
                     null                 // Chưa có người chiến thắng
             );
 
             auctionDao.save(newAuction); // Gọi lệnh INSERT xuống bảng auctions
+
+            // Chủ động đẩy Auction này vào bộ đếm giờ đóng/mở bid
+            AuctionStatusService.scheduleAuctionEvents(newAuction);
 
             // 4. Báo cáo thành công
             return new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);
@@ -297,6 +288,141 @@ public class AuctionService {
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi lưu sản phẩm: " + e.getMessage(), null);
+        }
+    }
+
+    public Response handleGetUsers() {
+        try {
+            // 1. Lấy danh sách user
+            List<User> dbUsers = userDao.findAll();
+            List<UserDetailResponse> responseList = new ArrayList<>();
+
+            // 2. Lặp qua từng user
+            for (User user : dbUsers) {
+                int counters = 0;
+                String latestItemTitle = "";
+                if (user.getRole().isBidder()) {
+                    // Lấy bid mới nhất của user này
+                    Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
+
+                    if (transactionOpt.isPresent()) {
+                        // Nếu có bid, tìm tên Item tương ứng
+                        BidTransaction bid = transactionOpt.get();
+
+                        // Mẫu gốc:
+                        // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
+
+                        Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+
+                        if (auctionOpt.isPresent()) {
+                            Auction auction = auctionOpt.get();
+
+                            Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+
+                            if (itemOpt.isPresent()) {
+                                Item item = itemOpt.get();
+                                latestItemTitle = item.getTitle();
+                                counters = (int) bidDao.countBidsByBidderId(user.getId());
+                            } else {
+                                // Trường hợp phiên bị xóa.(WIP)
+                                latestItemTitle = "Phiên đấu đã bị xóa";
+                            }
+                        } else {
+                            // Nếu không có bid:
+                            latestItemTitle = "Acc mới chưa cược";
+                        }
+                    }
+                    // - You messed up again. And again
+                    // - C*nt. Not Now
+
+                }
+
+                else if (user.getRole().isSeller()) {
+                    Optional<Auction> auctionOpt = auctionDao.findLatestAuctionCreatedBySellerId(user.getId());
+                    if (auctionOpt.isPresent()) {
+                        Auction auction = auctionOpt.get();
+                        Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                        if (itemOpt.isPresent()) {
+                            Item item = itemOpt.get();
+                            latestItemTitle = item.getTitle();
+                            counters = (int) auctionDao.countAuctionsCreatedBySellerId(user.getId());
+                        } else {
+                            latestItemTitle = "Phiên đấu đã bị xóa";
+                        }
+                    }
+
+                    else {
+                        latestItemTitle = "Acc mới chưa tạo";
+                    }
+                } else {
+                    latestItemTitle = "Admin";
+                }
+
+                // Tạo DTO
+                UserDetailResponse dto = new UserDetailResponse(
+                        String.valueOf(user.getId()),
+                        latestItemTitle,
+                        user.getFullName(),
+                        user.getRole().name(),
+                        userDao.findWalletByUserId(user.getId()).get().getBalance(),
+                        userDao.findById(user.getId()).get().isActive(),
+                        counters
+                );
+                counters = 0;
+                responseList.add(dto);
+            }
+
+            return new Response(true, "Tải dữ liệu thành công!", responseList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+        }
+    }
+
+    public Response handleRemoveAuction(RemoveAuctionRequest data) {
+        try {
+            // Khi ta xóa Item đi, Auction, Transaction cũng bị xóa theo do...
+            itemDao.deleteById(itemDao.findByAuctionId(UUID.fromString(data.auctionId())).get().getId());
+
+            return new Response(true, "Đã xóa phiên đấu giá", null);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+
+            // - Good luck.
+        }
+    }
+
+    public Response handleSetUserStatus(ManagerAndHistoryRequest data) {
+        try {
+
+            Optional<User> user = userDao.findById(UUID.fromString(data.userId()));
+
+            boolean status = false;
+
+            if (user.isPresent()) {
+                if (user.get().getRole().isAdmin()) {
+                    // Không thể chặn Admin
+                    return new Response(false, "Không thể chặn Admin.", null);
+                }
+                status = user.get().isActive();
+            }
+
+            userDao.updateActiveStatus(UUID.fromString(data.userId()), !status);
+
+            if (status) {
+                return new Response(true, "Đã Ban người này", null);
+            } else {
+                return new Response(true, "Đã Unban người này", null);
+            }
+        }  catch(Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+
+            // - Good luck.
+            // - Fuck you whore.
         }
     }
 }

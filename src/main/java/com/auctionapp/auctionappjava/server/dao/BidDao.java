@@ -23,6 +23,8 @@ public interface BidDao {
 
     long countBiddersByAuctionId(UUID auctionId);
 
+    long countBidsByBidderId(UUID bidderId);
+
     Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId);
 
     void deleteByAuctionId(UUID auctionId); // xóa lịch sử đấu giá của 1 phiên
