@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 public class DepositController {
 
@@ -36,7 +37,7 @@ public class DepositController {
     @FXML
     public void initialize() {
         settingMoneyFormat(txtAmount);
-        lblCurrentBalance.setText(UserSession.getInstance().getCurrentUser().walletBalance().toPlainString() + " VND");
+        lblCurrentBalance.setText(formatMoney(UserSession.getInstance().getCurrentUser().walletBalance()) + " VND");
     }
 
     @FXML

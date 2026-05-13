@@ -27,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 public class ConfirmBiddingController {
 
@@ -84,10 +85,9 @@ public class ConfirmBiddingController {
     public void initialize() {
         btnMore.setManaged(false);
         btnMore.setVisible(false);
-        lblBalance.setText(balance.toPlainString());
-        lblBest.setText(best.toPlainString());
-        lblMinIncrement.setText(minIncrement.toPlainString());
-        btnMore.setManaged(false);
+        lblBalance.setText(formatMoney(balance));
+        lblBest.setText(formatMoney(best));
+        lblMinIncrement.setText(formatMoney(minIncrement));
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
     }

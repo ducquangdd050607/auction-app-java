@@ -27,7 +27,7 @@ public class AuctionStatusService {
 
             if (delayToOpen <= 0) {
                 // Đã quá giờ -> Mở luôn lập tức
-                executeOpenAuction(auction.getId());
+                scheduler.execute(() -> executeOpenAuction(auction.getId()));
             } else {
                 // Hẹn giờ mở bằng ScheduledExecutorService
                 scheduler.schedule(() -> executeOpenAuction(auction.getId()), delayToOpen, TimeUnit.MILLISECONDS);
@@ -39,7 +39,7 @@ public class AuctionStatusService {
             long delayToClose = ChronoUnit.MILLIS.between(now, auction.getEndTime());
 
             if (delayToClose <= 0) {
-                executeCloseAuction(auction.getId());
+                scheduler.execute(() -> executeCloseAuction(auction.getId()));
             } else {
                 scheduler.schedule(() -> executeCloseAuction(auction.getId()), delayToClose, TimeUnit.MILLISECONDS);
             }

@@ -35,7 +35,7 @@ public class AuctionService {
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
                             item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            "Đang diễn ra", auction.getStatus(), bidderCount
+                            null, auction.getStatus(), bidderCount
                     ));
                 }
             }

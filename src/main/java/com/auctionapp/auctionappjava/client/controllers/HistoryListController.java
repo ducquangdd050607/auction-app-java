@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
+
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatPriceColumn;
+
 public class HistoryListController implements Initializable {
     private ObservableList<BidHistoryResponse> historyDataList = FXCollections.observableArrayList();
     // Everything that happened in this shit is due to THIS mtfking Response.
@@ -133,9 +136,9 @@ public class HistoryListController implements Initializable {
         clmBiddedTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().biddedTime()));
 
         clmStartingPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().auctionStartPrice()));
-
         clmBiddingMoney.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().amount()));
-
+        formatPriceColumn(clmStartingPrice);
+        formatPriceColumn(clmBiddingMoney);
     }
 
     void show() {

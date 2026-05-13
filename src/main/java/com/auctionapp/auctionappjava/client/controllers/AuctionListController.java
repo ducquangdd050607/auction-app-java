@@ -5,6 +5,7 @@ import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,6 +34,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.client.controllers.NavigatorController.modeName;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatPriceColumn;
 
 public class AuctionListController implements Initializable {
 
@@ -140,7 +142,6 @@ public class AuctionListController implements Initializable {
                 //xử lý hủy(chắc chỉ thế này)
                 alert.close();
                 btnRemove.setDisable(false);
-
             }
         });
     }
@@ -194,10 +195,12 @@ public class AuctionListController implements Initializable {
 
     // Luồng xử lý ngầm gọi Server
     private void loadAuctionsFromServer() {
+        // Thêm vòng tròn loading trong lúc đợi lấy data từ server
         ProgressIndicator loadingSpinner = new ProgressIndicator();
         loadingSpinner.setMaxSize(50, 50);
         listAuctions.setPlaceholder(loadingSpinner);
-        auctionData.clear(); // Xóa sạch dữ liệu cũ trong lúc chờ tải mới
+        auctionData.clear();
+
         Request req = new Request("GET_ALL_AUCTIONS", null);
         if ((modeName.equals("Danh sách đấu giá")) || (modeName.equals("Quản lý phiên đấu giá"))) {
             req = new Request("GET_ALL_AUCTIONS", null);
@@ -232,7 +235,9 @@ public class AuctionListController implements Initializable {
                 // Nếu tải xong mà danh sách vẫn trống trơn, đổi vòng xoay thành dòng chữ
                 if (auctionData.isEmpty()) {
                     Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
-                    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                    noDataLabel.setStyle("" +
+                            "-fx-font-size: 14px; " +
+                            "-fx-text-fill: gray; ");
                     listAuctions.setPlaceholder(noDataLabel);
                 }
             });
@@ -280,8 +285,35 @@ public class AuctionListController implements Initializable {
         if (clmStatus != null) {
             clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().status())));
         }
+
         if (clmTime != null) {
-            clmTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().timeLeft()));
+            clmTime.setCellValueFactory(cell -> {
+                // Lấy ra trạng thái hiện tại của phiên đấu giá
+                var status = cell.getValue().status();
+                String displayTime;
+
+                // Tự động gán text hiển thị dựa trên Status
+                if (status != null) {
+                    switch (status) {
+                        case OPEN:
+                            displayTime = "Sắp mở";
+                            break;
+                        case FINISHED:
+                            displayTime = "Đã kết thúc";
+                            break;
+                        case RUNNING:
+                            // TODO: Chỗ này nếu muốn thì có thể làm cái bộ đếm giờ ở đây
+                            displayTime = "Đang diễn ra";
+                            break;
+                        default:
+                            displayTime = "Không xác định";
+                    }
+                } else {
+                    displayTime = "Đang tải...";
+                }
+
+                return new SimpleStringProperty(displayTime);
+            });
         }
 
         // Dùng SimpleObjectProperty cho các cột chứa Số (BigDecimal, int...)
@@ -294,6 +326,11 @@ public class AuctionListController implements Initializable {
         if (clmMinIncrement != null) {
             clmMinIncrement.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().minimumIncrement()));
         }
+
+        // Hàm format lại giá tiền trong bảng
+         formatPriceColumn(clmStartPrice);
+        if (clmCurrentPrice != null) formatPriceColumn(clmCurrentPrice);
+        if (clmMinIncrement != null) formatPriceColumn(clmMinIncrement);
 
         if (clmBidders != null) {
             // Lambda sẽ tự động autoboxing int thành Integer cho TableColumn
