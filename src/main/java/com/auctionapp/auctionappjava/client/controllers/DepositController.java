@@ -79,7 +79,8 @@ public class DepositController {
                                         oldUser.fullName(),
                                         oldUser.role(),
                                         oldUser.email(),
-                                        oldUser.walletBalance().add(amount)   // Cộng thêm tiền nạp vào
+                                        oldUser.walletBalance().add(amount), // Cộng thêm tiền nạp vào
+                                        oldUser.accStatus()
                                 );
                                 UserSession.getInstance().setCurrentUser(updatedUser);
 

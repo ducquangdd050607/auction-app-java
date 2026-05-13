@@ -58,7 +58,8 @@ public class ChangeInformationController {
                                     txtFullname.getText(),  // Tên mới
                                     oldUser.role(),
                                     txtEmail.getText(),     // Email mới
-                                    oldUser.walletBalance()
+                                    oldUser.walletBalance(),
+                                    oldUser.accStatus()
                             );
                             UserSession.getInstance().setCurrentUser(updatedUser);
 

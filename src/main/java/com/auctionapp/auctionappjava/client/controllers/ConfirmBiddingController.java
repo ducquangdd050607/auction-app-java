@@ -192,7 +192,8 @@ public class ConfirmBiddingController {
                                 oldUser.fullName(),
                                 oldUser.role(),
                                 oldUser.email(),
-                                oldUser.walletBalance().subtract(finalBidAmount)
+                                oldUser.walletBalance().subtract(finalBidAmount),
+                                oldUser.accStatus()
                         );
                         UserSession.getInstance().setCurrentUser(updatedUser);
 
