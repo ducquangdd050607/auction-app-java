@@ -380,7 +380,7 @@ public class AuctionService {
     public Response handleRemoveAuction(RemoveAuctionRequest data) {
         try {
             // Khi ta xóa Item đi, Auction, Transaction cũng bị xóa theo do...
-            itemDao.findByAuctionId(UUID.fromString(data.auctionId()));
+            itemDao.deleteById(itemDao.findByAuctionId(UUID.fromString(data.auctionId())).get().getId());
 
             return new Response(true, "Đã xóa phiên đấu giá", null);
 
