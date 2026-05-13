@@ -15,8 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 public class AuctionStatusService {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(50);
-    private static final AuctionDao auctionDao = new JdbcAuctionDao();
+    private static AuctionDao auctionDao = new JdbcAuctionDao();
 
+    // Cho phép inject dao trong test
+    public static void setAuctionDao(AuctionDao dao) {
+        if (dao != null) auctionDao = dao;
+    }
     // Đặt bộ đếm giờ cho 1 phiên đấu giá
     public static void scheduleAuctionEvents(Auction auction) {
         LocalDateTime now = LocalDateTime.now();
