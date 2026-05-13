@@ -5,7 +5,6 @@ import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
-import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -133,11 +132,9 @@ public class AuctionListController implements Initializable {
         alert.showAndWait().ifPresent(response -> {
 
             if (response == ButtonType.OK) {
-
                 removeBehaviour(false);
                 alert.close();
                 btnRemove.setDisable(false);
-
             } else {
                 //xử lý hủy(chắc chỉ thế này)
                 alert.close();
@@ -204,11 +201,9 @@ public class AuctionListController implements Initializable {
         Request req = new Request("GET_ALL_AUCTIONS", null);
         if ((modeName.equals("Danh sách đấu giá")) || (modeName.equals("Quản lý phiên đấu giá"))) {
             req = new Request("GET_ALL_AUCTIONS", null);
-
         } else if (modeName.equals("Quản lý vật phẩm")) {
             ManagerAndHistoryRequest bidReq = new ManagerAndHistoryRequest(UserSession.getInstance().getCurrentUser().id().toString());
             req = new Request("GET_ALL_UPLOADED_AUCTIONS", bidReq);
-
         }
 
         Request finalReq = req;
@@ -261,7 +256,6 @@ public class AuctionListController implements Initializable {
                 if (response.success()) {
                     // XÓA LUÔN TRÊN MÀN HÌNH
                     auctionData.remove(auction);
-
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
                     alert.show();
@@ -328,7 +322,7 @@ public class AuctionListController implements Initializable {
         }
 
         // Hàm format lại giá tiền trong bảng
-         formatPriceColumn(clmStartPrice);
+        formatPriceColumn(clmStartPrice);
         if (clmCurrentPrice != null) formatPriceColumn(clmCurrentPrice);
         if (clmMinIncrement != null) formatPriceColumn(clmMinIncrement);
 
@@ -387,10 +381,8 @@ public class AuctionListController implements Initializable {
 
         if (Objects.equals(mode, "Danh sách đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Services");
-
         } else if (Objects.equals(mode, "Quản lý vật phẩm")) {
             txtVersatile.setText("Bét88 Items Manager");
-
         } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
             txtVersatile.setText("Bét88 Live Auction Manager");
         }
@@ -401,13 +393,10 @@ public class AuctionListController implements Initializable {
             TableRow<AuctionSummaryResponse> row = new TableRow<>();
 
             row.setOnMouseClicked(event -> {
-
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
-
                     try {
                         AuctionSession.getInstance().setCurrentAuction(row.getItem());
                         if (removeAuction) {
-
                             Runnable finalWarning = () -> {
                                 try {
                                     handleRemoveAuction(row.getItem());
@@ -429,7 +418,6 @@ public class AuctionListController implements Initializable {
                         } else {
                             openAuctionDetail(row.getItem());
                         }
-
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

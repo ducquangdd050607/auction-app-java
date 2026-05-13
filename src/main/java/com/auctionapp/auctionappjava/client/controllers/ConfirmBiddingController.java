@@ -85,9 +85,9 @@ public class ConfirmBiddingController {
     public void initialize() {
         btnMore.setManaged(false);
         btnMore.setVisible(false);
-        lblBalance.setText(formatMoney(balance));
-        lblBest.setText(formatMoney(best));
-        lblMinIncrement.setText(formatMoney(minIncrement));
+        lblBalance.setText(formatMoney(balance) + " VND");
+        lblBest.setText(formatMoney(best) + " VND");
+        lblMinIncrement.setText(formatMoney(minIncrement) + " VND");
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
     }

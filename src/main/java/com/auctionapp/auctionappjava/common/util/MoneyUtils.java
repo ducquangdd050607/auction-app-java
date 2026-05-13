@@ -1,6 +1,5 @@
 package com.auctionapp.auctionappjava.common.util;
 
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;

@@ -65,9 +65,9 @@ public class AuctionDetailController {
     void loadAuctionData(AuctionSummaryResponse auction) {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
-        lblStartingPrice.setText(formatMoney(auction.startPrice()));
-        lblMinIncrement.setText(formatMoney(auction.minimumIncrement()));
-        lblCurrentPrice.setText(formatMoney(auction.currentPrice()));
+        lblStartingPrice.setText(formatMoney(auction.startPrice()) + " VND");
+        lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
+        lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
         //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
     }
