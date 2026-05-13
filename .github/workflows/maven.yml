@@ -34,5 +34,5 @@ jobs:
     - name: Upload JAR
       uses: actions/upload-artifact@v4
       with:
-        name: Blue88-App
+        name: Blue88-App-${{ matrix.os }}
         path: target/*.jar
