@@ -76,6 +76,34 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
     }
 
     @Override
+    public Optional<Item> findByAuctionId(UUID auctionId) {
+        // i.* lấy toàn bộ cột của auction_items
+        // JOIN dựa trên việc i.id trùng với a.item_id của bảng auctions
+        String sql = """
+            SELECT i.* 
+            FROM auction_items i
+            JOIN auctions a ON i.id = a.item_id
+            WHERE a.id = ?
+            """;
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId)); // Chuyển UUID sang String để query
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    // mapAuctionItem là hàm dùng để chuyển ResultSet thành Object AuctionItem
+                    return Optional.of(mapItem(resultSet));
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Lỗi khi tìm Item từ Auction ID: " + auctionId, exception);
+        }
+    }
+
+    @Override
     public void deleteById(UUID itemId) {
         String sql = "DELETE FROM auction_items WHERE id = ?";
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {

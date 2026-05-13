@@ -79,6 +79,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);
     }
 
+
     @Override
     public void deleteById(UUID auctionId) {
         String sql = "DELETE FROM auctions WHERE id = ?";
