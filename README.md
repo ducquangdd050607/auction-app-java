@@ -1,3 +1,5 @@
+[![Java CI with Maven](https://github.com/ducquangdd050607/auction-app-java/actions/workflows/maven.yml/badge.svg)](https://github.com/ducquangdd050607/auction-app-java/actions/workflows/maven.yml)
+
 # Phân chia công việc
 
 Dự án được chia thành các phần chính gồm: common, client, server, database, DAO và connection.
