@@ -36,7 +36,7 @@ public class AuctionService {
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
                             item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            null, auction.getStatus(), bidderCount, item.getImageData()
+                            null, auction.getStatus(), bidderCount
                     ));
                 }
             }
@@ -61,7 +61,7 @@ public class AuctionService {
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
                             item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            "Đang diễn ra", auction.getStatus(), bidderCount, item.getImageData()
+                            "Đang diễn ra", auction.getStatus(), bidderCount
                     ));
                 }
             }
