@@ -14,6 +14,7 @@ public abstract class Item extends BaseEntity {
     private ItemType itemType;
     private String attributeOne;// là các đặc điểm của đồ vật
     private String attributeTwo;//
+    private byte[] imageData;
 
     protected Item() {
         super();
@@ -28,7 +29,8 @@ public abstract class Item extends BaseEntity {
                    BigDecimal startingPrice,
                    ItemType itemType,
                    String attributeOne,
-                   String attributeTwo) {
+                   String attributeTwo,
+                   byte[] imageData) {
         super(id, createdAt, updatedAt);
         this.sellerId = sellerId;
         this.title = title;
@@ -37,6 +39,7 @@ public abstract class Item extends BaseEntity {
         this.itemType = itemType;
         this.attributeOne = attributeOne;
         this.attributeTwo = attributeTwo;
+        this.imageData = imageData;
     }
 
     public UUID getSellerId() {
@@ -104,5 +107,13 @@ public abstract class Item extends BaseEntity {
             parts.add(attributeTwo);
         }
         return String.join(" | ", parts);
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 }
