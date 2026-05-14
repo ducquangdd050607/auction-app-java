@@ -201,7 +201,7 @@ public class AuctionListController implements Initializable {
         if (LoginController.bidderRoute) {
             SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
         } else {
-            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "BXH");
+            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "BXH");
         }
     }
 
@@ -483,7 +483,7 @@ public class AuctionListController implements Initializable {
                                     "PHIÊN ĐẤU ĐÃ BỊ XÓA",
                                     "",
                                     finalWarning,
-                                    getWarningView());
+                                    getWarnedView());
                         } else {
                             openAuctionDetail(row.getItem());
                         }
@@ -531,7 +531,7 @@ public class AuctionListController implements Initializable {
         } else {
             // Seller/Admin
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml"));
+                    "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -543,7 +543,7 @@ public class AuctionListController implements Initializable {
             stage.showAndWait();
 
         }
-    } private ImageView getWarningView() throws IOException {
+    } private ImageView getWarnedView() throws IOException {
         Image warningImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Koconut.png")));
         ImageView warningView = new ImageView(warningImage);
         warningView.setPreserveRatio(true);

@@ -83,9 +83,9 @@
                <Label fx:id="lblCurrentLeader" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>
-         <HBox prefHeight="100.0" prefWidth="200.0">
+         <HBox prefHeight="69.0" prefWidth="239.0">
             <children>
-               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả:" />
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả: " />
                <Label fx:id="txtDescription" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>

@@ -61,6 +61,9 @@ public class ClientHandler implements Runnable {
                     case "GET_ALL_UPLOADED_AUCTIONS":
                         response = auctionService.handleGetAllUploadedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
+                    case "GET_ALL_FEATURED_AUCTIONS":
+                        response = auctionService.handleGetAllFeaturedAuctions();
+                        break;
                     case "GET_HISTORY":
                         response = auctionService.handleGetAllPersonalBiddedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
