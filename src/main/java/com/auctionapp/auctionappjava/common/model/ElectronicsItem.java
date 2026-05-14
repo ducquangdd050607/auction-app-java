@@ -19,7 +19,8 @@ public class ElectronicsItem extends Item {
                            String description,
                            BigDecimal startingPrice,
                            String brand,
-                           String model) {
-        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.ELECTRONICS, brand, model);
+                           String model,
+                           byte[] imageData) {
+        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.ELECTRONICS, brand, model, imageData);
     }
 }

@@ -19,7 +19,8 @@ public class ArtItem extends Item {
                    String description,
                    BigDecimal startingPrice,
                    String artist,
-                   String medium) {
-        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.ART, artist, medium);
+                   String medium,
+                   byte[] imageData) {
+        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.ART, artist, medium,imageData);
     }
 }
