@@ -35,7 +35,7 @@ public class AuctionService {
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
                             item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            null, auction.getStatus(), bidderCount
+                            null, auction.getStatus(), bidderCount, item.getImageData()
                     ));
                 }
             }
@@ -60,7 +60,7 @@ public class AuctionService {
                     responseList.add(new AuctionSummaryResponse(
                             auction.getId().toString(), item.getItemType().name(), item.getTitle(),
                             item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            "Đang diễn ra", auction.getStatus(), bidderCount
+                            "Đang diễn ra", auction.getStatus(), bidderCount, item.getImageData()
                     ));
                 }
             }
@@ -254,7 +254,8 @@ public class AuctionService {
                     data.description(),
                     data.startPrice(),
                     data.attribute1(),
-                    data.attribute2()
+                    data.attribute2(),
+                    data.imageData()
             );
 
             itemDao.save(newItem); // Gọi lệnh INSERT xuống bảng auction_items
