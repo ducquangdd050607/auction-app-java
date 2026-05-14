@@ -19,12 +19,13 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
         String sql = """
                 INSERT INTO auction_items (
                     id, seller_id, title, description, starting_price, item_type,
-                    attribute_one, attribute_two, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    attribute_one, attribute_two,image_data, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     seller_id = VALUES(seller_id), title = VALUES(title), description = VALUES(description),
                     starting_price = VALUES(starting_price), item_type = VALUES(item_type),
                     attribute_one = VALUES(attribute_one), attribute_two = VALUES(attribute_two),
+                    image_data = VALUES(image_data),
                     updated_at = VALUES(updated_at)
                 """;
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -36,8 +37,9 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
             statement.setString(6, item.getItemType().name());
             statement.setString(7, item.getAttributeOne());
             statement.setString(8, item.getAttributeTwo());
-            statement.setTimestamp(9, timestamp(item.getCreatedAt()));
-            statement.setTimestamp(10, timestamp(item.getUpdatedAt()));
+            statement.setBytes(9, item.getImageData());
+            statement.setTimestamp(10, timestamp(item.getCreatedAt()));
+            statement.setTimestamp(11, timestamp(item.getUpdatedAt()));
             statement.executeUpdate();
             return item;
         } catch (SQLException exception) {
@@ -135,6 +137,8 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 resultSet.getString("description"),
                 resultSet.getBigDecimal("starting_price"),
                 resultSet.getString("attribute_one"),
-                resultSet.getString("attribute_two"));
+                resultSet.getString("attribute_two"),
+                resultSet.getBytes("image_data")
+        );
     }
 }
