@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class InsideItemController {
+public class RankingListController {
 
     private BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
     private BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
