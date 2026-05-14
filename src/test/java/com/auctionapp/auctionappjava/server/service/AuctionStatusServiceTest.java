@@ -37,7 +37,7 @@ public class AuctionStatusServiceTest {
     }
 
     @Test
-    public void testExecuteCloseAuction_setsFinished() {
+    public void testExecuteCloseAuction_setsFinished() throws InterruptedException {
         UUID auctionId = UUID.randomUUID();
         Auction a = new Auction(
                 auctionId,
@@ -56,6 +56,9 @@ public class AuctionStatusServiceTest {
 
         // scheduleAuctionEvents should detect endTime <= now and call executeCloseAuction synchronously
         AuctionStatusService.scheduleAuctionEvents(a);
+
+        // TODO: Do dính race condition phải xử lí bằng observer ở đây chưa làm nên tạm thời chặn luồng 1 lúc, nào làm realtime xong nhớ xóa
+        Thread.sleep(100);
 
         Auction result = fakeAuctionDao.findById(auctionId).orElseThrow();
         assertEquals(AuctionStatus.FINISHED, result.getStatus(), "Auction should be marked FINISHED");

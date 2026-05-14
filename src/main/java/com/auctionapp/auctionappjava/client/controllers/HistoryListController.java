@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,6 +35,8 @@ public class HistoryListController implements Initializable {
     @FXML
     private TableColumn<BidHistoryResponse, String> clmAuctionName;
     @FXML
+    private TableColumn<BidHistoryResponse, String> clmCategory;
+    @FXML
     private TableColumn<BidHistoryResponse, String> clmBidderName;
     @FXML
     private TableColumn<BidHistoryResponse, BigDecimal> clmStartingPrice;
@@ -44,32 +47,88 @@ public class HistoryListController implements Initializable {
     @FXML
     private TableColumn<BidHistoryResponse, String> clmBiddedTime; // Thời điểm đặt
     @FXML
-    private TableColumn<BidHistoryResponse, ?> clmChoose;
-    @FXML
     private Label txtHistory;
     @FXML
     private TextField txtSearch;
+    @FXML
+    private Button btnSearch;
+
+    // Thêm FilteredList để làm bộ lọc
+    private FilteredList<BidHistoryResponse> filteredData;
 
     @FXML
     void handleSearch(ActionEvent event) {
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        String selectedStatus = cbFilterStatus.getValue();
+        String selectedCategory = cbType.getValue();
 
+        filteredData.setPredicate(bid -> {
+            // 1. Khớp Tên Sản phẩm HOẶC Tên Bidder (nếu là Admin)
+            boolean matchKeyword = keyword.isEmpty() ||
+                    (bid.auctionName() != null && bid.auctionName().toLowerCase().contains(keyword));
+
+            // Nếu là Admin, cho phép tìm kiếm thêm theo tên người đặt
+            if (LoginController.adminRoute && !matchKeyword) {
+                matchKeyword = bid.bidderName() != null && bid.bidderName().toLowerCase().contains(keyword);
+            }
+
+            // 2. Khớp Trạng thái
+            boolean matchStatus = false;
+            if (selectedStatus == null || selectedStatus.equals("Tất cả trạng thái")) {
+                matchStatus = true;
+            } else {
+                String translatedStatus = "";
+                if (bid.auctionStatus() != null) {
+                    translatedStatus = switch (bid.auctionStatus()) {
+                        case OPEN -> "MỞ";
+                        case RUNNING -> "ĐANG DIỄN RA";
+                        case FINISHED -> "KẾT THÚC";
+                        default -> translatedStatus;
+                    };
+                }
+                matchStatus = translatedStatus.equals(selectedStatus);
+            }
+
+            // 3. Khớp Thể loại
+            boolean matchCategory = false;
+            if (selectedCategory == null || selectedCategory.equals("Tất cả thể loại")) {
+                matchCategory = true;
+            } else {
+                String serverCategory = switch (selectedCategory) {
+                    case "Nghệ thuật" -> "ART";
+                    case "Điện tử" -> "ELECTRONICS";
+                    case "Phương tiện" -> "VEHICLE";
+                    default -> "";
+                };
+                matchCategory = bid.category() != null && bid.category().equalsIgnoreCase(serverCategory);
+            }
+
+            return matchKeyword && matchStatus && matchCategory;
+        });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
-        String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
+        // 1. Kiểm tra vai trò để ẩn/hiện cột Tên Bidder
+        clmBidderName.setVisible(LoginController.adminRoute);
+
+        // 2. Thiết lập ComboBox và FilteredList
+        String[] statuses = {"Tất cả trạng thái", "MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"};
         cbFilterStatus.getItems().addAll(statuses);
+        cbFilterStatus.setValue("Tất cả trạng thái");
 
-        String[] type = {};//manual-added
-
+        String[] type = {"Tất cả thể loại", "Nghệ thuật", "Điện tử", "Phương tiện"};
         cbType.getItems().addAll(type);
+        cbType.setValue("Tất cả thể loại");
 
         show();
 
         // Khởi tạo các cột và set data vào bảng
         setupColumns();
-        historyTable.setItems(historyDataList);
+
+        // Bọc dữ liệu bằng FilteredList
+        filteredData = new FilteredList<>(historyDataList, p -> true);
+        historyTable.setItems(filteredData); // Gắn filteredData vào bảng
 
         // Tự động kéo dữ liệu từ mạng khi mở màn hình
         loadAuctionsFromServer();
@@ -77,6 +136,12 @@ public class HistoryListController implements Initializable {
     }
 
     private void loadAuctionsFromServer() {
+        // Khóa giao diện search
+        txtSearch.setDisable(true);
+        cbFilterStatus.setDisable(true);
+        cbType.setDisable(true);
+        btnSearch.setDisable(true);
+
         ProgressIndicator loadingSpinner = new ProgressIndicator();
         loadingSpinner.setMaxSize(50, 50);
         historyTable.setPlaceholder(loadingSpinner);
@@ -105,6 +170,12 @@ public class HistoryListController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
+                // Mở khóa giao diện
+                txtSearch.setDisable(false);
+                cbFilterStatus.setDisable(false);
+                cbType.setDisable(false);
+                btnSearch.setDisable(false);
+
                 if (response.success()) {
                     // Ép kiểu lấy danh sách từ Response
                     List<BidHistoryResponse> listFromServer = (List<BidHistoryResponse>) response.data();
@@ -116,16 +187,16 @@ public class HistoryListController implements Initializable {
                     alert.show();
                 }
 
-                // Nếu tải xong mà danh sách vẫn trống trơn, đổi vòng xoay thành dòng chữ
-                if (historyDataList.isEmpty()) {
-                    Label noDataLabel = new Label("Hiện tại chưa tham gia phiên đấu giá nào.");
-                    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
-                    historyTable.setPlaceholder(noDataLabel);
-                }
+                // Nếu tải xong mà danh sách vẫn trống trơn hoc search không có bid nào phù hợp, đổi vòng xoay thành dòng chữ
+                Label noDataLabel = new Label("Chưa tham gia phiên đấu giá nào hoặc không tìm thấy kết quả phù hợp.");
+                noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                historyTable.setPlaceholder(noDataLabel);
             });
         });
     } private void setupColumns() {
         // Dùng SimpleStringProperty cho các cột chứa chuỗi (String)
+        clmCategory.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().category()));
+
         clmAuctionName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().auctionName()));
 
         clmBidderName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().bidderName()));

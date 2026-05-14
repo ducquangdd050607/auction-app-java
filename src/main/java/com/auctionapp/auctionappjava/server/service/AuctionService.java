@@ -10,6 +10,7 @@ import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.time.format.DateTimeFormatter;
 
 import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
 import static java.time.LocalDateTime.now;
@@ -74,38 +75,41 @@ public class AuctionService {
     public Response handleGetAllPersonalBiddedAuctions(ManagerAndHistoryRequest data) {
         // #FckNowImHungry
         try {
+            // Hàm mới của Bình: Cho phép tìm Transaction của riêng Bidders
             List<BidTransaction> history = bidDao.findByBidderId(UUID.fromString(data.userId()));
 
-            // Hàm mới của Bình: Cho phép tìm Transaction của riêng Bidders
-
+            // Tạo ArrayList chuẩn bị chuyền dữ liệu vào
             List<BidHistoryResponse> responseList = new ArrayList<>();
 
-            // Tạo ArrayList chuẩn bị chuyền dữ liệu vào
-
             for (BidTransaction bid : history) {
+                // Lấy Auction trước
                 Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
-
-                // Lấy thông tin của Auction qua AuctionId của Cái Transaction
 
                 if (auctionOpt.isPresent()) {
                     Auction auction = auctionOpt.get();
 
+                    // Dùng ItemId của Auction để tìm Item
                     Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
-
-                    // Lấy thông tin của Item qua Auction trên
 
                     if (itemOpt.isPresent()) {
                         Item item = itemOpt.get();
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                        String formattedTime = bid.getUpdatedAt() != null ? bid.getUpdatedAt().format(formatter) : "Không rõ";
+
                         responseList.add(new BidHistoryResponse(
-                                null,               // Hiện tại chỉ lịch sử của 1 người: You
-                                item.getTitle(),               // Lấy tên sản phẩm
-                                item.getStartingPrice(),       // Lấy giá bắt đầu
-                                bid.getAmount(),               // Lấy giá tiền đã cược
-                                RUNNING,                       // WIP
-                                "Đang diễn ra"));              // WIP
+                                null,
+                                item.getItemType().name(),
+                                item.getTitle(),
+                                item.getStartingPrice(),
+                                bid.getAmount(),
+                                auction.getStatus(),
+                                formattedTime
+                        ));
                     }
                 }
             }
+
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,24 +124,34 @@ public class AuctionService {
             List<BidHistoryResponse> responseList = new ArrayList<>();
 
             for (BidTransaction bid : history) {
+                // Lấy Auction trước
                 Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
+
                 if (auctionOpt.isPresent()) {
                     Auction auction = auctionOpt.get();
 
+                    // Dùng ItemId của Auction để tìm Item
                     Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
 
                     if (itemOpt.isPresent()) {
                         Item item = itemOpt.get();
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                        String formattedTime = bid.getUpdatedAt() != null ? bid.getUpdatedAt().format(formatter) : "Không rõ";
+
                         responseList.add(new BidHistoryResponse(
                                 userDao.findById(bid.getBidderId()).get().getFullName(),
-                                item.getTitle(),               // Lấy tên sản phẩm
-                                item.getStartingPrice(),       // Lấy giá bắt đầu
-                                bid.getAmount(),               // Lấy giá tiền đã cược
-                                RUNNING,                       // WIP
-                                "Đang diễn ra"));              // WIP
+                                item.getItemType().name(),
+                                item.getTitle(),
+                                item.getStartingPrice(),
+                                bid.getAmount(),
+                                auction.getStatus(),
+                                formattedTime
+                        ));
                     }
                 }
             }
+
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
