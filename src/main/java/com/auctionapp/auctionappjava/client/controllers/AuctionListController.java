@@ -11,6 +11,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,6 +57,8 @@ public class AuctionListController implements Initializable {
     @FXML
     private Button btnTest;
     @FXML
+    private Button btnSearch;
+    @FXML
     private ComboBox<String> cbFilterStatus;
     @FXML
     private ComboBox<String> cbType;
@@ -87,10 +91,59 @@ public class AuctionListController implements Initializable {
     @FXML
     private Label txtVersatile;
 
+    // Thêm danh sách bọc ngoài dùng để LỌC (FilteredList)
+    private FilteredList<AuctionSummaryResponse> filteredData;
+
 
     @FXML
     void handleSearch(ActionEvent event) {
-        // TODO: Tìm kiếm
+        // Lấy điều kiện lọc
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        String selectedStatus = cbFilterStatus.getValue();
+        String selectedCategory = cbType.getValue();
+
+        // Cập nhật điều kiện lọc cho FilteredList
+        filteredData.setPredicate(auction -> {
+            // 1. Khớp Tên
+            boolean matchName = keyword.isEmpty() ||
+                    (auction.itemName() != null && auction.itemName().toLowerCase().contains(keyword));
+
+            // 2. Khớp Trạng thái (Cần map tiếng Việt với Enum AuctionStatus của bạn)
+            boolean matchStatus = false;
+            if (selectedStatus == null || selectedStatus.equals("Tất cả trạng thái")) {
+                matchStatus = true;
+            } else {
+                // Tùy biến chỗ này theo chữ bạn hiển thị. Ví dụ:
+                String translatedStatus = "";
+                if (auction.status() != null) {
+                    translatedStatus = switch (auction.status()) {
+                        case OPEN -> "MỞ";
+                        case RUNNING -> "ĐANG DIỄN RA";
+                        case FINISHED -> "KẾT THÚC";
+                        default -> translatedStatus;
+                    };
+                }
+                matchStatus = translatedStatus.equals(selectedStatus);
+            }
+
+            // 3. Khớp Thể loại
+            boolean matchCategory = false;
+            if (selectedCategory == null || selectedCategory.equals("Tất cả thể loại")) {
+                matchCategory = true;
+            } else {
+                String serverCategory = switch (selectedCategory) {
+                    case "Nghệ thuật" -> "ART";
+                    case "Điện tử" -> "ELECTRONICS";
+                    case "Xe cộ" -> "VEHICLE";
+                    default -> "";
+                };
+                matchCategory = auction.category() != null &&
+                        auction.category().equalsIgnoreCase(serverCategory);
+            }
+
+            // Chỉ hiện những dòng thỏa mãn cả 3 điều kiện
+            return matchName && matchStatus && matchCategory;
+        });
     }
 
     @FXML
@@ -165,12 +218,13 @@ public class AuctionListController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
-        String[] statuses = {"MỞ", "ĐANG DIỄN RA", "KẾT THÚC", "ĐÃ TRẢ TIỀN/HỦY"}; //trạng thái
+        String[] statuses = {"Tất cả trạng thái", "MỞ", "ĐANG DIỄN RA", "KẾT THÚC"};
         cbFilterStatus.getItems().addAll(statuses);
+        cbFilterStatus.setValue("Tất cả trạng thái"); // Chọn mặc định
 
-        String[] type = {};//manual-added
-
+        String[] type = {"Tất cả thể loại", "Nghệ thuật", "Điện tử", "Phương tiện"};
         cbType.getItems().addAll(type);
+        cbType.setValue("Tất cả thể loại"); // Chọn mặc định
 
         try {
             show();// kiểm tra kiểu người dùng
@@ -181,7 +235,14 @@ public class AuctionListController implements Initializable {
 
         // Khởi tạo các cột và set data vào bảng
         setupColumns();
-        listAuctions.setItems(auctionData);
+
+        // 2. BỌC DỮ LIỆU BẰNG FILTERED LIST VÀ SORTER LIST
+        filteredData = new FilteredList<>(auctionData, p -> true); // Ban đầu hiển thị tất cả
+        SortedList<AuctionSummaryResponse> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(listAuctions.comparatorProperty()); // Để bảng có thể bấm sort theo cột
+
+        // Gắn dữ liệu đã được bọc vào bảng thay vì auctionData gốc
+        listAuctions.setItems(sortedData);
 
         // Tự động kéo dữ liệu từ mạng khi mở màn hình
         loadAuctionsFromServer();
@@ -192,6 +253,12 @@ public class AuctionListController implements Initializable {
 
     // Luồng xử lý ngầm gọi Server
     private void loadAuctionsFromServer() {
+        // Khóa search trong lúc loading
+        txtSearch.setDisable(true);
+        cbFilterStatus.setDisable(true);
+        cbType.setDisable(true);
+        btnSearch.setDisable(true);
+
         // Thêm vòng tròn loading trong lúc đợi lấy data từ server
         ProgressIndicator loadingSpinner = new ProgressIndicator();
         loadingSpinner.setMaxSize(50, 50);
@@ -216,6 +283,12 @@ public class AuctionListController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
+                // Mở laại search khi dữ liệu được trả về
+                txtSearch.setDisable(false);
+                cbFilterStatus.setDisable(false);
+                cbType.setDisable(false);
+                btnSearch.setDisable(false);
+
                 if (response.success()) {
                     // Ép kiểu lấy danh sách từ Response
                     List<AuctionSummaryResponse> listFromServer = (List<AuctionSummaryResponse>) response.data();
@@ -227,14 +300,10 @@ public class AuctionListController implements Initializable {
                     alert.show();
                 }
 
-                // Nếu tải xong mà danh sách vẫn trống trơn, đổi vòng xoay thành dòng chữ
-                if (auctionData.isEmpty()) {
-                    Label noDataLabel = new Label("Hiện tại chưa có phiên đấu giá nào.");
-                    noDataLabel.setStyle("" +
-                            "-fx-font-size: 14px; " +
-                            "-fx-text-fill: gray; ");
-                    listAuctions.setPlaceholder(noDataLabel);
-                }
+                // Luôn luôn cất vòng xoay đi và thay bằng nhãn chữ này
+                Label noDataLabel = new Label("Không tìm thấy phiên đấu giá nào khớp yêu cầu.");
+                noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray; ");
+                listAuctions.setPlaceholder(noDataLabel);
             });
         });
     }
