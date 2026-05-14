@@ -211,7 +211,8 @@ public class ConfirmBiddingController {
                                 oldData.minimumIncrement(),
                                 oldData.timeLeft(),
                                 oldData.status(),
-                                (int) bidders
+                                (int) bidders,
+                                oldData.imageData()
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
 
