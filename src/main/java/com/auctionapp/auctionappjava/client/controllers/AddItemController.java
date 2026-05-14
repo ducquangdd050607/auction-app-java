@@ -146,7 +146,7 @@ public class AddItemController implements Initializable {
         }
 
         AddItemRequest payload = new AddItemRequest(UserSession.getInstance().getCurrentUser().id(), name,
-                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2);
+                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2,null);
         Request addItemReq = new Request("ADD_ITEM", payload);
 
         ImageView imageView = new ImageView(alertImage);
