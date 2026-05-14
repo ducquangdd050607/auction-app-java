@@ -13,5 +13,6 @@ public record AuctionDetailResponse(
         BigDecimal currentPrice,
         BigDecimal stepPrice,
         long endTimeMillis,
+        byte[] imageData,
         List<BidHistoryResponse> recentBids // Trả về 5-10 lượt bid gần nhất
 ) implements Serializable {}
