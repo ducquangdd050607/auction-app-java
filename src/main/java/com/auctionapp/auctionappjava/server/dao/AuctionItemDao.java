@@ -10,6 +10,8 @@ public interface AuctionItemDao {
 
     Optional<Item> findById(UUID itemId);
 
+    Optional<Item> findByIdWithoutImage(UUID itemId);
+
     List<Item> findBySellerId(UUID sellerId);
 
     Optional<Item> findByAuctionId(UUID auctionId);

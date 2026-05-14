@@ -61,6 +61,24 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
     }
 
     @Override
+    public Optional<Item> findByIdWithoutImage(UUID itemId) {
+        String sql = """
+                SELECT id, seller_id, title, description, starting_price, item_type,
+                       attribute_one, attribute_two, created_at, updated_at
+                FROM auction_items
+                WHERE id = ?
+                """;
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid(itemId));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapItemWithoutImage(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc item", exception);
+        }
+    }
+
+    @Override
     public List<Item> findBySellerId(UUID sellerId) {
         String sql = "SELECT * FROM auction_items WHERE seller_id = ? ORDER BY created_at";
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -139,6 +157,22 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 resultSet.getString("attribute_one"),
                 resultSet.getString("attribute_two"),
                 resultSet.getBytes("image_data")
+        );
+    }
+
+    private Item mapItemWithoutImage(ResultSet resultSet) throws SQLException {
+        return AuctionItemFactory.create(
+                ItemType.valueOf(resultSet.getString("item_type")),
+                uuid(resultSet.getString("id")),
+                localDateTime(resultSet.getTimestamp("created_at")),
+                localDateTime(resultSet.getTimestamp("updated_at")),
+                uuid(resultSet.getString("seller_id")),
+                resultSet.getString("title"),
+                resultSet.getString("description"),
+                resultSet.getBigDecimal("starting_price"),
+                resultSet.getString("attribute_one"),
+                resultSet.getString("attribute_two"),
+                null
         );
     }
 }
