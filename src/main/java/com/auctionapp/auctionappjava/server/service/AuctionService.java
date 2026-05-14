@@ -28,7 +28,7 @@ public class AuctionService {
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
 
             for (Auction auction : dbAuctions) {
-                Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
                 if (itemOpt.isPresent()) {
                     Item item = itemOpt.get();
                     int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
@@ -53,7 +53,7 @@ public class AuctionService {
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
 
             for (Auction auction : dbAuctions) {
-                Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
                 if (itemOpt.isPresent()) {
                     Item item = itemOpt.get();
                     int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
@@ -89,7 +89,7 @@ public class AuctionService {
                     Auction auction = auctionOpt.get();
 
                     // Dùng ItemId của Auction để tìm Item
-                    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                    Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
 
                     if (itemOpt.isPresent()) {
                         Item item = itemOpt.get();
@@ -131,7 +131,7 @@ public class AuctionService {
                     Auction auction = auctionOpt.get();
 
                     // Dùng ItemId của Auction để tìm Item
-                    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                    Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
 
                     if (itemOpt.isPresent()) {
                         Item item = itemOpt.get();
@@ -332,7 +332,7 @@ public class AuctionService {
                         if (auctionOpt.isPresent()) {
                             Auction auction = auctionOpt.get();
 
-                            Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                            Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
 
                             if (itemOpt.isPresent()) {
                                 Item item = itemOpt.get();
@@ -356,7 +356,7 @@ public class AuctionService {
                     Optional<Auction> auctionOpt = auctionDao.findLatestAuctionCreatedBySellerId(user.getId());
                     if (auctionOpt.isPresent()) {
                         Auction auction = auctionOpt.get();
-                        Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                        Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
                         if (itemOpt.isPresent()) {
                             Item item = itemOpt.get();
                             latestItemTitle = item.getTitle();
