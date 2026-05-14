@@ -15,5 +15,6 @@ public record AuctionSummaryResponse(
         BigDecimal minimumIncrement,    // Bước giá
         /*long*/String timeLeft, // Thời gian còn lại (tạm để String test Socket trước)
         AuctionStatus status,
-        int bidderCount  // Số bidder quan tâm
+        int bidderCount,// Số bidder quan tâm
+        byte[] imageData
 ) implements Serializable {}
