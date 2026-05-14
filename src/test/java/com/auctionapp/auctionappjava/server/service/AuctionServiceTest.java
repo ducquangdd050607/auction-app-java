@@ -32,6 +32,7 @@ public class AuctionServiceTest {
         // Additional helpers used by AuctionService elsewhere
         @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
         @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
+        @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
     }
 
     static class FakeItemDao implements AuctionItemDao {

@@ -24,6 +24,7 @@ public class AuctionStatusServiceTest {
 
         @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
         @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
+        @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
     }
 
     private FakeAuctionDao fakeAuctionDao;

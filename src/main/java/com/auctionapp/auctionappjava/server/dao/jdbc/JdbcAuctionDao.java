@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.Auction;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
@@ -126,6 +127,31 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         } catch (SQLException exception) {
             throw new IllegalStateException("Khong dem duoc so luong auction cho seller: " + sellerId, exception);
         }
+    }
+
+    @Override
+    public Optional<Auction> findMostBiddedAuction() {
+        // JOIN với bảng bids, GROUP BY để đếm người tham gia (DISTINCT),
+        // ORDER BY để đưa ông cao nhất lên đầu và LIMIT 1.
+        String sql = """
+            SELECT a.* FROM auctions a
+            LEFT JOIN bids b ON a.id = b.auction_id
+            GROUP BY a.id
+            ORDER BY COUNT(DISTINCT b.bidder_id) DESC, a.created_at DESC
+            LIMIT 1
+            """;
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return Optional.of(mapAuction(resultSet));
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Lỗi khi tìm phiên đấu giá đông nhất", exception);
+        }
+        return Optional.empty();
     }
 
     private void bindAuction(PreparedStatement statement, Auction auction) throws SQLException {
