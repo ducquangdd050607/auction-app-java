@@ -206,12 +206,17 @@ public class ConfirmBiddingController {
                                 oldData.auctionId(),
                                 oldData.category(),
                                 oldData.itemName(),
+                                oldData.sellerName(),
+                                oldData.description(),
                                 oldData.startPrice(),
                                 finalBidAmount, // Thay currentprice bằng giá vừa đặt thành công
                                 oldData.minimumIncrement(),
+                                oldData.startDateTime(),
+                                oldData.endDateTime(),
                                 oldData.timeLeft(),
                                 oldData.status(),
-                                (int) bidders
+                                (int) bidders,
+                                null // Later
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
 

@@ -34,9 +34,20 @@ public class AuctionService {
                     int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
 
                     responseList.add(new AuctionSummaryResponse(
-                            auction.getId().toString(), item.getItemType().name(), item.getTitle(),
-                            item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            null, auction.getStatus(), bidderCount
+                            auction.getId().toString(),
+                            item.getItemType().name(),
+                            item.getTitle(),
+                            userDao.findById(auction.getSellerId()).get().getFullName(),
+                            item.getDescription(),
+                            item.getStartingPrice(),
+                            auction.getCurrentPrice(),
+                            auction.getMinimumIncrement(),
+                            auction.getStartTime(),
+                            auction.getEndTime(),
+                            0, //TODO: SOON
+                            auction.getStatus(),
+                            bidderCount,
+                            null // Later
                     ));
                 }
             }
@@ -59,9 +70,20 @@ public class AuctionService {
                     int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
 
                     responseList.add(new AuctionSummaryResponse(
-                            auction.getId().toString(), item.getItemType().name(), item.getTitle(),
-                            item.getStartingPrice(), auction.getCurrentPrice(), auction.getMinimumIncrement(),
-                            "Đang diễn ra", auction.getStatus(), bidderCount
+                            auction.getId().toString(),
+                            item.getItemType().name(),
+                            item.getTitle(),
+                            userDao.findById(UUID.fromString(data.userId())).get().getFullName(),
+                            item.getDescription(),
+                            item.getStartingPrice(),
+                            auction.getCurrentPrice(),
+                            auction.getMinimumIncrement(),
+                            auction.getStartTime(),
+                            auction.getEndTime(),
+                            0,
+                            auction.getStatus(),
+                            bidderCount,
+                            null
                     ));
                 }
             }
@@ -157,6 +179,50 @@ public class AuctionService {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
         }
+    }
+
+    public Response handleGetAllFeaturedAuctions() {
+        long counters = 0;
+
+        try {
+            List<AuctionSummaryResponse> featuredAuctions = new ArrayList<>();;
+
+            Optional<Auction> auctionOpt = auctionDao.findMostBiddedAuction();
+
+            if (auctionOpt.isPresent()) {
+                Auction mostBiddedAuction = auctionOpt.get();
+                Optional<Item> itemOpt =  itemDao.findByAuctionId(mostBiddedAuction.getId());
+                if (itemOpt.isPresent()) {
+                    Item item = itemOpt.get();
+
+                    AuctionSummaryResponse summaryResponse = new AuctionSummaryResponse(
+                            mostBiddedAuction.getId().toString(),
+                            item.getItemType().name(),
+                            item.getTitle(),
+                            userDao.findById(mostBiddedAuction.getSellerId()).get().getFullName(),
+                            item.getDescription(),
+                            item.getStartingPrice(),
+                            mostBiddedAuction.getCurrentPrice(),
+                            mostBiddedAuction.getMinimumIncrement(),
+                            mostBiddedAuction.getStartTime(),
+                            mostBiddedAuction.getEndTime(),
+                            0,
+                            mostBiddedAuction.getStatus(),
+                            mostBiddedAuction.getBiddersCount(),
+                            null
+                            );
+                    featuredAuctions.add(summaryResponse);
+                }
+            }
+
+            return new Response(true, "Tải dữ liệu thành công!", featuredAuctions);
+
+        }
+        catch (Exception e) {
+                e.printStackTrace();
+        }
+        return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+
     }
 
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
@@ -283,7 +349,7 @@ public class AuctionService {
                     sellerId,          // ID người bán
                     data.startPrice(),   // Giá hiện tại lúc bắt đầu chính là giá khởi điểm
                     null,                // Chưa có ai đấu giá (Leading Bidder = null)
-                    data.openTime(), // Bắt đầu đấu giá ngay lập tức
+                    data.openTime(), // Bắt đầu đấu giá
                     data.endTime(), // Kết thúc sau X ngày
                     AuctionStatus.OPEN,  // Trạng thái phiên mới tạo là OPEN
                     data.minIncrement(), // Bước giá tối thiểu

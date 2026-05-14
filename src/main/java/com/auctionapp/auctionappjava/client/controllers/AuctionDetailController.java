@@ -69,7 +69,8 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-        //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
+        lblEndDate.setText(String.valueOf(auction.endDateTime()));
+        txtDescription.setText(auction.description());
     }
 
     @FXML
@@ -92,6 +93,6 @@ public class AuctionDetailController {
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
     }
 }
