@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public final class AuctionItemFactory {
 
-    private AuctionItemFactory() {}
+    private AuctionItemFactory() {
+    }
 
     public static Item create(
             ItemType t,
@@ -20,12 +21,13 @@ public final class AuctionItemFactory {
             String desc,
             BigDecimal price,
             String a1,
-            String a2
+            String a2,
+            byte[] imageData
     ) {
         return switch (t) {
-            case ELECTRONICS -> new ElectronicsItem(id, c, u, sellerId, title, desc, price, a1, a2);
-            case VEHICLE     -> new VehicleItem(id, c, u, sellerId, title, desc, price, a1, a2);
-            case ART         -> new ArtItem(id, c, u, sellerId, title, desc, price, a1, a2);
+            case ELECTRONICS -> new ElectronicsItem(id, c, u, sellerId, title, desc, price, a1, a2, imageData);
+            case VEHICLE -> new VehicleItem(id, c, u, sellerId, title, desc, price, a1, a2, imageData);
+            case ART -> new ArtItem(id, c, u, sellerId, title, desc, price, a1, a2, imageData);
         };
     }
 }
