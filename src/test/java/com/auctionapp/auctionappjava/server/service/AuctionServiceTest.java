@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.server.service;
 
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.*;
@@ -27,6 +29,8 @@ public class AuctionServiceTest {
         @Override public List<Auction> findByStatus(com.auctionapp.auctionappjava.common.enums.AuctionStatus status) { return new ArrayList<>(); }
         @Override public List<Auction> findAll() { return new ArrayList<>(store.values()); }
         @Override public List<Auction> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
+        @Override public List<AuctionSummaryResponse> findAllSummaries() { return new ArrayList<>(); }
+        @Override public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) { return new ArrayList<>(); }
         @Override public void deleteById(UUID auctionId) { store.remove(auctionId); }
 
         // Additional helpers used by AuctionService elsewhere
@@ -73,6 +77,20 @@ public class AuctionServiceTest {
             return l;
         }
         @Override public List<BidTransaction> findAll() { return new ArrayList<>(store.values()); }
+        @Override public List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId) {
+            List<BidHistoryResponse> history = new ArrayList<>();
+            for (BidTransaction bid : findByBidderId(bidderId)) {
+                history.add(toHistoryResponse(null, bid));
+            }
+            return history;
+        }
+        @Override public List<BidHistoryResponse> findAllHistory() {
+            List<BidHistoryResponse> history = new ArrayList<>();
+            for (BidTransaction bid : store.values()) {
+                history.add(toHistoryResponse("Test Bidder", bid));
+            }
+            return history;
+        }
         @Override public long countByAuctionId(UUID auctionId) {
             return findByAuctionId(auctionId).size();
         }
@@ -104,6 +122,17 @@ public class AuctionServiceTest {
                     .map(BidTransaction::getAuctionId)
                     .distinct()
                     .count();
+        }
+        private BidHistoryResponse toHistoryResponse(String bidderName, BidTransaction bid) {
+            return new BidHistoryResponse(
+                    bidderName,
+                    "TEST",
+                    "Test Auction",
+                    BigDecimal.ZERO,
+                    bid.getAmount(),
+                    AuctionStatus.RUNNING,
+                    bid.getUpdatedAt() == null ? "Khong ro" : bid.getUpdatedAt().toString()
+            );
         }
     }
 

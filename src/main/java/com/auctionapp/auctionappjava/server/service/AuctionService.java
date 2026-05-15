@@ -24,33 +24,8 @@ public class AuctionService {
 
     public Response handleGetAllAuctions() {
         try {
-            List<Auction> dbAuctions = auctionDao.findAll();
-            List<AuctionSummaryResponse> responseList = new ArrayList<>();
+            List<AuctionSummaryResponse> responseList = auctionDao.findAllSummaries();
 
-            for (Auction auction : dbAuctions) {
-                Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-                if (itemOpt.isPresent()) {
-                    Item item = itemOpt.get();
-                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
-
-                    responseList.add(new AuctionSummaryResponse(
-                            auction.getId().toString(),
-                            item.getItemType().name(),
-                            item.getTitle(),
-                            userDao.findById(auction.getSellerId()).get().getFullName(),
-                            item.getDescription(),
-                            item.getStartingPrice(),
-                            auction.getCurrentPrice(),
-                            auction.getMinimumIncrement(),
-                            auction.getStartTime(),
-                            auction.getEndTime(),
-                            0, //TODO: SOON
-                            auction.getStatus(),
-                            bidderCount,
-                            null // Later
-                    ));
-                }
-            }
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,33 +35,9 @@ public class AuctionService {
 
     public Response handleGetAllUploadedAuctions(ManagerAndHistoryRequest data) {
         try {
-            List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.userId()));
-            List<AuctionSummaryResponse> responseList = new ArrayList<>();
+            List<AuctionSummaryResponse> responseList =
+                    auctionDao.findSummariesBySellerId(UUID.fromString(data.userId()));
 
-            for (Auction auction : dbAuctions) {
-                Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-                if (itemOpt.isPresent()) {
-                    Item item = itemOpt.get();
-                    int bidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
-
-                    responseList.add(new AuctionSummaryResponse(
-                            auction.getId().toString(),
-                            item.getItemType().name(),
-                            item.getTitle(),
-                            userDao.findById(UUID.fromString(data.userId())).get().getFullName(),
-                            item.getDescription(),
-                            item.getStartingPrice(),
-                            auction.getCurrentPrice(),
-                            auction.getMinimumIncrement(),
-                            auction.getStartTime(),
-                            auction.getEndTime(),
-                            0,
-                            auction.getStatus(),
-                            bidderCount,
-                            null
-                    ));
-                }
-            }
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,42 +46,9 @@ public class AuctionService {
     }
 
     public Response handleGetAllPersonalBiddedAuctions(ManagerAndHistoryRequest data) {
-        // #FckNowImHungry
         try {
-            // Hàm mới của Bình: Cho phép tìm Transaction của riêng Bidders
-            List<BidTransaction> history = bidDao.findByBidderId(UUID.fromString(data.userId()));
-
-            // Tạo ArrayList chuẩn bị chuyền dữ liệu vào
-            List<BidHistoryResponse> responseList = new ArrayList<>();
-
-            for (BidTransaction bid : history) {
-                // Lấy Auction trước
-                Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
-
-                if (auctionOpt.isPresent()) {
-                    Auction auction = auctionOpt.get();
-
-                    // Dùng ItemId của Auction để tìm Item
-                    Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-
-                    if (itemOpt.isPresent()) {
-                        Item item = itemOpt.get();
-
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                        String formattedTime = bid.getUpdatedAt() != null ? bid.getUpdatedAt().format(formatter) : "Không rõ";
-
-                        responseList.add(new BidHistoryResponse(
-                                null,
-                                item.getItemType().name(),
-                                item.getTitle(),
-                                item.getStartingPrice(),
-                                bid.getAmount(),
-                                auction.getStatus(),
-                                formattedTime
-                        ));
-                    }
-                }
-            }
+            List<BidHistoryResponse> responseList =
+                    bidDao.findHistoryByBidderId(UUID.fromString(data.userId()));
 
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
@@ -141,38 +59,7 @@ public class AuctionService {
 
     public Response handleGetAllBiddedAuctions(ManagerAndHistoryRequest data) {
         try {
-            List<BidTransaction> history = bidDao.findAll();
-
-            List<BidHistoryResponse> responseList = new ArrayList<>();
-
-            for (BidTransaction bid : history) {
-                // Lấy Auction trước
-                Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
-
-                if (auctionOpt.isPresent()) {
-                    Auction auction = auctionOpt.get();
-
-                    // Dùng ItemId của Auction để tìm Item
-                    Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-
-                    if (itemOpt.isPresent()) {
-                        Item item = itemOpt.get();
-
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                        String formattedTime = bid.getUpdatedAt() != null ? bid.getUpdatedAt().format(formatter) : "Không rõ";
-
-                        responseList.add(new BidHistoryResponse(
-                                userDao.findById(bid.getBidderId()).get().getFullName(),
-                                item.getItemType().name(),
-                                item.getTitle(),
-                                item.getStartingPrice(),
-                                bid.getAmount(),
-                                auction.getStatus(),
-                                formattedTime
-                        ));
-                    }
-                }
-            }
+            List<BidHistoryResponse> responseList = bidDao.findAllHistory();
 
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
@@ -180,6 +67,7 @@ public class AuctionService {
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
         }
     }
+
 
     public Response handleGetAllFeaturedAuctions() {
         long counters = 0;
@@ -503,7 +391,7 @@ public class AuctionService {
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
 
             // - Good luck.
-            // - Fuck you whore.
+
         }
     }
 }
