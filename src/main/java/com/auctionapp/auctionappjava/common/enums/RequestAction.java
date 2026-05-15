@@ -10,7 +10,10 @@ public enum RequestAction {
     UNSUBSCRIBE_AUCTION,
     PLACE_BID, // đặt giá
     CONFIGURE_AUTO_BID, // autobid
+<<<<<<< HEAD
     GET_BID_HISTORY, // lấy lịch sử bid thật từ DB cho biểu đồ
+=======
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     CREATE_AUCTION,// tạo
     UPDATE_AUCTION, // thay đổi
     DELETE_AUCTION, // xóa

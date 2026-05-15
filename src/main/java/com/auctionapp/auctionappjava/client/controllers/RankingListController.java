@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+<<<<<<< HEAD
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
@@ -19,6 +20,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+=======
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -27,6 +34,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+<<<<<<< HEAD
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -330,6 +338,66 @@ public class RankingListController {
 
     private String formatTableTime(LocalDateTime time) {
         return time == null ? "?" : time.format(tableTimeFormatter);
+=======
+
+public class RankingListController {
+
+    private BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
+    private BigDecimal minIncrement = AuctionSession.getInstance().getCurrentAuction().minimumIncrement();
+    private BigDecimal start = AuctionSession.getInstance().getCurrentAuction().startPrice();
+    //private String bestBidder =
+
+    @FXML
+    private Button btnBack;
+
+    @FXML
+    private Button btnExportWinner;
+
+    @FXML
+    private TableColumn<?, ?> colBidAmount;
+
+    @FXML
+    private TableColumn<?, ?> colBidTime;
+
+    @FXML
+    private TableColumn<?, ?> colRank;
+
+    @FXML
+    private TableColumn<?, ?> colUsername;
+
+    @FXML
+    private Label lblMinIncrement;
+
+    @FXML
+    private Label lblCategory;
+
+    @FXML
+    private Label lblItemName;
+
+    @FXML
+    private Label lblStartingPrice;
+
+    @FXML
+    private Label lblStatus;
+
+    @FXML
+    private Label lblTopBid;
+
+    @FXML
+    private Label lblTopBidder;
+
+    @FXML
+    private TableView<?> tableBidders;
+
+    @FXML
+    void initialize() {
+        lblStartingPrice.setText(start.toPlainString());
+        lblTopBid.setText(best.toPlainString());
+        lblMinIncrement.setText(minIncrement.toPlainString());
+        lblCategory.setText(AuctionSession.getInstance().getCurrentAuction().category());
+        lblItemName.setText(AuctionSession.getInstance().getCurrentAuction().itemName());
+        lblStatus.setText(AuctionSession.getInstance().getCurrentAuction().status().toString());
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     }
 
     @FXML
@@ -337,15 +405,28 @@ public class RankingListController {
         if (LoginController.adminRoute) {
             // force-remove
         } else if (LoginController.sellerRoute) {
+<<<<<<< HEAD
             // xử lý xóa theo quyền seller nếu cần
+=======
+            // if (Item.status == "OPEN") {
+            // remove
+            // } else {
+            // { báo lỗi: Không đủ thẩm quyền xóa sản phẩm }
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         }
     }
 
     @FXML
     void handleBack(ActionEvent event) throws IOException {
+<<<<<<< HEAD
         unsubscribeRealtime();
         if (LoginController.bidderRoute) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
+=======
+        if (LoginController.bidderRoute) {
+            SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         } else {
             Stage stage = (Stage) btnBack.getScene().getWindow();
             stage.close();
@@ -354,11 +435,16 @@ public class RankingListController {
 
     @FXML
     void handleBidders(ActionEvent event) {
+<<<<<<< HEAD
         // Có thể bổ sung màn quản lý bidder sau nếu cần.
+=======
+        // TODO: Quản lý Bidders trong sản phẩm
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     }
 
     @FXML
     void handleExportWinner(ActionEvent event) {
+<<<<<<< HEAD
         // Có thể bổ sung chức năng xuất thông báo người thắng sau nếu cần.
     }
 
@@ -391,4 +477,9 @@ public class RankingListController {
             return bidTime;
         }
     }
+=======
+        // TODO: Xuất ra danh sách người thắng (Optional)
+    }
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 }

@@ -8,6 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+<<<<<<< HEAD
+=======
+import java.time.format.DateTimeFormatter;
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +83,66 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         return queryAuctions("SELECT * FROM auctions WHERE seller_id = ? ORDER BY created_at", sellerId);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    public List<AuctionSummaryResponse> findAllSummaries() {
+        return queryAuctionSummaries("""
+                SELECT
+                    a.id AS auction_id,
+                    i.item_type,
+                    i.title,
+                    u.full_name AS seller_name,
+                    i.description,
+                    i.starting_price,
+                    a.current_price,
+                    a.minimum_increment,
+                    a.start_time,
+                    a.end_time,
+                    a.status,
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                FROM auctions a
+                JOIN auction_items i ON i.id = a.item_id
+                JOIN users u ON u.id = a.seller_id
+                LEFT JOIN bids b ON b.auction_id = a.id
+                GROUP BY
+                    a.id, i.item_type, i.title, u.full_name, i.description,
+                    i.starting_price, a.current_price, a.minimum_increment,
+                    a.start_time, a.end_time, a.status, a.created_at
+                ORDER BY a.created_at DESC
+                """, null);
+    }
+
+    @Override
+    public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) {
+        return queryAuctionSummaries("""
+                SELECT
+                    a.id AS auction_id,
+                    i.item_type,
+                    i.title,
+                    u.full_name AS seller_name,
+                    i.description,
+                    i.starting_price,
+                    a.current_price,
+                    a.minimum_increment,
+                    a.start_time,
+                    a.end_time,
+                    a.status,
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                FROM auctions a
+                JOIN auction_items i ON i.id = a.item_id
+                JOIN users u ON u.id = a.seller_id
+                LEFT JOIN bids b ON b.auction_id = a.id
+                WHERE a.seller_id = ?
+                GROUP BY
+                    a.id, i.item_type, i.title, u.full_name, i.description,
+                    i.starting_price, a.current_price, a.minimum_increment,
+                    a.start_time, a.end_time, a.status, a.created_at
+                ORDER BY a.created_at DESC
+                """, sellerId);
+    }
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
     @Override
     public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {
@@ -186,6 +250,45 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         }
     }
 
+<<<<<<< HEAD
+=======
+    private List<AuctionSummaryResponse> queryAuctionSummaries(String sql, UUID sellerId) {
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            if (sellerId != null) {
+                statement.setString(1, uuid(sellerId));
+            }
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<AuctionSummaryResponse> summaries = new ArrayList<>();
+                while (resultSet.next()) {
+                    summaries.add(mapAuctionSummary(resultSet));
+                }
+                return summaries;
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach auction summary", exception);
+        }
+    }
+
+    private AuctionSummaryResponse mapAuctionSummary(ResultSet resultSet) throws SQLException {
+        return new AuctionSummaryResponse(
+                resultSet.getString("auction_id"),
+                resultSet.getString("item_type"),
+                resultSet.getString("title"),
+                resultSet.getString("seller_name"),
+                resultSet.getString("description"),
+                resultSet.getBigDecimal("starting_price"),
+                resultSet.getBigDecimal("current_price"),
+                resultSet.getBigDecimal("minimum_increment"),
+                localDateTime(resultSet.getTimestamp("start_time")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                localDateTime(resultSet.getTimestamp("end_time")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                0,
+                AuctionStatus.valueOf(resultSet.getString("status")),
+                resultSet.getInt("bidder_count"),
+                null
+        );
+    }
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
     private Auction mapAuction(ResultSet resultSet) throws SQLException {
         return new Auction(

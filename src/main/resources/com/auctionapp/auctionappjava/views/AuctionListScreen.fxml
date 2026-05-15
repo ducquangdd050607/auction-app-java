@@ -73,7 +73,10 @@
                <children>
                   <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" styleClass="confirm-btn" text="Thêm sản phẩm" />
                   <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" styleClass="confirm-btn" text="Xóa sản phẩm" />
+<<<<<<< HEAD
                   <Button fx:id="btnAdmin" layoutX="321.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenAdminScreen" styleClass="confirm-btn" text="Quản trị" />
+=======
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                   <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" styleClass="confirm-btn" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" styleClass="confirm-btn" text="Hủy bỏ" />
                   <Button fx:id="btnTest" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleTest" styleClass="confirm-btn" text="Test" />

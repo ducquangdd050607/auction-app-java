@@ -1,5 +1,9 @@
 package com.auctionapp.auctionappjava.server.dao;
 
+<<<<<<< HEAD
+=======
+import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 
 import java.util.List;
@@ -11,16 +15,26 @@ public interface BidDao {
 
     List<BidTransaction> findByAuctionId(UUID auctionId); // in tất cả lịch sử trả giá trong 1 phiên
 
+<<<<<<< HEAD
     default List<BidTransaction> findByAuctionIdOrderByBidTimeAsc(UUID auctionId) {
         return findByAuctionId(auctionId);
     }
 
+=======
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     List<BidTransaction> findByBidderId(UUID bidderId);
 
     Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId); // Lấy bid mới nhất của bidder
 
     List<BidTransaction> findAll(); // in tất cả giao dịch của TẤT CẢ bidders(WIP)
 
+<<<<<<< HEAD
+=======
+    List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId);
+
+    List<BidHistoryResponse> findAllHistory();
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     long countByAuctionId(UUID auctionId); // đếm số lượng trả giá trong 1 phiên
 
     long countByBidderId(UUID bidderId); //đếm số lượng đặt bid của 1 người

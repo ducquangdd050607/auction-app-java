@@ -7,6 +7,7 @@ import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.model.*;
 import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
+<<<<<<< HEAD
 import com.auctionapp.auctionappjava.common.strategy.AntiSnipingExtensionStrategy;
 import com.auctionapp.auctionappjava.server.realtime.AuctionRealtimeHub;
 
@@ -15,6 +16,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+=======
+
+import java.math.BigDecimal;
+import java.util.*;
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import java.time.format.DateTimeFormatter;
 
 import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
@@ -22,14 +28,18 @@ import static java.time.LocalDateTime.now;
 
 public class AuctionService {
     // Gom tất cả DAO liên quan đến đấu giá vào đây
+<<<<<<< HEAD
     private static final long EXTEND_THRESHOLD_SECONDS = 30;
     private static final long EXTEND_BY_SECONDS = 60;
     private static final ConcurrentHashMap<UUID, ReentrantLock> AUCTION_LOCKS = new ConcurrentHashMap<>();
 
+=======
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     private final AuctionDao auctionDao = new JdbcAuctionDao();
     private final AuctionItemDao itemDao = new JdbcAuctionItemDao();
     private final BidDao bidDao = new JdbcBidDao();
     private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
+<<<<<<< HEAD
     private final AutoBidDao autoBidDao = new JdbcAutoBidDao();
     private final AutoBidEngine autoBidEngine = new AutoBidEngine();
     private final AntiSnipingExtensionStrategy extensionStrategy =
@@ -65,6 +75,12 @@ public class AuctionService {
                     ));
                 }
             }
+=======
+
+    public Response handleGetAllAuctions() {
+        try {
+            List<AuctionSummaryResponse> responseList = auctionDao.findAllSummaries();
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +90,7 @@ public class AuctionService {
 
     public Response handleGetAllUploadedAuctions(ManagerAndHistoryRequest data) {
         try {
+<<<<<<< HEAD
             List<Auction> dbAuctions = auctionDao.findBySellerId(UUID.fromString(data.userId()));
             List<AuctionSummaryResponse> responseList = new ArrayList<>();
 
@@ -101,6 +118,10 @@ public class AuctionService {
                     ));
                 }
             }
+=======
+            List<AuctionSummaryResponse> responseList =
+                    auctionDao.findSummariesBySellerId(UUID.fromString(data.userId()));
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,6 +130,7 @@ public class AuctionService {
     }
 
     public Response handleGetAllPersonalBiddedAuctions(ManagerAndHistoryRequest data) {
+<<<<<<< HEAD
         // #FckNowImHungry
         try {
             // Hàm mới của Bình: Cho phép tìm Transaction của riêng Bidders
@@ -145,6 +167,11 @@ public class AuctionService {
                     }
                 }
             }
+=======
+        try {
+            List<BidHistoryResponse> responseList =
+                    bidDao.findHistoryByBidderId(UUID.fromString(data.userId()));
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
@@ -155,6 +182,7 @@ public class AuctionService {
 
     public Response handleGetAllBiddedAuctions(ManagerAndHistoryRequest data) {
         try {
+<<<<<<< HEAD
             List<BidTransaction> history = bidDao.findAll();
 
             List<BidHistoryResponse> responseList = new ArrayList<>();
@@ -187,6 +215,9 @@ public class AuctionService {
                     }
                 }
             }
+=======
+            List<BidHistoryResponse> responseList = bidDao.findAllHistory();
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
@@ -195,6 +226,10 @@ public class AuctionService {
         }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     public Response handleGetAllFeaturedAuctions() {
         long counters = 0;
 
@@ -209,6 +244,13 @@ public class AuctionService {
                 if (itemOpt.isPresent()) {
                     Item item = itemOpt.get();
 
+<<<<<<< HEAD
+=======
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                    String startFormattedTime = mostBiddedAuction.getStartTime().format(formatter);
+                    String endFormattedTime = mostBiddedAuction.getEndTime().format(formatter);
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                     AuctionSummaryResponse summaryResponse = new AuctionSummaryResponse(
                             mostBiddedAuction.getId().toString(),
                             item.getItemType().name(),
@@ -218,8 +260,13 @@ public class AuctionService {
                             item.getStartingPrice(),
                             mostBiddedAuction.getCurrentPrice(),
                             mostBiddedAuction.getMinimumIncrement(),
+<<<<<<< HEAD
                             mostBiddedAuction.getStartTime(),
                             mostBiddedAuction.getEndTime(),
+=======
+                            startFormattedTime,
+                            endFormattedTime,
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                             0,
                             mostBiddedAuction.getStatus(),
                             mostBiddedAuction.getBiddersCount(),
@@ -240,6 +287,7 @@ public class AuctionService {
     }
 
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
+<<<<<<< HEAD
         if (placeBidData == null || placeBidData.auctionId() == null || placeBidData.userId() == null || placeBidData.amount() == null) {
             return new Response(false, "Thiếu dữ liệu đặt giá.", null);
         }
@@ -454,6 +502,99 @@ public class AuctionService {
         realtimeHub.broadcast(auction.getId(), event);
     }
 
+=======
+        try {
+            // 1. Kiểm tra phiên đấu giá có tồn tại không
+            Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
+
+            if (auctionOpt.isEmpty()) {
+                return new Response(false, "Phiên đấu giá không tồn tại!", null);
+            } else {
+                Auction auction = auctionOpt.get();
+
+                // 2. Validate 1: Phiên đấu giá có đang mở cửa không?
+                if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != RUNNING) {
+                    return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
+                }
+                // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
+                // TODO: Check lại validate 2 này, vì nếu nhớ k nhầm đã xử lí ở controller rồi
+                else {
+                    BigDecimal minRequiredPrice = auction.getCurrentPrice().add(auction.getMinimumIncrement());
+
+                    if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
+                        return new Response(false, "Giá đặt phải từ " + minRequiredPrice + " trở lên!", null);
+                    } else {
+                        // Kiểm tra ví tiền người đặt mới
+                        UUID currentBidderId = placeBidData.userId();
+                        Optional<Wallet> currentBidderWalletOpt = userDao.findWalletByUserId(currentBidderId);
+
+                        if (currentBidderWalletOpt.isEmpty()) {
+                            return new Response(false, "Lỗi: Không tìm thấy ví tiền của người dùng!", null);
+                        } else {
+                            Wallet currentBidderWallet = currentBidderWalletOpt.get();
+
+                            if (currentBidderWallet.getBalance().compareTo(placeBidData.amount()) < 0) {
+                                // Nếu Số dư < Số tiền muốn đặt
+                                return new Response(false, "Số dư trong ví không đủ để đặt giá!", null);
+                            } else {
+                                // Hoàn tiền người dẫn đầu cũ (nếu có)
+                                UUID oldLeaderId = auction.getLeadingBidderId();
+
+                                if (oldLeaderId != null) {
+                                    // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
+                                    if (oldLeaderId.equals(currentBidderId)) {
+                                        // Hoàn tiền cũ lại vào ví của chính họ
+                                        BigDecimal refundedBalance = currentBidderWallet.getBalance().add(auction.getCurrentPrice());
+                                        currentBidderWallet.setBalance(refundedBalance);
+                                    } else {
+                                        // Hoàn tiền cho người khác
+                                        Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
+                                        if (oldLeaderWalletOpt.isPresent()) {
+                                            Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
+                                            // Cộng trả lại số tiền họ đã cược (chính là currentPrice của phiên hiện tại)
+                                            BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
+                                            oldLeaderWallet.setBalance(refundedBalance);
+                                            userDao.saveWallet(oldLeaderWallet);
+                                        }
+                                    }
+                                }
+
+                                // Trừ tiền người đặt mới
+                                BigDecimal updatedBalance = currentBidderWallet.getBalance().subtract(placeBidData.amount());
+                                currentBidderWallet.setBalance(updatedBalance);
+                                userDao.saveWallet(currentBidderWallet);
+
+                                BidTransaction newBid = new BidTransaction(
+                                        UUID.randomUUID(),    // ID tự sinh
+                                        now(),  // createdAt
+                                        now(),  // updatedAt
+                                        placeBidData.auctionId(),     // ID phiên
+                                        placeBidData.userId(),        // ID người đặt
+                                        placeBidData.amount(),        // Số tiền đặt
+                                        false,                // autoGenerated?
+                                        "Giao dịch đặt cược"  // Note
+                                );
+                                bidDao.save(newBid);
+
+                                // Cập nhật lại auction trong database
+                                auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
+                                auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
+                                auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
+                                auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
+
+                                return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi xử lý đặt giá: " + e.getMessage(), null);
+        }
+    }
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     public Response handleAddItem(AddItemRequest data) {
         try {
             // 1. Tạo ID ngẫu nhiên cho vật phẩm mới
@@ -640,7 +781,11 @@ public class AuctionService {
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
 
             // - Good luck.
+<<<<<<< HEAD
             // - Fuck you whore.
+=======
+
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         }
     }
 }

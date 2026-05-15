@@ -61,7 +61,11 @@
         </HBox>
     </bottom>
    <left>
+<<<<<<< HEAD
         <TableView fx:id="tableBidders" prefHeight="449.0" prefWidth="560.0" style="-fx-background-color: #3A8DAD;                           -fx-table-cell-border-color: rgba(255,255,255,0.15);                           -fx-font-size: 13;" BorderPane.alignment="CENTER">
+=======
+        <TableView fx:id="tableBidders" prefHeight="449.0" prefWidth="511.0" style="-fx-background-color: #3A8DAD;                           -fx-table-cell-border-color: rgba(255,255,255,0.15);                           -fx-font-size: 13;" BorderPane.alignment="CENTER">
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             <BorderPane.margin><Insets bottom="16" top="10" /></BorderPane.margin>
             <columns>
                 <TableColumn fx:id="colRank" prefWidth="50" text="#" />
@@ -75,6 +79,7 @@
         </TableView>
    </left>
    <center>
+<<<<<<< HEAD
       <LineChart fx:id="bidLineChart" animated="false" createSymbols="true" legendVisible="true" prefHeight="449.0" prefWidth="380.0" title="Biểu đồ giá đấu realtime" BorderPane.alignment="CENTER">
          <BorderPane.margin><Insets bottom="16" left="18" top="10" /></BorderPane.margin>
         <xAxis>
@@ -82,6 +87,14 @@
         </xAxis>
         <yAxis>
           <NumberAxis forceZeroInRange="false" label="Giá đấu" side="LEFT" />
+=======
+      <LineChart fx:id="bidLineChart" prefHeight="343.0" prefWidth="309.0" BorderPane.alignment="CENTER">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+>>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         </yAxis>
       </LineChart>
    </center>
