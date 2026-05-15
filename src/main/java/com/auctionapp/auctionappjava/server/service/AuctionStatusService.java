@@ -2,11 +2,8 @@ package com.auctionapp.auctionappjava.server.service;
 
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.Auction;
-<<<<<<< HEAD
 import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
 import com.auctionapp.auctionappjava.server.realtime.AuctionRealtimeHub;
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
 
@@ -73,7 +70,6 @@ public class AuctionStatusService {
 
                 // 3. TIẾN HÀNH MỞ PHIÊN (Lúc này CHẮC CHẮN 1000% đã qua giờ)
                 auction.setStatus(AuctionStatus.RUNNING);
-<<<<<<< HEAD
                 auction.touch();
                 auctionDao.save(auction);
 
@@ -91,11 +87,6 @@ public class AuctionStatusService {
                         false,
                         "Phiên đấu giá đã bắt đầu."
                 ));
-=======
-                auctionDao.save(auction);
-
-                // TODO: Gọi Broadcast báo cho Client
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,7 +95,6 @@ public class AuctionStatusService {
 
     private static void executeCloseAuction(UUID auctionId) {
         try {
-<<<<<<< HEAD
             while (true) {
                 Auction auction = auctionDao.findById(auctionId).orElse(null);
                 if (auction == null || auction.getStatus() != AuctionStatus.RUNNING) {
@@ -137,27 +127,6 @@ public class AuctionStatusService {
                         "Phiên đấu giá đã kết thúc."
                 ));
                 return;
-=======
-            Auction auction = auctionDao.findById(auctionId).orElse(null);
-            if (auction != null && auction.getStatus() == AuctionStatus.RUNNING) {
-
-                // 1. Tính toán thời gian còn thiếu
-                long remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getEndTime());
-
-                // 2. VÒNG LẶP CHỐNG THỨC SỚM
-                while (remainingMillis > 0) {
-                    Thread.sleep(remainingMillis);
-
-                    // NẾU BỊ ĐÁNH THỨC, TÍNH LẠI XEM CÒN THIẾU BAO NHIÊU ĐỂ NGỦ TIẾP
-                    remainingMillis = ChronoUnit.MILLIS.between(LocalDateTime.now(), auction.getEndTime());
-                }
-
-                // 3. TIẾN HÀNH ĐÓNG PHIÊN (Lúc này CHẮC CHẮN 1000% đã qua giờ)
-                auction.setStatus(AuctionStatus.FINISHED);
-                auctionDao.save(auction);
-
-                // TODO: Gọi Broadcast báo cho Client
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             }
         } catch (Exception e) {
             e.printStackTrace();

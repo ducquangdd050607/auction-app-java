@@ -1,6 +1,5 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
-<<<<<<< HEAD
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
@@ -17,21 +16,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-=======
-import com.auctionapp.auctionappjava.client.session.AuctionSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
-import com.auctionapp.auctionappjava.common.util.AlertUtils;
-import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,8 +30,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
@@ -50,7 +37,6 @@ public class AuctionDetailController {
 
     @FXML
     private Button btnBack;
-<<<<<<< HEAD
     @FXML
     private Button btnGamble;
     @FXML
@@ -102,51 +88,6 @@ public class AuctionDetailController {
         priceLineChart.getData().add(priceSeries);
     }
 
-=======
-
-    @FXML
-    private Button btnGamble;
-
-    @FXML
-    private Button btnRanking;
-
-    @FXML
-    private Label lblCategory;
-
-    @FXML
-    private Label lblCurrentLeader;
-
-    @FXML
-    private Label lblCurrentPrice;
-
-    @FXML
-    private Label lblEndDate;
-
-    @FXML
-    private Label lblItemName;
-
-    @FXML
-    private Label lblMinIncrement;
-
-    @FXML
-    private Label lblStartingPrice;
-
-    @FXML
-    private Label lblStatus;
-
-    @FXML
-    private Label txtDescription;
-
-    @FXML
-    public void initialize() {
-        // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
-        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
-        if (currentAuction != null) {
-            loadAuctionData(currentAuction);
-        }
-    }
-
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     void loadAuctionData(AuctionSummaryResponse auction) {
         lblItemName.setText(auction.itemName());
         lblCategory.setText(auction.category());
@@ -154,7 +95,6 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-<<<<<<< HEAD
         lblEndDate.setText(String.valueOf(auction.endDateTime()));
         lblCurrentLeader.setText("Chưa có dữ liệu realtime");
         txtDescription.setText(auction.description());
@@ -285,14 +225,6 @@ public class AuctionDetailController {
     @FXML
     void handleBack(ActionEvent event) {
         unsubscribeRealtime();
-=======
-        lblEndDate.setText(auction.endDateTime());
-        txtDescription.setText(auction.description());
-    }
-
-    @FXML
-    void handleBack(ActionEvent event) {
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         Stage stage = (Stage) btnBack.getScene().getWindow();
         stage.close();
     }
@@ -302,26 +234,14 @@ public class AuctionDetailController {
         if (AuctionStatus.RUNNING.equals(AuctionStatus.valueOf(lblStatus.getText()))) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {
-<<<<<<< HEAD
             Runnable unableToGamble = () -> btnGamble.setDisable(true);
-=======
-            Runnable unableToGamble = () -> {
-                btnGamble.setDisable(true);
-            };
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             AlertUtils.AnnouncementController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-<<<<<<< HEAD
         unsubscribeRealtime();
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
     }
 }
-=======
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
-    }
-}
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938

@@ -1,21 +1,16 @@
 package com.auctionapp.auctionappjava.server.network;
 
 import com.auctionapp.auctionappjava.common.dto.*;
-<<<<<<< HEAD
 import com.auctionapp.auctionappjava.server.realtime.AuctionRealtimeHub;
 import com.auctionapp.auctionappjava.server.realtime.ClientConnection;
 import com.auctionapp.auctionappjava.server.service.AuctionService;
 import com.auctionapp.auctionappjava.server.service.AutoBidService;
 import com.auctionapp.auctionappjava.server.service.BidHistoryService;
-=======
-import com.auctionapp.auctionappjava.server.service.AuctionService;
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import com.auctionapp.auctionappjava.server.service.UserService;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-<<<<<<< HEAD
 import java.util.UUID;
 
 public class ClientHandler implements Runnable {
@@ -26,15 +21,6 @@ public class ClientHandler implements Runnable {
     private final AutoBidService autoBidService = new AutoBidService();
     private final BidHistoryService bidHistoryService = new BidHistoryService();
     private final AuctionRealtimeHub realtimeHub = AuctionRealtimeHub.getInstance();
-=======
-
-public class ClientHandler implements Runnable {
-    private Socket socket;
-
-    // Khởi tạo các Service
-    private final UserService userService = new UserService();
-    private final AuctionService auctionService = new AuctionService();
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -46,33 +32,19 @@ public class ClientHandler implements Runnable {
         System.out.println("[" + threadName + "] Bắt đầu phục vụ Client: " + socket.getInetAddress());
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
-<<<<<<< HEAD
         ClientConnection connection = null;
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
             out.flush();
-<<<<<<< HEAD
             connection = new ClientConnection(out);
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             in = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
                 Request request = (Request) in.readObject();
-<<<<<<< HEAD
                 Response response;
 
                 switch (request.action()) {
-=======
-                Response response = null;
-
-                // Sử dụng Switch-case hiện đại của Java để định tuyến (Routing)
-                switch (request.action()) {
-                    // Case thuộc user
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                     case "LOGIN":
                         response = userService.handleLogin((LoginRequest) request.payload());
                         break;
@@ -89,10 +61,6 @@ public class ClientHandler implements Runnable {
                         response = userService.handleChangePassword((ChangePasswordRequest) request.payload());
                         break;
 
-<<<<<<< HEAD
-=======
-                    // Case thuộc auction
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                     case "GET_ALL_AUCTIONS":
                         response = auctionService.handleGetAllAuctions();
                         break;
@@ -114,7 +82,6 @@ public class ClientHandler implements Runnable {
                     case "PLACE_BID":
                         response = auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
                         break;
-<<<<<<< HEAD
                     case "CONFIGURE_AUTO_BID":
                         response = autoBidService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
                         break;
@@ -129,8 +96,6 @@ public class ClientHandler implements Runnable {
                         realtimeHub.unsubscribe(parseAuctionId(request.payload()), connection);
                         response = new Response(true, "Đã unsubscribe realtime auction.", null);
                         break;
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                     case "GET_USERS":
                         response = auctionService.handleGetUsers();
                         break;
@@ -145,26 +110,15 @@ public class ClientHandler implements Runnable {
                         break;
                 }
 
-<<<<<<< HEAD
                 connection.sendResponse(response);
-=======
-                // Gửi kết quả duy nhất 1 lần ở đây
-                if (response != null) {
-                    out.writeObject(response);
-                    out.flush();
-                }
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             }
 
         } catch (Exception e) {
             System.out.println("[" + threadName + "] Client đã ngắt kết nối. Lỗi: " + e.getMessage());
         } finally {
-<<<<<<< HEAD
             if (connection != null) {
                 realtimeHub.unsubscribeAll(connection);
             }
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             try {
                 if (in != null) in.close();
                 if (out != null) out.close();
@@ -174,7 +128,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-<<<<<<< HEAD
 
     private UUID parseAuctionId(Object payload) {
         if (payload instanceof UUID uuid) return uuid;
@@ -182,6 +135,3 @@ public class ClientHandler implements Runnable {
         throw new IllegalArgumentException("auctionId không hợp lệ");
     }
 }
-=======
-}
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938

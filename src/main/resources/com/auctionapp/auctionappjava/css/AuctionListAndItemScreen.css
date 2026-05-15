@@ -18,10 +18,3 @@
     -fx-translate-y: 2px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 1);
 }
-<<<<<<< HEAD
-=======
-
-.table-view .table-cell {
-    -fx-alignment: CENTER;
-}
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938

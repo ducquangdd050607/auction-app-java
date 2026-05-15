@@ -127,10 +127,40 @@ public class AuctionServiceTest {
         public void putWallet(Wallet w) { wallets.put(w.getUserId(), w); }
     }
 
+    static class FakeAutoBidDao implements AutoBidDao {
+        final Map<UUID, AutoBidConfig> store = new LinkedHashMap<>();
+
+        @Override public AutoBidConfig save(AutoBidConfig config) {
+            store.put(config.getId(), config);
+            return config;
+        }
+
+        @Override public Optional<AutoBidConfig> findByAuctionIdAndBidderId(UUID auctionId, UUID bidderId) {
+            return store.values().stream()
+                    .filter(config -> auctionId.equals(config.getAuctionId()) && bidderId.equals(config.getBidderId()))
+                    .findFirst();
+        }
+
+        @Override public List<AutoBidConfig> findEnabledByAuctionId(UUID auctionId) {
+            return store.values().stream()
+                    .filter(config -> auctionId.equals(config.getAuctionId()) && config.isEnabled())
+                    .toList();
+        }
+
+        @Override public void deleteByAuctionId(UUID auctionId) {
+            store.values().removeIf(config -> auctionId.equals(config.getAuctionId()));
+        }
+
+        @Override public void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId) {
+            findByAuctionIdAndBidderId(auctionId, bidderId).ifPresent(config -> config.setEnabled(false));
+        }
+    }
+
     private FakeAuctionDao fakeAuctionDao;
     private FakeItemDao fakeItemDao;
     private FakeBidDao fakeBidDao;
     private FakeUserDao fakeUserDao;
+    private FakeAutoBidDao fakeAutoBidDao;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -140,12 +170,14 @@ public class AuctionServiceTest {
         fakeItemDao = new FakeItemDao();
         fakeBidDao = new FakeBidDao();
         fakeUserDao = new FakeUserDao();
+        fakeAutoBidDao = new FakeAutoBidDao();
 
         // inject fakes into private final fields via reflection
         setPrivateField(auctionService, "auctionDao", fakeAuctionDao);
         setPrivateField(auctionService, "itemDao", fakeItemDao);
         setPrivateField(auctionService, "bidDao", fakeBidDao);
         setPrivateField(auctionService, "userDao", fakeUserDao);
+        setPrivateField(auctionService, "autoBidDao", fakeAutoBidDao);
     }
 
     private void setPrivateField(Object target, String fieldName, Object value) throws Exception {
@@ -255,5 +287,57 @@ public class AuctionServiceTest {
         // Assert
         assertFalse(response.success());
         assertTrue(response.message().contains("Số dư trong ví không đủ"));
+    }
+
+    @Test
+    public void testPlaceBid_proxyAutoBid_usesMaxBidWithoutRoundLimit() {
+        UUID auctionId = UUID.randomUUID();
+        UUID manualBidderId = UUID.randomUUID();
+        UUID firstAutoBidderId = UUID.randomUUID();
+        UUID secondAutoBidderId = UUID.randomUUID();
+
+        Auction auction = new Auction(
+                auctionId, LocalDateTime.now(), LocalDateTime.now(),
+                UUID.randomUUID(), UUID.randomUUID(),
+                new BigDecimal("10000"), null,
+                LocalDateTime.now().minusMinutes(1), LocalDateTime.now().plusMinutes(20),
+                AuctionStatus.RUNNING, new BigDecimal("1000"), null
+        );
+        fakeAuctionDao.save(auction);
+
+        fakeUserDao.putWallet(new Wallet(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now(), manualBidderId, new BigDecimal("200000")));
+        fakeUserDao.putWallet(new Wallet(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now(), firstAutoBidderId, new BigDecimal("200000")));
+        fakeUserDao.putWallet(new Wallet(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now(), secondAutoBidderId, new BigDecimal("200000")));
+
+        LocalDateTime earlier = LocalDateTime.now().minusMinutes(2);
+        LocalDateTime later = LocalDateTime.now().minusMinutes(1);
+        fakeAutoBidDao.save(new AutoBidConfig(
+                UUID.randomUUID(), earlier, earlier,
+                auctionId, firstAutoBidderId,
+                new BigDecimal("100000"), new BigDecimal("1000"), true
+        ));
+        fakeAutoBidDao.save(new AutoBidConfig(
+                UUID.randomUUID(), later, later,
+                auctionId, secondAutoBidderId,
+                new BigDecimal("100000"), new BigDecimal("1000"), true
+        ));
+
+        var response = auctionService.handlePlaceBid(new PlaceBidRequest(
+                auctionId,
+                manualBidderId,
+                new BigDecimal("11000")
+        ));
+
+        assertTrue(response.success());
+        Auction updated = fakeAuctionDao.findById(auctionId).orElseThrow();
+        assertEquals(new BigDecimal("100000"), updated.getCurrentPrice());
+        assertEquals(firstAutoBidderId, updated.getLeadingBidderId());
+
+        List<BidTransaction> bids = fakeBidDao.findByAuctionId(auctionId);
+        assertEquals(2, bids.size());
+        assertTrue(bids.stream().anyMatch(bid -> !bid.isAutoGenerated() && bid.getAmount().equals(new BigDecimal("11000"))));
+        assertTrue(bids.stream().anyMatch(bid -> bid.isAutoGenerated()
+                && bid.getBidderId().equals(firstAutoBidderId)
+                && bid.getAmount().equals(new BigDecimal("100000"))));
     }
 }

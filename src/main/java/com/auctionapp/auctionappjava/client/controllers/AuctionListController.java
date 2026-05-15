@@ -4,17 +4,8 @@ import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
-<<<<<<< HEAD
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-=======
-import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
-import com.auctionapp.auctionappjava.common.util.AlertUtils;
-import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -34,19 +25,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-<<<<<<< HEAD
-=======
-import javafx.util.Duration;
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-<<<<<<< HEAD
-=======
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -65,11 +47,8 @@ public class AuctionListController implements Initializable {
     @FXML
     private Button btnAdd;
     @FXML
-<<<<<<< HEAD
     private Button btnAdmin;
     @FXML
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     private Button btnConfirm;
     @FXML
     private Button btnCancel;
@@ -115,12 +94,6 @@ public class AuctionListController implements Initializable {
     // Thêm danh sách bọc ngoài dùng để LỌC (FilteredList)
     private FilteredList<AuctionSummaryResponse> filteredData;
 
-<<<<<<< HEAD
-=======
-    // Khai báo thêm đồng hồ
-    private Timeline countdownTimer;
-
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 
     @FXML
     void handleSearch(ActionEvent event) {
@@ -174,14 +147,11 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-<<<<<<< HEAD
     void handleOpenAdminScreen(ActionEvent event) {
         // Optional
     }
 
     @FXML
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     void handleRemove(ActionEvent event) throws IOException {
         // bật lên btn checkbox và xác nhận, chọn và xóa (admin)
         btnRemove.setDisable(true);
@@ -279,21 +249,6 @@ public class AuctionListController implements Initializable {
 
         // Cho phép Double-click truy cập sản phẩm
         setupRowDoubleClick();
-<<<<<<< HEAD
-=======
-
-        // Cứ mỗi 1 giây, đồng hồ sẽ yêu cầu cái bảng vẽ lại giao diện 1 lần
-        countdownTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            listAuctions.refresh();
-        }));
-        countdownTimer.setCycleCount(Animation.INDEFINITE);
-        countdownTimer.play();
-    }
-
-    // Tắt đồng hồ khi tắt màn hình để giải phóng RAM
-    public void stopTimer() {
-        if (countdownTimer != null) countdownTimer.stop();
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
     }
 
     // Luồng xử lý ngầm gọi Server
@@ -387,7 +342,6 @@ public class AuctionListController implements Initializable {
     private void setupColumns() {
         // Dùng SimpleStringProperty cho các cột chứa chuỗi (String)
         clmName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().itemName()));
-<<<<<<< HEAD
         clmType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().category()));
 
         // Nếu bạn có khai báo các cột này trong FXML, hãy map dữ liệu tương tự
@@ -419,67 +373,6 @@ public class AuctionListController implements Initializable {
                     }
                 } else {
                     displayTime = "Đang tải...";
-=======
-        clmName.setStyle("-fx-alignment: CENTER-LEFT;");
-
-        clmType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().category()));
-
-        // Tính lại thời gian để set status
-        if (clmStatus != null) {
-            clmStatus.setCellValueFactory(cell -> {
-                var auction = cell.getValue();
-                String displayStatus = auction.status() != null ? auction.status().name() : "UNKNOWN";
-
-                try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime startTime = LocalDateTime.parse(auction.startDateTime(), formatter);
-                    LocalDateTime endTime = LocalDateTime.parse(auction.endDateTime(), formatter);
-
-                    // Phán đoán trạng thái Lạc quan dựa trên mốc thời gian
-                    if (now.isBefore(startTime)) {
-                        displayStatus = "OPEN"; // Hoặc chữ "MỞ" tùy bạn hiển thị
-                    } else if (!now.isBefore(startTime) && now.isBefore(endTime)) {
-                        displayStatus = "RUNNING"; // Hoặc "ĐANG DIỄN RA"
-                    } else {
-                        displayStatus = "FINISHED"; // Hoặc "KẾT THÚC"
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    displayStatus = "ERROR";
-                }
-
-                return new SimpleStringProperty(displayStatus);
-            });
-        }
-
-        // Tương tự status, nhưng thêm việc refresh mỗi 1s đếm giờ
-        if (clmTime != null) {
-            clmTime.setCellValueFactory(cell -> {
-                var auction = cell.getValue();
-                String displayTime = "Không xác định";
-
-                try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime startTime = LocalDateTime.parse(auction.startDateTime(), formatter);
-                    LocalDateTime endTime = LocalDateTime.parse(auction.endDateTime(), formatter);
-
-                    // Pha 1: Chưa tới giờ mở -> Đếm ngược đến lúc Mở
-                    if (now.isBefore(startTime)) {
-                        displayTime = "Mở sau " + formatDuration(java.time.Duration.between(now, startTime));
-                    }
-                    // Pha 2: Đã mở nhưng chưa kết thúc -> Đếm ngược đến lúc Kết thúc
-                    else if (!now.isBefore(startTime) && now.isBefore(endTime)) {
-                        displayTime = formatDuration(java.time.Duration.between(now, endTime));
-                    }
-                    // Pha 3: Vượt qua giờ kết thúc -> Khóa sổ
-                    else {
-                        displayTime = "Đã kết thúc";
-                    }
-                } catch (Exception e) {
-                    displayTime = "Lỗi hiển thị";
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
                 }
 
                 return new SimpleStringProperty(displayTime);
@@ -518,13 +411,10 @@ public class AuctionListController implements Initializable {
         btnRemove.setVisible(false);
         btnRemove.setManaged(false);
 
-<<<<<<< HEAD
         //nút admin
         btnAdmin.setVisible(false);
         btnAdmin.setManaged(false);
 
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         // nút xác nhận-hủy-khung chọn chỉ khi bấm remove
         btnConfirm.setVisible(false);
         btnConfirm.setManaged(false);
@@ -534,11 +424,8 @@ public class AuctionListController implements Initializable {
 
         //nút admin
         if (LoginController.adminRoute) {
-<<<<<<< HEAD
             btnAdmin.setVisible(true);
             btnAdmin.setManaged(true);
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
             btnRemove.setVisible(true);
             btnRemove.setManaged(true);
 
@@ -553,11 +440,8 @@ public class AuctionListController implements Initializable {
         btnConfirm.setVisible(admin);
         btnConfirm.setManaged(admin);
         clmChoose.setVisible(admin);
-<<<<<<< HEAD
         btnAdmin.setVisible(!admin);
         btnAdmin.setManaged(!admin);
-=======
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
         btnCancel.setVisible(admin);
         btnCancel.setManaged(admin);
     }
@@ -667,21 +551,4 @@ public class AuctionListController implements Initializable {
         return warningView;
     }
 
-<<<<<<< HEAD
-=======
-    private String formatDuration(java.time.Duration duration) {
-        if (duration.isNegative() || duration.isZero()) return "00:00:00";
-
-        long days = duration.toDays();
-        long hours = duration.toHoursPart();
-        long minutes = duration.toMinutesPart();
-        long seconds = duration.toSecondsPart();
-
-        if (days > 0) {
-            return String.format("%d ngày %02d:%02d:%02d", days, hours, minutes, seconds);
-        } else {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        }
-    }
->>>>>>> 48bf0f83663782457a4ff6c1ac69291ad16fd938
 }
