@@ -1,0 +1,80 @@
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.logout-btn:hover {
+    -fx-background-color: rgb(57, 155, 193);
+    -fx-font-weight: bold;
+}
+
+.logout-btn:pressed {
+    -fx-background-color: rgb(36, 103, 129);
+    -fx-translate-y: 1px;
+}
+
+.nav-menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 10px 10px;
+}
+
+.nav-menu-btn:hover {
+    -fx-background-color: rgb(51, 149, 191);
+}
+
+.nav-menu-btn:pressed {
+    -fx-background-color: rgb(37, 109, 140);
+    -fx-translate-y: 1px;
+}
+
+.nav-menu-btn-active {
+    -fx-background-color: #2B849D;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: #f3be7a;
+    -fx-border-width: 0 0 0 5px;
+}
+
+.route-btn {
+    -fx-background-color: whitesmoke;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.route-btn:hover {
+    -fx-background-color: rgb(218, 218, 218);
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B849D;
+}
+
+.route-btn:pressed {
+    -fx-background-color: rgb(180, 180, 180);
+    -fx-translate-y: 1px;
+}
+
+.route-btn:disabled {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-opacity: 1.0;
+}
+
+.stat-btn {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 2);
+}
+
+.stat-btn:hover {
+    -fx-background-color: rgb(218, 218, 218);
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B849D;
+}
+
+.stat-btn:pressed {
+    -fx-background-color: rgb(180, 180, 180);
+    -fx-translate-y: 1px;
+}

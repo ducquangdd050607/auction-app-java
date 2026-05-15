@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Slide 7: Danh sách phiên đấu giá -->
+
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.UsersManagerController">
+    <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
+
+    <top>
+        <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
+            <!-- Screen title -->
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Users Manager" />
+
+            <!-- Search + filter bar -->
+            <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="726.0" spacing="10" style="-fx-background-color: #2E7D9B;">
+                <TextField fx:id="txtSearch" prefHeight="32" prefWidth="231.0" promptText="Tìm kiếm người dùng..." style="-fx-background-radius: 4; -fx-font-size: 13;" />
+                <ComboBox fx:id="cbFilterRoute" prefHeight="32" prefWidth="140" promptText="Route" style="-fx-font-size: 13;" />
+            <ComboBox fx:id="cbFilterAccountStatus" layoutX="252.0" layoutY="14.0" prefHeight="32" prefWidth="171.0" promptText="Trạng thái tài khoản" style="-fx-font-size: 13;" />
+                <Button onAction="#handleSearch" prefHeight="32" prefWidth="70" style="-fx-background-color: white; -fx-text-fill: #2E7D9B;                                -fx-font-weight: bold; -fx-cursor: hand;                                -fx-background-radius: 4;" text="Tìm" />
+            </HBox>
+            <padding><Insets bottom="10.0" left="30.0" right="10.0" top="10.0" /></padding>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+        </VBox>
+    </top>
+   <center>
+      <TableView fx:id="listUsers" prefHeight="394.0" prefWidth="820.0" BorderPane.alignment="CENTER">
+        <columns>
+            <TableColumn fx:id="clmName" prefWidth="134.0" text="Tên" />
+            <TableColumn fx:id="clmRoute" prefWidth="71.0" text="Vai trò" />
+            <TableColumn fx:id="clmBalance" prefWidth="119.0" text="Số dư Ví" />
+            <TableColumn fx:id="clmRecentBid" prefWidth="166.0" text="Phiên đấu gía gần đây">
+               <graphic>
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="13.0" prefWidth="5.0" style="-fx-border-style: circle;" text="?">
+                     <tooltip>
+                        <Tooltip text="Hiển thị Các phiên đấu giá tham gia gần đây của BIDDER và Các phiên được tạo ra bởi SELLER" />
+                     </tooltip>
+                  </Button>
+               </graphic></TableColumn>
+            <TableColumn fx:id="clmBids" prefWidth="180.0" text="Số phiên tham gia/Tạo ra">
+               <graphic>
+                  <Button mnemonicParsing="false" text="?">
+                     <tooltip>
+                        <Tooltip text="Các phiên BIDDER tham gia và Các phiên tạo ra bởi SELLER" />
+                     </tooltip>
+                  </Button>
+               </graphic></TableColumn>
+            <TableColumn fx:id="clmAccountStatus" prefWidth="127.0" text="Trạng thái tài khoản" />
+            <TableColumn fx:id="clmChoose" minWidth="0.0" prefWidth="21.0">
+               <graphic>
+                  <CheckBox mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" />
+               </graphic>
+            </TableColumn>
+        </columns>
+         <BorderPane.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </BorderPane.margin>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox fx:id="box" alignment="CENTER" prefHeight="35.0" prefWidth="612.0" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="414.0" spacing="20.0" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12;">
+               <children>
+                  <Button fx:id="btnBan" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleBan" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Chặn người dùng" />
+                  <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Xác nhận" />
+                  <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: white; -fx-text-fill: #2E7D9B; -fx-background-radius: 4; -fx-font-weight: bold;" text="Hủy bỏ" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </bottom>
+
+</BorderPane>

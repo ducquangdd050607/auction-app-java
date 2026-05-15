@@ -1,0 +1,72 @@
+package com.auctionapp.auctionappjava.common.util;
+
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
+public class AlertUtils {
+    // Runnable cho phép hàm có thể chạy sau khi bấm nút OK
+    public static void ConfirmAlertController( ActionEvent event,
+                                               String alertTitle,
+                                               String alertHeader,
+                                               String alertContent,
+                                               String announcementTitle,
+                                               String announcementHeader,
+                                               String announcementContent,
+                                               Runnable onConfirm,
+                                               ImageView announcementImage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(alertTitle);
+        alert.setHeaderText(alertHeader);
+        alert.setContentText(alertContent);
+
+        alert.showAndWait().ifPresent(response -> {
+
+            if (response == ButtonType.OK) {
+
+                alert.close();
+
+                if (onConfirm != null) {
+                    onConfirm.run();
+                }
+
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle(announcementTitle);
+                successAlert.setHeaderText(announcementHeader);
+                successAlert.setContentText(announcementContent);
+                if (announcementImage != null) {
+                    successAlert.setGraphic(announcementImage);
+                }
+                successAlert.showAndWait();
+                if (event != null) {
+                    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    currentStage.close();
+                }
+            } else {
+                alert.close();
+            }
+        });
+    }
+
+    public static void AnnouncementController(String title,
+                                              String header,
+                                              Runnable onConfirm,
+                                              ImageView announcementImage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        if (announcementImage != null) {
+            alert.setGraphic(announcementImage);
+        }
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                if (onConfirm != null) {
+                    onConfirm.run();
+                }
+            }
+        });
+    }
+}
