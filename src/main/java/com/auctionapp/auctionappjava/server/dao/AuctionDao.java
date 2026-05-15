@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao;
 
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.Auction;
 import java.util.List;
@@ -16,6 +18,11 @@ public interface AuctionDao {
     List<Auction> findAll();
 
     List<Auction> findBySellerId(UUID sellerId);
+
+    List<AuctionSummaryResponse> findAllSummaries();
+
+    List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
+
 
     Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
 
