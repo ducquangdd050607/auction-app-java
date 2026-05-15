@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao;
 
+import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 
 import java.util.List;
@@ -16,6 +17,10 @@ public interface BidDao {
     Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId); // Lấy bid mới nhất của bidder
 
     List<BidTransaction> findAll(); // in tất cả giao dịch của TẤT CẢ bidders(WIP)
+
+    List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId);
+
+    List<BidHistoryResponse> findAllHistory();
 
     long countByAuctionId(UUID auctionId); // đếm số lượng trả giá trong 1 phiên
 
