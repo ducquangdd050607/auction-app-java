@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -270,8 +271,8 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 resultSet.getBigDecimal("starting_price"),
                 resultSet.getBigDecimal("current_price"),
                 resultSet.getBigDecimal("minimum_increment"),
-                localDateTime(resultSet.getTimestamp("start_time")),
-                localDateTime(resultSet.getTimestamp("end_time")),
+                localDateTime(resultSet.getTimestamp("start_time")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                localDateTime(resultSet.getTimestamp("end_time")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
                 0,
                 AuctionStatus.valueOf(resultSet.getString("status")),
                 resultSet.getInt("bidder_count"),

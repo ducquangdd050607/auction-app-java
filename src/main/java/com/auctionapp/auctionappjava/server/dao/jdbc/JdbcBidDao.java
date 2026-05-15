@@ -169,7 +169,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                             rs.getBigDecimal("amount"),
                             AuctionStatus.valueOf(rs.getString("status")),
                             localDateTime(rs.getTimestamp("updated_at"))
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
                     ));
                 }
                 return result;

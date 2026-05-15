@@ -207,7 +207,7 @@ public class DashboardController implements Initializable {
 
 
                     lblItemName1.setText(mostBiddedAuction.itemName());
-                    endTime1.setText(String.valueOf(mostBiddedAuction.endDateTime()));
+                    endTime1.setText(mostBiddedAuction.endDateTime());
                     lblItemPrice1.setText(MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
                     lblItemDesc1.setText(mostBiddedAuction.description());
 

@@ -15,8 +15,8 @@ public record AuctionSummaryResponse(
         BigDecimal startPrice,     // Khởi đầu
         BigDecimal currentPrice,   // Giá hiện tại
         BigDecimal minimumIncrement,    // Bước giá
-        LocalDateTime startDateTime,
-        LocalDateTime endDateTime,
+        String startDateTime,
+        String endDateTime,
         long timeLeft, // Thời gian còn lại
         AuctionStatus status,
         int bidderCount,// Số bidder quan tâm

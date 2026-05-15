@@ -69,7 +69,7 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-        lblEndDate.setText(String.valueOf(auction.endDateTime()));
+        lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
     }
 

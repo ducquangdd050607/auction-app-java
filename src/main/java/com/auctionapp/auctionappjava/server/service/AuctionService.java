@@ -25,7 +25,6 @@ public class AuctionService {
     public Response handleGetAllAuctions() {
         try {
             List<AuctionSummaryResponse> responseList = auctionDao.findAllSummaries();
-
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +36,6 @@ public class AuctionService {
         try {
             List<AuctionSummaryResponse> responseList =
                     auctionDao.findSummariesBySellerId(UUID.fromString(data.userId()));
-
             return new Response(true, "Tải dữ liệu thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,6 +81,10 @@ public class AuctionService {
                 if (itemOpt.isPresent()) {
                     Item item = itemOpt.get();
 
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                    String startFormattedTime = mostBiddedAuction.getStartTime().format(formatter);
+                    String endFormattedTime = mostBiddedAuction.getEndTime().format(formatter);
+
                     AuctionSummaryResponse summaryResponse = new AuctionSummaryResponse(
                             mostBiddedAuction.getId().toString(),
                             item.getItemType().name(),
@@ -92,8 +94,8 @@ public class AuctionService {
                             item.getStartingPrice(),
                             mostBiddedAuction.getCurrentPrice(),
                             mostBiddedAuction.getMinimumIncrement(),
-                            mostBiddedAuction.getStartTime(),
-                            mostBiddedAuction.getEndTime(),
+                            startFormattedTime,
+                            endFormattedTime,
                             0,
                             mostBiddedAuction.getStatus(),
                             mostBiddedAuction.getBiddersCount(),
