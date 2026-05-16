@@ -2,34 +2,31 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.BidHistoryChartResponse;
-import com.auctionapp.auctionappjava.common.dto.BidHistoryPointDto;
+import com.auctionapp.auctionappjava.common.dto.ImageRequest;
+import com.auctionapp.auctionappjava.common.dto.ImageResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.CompressionUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
@@ -37,55 +34,86 @@ public class AuctionDetailController {
 
     @FXML
     private Button btnBack;
+
     @FXML
     private Button btnGamble;
+
     @FXML
     private Button btnRanking;
+
     @FXML
     private Label lblCategory;
+
     @FXML
     private Label lblCurrentLeader;
+
     @FXML
     private Label lblCurrentPrice;
+
     @FXML
     private Label lblEndDate;
+
     @FXML
     private Label lblItemName;
+
     @FXML
     private Label lblMinIncrement;
+
     @FXML
     private Label lblStartingPrice;
+
     @FXML
     private Label lblStatus;
+
     @FXML
     private Label txtDescription;
-    @FXML
-    private LineChart<String, Number> priceLineChart;
 
-    private final XYChart.Series<String, Number> priceSeries = new XYChart.Series<>();
-    private final Set<UUID> renderedBidIds = new HashSet<>();
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private AuctionSummaryResponse currentAuction;
-    private Consumer<AuctionRealtimeEvent> realtimeListener;
+    @FXML
+    private ImageView imgProduct;
 
     @FXML
     public void initialize() {
-        currentAuction = AuctionSession.getInstance().getCurrentAuction();
-        setupPriceChart();
+        // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
+        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
         if (currentAuction != null) {
             loadAuctionData(currentAuction);
-            loadBidHistoryFromDatabase(currentAuction);
-            subscribeRealtime(currentAuction);
         }
-    }
 
-    private void setupPriceChart() {
-        if (priceLineChart == null) return;
-        priceSeries.setName("Giá cao nhất");
-        priceLineChart.setAnimated(false);
-        priceLineChart.setCreateSymbols(true);
-        priceLineChart.getData().clear();
-        priceLineChart.getData().add(priceSeries);
+        // Đổi con trỏ chuột thành hình bàn tay khi di chuột vào ảnh cho giống Web
+        if (imgProduct != null) {
+            imgProduct.setCursor(Cursor.HAND);
+
+            // Bắt sự kiện Click chuột vào ảnh
+            imgProduct.setOnMouseClicked((MouseEvent event) -> {
+                // Nếu chưa chọn ảnh thì không làm gì cả
+                if (imgProduct.getImage() == null) return;
+
+                // 3. Tạo một cửa sổ (Stage) mới để phóng to ảnh
+                Stage zoomStage = new Stage();
+                zoomStage.initModality(Modality.APPLICATION_MODAL); // Khóa form ở dưới, bắt buộc xem xong mới được quay lại
+                zoomStage.setTitle("Xem chi tiết ảnh");
+
+                // 4. Tạo một ImageView mới chứa cùng bức ảnh đó nhưng to hơn
+                ImageView zoomedImageView = new ImageView(imgProduct.getImage());
+                zoomedImageView.setPreserveRatio(true);
+
+                // Set kích thước tối đa để ảnh không bị tràn màn hình
+                zoomedImageView.setFitWidth(800);
+                zoomedImageView.setFitHeight(600);
+
+                // 5. Bọc ảnh vào một StackPane để căn giữa
+                StackPane root = new StackPane(zoomedImageView);
+
+                // Click vào bất kỳ đâu trên cửa sổ phóng to này sẽ tự động đóng nó lại
+                root.setOnMouseClicked(e -> zoomStage.close());
+
+                // Hiển thị lên giữa màn hình
+                Scene scene = new Scene(root, 900, 700);
+                zoomStage.setScene(scene);
+                zoomStage.centerOnScreen();
+                zoomStage.showAndWait();
+            });
+        }
     }
 
     void loadAuctionData(AuctionSummaryResponse auction) {
@@ -95,136 +123,47 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-        lblEndDate.setText(String.valueOf(auction.endDateTime()));
-        lblCurrentLeader.setText("Chưa có dữ liệu realtime");
+        lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
-    }
 
-    private void loadBidHistoryFromDatabase(AuctionSummaryResponse auction) {
+        // Set tạm một ảnh loading hoặc ảnh mặc định trong lúc chờ tải
+        imgProduct.setImage(new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Koconut.png")));
+
+        // Tạo request lấy ảnh
+        Request imgReq = new Request("GET_IMAGE", new ImageRequest(auction.auctionId()));
+
         CompletableFuture.supplyAsync(() -> {
             try {
-                return Client.getInstance().sendRequest(new Request("GET_BID_HISTORY", UUID.fromString(auction.auctionId())));
+                return Client.getInstance().sendRequest(imgReq);
             } catch (Exception e) {
-                return new Response(false, "Không tải được lịch sử bid: " + e.getMessage(), null);
+                return null;
             }
-        }).thenAccept(response -> Platform.runLater(() -> {
-            if (!response.success() || !(response.data() instanceof BidHistoryChartResponse history)) {
-                return;
-            }
-            priceSeries.getData().clear();
-            renderedBidIds.clear();
-            history.points().stream()
-                    .sorted(Comparator.comparing(BidHistoryPointDto::bidTime))
-                    .forEach(this::addHistoryPointToChart);
-        }));
-    }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response != null && response.success() && response.data() != null) {
+                    ImageResponse imgRes = (ImageResponse) response.data();
+                    byte[] compressedBytes = imgRes.imageData();
 
-    private void addHistoryPointToChart(BidHistoryPointDto point) {
-        if (point.bidId() != null && !renderedBidIds.add(point.bidId())) return;
-        LocalDateTime bidTime = point.bidTime();
-        String x = bidTime == null ? "?" : bidTime.format(timeFormatter);
-        priceSeries.getData().add(new XYChart.Data<>(x, point.amount()));
-    }
+                    if (compressedBytes != null && compressedBytes.length > 0) {
+                        try {
+                            // Giải nén lại ảnh
+                            byte[] originalBytes = CompressionUtils.decompress(compressedBytes);
 
-    private void subscribeRealtime(AuctionSummaryResponse auction) {
-        realtimeListener = this::handleRealtimeEvent;
-        Client.getInstance().addRealtimeListener(realtimeListener);
-        CompletableFuture.runAsync(() -> {
-            try {
-                Client.getInstance().sendRequest(new Request("SUBSCRIBE_AUCTION", UUID.fromString(auction.auctionId())));
-            } catch (Exception ignored) {
-            }
-        });
-    }
+                            // Vẽ lại ảnh lên UI
+                            Image realImage = new Image(new ByteArrayInputStream(originalBytes));
+                            imgProduct.setImage(realImage);
 
-    private void unsubscribeRealtime() {
-        AuctionSummaryResponse auction = currentAuction;
-        if (auction != null) {
-            CompletableFuture.runAsync(() -> {
-                try {
-                    Client.getInstance().sendRequest(new Request("UNSUBSCRIBE_AUCTION", UUID.fromString(auction.auctionId())));
-                } catch (Exception ignored) {
+                        } catch (IOException e) {
+                            System.err.println("Lỗi giải nén ảnh: " + e.getMessage());
+                        }
+                    }
                 }
             });
-        }
-        if (realtimeListener != null) {
-            Client.getInstance().removeRealtimeListener(realtimeListener);
-            realtimeListener = null;
-        }
-    }
-
-    private void handleRealtimeEvent(AuctionRealtimeEvent event) {
-        if (event == null || currentAuction == null || event.auctionId() == null) return;
-        if (!event.auctionId().toString().equals(currentAuction.auctionId())) return;
-
-        Platform.runLater(() -> {
-            switch (event.type()) {
-                case AuctionRealtimeEvent.BID_PLACED -> handleBidPlacedEvent(event);
-                case AuctionRealtimeEvent.AUCTION_EXTENDED -> handleAuctionExtendedEvent(event);
-                case AuctionRealtimeEvent.AUCTION_FINISHED -> handleAuctionFinishedEvent(event);
-                default -> { }
-            }
         });
-    }
-
-    private void handleBidPlacedEvent(AuctionRealtimeEvent event) {
-        BigDecimal amount = event.bidAmount() != null ? event.bidAmount() : event.currentPrice();
-        if (amount != null && (event.bidId() == null || renderedBidIds.add(event.bidId()))) {
-            LocalDateTime bidTime = event.bidTime() == null ? LocalDateTime.now() : event.bidTime();
-            String x = bidTime.format(timeFormatter);
-            priceSeries.getData().add(new XYChart.Data<>(x, amount));
-        }
-        if (event.currentPrice() != null) {
-            lblCurrentPrice.setText(formatMoney(event.currentPrice()) + " VND");
-        }
-        if (event.bidderName() != null) {
-            lblCurrentLeader.setText(event.bidderName() + (event.autoBid() ? " (Auto)" : ""));
-        }
-        if (event.newEndTime() != null) {
-            lblEndDate.setText(String.valueOf(event.newEndTime()));
-        }
-        updateAuctionSession(event.currentPrice(), event.newEndTime(), null);
-    }
-
-    private void handleAuctionExtendedEvent(AuctionRealtimeEvent event) {
-        if (event.newEndTime() != null) {
-            lblEndDate.setText(String.valueOf(event.newEndTime()));
-            updateAuctionSession(null, event.newEndTime(), null);
-        }
-    }
-
-    private void handleAuctionFinishedEvent(AuctionRealtimeEvent event) {
-        lblStatus.setText(String.valueOf(AuctionStatus.FINISHED));
-        btnGamble.setDisable(true);
-        updateAuctionSession(event.currentPrice(), event.newEndTime(), AuctionStatus.FINISHED);
-    }
-
-    private void updateAuctionSession(BigDecimal newPrice, LocalDateTime newEndTime, AuctionStatus newStatus) {
-        AuctionSummaryResponse old = AuctionSession.getInstance().getCurrentAuction();
-        if (old == null) return;
-        AuctionSummaryResponse updated = new AuctionSummaryResponse(
-                old.auctionId(),
-                old.category(),
-                old.itemName(),
-                old.sellerName(),
-                old.description(),
-                old.startPrice(),
-                newPrice != null ? newPrice : old.currentPrice(),
-                old.minimumIncrement(),
-                old.startDateTime(),
-                newEndTime != null ? newEndTime : old.endDateTime(),
-                old.timeLeft(),
-                newStatus != null ? newStatus : old.status(),
-                old.bidderCount(),
-                old.imageData()
-        );
-        AuctionSession.getInstance().setCurrentAuction(updated);
-        currentAuction = updated;
     }
 
     @FXML
     void handleBack(ActionEvent event) {
-        unsubscribeRealtime();
         Stage stage = (Stage) btnBack.getScene().getWindow();
         stage.close();
     }
@@ -234,14 +173,15 @@ public class AuctionDetailController {
         if (AuctionStatus.RUNNING.equals(AuctionStatus.valueOf(lblStatus.getText()))) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {
-            Runnable unableToGamble = () -> btnGamble.setDisable(true);
+            Runnable unableToGamble = () -> {
+                btnGamble.setDisable(true);
+            };
             AlertUtils.AnnouncementController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
         }
     }
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-        unsubscribeRealtime();
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
     }
 }

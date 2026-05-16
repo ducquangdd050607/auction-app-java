@@ -79,6 +79,36 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
     }
 
     @Override
+    public Optional<byte[]> findImageByAuctionId(UUID auctionId) {
+        String sql = """
+                SELECT i.image_data
+                FROM auction_items i
+                JOIN auctions a ON a.item_id = i.id
+                WHERE a.id = ?
+                """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    byte[] imageData = resultSet.getBytes("image_data");
+
+                    if (imageData == null || imageData.length == 0) {
+                        return Optional.empty();
+                    }
+
+                    return Optional.of(imageData);
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc anh san pham cua auction: " + auctionId, exception);
+        }
+    }
+
+    @Override
     public List<Item> findBySellerId(UUID sellerId) {
         String sql = "SELECT * FROM auction_items WHERE seller_id = ? ORDER BY created_at";
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {

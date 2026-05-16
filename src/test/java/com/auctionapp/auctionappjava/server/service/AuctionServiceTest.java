@@ -40,6 +40,7 @@ public class AuctionServiceTest {
 
         @Override public Item save(Item item) { store.put(item.getId(), item); return item; }
         @Override public Optional<Item> findById(UUID itemId) { return Optional.ofNullable(store.get(itemId)); }
+        @Override public Optional<byte[]> findImageByAuctionId(UUID auctionId) { return Optional.empty(); }
         @Override public Optional<Item> findByIdWithoutImage(UUID itemId) { return Optional.ofNullable(store.get(itemId)); }
         @Override public List<Item> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
         @Override public void deleteById(UUID itemId) { store.remove(itemId); }

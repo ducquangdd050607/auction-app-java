@@ -105,6 +105,9 @@ public class ClientHandler implements Runnable {
                     case "DECIDE_STATUS":
                         response = auctionService.handleSetUserStatus((ManagerAndHistoryRequest) request.payload());
                         break;
+                    case "GET_IMAGE":
+                        response = auctionService.handleGetImage((ImageRequest) request.payload());
+                        break;
                     default:
                         response = new Response(false, "Hành động không hợp lệ: " + request.action(), null);
                         break;
