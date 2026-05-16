@@ -26,11 +26,14 @@ import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 public class AuctionDetailController {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @FXML
     private Button btnBack;
@@ -123,7 +126,7 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-        lblEndDate.setText(auction.endDateTime());
+        lblEndDate.setText(formatDateTime(auction.endDateTime()));
         txtDescription.setText(auction.description());
 
         // Set tạm một ảnh loading hoặc ảnh mặc định trong lúc chờ tải
@@ -160,6 +163,10 @@ public class AuctionDetailController {
                 }
             });
         });
+    }
+
+    private String formatDateTime(LocalDateTime dateTime) {
+        return dateTime == null ? "Không rõ" : dateTime.format(DATE_TIME_FORMATTER);
     }
 
     @FXML
