@@ -1,9 +1,5 @@
 package com.auctionapp.auctionappjava.client.network;
 
-import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -12,7 +8,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
-public class Client {
+import com.auctionapp.auctionappjava.common.dto.AuctionRealtimeEvent;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
+
+public class Client 
+{
     private static Client instance;
     private Socket socket;
     private ObjectOutputStream out;

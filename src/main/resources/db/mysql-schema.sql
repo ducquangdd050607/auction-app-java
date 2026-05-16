@@ -88,10 +88,44 @@ CREATE TABLE IF NOT EXISTS Wallet (
     user_id VARCHAR(36) NOT NULL,
     balance DECIMAL(19, 4) NOT NULL DEFAULT 0.0000, # 'Số dư hiện tại của ví',
     currency VARCHAR(3) NOT NULL DEFAULT 'VND', # 'Mã tiền tệ (VD: VND, USD)',
-    status ENUM('active', 'locked', 'closed') NOT NULL DEFAULT 'active', # 'Trạng thái của ví'
+    status ENUM('active', 'locked', 'closed') NOT NULL DEFAULT 'active', # 'Trạng thái của ví',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     constraint fk_user_id foreign key(user_id) references users(id) ON DELETE RESTRICT,
     /* ON DELETE RESTRICT nếu xóa user mà vẫn còn tiền thì không cho xóa */
 	UNIQUE KEY unique_user_currency (user_id, currency) # buộc mỗi ví của mỗi người dùng chỉ có 1 đơn vị tiền tệ
+);
+CREATE TABLE IF NOT EXISTS payment_deadlines (
+    id VARCHAR(36) PRIMARY KEY,
+    auction_id VARCHAR(36) NOT NULL,
+    winner_id VARCHAR(36) NOT NULL,
+    amount_due DECIMAL(19, 2) NOT NULL,
+    deadline_at DATETIME NOT NULL,
+    paid_at DATETIME NULL,
+    failed_at DATETIME NULL,
+    status VARCHAR(30) NOT NULL,
+    note VARCHAR(255),
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    UNIQUE KEY uq_payment_deadlines_auction (auction_id),
+    CONSTRAINT fk_payment_deadlines_auction FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_payment_deadlines_winner FOREIGN KEY (winner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS second_chance_offers (
+    id VARCHAR(36) PRIMARY KEY,
+    auction_id VARCHAR(36) NOT NULL,
+    original_winner_id VARCHAR(36) NOT NULL,
+    offered_bidder_id VARCHAR(36) NOT NULL,
+    offer_amount DECIMAL(19, 2) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    responded_at DATETIME NULL,
+    status VARCHAR(30) NOT NULL,
+    note VARCHAR(255),
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    UNIQUE KEY uq_second_chance_offer (auction_id, offered_bidder_id),
+    CONSTRAINT fk_second_chance_auction FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_second_chance_original_winner FOREIGN KEY (original_winner_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_second_chance_offered_bidder FOREIGN KEY (offered_bidder_id) REFERENCES users(id) ON DELETE CASCADE
 );
