@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -29,7 +30,7 @@
     <center>
         <VBox spacing="18">
 
-            <GridPane hgap="16" vgap="15.0">
+            <GridPane hgap="16" prefHeight="413.0" prefWidth="483.0" vgap="15.0">
 
                 <!-- Tên sản phẩm -->
                 <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Tên sản phẩm:" />
@@ -91,5 +92,13 @@
          <HBox alignment="CENTER" />
         </HBox>
     </bottom>
+   <right>
+      <VBox alignment="CENTER" prefHeight="421.0" prefWidth="264.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imgPreview" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+            <Button mnemonicParsing="false" onAction="#handleChooseImage" text="Chọn ảnh sản phẩm" />
+         </children>
+      </VBox>
+   </right>
 
 </BorderPane>

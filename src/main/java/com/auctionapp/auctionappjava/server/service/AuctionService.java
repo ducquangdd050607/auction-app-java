@@ -396,4 +396,19 @@ public class AuctionService {
 
         }
     }
+
+    public Response handleGetImage(ImageRequest request) {
+        try {
+            Optional<byte[]> imageOpt = itemDao.findImageByAuctionId(UUID.fromString(request.auctionId()));
+
+            if (imageOpt.isPresent() && imageOpt.get() != null) {
+                return new Response(true, "Tải ảnh thành công", new ImageResponse(imageOpt.get()));
+            } else {
+                return new Response(false, "Sản phẩm không có ảnh", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ khi tải ảnh", null);
+        }
+    }
 }
