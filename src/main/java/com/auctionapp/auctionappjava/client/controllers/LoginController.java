@@ -11,10 +11,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -36,6 +33,8 @@ public class LoginController implements Initializable {
     private TextField txtUsername;
     @FXML
     private Button btnLogin;
+    @FXML
+    private Hyperlink hplRegister;
 
     @FXML
     void handleConfirm(ActionEvent event) {
@@ -44,9 +43,10 @@ public class LoginController implements Initializable {
             lblError.setVisible(true);
             lblError.setTextFill(Color.web("#FF8A80"));
         } else {
-
-            //TODO: Kiểm tra DB cho tài khoản
             btnLogin.setDisable(true); // Khóa nút bấm, chống trường hợp nhồi c*t vào server
+            txtUsername.setDisable(true);
+            txtPassword.setDisable(true);
+            hplRegister.setDisable(true);
 
             String user = txtUsername.getText();
             String pass = txtPassword.getText();
@@ -66,8 +66,6 @@ public class LoginController implements Initializable {
             }).thenAccept(response -> {
                 // 3. Trở lại luồng UI để vẽ giao diện
                 Platform.runLater(() -> {
-                    btnLogin.setDisable(false);
-
                     if (response.success()) {
                         // Móc DTO ra xem Role là gì
                         LoginResponse authUser = (LoginResponse) response.data();
@@ -105,6 +103,11 @@ public class LoginController implements Initializable {
                             }
                         }
                     } else {
+                        btnLogin.setDisable(false);
+                        txtUsername.setDisable(false);
+                        txtPassword.setDisable(false);
+                        hplRegister.setDisable(false);
+
                         // Báo lỗi sai pass
                         lblError.setText(response.message());
                         lblError.setVisible(true);

@@ -239,8 +239,9 @@ public class AddItemController implements Initializable {
 
         alertImage = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
 
-        // Populate category dropdown từ ItemType hoặc danh sách cố định
-        cbCategory.getItems().addAll("Nghệ thuật", "Điện tử", "Phương tiện"); // mở rộng theo ItemType
+        String[] type = {"Chọn thể loại", "Nghệ thuật", "Điện tử", "Phương tiện"};
+        cbCategory.getItems().addAll(type);
+        cbCategory.setValue("Chọn thể loại");
 
         // Cập nhật nhãn extra info khi đổi loại
         cbCategory.setOnAction(e -> {

@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -80,7 +81,13 @@
    <right>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-             <ImageView fx:id="imgProduct" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+             <StackPane prefHeight="200.0" prefWidth="200.0">
+                 <children>
+                     <ImageView fx:id="imgProduct" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                     <ProgressIndicator fx:id="imgSpinner" maxHeight="75.0" maxWidth="75.0" style="-fx-progress-color: rgba(255, 255, 255, 0.8);" />
+                     <Label fx:id="lblNoImage" style="-fx-text-fill: #B0D8E8; -fx-font-size: 15; -fx-text-alignment: center;" text="Sản phẩm này không có ảnh minh họa" visible="false" wrapText="true" />
+                 </children>
+             </StackPane>
          </children>
       </VBox>
    </right>

@@ -17,6 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -70,6 +71,12 @@ public class AuctionDetailController {
 
     @FXML
     private ImageView imgProduct;
+
+    @FXML
+    private ProgressIndicator imgSpinner;
+
+    @FXML
+    private Label lblNoImage;
 
     @FXML
     public void initialize() {
@@ -126,8 +133,10 @@ public class AuctionDetailController {
         lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
 
-        // Set tạm một ảnh loading hoặc ảnh mặc định trong lúc chờ tải
-        imgProduct.setImage(new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Koconut.png")));
+        // Hiện vòng xoay, giấu khung ảnh và chữ đi
+        imgSpinner.setVisible(true);
+        imgProduct.setVisible(false);
+        lblNoImage.setVisible(false);
 
         // Tạo request lấy ảnh
         Request imgReq = new Request("GET_IMAGE", new ImageRequest(auction.auctionId()));
@@ -140,6 +149,9 @@ public class AuctionDetailController {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
+                // Tắt vòng xoay đi
+                imgSpinner.setVisible(false);
+
                 if (response != null && response.success() && response.data() != null) {
                     ImageResponse imgRes = (ImageResponse) response.data();
                     byte[] compressedBytes = imgRes.imageData();
@@ -152,12 +164,16 @@ public class AuctionDetailController {
                             // Vẽ lại ảnh lên UI
                             Image realImage = new Image(new ByteArrayInputStream(originalBytes));
                             imgProduct.setImage(realImage);
-
-                        } catch (IOException e) {
-                            System.err.println("Lỗi giải nén ảnh: " + e.getMessage());
+                            imgProduct.setVisible(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
+
+                // Không có ảnh thì hiện chữ
+                imgProduct.setVisible(false);
+                lblNoImage.setVisible(true);
             });
         });
     }
