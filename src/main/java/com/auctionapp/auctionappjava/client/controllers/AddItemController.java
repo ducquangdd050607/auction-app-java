@@ -80,6 +80,11 @@ public class AddItemController implements Initializable {
 
     private Image alertImage;
     private byte[] selectedImageData = null;
+    private boolean isAddedSuccess;
+
+    public boolean isAddedSuccess() {
+        return isAddedSuccess;
+    }
 
     @FXML
     void handleChooseImage(ActionEvent event) {
@@ -201,10 +206,19 @@ public class AddItemController implements Initializable {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
-                        btnAddItem.setDisable(false);
-                        btnCancel.setDisable(false);
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.close();
+                        isAddedSuccess = true;
+
+                        Runnable closeForm = () -> {
+                            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            currentStage.close();
+                        };
+
+                        AlertUtils.AnnouncementController(
+                                "Thông báo",
+                                "Đã thêm sản phẩm thành công!",
+                                closeForm,
+                                imageView
+                        );
 
                     } else {
                         lblError.setText(response.message());
@@ -221,21 +235,17 @@ public class AddItemController implements Initializable {
         };
 
 
-        AlertUtils.ConfirmAlertController(
-                event,
+        AlertUtils.AnnouncementController(
                 "Chắc chưa?",
-                "Bạn CHẮC muốn Thêm phiên đấu giá này không?",
-                "",
-                "Thông báo",
-                "",
-                "Đã thêm thành công!",
+                "Bạn có chắc muốn thêm phiên đấu giá này không?",
                 mainMethod,
-                imageView);
+                null
+        );
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /*toggleExtraRows(false);*/
+        isAddedSuccess = false;
 
         alertImage = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
 

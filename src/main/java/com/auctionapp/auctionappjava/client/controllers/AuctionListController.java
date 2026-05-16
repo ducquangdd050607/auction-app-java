@@ -102,7 +102,6 @@ public class AuctionListController implements Initializable {
     // Khai báo thêm đồng hồ
     private Timeline countdownTimer;
 
-
     @FXML
     void handleSearch(ActionEvent event) {
         // Lấy điều kiện lọc
@@ -212,10 +211,15 @@ public class AuctionListController implements Initializable {
     void handleAdd(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/auctionapp/auctionappjava/views/AddItemScreen.fxml"));
         Parent root = loader.load();
+        AddItemController addItemController = loader.getController();
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(new Scene(root));
         stage.showAndWait();
+
+        if (addItemController.isAddedSuccess()) {
+            loadAuctionsFromServer();
+        }
     }
 
     @Override
