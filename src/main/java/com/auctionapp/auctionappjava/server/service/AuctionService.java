@@ -12,8 +12,8 @@ import com.auctionapp.auctionappjava.server.network.SessionManager;
 import java.math.BigDecimal;
 import java.util.*;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.auctionapp.auctionappjava.common.enums.AuctionStatus.RUNNING;
 import static java.time.LocalDateTime.now;
 
 public class AuctionService {
@@ -22,6 +22,9 @@ public class AuctionService {
     private final AuctionItemDao itemDao = new JdbcAuctionItemDao();
     private final BidDao bidDao = new JdbcBidDao();
     private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
+
+    // Thêm khóa luồng cho việc đặt bid
+    private final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
 
     public Response handleGetAllAuctions() {
         try {
@@ -117,104 +120,116 @@ public class AuctionService {
     }
 
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
-        try {
-            // 1. Kiểm tra phiên đấu giá có tồn tại không
-            Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
+        String auctionId = String.valueOf(placeBidData.auctionId());
 
-            if (auctionOpt.isEmpty()) {
-                return new Response(false, "Phiên đấu giá không tồn tại!", null);
-            } else {
-                Auction auction = auctionOpt.get();
+        // Lấy ổ khóa của riêng phiên đấu giá này ra
+        Object roomLock = auctionLocks.computeIfAbsent(auctionId, k -> new Object());
 
-                // 2. Validate 1: Phiên đấu giá có đang mở cửa không?
-                if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != RUNNING) {
-                    return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
-                }
-                // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
-                // TODO: Check lại validate 2 này, vì nếu nhớ k nhầm đã xử lí ở controller rồi
-                else {
-                    BigDecimal minRequiredPrice = auction.getCurrentPrice().add(auction.getMinimumIncrement());
+        synchronized (roomLock) {
+            try {
+                // 1. Kiểm tra phiên đấu giá có tồn tại không
+                Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
 
-                    if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
-                        return new Response(false, "Giá đặt phải từ " + minRequiredPrice + " trở lên!", null);
-                    } else {
-                        // Kiểm tra ví tiền người đặt mới
-                        UUID currentBidderId = placeBidData.userId();
-                        Optional<Wallet> currentBidderWalletOpt = userDao.findWalletByUserId(currentBidderId);
+                if (auctionOpt.isEmpty()) {
+                    return new Response(false, "Phiên đấu giá không tồn tại!", null);
+                } else {
+                    Auction auction = auctionOpt.get();
 
-                        if (currentBidderWalletOpt.isEmpty()) {
-                            return new Response(false, "Lỗi: Không tìm thấy ví tiền của người dùng!", null);
+                    // 2. SO SÁNH GIÁ (Chặn người đến sau nếu giá đã bị người đến trước đẩy lên)
+                    if (placeBidData.amount().compareTo(auction.getCurrentPrice()) <= 0) {
+                        return new Response(false, "Đã có người nhanh tay hơn đặt giá cao hơn hoặc bằng bạn! Vui lòng làm mới.", null);
+                    }
+
+                    // 2. Validate 1: Phiên đấu giá có đang mở cửa không?
+                    if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != AuctionStatus.RUNNING) {
+                        return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
+                    }
+                    // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
+                    // TODO: Check lại validate 2 này, vì nếu nhớ k nhầm đã xử lí ở controller rồi
+                    else {
+                        BigDecimal minRequiredPrice = auction.getCurrentPrice().add(auction.getMinimumIncrement());
+
+                        if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
+                            return new Response(false, "Giá đặt phải từ " + minRequiredPrice + " trở lên!", null);
                         } else {
-                            Wallet currentBidderWallet = currentBidderWalletOpt.get();
+                            // Kiểm tra ví tiền người đặt mới
+                            UUID currentBidderId = placeBidData.userId();
+                            Optional<Wallet> currentBidderWalletOpt = userDao.findWalletByUserId(currentBidderId);
 
-                            if (currentBidderWallet.getBalance().compareTo(placeBidData.amount()) < 0) {
-                                // Nếu Số dư < Số tiền muốn đặt
-                                return new Response(false, "Số dư trong ví không đủ để đặt giá!", null);
+                            if (currentBidderWalletOpt.isEmpty()) {
+                                return new Response(false, "Lỗi: Không tìm thấy ví tiền của người dùng!", null);
                             } else {
-                                // Hoàn tiền người dẫn đầu cũ (nếu có)
-                                UUID oldLeaderId = auction.getLeadingBidderId();
+                                Wallet currentBidderWallet = currentBidderWalletOpt.get();
 
-                                if (oldLeaderId != null) {
-                                    // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
-                                    if (oldLeaderId.equals(currentBidderId)) {
-                                        // Hoàn tiền cũ lại vào ví của chính họ
-                                        BigDecimal refundedBalance = currentBidderWallet.getBalance().add(auction.getCurrentPrice());
-                                        currentBidderWallet.setBalance(refundedBalance);
-                                    } else {
-                                        // Hoàn tiền cho người khác
-                                        Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
-                                        if (oldLeaderWalletOpt.isPresent()) {
-                                            Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
-                                            // Cộng trả lại số tiền họ đã cược (chính là currentPrice của phiên hiện tại)
-                                            BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
-                                            oldLeaderWallet.setBalance(refundedBalance);
-                                            userDao.saveWallet(oldLeaderWallet);
+                                if (currentBidderWallet.getBalance().compareTo(placeBidData.amount()) < 0) {
+                                    // Nếu Số dư < Số tiền muốn đặt
+                                    return new Response(false, "Số dư trong ví không đủ để đặt giá!", null);
+                                } else {
+                                    // Hoàn tiền người dẫn đầu cũ (nếu có)
+                                    UUID oldLeaderId = auction.getLeadingBidderId();
 
-                                            // THÊM MỚI: BÁO CHO NGƯỜI BỊ MẤT TOP LÀ HỌ ĐÃ ĐƯỢC HOÀN TIỀN
-                                            Response refundResponse = new Response(true, "SERVER_PUSH_BALANCE", refundedBalance);
-                                            SessionManager.getInstance().sendToUser(oldLeaderId.toString(), refundResponse);
+                                    if (oldLeaderId != null) {
+                                        // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
+                                        if (oldLeaderId.equals(currentBidderId)) {
+                                            // Hoàn tiền cũ lại vào ví của chính họ
+                                            BigDecimal refundedBalance = currentBidderWallet.getBalance().add(auction.getCurrentPrice());
+                                            currentBidderWallet.setBalance(refundedBalance);
+                                        } else {
+                                            // Hoàn tiền cho người khác
+                                            Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
+                                            if (oldLeaderWalletOpt.isPresent()) {
+                                                Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
+                                                // Cộng trả lại số tiền họ đã cược (chính là currentPrice của phiên hiện tại)
+                                                BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
+                                                oldLeaderWallet.setBalance(refundedBalance);
+                                                userDao.saveWallet(oldLeaderWallet);
+
+                                                // THÊM MỚI: BÁO CHO NGƯỜI BỊ MẤT TOP LÀ HỌ ĐÃ ĐƯỢC HOÀN TIỀN
+                                                Response refundResponse = new Response(true, "SERVER_PUSH_BALANCE", refundedBalance);
+                                                SessionManager.getInstance().sendToUser(oldLeaderId.toString(), refundResponse);
+                                            }
                                         }
                                     }
+
+                                    // Trừ tiền người đặt mới
+                                    BigDecimal updatedBalance = currentBidderWallet.getBalance().subtract(placeBidData.amount());
+                                    currentBidderWallet.setBalance(updatedBalance);
+                                    userDao.saveWallet(currentBidderWallet);
+
+                                    BidTransaction newBid = new BidTransaction(
+                                            UUID.randomUUID(),    // ID tự sinh
+                                            now(),  // createdAt
+                                            now(),  // updatedAt
+                                            placeBidData.auctionId(),     // ID phiên
+                                            placeBidData.userId(),        // ID người đặt
+                                            placeBidData.amount(),        // Số tiền đặt
+                                            false,                // autoGenerated?
+                                            "Giao dịch đặt cược"  // Note
+                                    );
+                                    bidDao.save(newBid);
+
+                                    // Cập nhật lại auction trong database
+                                    auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
+                                    auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
+                                    auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
+                                    auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
+
+                                    // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
+                                    // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
+                                    Object[] pushData = new Object[]{ placeBidData.auctionId(), placeBidData.amount() };
+                                    Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
+                                    SessionManager.getInstance().broadcast(newBidResponse);
+
+                                    return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
                                 }
-
-                                // Trừ tiền người đặt mới
-                                BigDecimal updatedBalance = currentBidderWallet.getBalance().subtract(placeBidData.amount());
-                                currentBidderWallet.setBalance(updatedBalance);
-                                userDao.saveWallet(currentBidderWallet);
-
-                                BidTransaction newBid = new BidTransaction(
-                                        UUID.randomUUID(),    // ID tự sinh
-                                        now(),  // createdAt
-                                        now(),  // updatedAt
-                                        placeBidData.auctionId(),     // ID phiên
-                                        placeBidData.userId(),        // ID người đặt
-                                        placeBidData.amount(),        // Số tiền đặt
-                                        false,                // autoGenerated?
-                                        "Giao dịch đặt cược"  // Note
-                                );
-                                bidDao.save(newBid);
-
-                                // Cập nhật lại auction trong database
-                                auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
-                                auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
-                                auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
-                                auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
-
-                                // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
-                                // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
-                                Object[] pushData = new Object[]{ placeBidData.auctionId(), placeBidData.amount() };
-                                Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
-                                SessionManager.getInstance().broadcast(newBidResponse);
-
-                                return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
                             }
                         }
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Response(false, "Lỗi máy chủ khi xử lý đặt giá: " + e.getMessage(), null);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ khi xử lý đặt giá: " + e.getMessage(), null);
         }
     }
 
