@@ -1,5 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
+import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
 
@@ -7,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -133,6 +136,90 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
         }
     }
 
+    @Override
+    public List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId) {
+        String sql = """
+                SELECT 
+                    i.item_type,
+                    i.title,
+                    i.starting_price,
+                    b.amount,
+                    a.status,
+                    b.updated_at
+                FROM bids b
+                JOIN auctions a ON a.id = b.auction_id
+                JOIN auction_items i ON i.id = a.item_id
+                WHERE b.bidder_id = ?
+                ORDER BY b.created_at DESC
+                """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(bidderId));
+
+            try (ResultSet rs = statement.executeQuery()) {
+                List<BidHistoryResponse> result = new ArrayList<>();
+
+                while (rs.next()) {
+                    result.add(new BidHistoryResponse(
+                            null,
+                            rs.getString("item_type"),
+                            rs.getString("title"),
+                            rs.getBigDecimal("starting_price"),
+                            rs.getBigDecimal("amount"),
+                            AuctionStatus.valueOf(rs.getString("status")),
+                            localDateTime(rs.getTimestamp("updated_at"))
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                    ));
+                }
+                return result;
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Khong tai duoc lich su dau gia cua bidder", e);
+        }
+    }
+
+    @Override
+    public List<BidHistoryResponse> findAllHistory() {
+        String sql = """
+                SELECT 
+                    u.full_name AS bidder_name,
+                    i.item_type,
+                    i.title,
+                    i.starting_price,
+                    b.amount,
+                    a.status,
+                    b.updated_at
+                FROM bids b
+                JOIN auctions a ON a.id = b.auction_id
+                JOIN auction_items i ON i.id = a.item_id
+                JOIN users u ON u.id = b.bidder_id
+                ORDER BY b.created_at DESC
+                """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+
+            List<BidHistoryResponse> result = new ArrayList<>();
+
+            while (rs.next()) {
+                result.add(new BidHistoryResponse(
+                        rs.getString("bidder_name"),
+                        rs.getString("item_type"),
+                        rs.getString("title"),
+                        rs.getBigDecimal("starting_price"),
+                        rs.getBigDecimal("amount"),
+                        AuctionStatus.valueOf(rs.getString("status")),
+                        localDateTime(rs.getTimestamp("updated_at"))
+                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                ));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Khong tai duoc toan bo lich su dau gia", e);
+        }
+    }
     @Override
     public long countByAuctionId(UUID auctionId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE auction_id = ?", uuid(auctionId));

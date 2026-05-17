@@ -4,16 +4,24 @@ import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record AuctionSummaryResponse(
         String auctionId,
         String category,
         String itemName,
-        /*String imagePath,*/ // Đường dẫn ảnh thu nhỏ (kbt có cần hay không nên cmt lại)
+        String sellerName,
+        String description,
         BigDecimal startPrice,     // Khởi đầu
         BigDecimal currentPrice,   // Giá hiện tại
         BigDecimal minimumIncrement,    // Bước giá
-        /*long*/String timeLeft, // Thời gian còn lại (tạm để String test Socket trước)
+        String startDateTime,
+        String endDateTime,
+        long timeLeft, // Thời gian còn lại
         AuctionStatus status,
-        int bidderCount  // Số bidder quan tâm
+        int bidderCount,// Số bidder quan tâm
+        byte[] imageData
 ) implements Serializable {}
+
+// 1. Lần này là lần cuối thay đổi (mong vậy)
+// 2. Usage trải dài lên mọi thứ -> Cho đầy đủ các tính chất cho AuctionList, Dashboard, RankingList(WIP)

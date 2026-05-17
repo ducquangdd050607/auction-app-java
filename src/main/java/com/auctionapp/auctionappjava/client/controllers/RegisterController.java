@@ -8,10 +8,7 @@ import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -52,6 +49,9 @@ public class RegisterController {
     private TextField txtUsername;
 
     @FXML
+    private Hyperlink hplLogin;
+
+    @FXML
     void handleSeller(ActionEvent event) {
         roles = "SELLER";
         confirmRoute.setText("Bạn chọn là Seller");
@@ -88,6 +88,15 @@ public class RegisterController {
 
         else {
             btnConfirm.setDisable(true);
+            txtFullname.setDisable(true);
+            txtUsername.setDisable(true);
+            txtPassword.setDisable(true);
+            txtConfirmPassword.setDisable(true);
+            txtEmail.setDisable(true);
+            btnBid.setDisable(true);
+            btnSell.setDisable(true);
+            hplLogin.setDisable(true);
+
             String user = txtUsername.getText();
             String pass = txtPassword.getText();
             String name = txtFullname.getText();
@@ -119,6 +128,15 @@ public class RegisterController {
                         }
                     } else {
                         btnConfirm.setDisable(false);
+                        txtFullname.setDisable(false);
+                        txtUsername.setDisable(false);
+                        txtPassword.setDisable(false);
+                        txtConfirmPassword.setDisable(false);
+                        txtEmail.setDisable(false);
+                        btnBid.setDisable(false);
+                        btnSell.setDisable(false);
+                        hplLogin.setDisable(false);
+
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                     }

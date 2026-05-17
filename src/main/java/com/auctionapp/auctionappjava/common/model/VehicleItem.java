@@ -19,7 +19,8 @@ public class VehicleItem extends Item {
                        String description,
                        BigDecimal startingPrice,
                        String manufacturer,
-                       String registrationHint) {
-        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.VEHICLE, manufacturer, registrationHint);
+                       String registrationHint,
+                       byte[] imageData) {
+        super(id, createdAt, updatedAt, sellerId, title, description, startingPrice, ItemType.VEHICLE, manufacturer, registrationHint,imageData);
     }
 }

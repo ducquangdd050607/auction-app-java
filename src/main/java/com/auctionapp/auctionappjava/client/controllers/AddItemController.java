@@ -7,25 +7,34 @@ import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.CompressionUtils;
 import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -66,20 +75,48 @@ public class AddItemController implements Initializable {
     private Button btnAddItem;
     @FXML
     private Button btnCancel;
-
-    /*private void toggleExtraRows(boolean show) {
-        lblExtraInfo1.setVisible(show);
-        lblExtraInfo1.setManaged(show);
-        txtExtraInfo1.setVisible(show);
-        txtExtraInfo1.setManaged(show);
-
-        lblExtraInfo2.setVisible(show);
-        lblExtraInfo2.setManaged(show);
-        txtExtraInfo2.setVisible(show);
-        txtExtraInfo2.setManaged(show);
-    }*/
+    @FXML
+    private ImageView imgPreview;
 
     private Image alertImage;
+    private byte[] selectedImageData = null;
+    private boolean isAddedSuccess;
+
+    public boolean isAddedSuccess() {
+        return isAddedSuccess;
+    }
+
+    @FXML
+    void handleChooseImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Chọn ảnh sản phẩm");
+
+        // Thiết lập lọc file
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
+                "Các định dạng ảnh hỗ trợ (*.png, *.jpg, *.jpeg, *.gif)",
+                "*.png", "*.jpg", "*.jpeg", "*.gif"
+        );
+        // Gắn bộ lọc vào FileChooser
+        fileChooser.getExtensionFilters().add(imageFilter);
+
+        // Mở cửa sổ chọn file
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            try {
+                // Đọc file thành mảng byte
+                byte[] rawImage = Files.readAllBytes(file.toPath());
+
+                // Hiển thị Preview cho người dùng xem (dùng ảnh gốc cho nét)
+                Image image = new Image(new ByteArrayInputStream(rawImage));
+                imgPreview.setImage(image);
+
+                // NÉN ẢNH LẠI để chuẩn bị gửi đi
+                selectedImageData = CompressionUtils.compress(rawImage);
+            } catch (Exception e) {
+                AlertUtils.AnnouncementController("Lỗi", "Không thể đọc hoặc nén file ảnh!", null, null);
+            }
+        }
+    }
 
     @FXML
     void handleAddItem(ActionEvent event) {
@@ -146,7 +183,8 @@ public class AddItemController implements Initializable {
         }
 
         AddItemRequest payload = new AddItemRequest(UserSession.getInstance().getCurrentUser().id(), name,
-                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime, attribute1, attribute2);
+                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime,
+                attribute1, attribute2, selectedImageData);
         Request addItemReq = new Request("ADD_ITEM", payload);
 
         ImageView imageView = new ImageView(alertImage);
@@ -168,10 +206,19 @@ public class AddItemController implements Initializable {
             }).thenAccept(response -> {
                 Platform.runLater(() -> {
                     if (response.success()) {
-                        btnAddItem.setDisable(false);
-                        btnCancel.setDisable(false);
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.close();
+                        isAddedSuccess = true;
+
+                        Runnable closeForm = () -> {
+                            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            currentStage.close();
+                        };
+
+                        AlertUtils.AnnouncementController(
+                                "Thông báo",
+                                "Đã thêm sản phẩm thành công!",
+                                closeForm,
+                                imageView
+                        );
 
                     } else {
                         lblError.setText(response.message());
@@ -188,26 +235,23 @@ public class AddItemController implements Initializable {
         };
 
 
-        AlertUtils.ConfirmAlertController(
-                event,
+        AlertUtils.AnnouncementController(
                 "Chắc chưa?",
-                "Bạn CHẮC muốn Thêm phiên đấu giá này không?",
-                "",
-                "Thông báo",
-                "",
-                "Đã thêm thành công!",
+                "Bạn có chắc muốn thêm phiên đấu giá này không?",
                 mainMethod,
-                imageView);
+                null
+        );
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /*toggleExtraRows(false);*/
+        isAddedSuccess = false;
 
         alertImage = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));
 
-        // Populate category dropdown từ ItemType hoặc danh sách cố định
-        cbCategory.getItems().addAll("Nghệ thuật", "Điện tử", "Phương tiện"); // mở rộng theo ItemType
+        String[] type = {"Chọn thể loại", "Nghệ thuật", "Điện tử", "Phương tiện"};
+        cbCategory.getItems().addAll(type);
+        cbCategory.setValue("Chọn thể loại");
 
         // Cập nhật nhãn extra info khi đổi loại
         cbCategory.setOnAction(e -> {
@@ -238,6 +282,42 @@ public class AddItemController implements Initializable {
                     lblExtraInfo1.setText("Thông tin thêm:");
             }
         });
+
+        // Đổi con trỏ chuột thành hình bàn tay khi di chuột vào ảnh cho giống Web
+        if (imgPreview != null) {
+            imgPreview.setCursor(Cursor.HAND);
+
+            // Bắt sự kiện Click chuột vào ảnh
+            imgPreview.setOnMouseClicked((MouseEvent event) -> {
+                // Nếu chưa chọn ảnh thì không làm gì cả
+                if (imgPreview.getImage() == null) return;
+
+                // 3. Tạo một cửa sổ (Stage) mới để phóng to ảnh
+                Stage zoomStage = new Stage();
+                zoomStage.initModality(Modality.APPLICATION_MODAL); // Khóa form ở dưới, bắt buộc xem xong mới được quay lại
+                zoomStage.setTitle("Xem chi tiết ảnh");
+
+                // 4. Tạo một ImageView mới chứa cùng bức ảnh đó nhưng to hơn
+                ImageView zoomedImageView = new ImageView(imgPreview.getImage());
+                zoomedImageView.setPreserveRatio(true);
+
+                // Set kích thước tối đa để ảnh không bị tràn màn hình
+                zoomedImageView.setFitWidth(800);
+                zoomedImageView.setFitHeight(600);
+
+                // 5. Bọc ảnh vào một StackPane để căn giữa
+                StackPane root = new StackPane(zoomedImageView);
+
+                // Click vào bất kỳ đâu trên cửa sổ phóng to này sẽ tự động đóng nó lại
+                root.setOnMouseClicked(e -> zoomStage.close());
+
+                // Hiển thị lên giữa màn hình
+                Scene scene = new Scene(root, 900, 700);
+                zoomStage.setScene(scene);
+                zoomStage.centerOnScreen();
+                zoomStage.showAndWait();
+            });
+        }
     }
 
     @FXML

@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.service;
 
+import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.Auction;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
@@ -21,9 +22,18 @@ public class AuctionStatusServiceTest {
         @Override public List<Auction> findAll() { return new ArrayList<>(store.values()); }
         @Override public List<Auction> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
         @Override public void deleteById(UUID auctionId) { store.remove(auctionId); }
+        @Override
+        public List<AuctionSummaryResponse> findAllSummaries() {
+            return new ArrayList<>();
+        }
 
+        @Override
+        public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) {
+            return new ArrayList<>();
+        }
         @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
         @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
+        @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
     }
 
     private FakeAuctionDao fakeAuctionDao;

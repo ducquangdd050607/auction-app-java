@@ -13,5 +13,6 @@ public record AddItemRequest(
         LocalDateTime openTime,
         LocalDateTime endTime,
         String attribute1,
-        String attribute2
+        String attribute2,
+        byte[] imageData
 ) implements Serializable {}

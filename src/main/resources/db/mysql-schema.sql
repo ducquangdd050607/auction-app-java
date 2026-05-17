@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS auction_items (  # chứa các sản phẩm đấu gi
     item_type VARCHAR(30) NOT NULL,    # loại đồ: art, vehicle, electronic
     attribute_one VARCHAR(255),     # mô tả về đặc điểm thứ nhất
     attribute_two VARCHAR(255),
+    image_data LONGBLOB NULL,
     created_at DATETIME NOT NULL,   # thời gian đăng sản phẩm này lên
     updated_at DATETIME NOT NULL,    # thay đổi về giá,...
     CONSTRAINT fk_items_seller FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE

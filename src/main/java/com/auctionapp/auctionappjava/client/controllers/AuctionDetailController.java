@@ -1,17 +1,33 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.ImageRequest;
+import com.auctionapp.auctionappjava.common.dto.ImageResponse;
+import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.CompressionUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
@@ -54,11 +70,56 @@ public class AuctionDetailController {
     private Label txtDescription;
 
     @FXML
+    private ImageView imgProduct;
+
+    @FXML
+    private ProgressIndicator imgSpinner;
+
+    @FXML
+    private Label lblNoImage;
+
+    @FXML
     public void initialize() {
         // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
         AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
         if (currentAuction != null) {
             loadAuctionData(currentAuction);
+        }
+
+        // Đổi con trỏ chuột thành hình bàn tay khi di chuột vào ảnh cho giống Web
+        if (imgProduct != null) {
+            imgProduct.setCursor(Cursor.HAND);
+
+            // Bắt sự kiện Click chuột vào ảnh
+            imgProduct.setOnMouseClicked((MouseEvent event) -> {
+                // Nếu chưa chọn ảnh thì không làm gì cả
+                if (imgProduct.getImage() == null) return;
+
+                // 3. Tạo một cửa sổ (Stage) mới để phóng to ảnh
+                Stage zoomStage = new Stage();
+                zoomStage.initModality(Modality.APPLICATION_MODAL); // Khóa form ở dưới, bắt buộc xem xong mới được quay lại
+                zoomStage.setTitle("Xem chi tiết ảnh");
+
+                // 4. Tạo một ImageView mới chứa cùng bức ảnh đó nhưng to hơn
+                ImageView zoomedImageView = new ImageView(imgProduct.getImage());
+                zoomedImageView.setPreserveRatio(true);
+
+                // Set kích thước tối đa để ảnh không bị tràn màn hình
+                zoomedImageView.setFitWidth(800);
+                zoomedImageView.setFitHeight(600);
+
+                // 5. Bọc ảnh vào một StackPane để căn giữa
+                StackPane root = new StackPane(zoomedImageView);
+
+                // Click vào bất kỳ đâu trên cửa sổ phóng to này sẽ tự động đóng nó lại
+                root.setOnMouseClicked(e -> zoomStage.close());
+
+                // Hiển thị lên giữa màn hình
+                Scene scene = new Scene(root, 900, 700);
+                zoomStage.setScene(scene);
+                zoomStage.centerOnScreen();
+                zoomStage.showAndWait();
+            });
         }
     }
 
@@ -69,7 +130,52 @@ public class AuctionDetailController {
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
         lblStatus.setText(String.valueOf(auction.status()));
-        //lblEndDate.setText(String.valueOf()); Cái này đang thuộc về AddItem(?), tương tự 2 lbl còn lại.
+        lblEndDate.setText(auction.endDateTime());
+        txtDescription.setText(auction.description());
+
+        // Hiện vòng xoay, giấu khung ảnh và chữ đi
+        imgSpinner.setVisible(true);
+        imgProduct.setVisible(false);
+        lblNoImage.setVisible(false);
+
+        // Tạo request lấy ảnh
+        Request imgReq = new Request("GET_IMAGE", new ImageRequest(auction.auctionId()));
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(imgReq);
+            } catch (Exception e) {
+                return null;
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                // Tắt vòng xoay đi
+                imgSpinner.setVisible(false);
+
+                if (response != null && response.success() && response.data() != null) {
+                    ImageResponse imgRes = (ImageResponse) response.data();
+                    byte[] compressedBytes = imgRes.imageData();
+
+                    if (compressedBytes != null && compressedBytes.length > 0) {
+                        try {
+                            // Giải nén lại ảnh
+                            byte[] originalBytes = CompressionUtils.decompress(compressedBytes);
+
+                            // Vẽ lại ảnh lên UI
+                            Image realImage = new Image(new ByteArrayInputStream(originalBytes));
+                            imgProduct.setImage(realImage);
+                            imgProduct.setVisible(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                // Không có ảnh thì hiện chữ
+                imgProduct.setVisible(false);
+                lblNoImage.setVisible(true);
+            });
+        });
     }
 
     @FXML
@@ -92,6 +198,6 @@ public class AuctionDetailController {
 
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/InsideItemScreen.fxml", "Bảng xếp hạng");
+        SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
     }
 }

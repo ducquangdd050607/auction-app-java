@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 public record BidHistoryResponse(
         String bidderName,
+        String category,
         String auctionName,
         BigDecimal auctionStartPrice,
         BigDecimal amount,

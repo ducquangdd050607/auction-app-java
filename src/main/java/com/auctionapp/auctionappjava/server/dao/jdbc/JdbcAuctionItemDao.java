@@ -19,12 +19,13 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
         String sql = """
                 INSERT INTO auction_items (
                     id, seller_id, title, description, starting_price, item_type,
-                    attribute_one, attribute_two, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    attribute_one, attribute_two,image_data, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     seller_id = VALUES(seller_id), title = VALUES(title), description = VALUES(description),
                     starting_price = VALUES(starting_price), item_type = VALUES(item_type),
                     attribute_one = VALUES(attribute_one), attribute_two = VALUES(attribute_two),
+                    image_data = VALUES(image_data),
                     updated_at = VALUES(updated_at)
                 """;
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -36,8 +37,9 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
             statement.setString(6, item.getItemType().name());
             statement.setString(7, item.getAttributeOne());
             statement.setString(8, item.getAttributeTwo());
-            statement.setTimestamp(9, timestamp(item.getCreatedAt()));
-            statement.setTimestamp(10, timestamp(item.getUpdatedAt()));
+            statement.setBytes(9, item.getImageData());
+            statement.setTimestamp(10, timestamp(item.getCreatedAt()));
+            statement.setTimestamp(11, timestamp(item.getUpdatedAt()));
             statement.executeUpdate();
             return item;
         } catch (SQLException exception) {
@@ -55,6 +57,54 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Khong doc duoc item", exception);
+        }
+    }
+
+    @Override
+    public Optional<Item> findByIdWithoutImage(UUID itemId) {
+        String sql = """
+                SELECT id, seller_id, title, description, starting_price, item_type,
+                       attribute_one, attribute_two, created_at, updated_at
+                FROM auction_items
+                WHERE id = ?
+                """;
+        try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid(itemId));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapItemWithoutImage(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc item", exception);
+        }
+    }
+
+    @Override
+    public Optional<byte[]> findImageByAuctionId(UUID auctionId) {
+        String sql = """
+                SELECT i.image_data
+                FROM auction_items i
+                JOIN auctions a ON a.item_id = i.id
+                WHERE a.id = ?
+                """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    byte[] imageData = resultSet.getBytes("image_data");
+
+                    if (imageData == null || imageData.length == 0) {
+                        return Optional.empty();
+                    }
+
+                    return Optional.of(imageData);
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc anh san pham cua auction: " + auctionId, exception);
         }
     }
 
@@ -135,6 +185,24 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 resultSet.getString("description"),
                 resultSet.getBigDecimal("starting_price"),
                 resultSet.getString("attribute_one"),
-                resultSet.getString("attribute_two"));
+                resultSet.getString("attribute_two"),
+                resultSet.getBytes("image_data")
+        );
+    }
+
+    private Item mapItemWithoutImage(ResultSet resultSet) throws SQLException {
+        return AuctionItemFactory.create(
+                ItemType.valueOf(resultSet.getString("item_type")),
+                uuid(resultSet.getString("id")),
+                localDateTime(resultSet.getTimestamp("created_at")),
+                localDateTime(resultSet.getTimestamp("updated_at")),
+                uuid(resultSet.getString("seller_id")),
+                resultSet.getString("title"),
+                resultSet.getString("description"),
+                resultSet.getBigDecimal("starting_price"),
+                resultSet.getString("attribute_one"),
+                resultSet.getString("attribute_two"),
+                null
+        );
     }
 }
