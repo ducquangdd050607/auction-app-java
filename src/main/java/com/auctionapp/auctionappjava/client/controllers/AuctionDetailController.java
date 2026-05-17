@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
@@ -78,8 +79,12 @@ public class AuctionDetailController {
     @FXML
     private Label lblNoImage;
 
+    public static AuctionDetailController instance;
+
     @FXML
     public void initialize() {
+        instance = this;
+
         // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
         AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
         if (currentAuction != null) {
@@ -199,5 +204,19 @@ public class AuctionDetailController {
     @FXML
     void handleRanking(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "Bảng xếp hạng");
+    }
+
+    // Thêm hàm này để Router gọi
+    public void updatePriceRealtime(BigDecimal newPrice) {
+        Platform.runLater(() -> {
+            lblCurrentPrice.setText(formatMoney(newPrice) + " VND");
+        });
+    }
+
+    // Thêm hàm update status theo thời gian thực
+    public void updateStatusRealtime(com.auctionapp.auctionappjava.common.enums.AuctionStatus newStatus) {
+        Platform.runLater(() -> {
+            lblStatus.setText(newStatus.name());
+        });
     }
 }

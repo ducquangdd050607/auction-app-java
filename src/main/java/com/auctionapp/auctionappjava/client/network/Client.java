@@ -1,16 +1,23 @@
 package com.auctionapp.auctionappjava.client.network;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
+import javafx.application.Platform;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client {
     private static Client instance;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+
+    // Hàng đợi chặn để trung chuyển Response giữa luồng ngầm và luồng gọi Request
+    private final BlockingQueue<Response> responseQueue = new LinkedBlockingQueue<>();
 
     // Singleton Pattern: Đảm bảo chỉ có 1 NetworkClient tồn tại
     private Client() {}
@@ -31,6 +38,30 @@ public class Client {
         out.flush();
         in = new ObjectInputStream(socket.getInputStream());
         System.out.println("Đã kết nối thành công tới Server!");
+
+        // Kích hoạt luồng ngầm lắng nghe bằng runAsync
+        CompletableFuture.runAsync(this::listenToServer);
+    }
+
+    private void listenToServer() {
+        try {
+            while (socket != null && !socket.isClosed()) {
+                // Treo máy đợi dữ liệu từ Server ném xuống
+                Response response = (Response) in.readObject();
+
+                // KIỂM TRA: Nếu là sự kiện Chủ động đẩy từ Server (Push Event)
+                if (response.message() != null && response.message().startsWith("SERVER_PUSH_")) {
+                    // Đẩy sang luồng giao diện JavaFX để xử lý an toàn
+                    Platform.runLater(() -> RealtimeHandler.handlePushEvent(response));
+                }
+                // Nếu là Response trả lời thông thường cho một Request vừa gửi
+                else {
+                    responseQueue.put(response); // Nhét vào hàng đợi cho hàm sendRequest lấy ra
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("[NETWORK] Luồng lắng nghe ngắt kết nối: " + e.getMessage());
+        }
     }
 
     // Hàm dùng chung cho mọi Controller để gửi Request và lấy Response
@@ -44,7 +75,7 @@ public class Client {
         out.flush();
 
         // Đứng đợi và hứng kết quả Server trả về
-        return (Response) in.readObject();
+        return responseQueue.take();
     }
 
     // Gọi khi người dùng tắt App

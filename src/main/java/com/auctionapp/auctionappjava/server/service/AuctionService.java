@@ -7,6 +7,7 @@ import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.model.*;
 import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
+import com.auctionapp.auctionappjava.server.network.SessionManager;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -168,6 +169,10 @@ public class AuctionService {
                                             BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
                                             oldLeaderWallet.setBalance(refundedBalance);
                                             userDao.saveWallet(oldLeaderWallet);
+
+                                            // THÊM MỚI: BÁO CHO NGƯỜI BỊ MẤT TOP LÀ HỌ ĐÃ ĐƯỢC HOÀN TIỀN
+                                            Response refundResponse = new Response(true, "SERVER_PUSH_BALANCE", refundedBalance);
+                                            SessionManager.getInstance().sendToUser(oldLeaderId.toString(), refundResponse);
                                         }
                                     }
                                 }
@@ -194,6 +199,12 @@ public class AuctionService {
                                 auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
                                 auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
                                 auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
+
+                                // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
+                                // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
+                                Object[] pushData = new Object[]{ placeBidData.auctionId(), placeBidData.amount() };
+                                Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
+                                SessionManager.getInstance().broadcast(newBidResponse);
 
                                 return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
                             }
@@ -250,6 +261,9 @@ public class AuctionService {
 
             // Chủ động đẩy Auction này vào bộ đếm giờ đóng/mở bid
             AuctionStatusService.scheduleAuctionEvents(newAuction);
+
+            // THÊM MỚI: BÁO CHO MỌI NGƯỜI BIẾT CÓ HÀNG MỚI ĐỂ REFRESH LIST
+            SessionManager.getInstance().broadcast(new Response(true, "SERVER_PUSH_NEW_AUCTION", null));
 
             // 4. Báo cáo thành công
             return new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);

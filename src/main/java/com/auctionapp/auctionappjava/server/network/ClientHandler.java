@@ -25,6 +25,7 @@ public class ClientHandler implements Runnable {
         System.out.println("[" + threadName + "] Bắt đầu phục vụ Client: " + socket.getInetAddress());
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
+        String currentUserId = null;
 
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -35,11 +36,15 @@ public class ClientHandler implements Runnable {
                 Request request = (Request) in.readObject();
                 Response response = null;
 
-                // Sử dụng Switch-case hiện đại của Java để định tuyến (Routing)
                 switch (request.action()) {
                     // Case thuộc user
                     case "LOGIN":
                         response = userService.handleLogin((LoginRequest) request.payload());
+                        if (response.success() && response.data() != null) {
+                            LoginResponse loginRes = (LoginResponse) response.data();
+                            currentUserId = loginRes.id();
+                            SessionManager.getInstance().registerSession(currentUserId, out);
+                        }
                         break;
                     case "REGISTER":
                         response = userService.handleRegister((RegisterRequest) request.payload());
@@ -52,6 +57,9 @@ public class ClientHandler implements Runnable {
                         break;
                     case "CHANGE_PASSWORD":
                         response = userService.handleChangePassword((ChangePasswordRequest) request.payload());
+                        break;
+                    case "GET_BALANCE":
+                        response = userService.handleGetBalance((String) request.payload());
                         break;
 
                     // Case thuộc auction
@@ -103,6 +111,10 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             System.out.println("[" + threadName + "] Client đã ngắt kết nối. Lỗi: " + e.getMessage());
         } finally {
+            if (currentUserId != null) {
+                SessionManager.getInstance().removeSession(currentUserId);
+            }
+
             try {
                 if (in != null) in.close();
                 if (out != null) out.close();

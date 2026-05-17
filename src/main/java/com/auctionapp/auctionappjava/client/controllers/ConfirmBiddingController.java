@@ -74,6 +74,8 @@ public class ConfirmBiddingController {
     @FXML
     private Button btnConfirm;
 
+    public static ConfirmBiddingController instance;
+
     @FXML
     void handleAutoBidding(ActionEvent event) {
         boxAutoBidding.setVisible(chboxAutoBidding.isSelected());
@@ -83,6 +85,8 @@ public class ConfirmBiddingController {
 
     @FXML
     public void initialize() {
+        instance = this;
+
         btnMore.setManaged(false);
         btnMore.setVisible(false);
         lblBalance.setText(formatMoney(balance) + " VND");
@@ -242,8 +246,6 @@ public class ConfirmBiddingController {
 
                         // Hiện lại nút bấm để người dùng có thể thao tác lại
                         btnConfirm.setDisable(false);
-                        /*btnMore.setManaged(true);
-                        btnMore.setVisible(true);*/
                     }
                 });
             });
@@ -251,8 +253,39 @@ public class ConfirmBiddingController {
     }
     @FXML
     void handleWallet(ActionEvent event) throws IOException {
-
         SceneSwitcherUtils.PopupController(event,"/com/auctionapp/auctionappjava/views/DepositScreen.fxml", "moneymoneymoney");
+    }
 
+    public void showOutbidWarning() {
+        Platform.runLater(() -> {
+            // Khóa cứng nút bấm ngay lập tức
+            btnConfirm.setDisable(true);
+
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/ErrorMari.jpg")));
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(500);
+
+            Runnable goBackToDetail = () -> {
+                try {
+                    // Mẹo: Tạo một sự kiện fake click từ nút btnConfirm để mượn xài hàm SceneSwitcherUtils
+                    ActionEvent dummyEvent = new ActionEvent(btnConfirm, null);
+                    SceneSwitcherUtils.NewSceneController(
+                            dummyEvent,
+                            "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml",
+                            "Thông tin sản phẩm"
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+
+            AlertUtils.AnnouncementController(
+                    "Thông báo!",
+                    "Có thay đổi trong phiên đấu giá, hãy quay về màn hình chi tiết để tìm hiểu",
+                    goBackToDetail,
+                    imageView
+            );
+        });
     }
 }

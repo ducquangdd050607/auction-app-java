@@ -49,12 +49,13 @@ public class UserService {
 
     public Response handleDeposit(DepositRequest depositData) {
         try {
-            Wallet wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy ví"));
-
-            wallet.setBalance(wallet.getBalance().add(depositData.amount()));
-            userDao.saveWallet(wallet);
-            return new Response(true, "Nạp tiền thành công", null);
+            Optional<Wallet> wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()));
+            if (wallet.isPresent()) {
+                Wallet depositWallet = wallet.get();
+                depositWallet.setBalance(depositWallet.getBalance().add(depositData.amount()));
+                userDao.saveWallet(depositWallet);
+                return new Response(true, "Nạp tiền thành công", null);
+            } else return new Response(false, "Có lỗi khi nạp tiền", null);
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Nạp thất bại", null);
@@ -146,6 +147,20 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
+        }
+    }
+
+    public Response handleGetBalance(String userId) {
+        try {
+            Optional<Wallet> walletOpt = userDao.findWalletByUserId(UUID.fromString(userId));
+            if (walletOpt.isPresent()) {
+                // Trả về số dư mới nhất
+                return new Response(true, "Lấy số dư thành công", walletOpt.get().getBalance());
+            }
+            return new Response(false, "Không tìm thấy ví", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi khi lấy số dư", null);
         }
     }
 }

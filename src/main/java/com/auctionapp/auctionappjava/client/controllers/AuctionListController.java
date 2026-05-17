@@ -39,6 +39,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.client.controllers.NavigatorController.modeName;
@@ -95,6 +96,8 @@ public class AuctionListController implements Initializable {
     private TextField txtSearch;
     @FXML
     private Label txtVersatile;
+
+    public static AuctionListController instance;
 
     // Thêm danh sách bọc ngoài dùng để LỌC (FilteredList)
     private FilteredList<AuctionSummaryResponse> filteredData;
@@ -224,6 +227,8 @@ public class AuctionListController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
+
         //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
         String[] statuses = {"Tất cả trạng thái", "MỞ", "ĐANG DIỄN RA", "KẾT THÚC"};
         cbFilterStatus.getItems().addAll(statuses);
@@ -603,5 +608,59 @@ public class AuctionListController implements Initializable {
         } else {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         }
+    }
+
+    public void refreshListRealtime() {
+        Platform.runLater(this::loadAuctionsFromServer);
+    }
+
+    // Hàm nhận lệnh từ Router để chỉ cập nhật dòng bị thay đổi
+    public void updateSingleRowStatus(UUID auctionId, AuctionStatus newStatus) {
+        Platform.runLater(() -> {
+            // Quét và cập nhật trên danh sách gốc
+            for (int i = 0; i < auctionData.size(); i++) {
+                AuctionSummaryResponse currentItem = auctionData.get(i);
+
+                if (currentItem.auctionId().equals(auctionId.toString())) {
+                    // Tạo một bản sao mới, chỉ thay đổi status cho phù hợp
+                    AuctionSummaryResponse updatedItem = new AuctionSummaryResponse(
+                            currentItem.auctionId(), currentItem.category(), currentItem.itemName(),
+                            currentItem.sellerName(), currentItem.description(), currentItem.startPrice(),
+                            currentItem.currentPrice(), currentItem.minimumIncrement(), currentItem.startDateTime(),
+                            currentItem.endDateTime(), currentItem.timeLeft(),
+                            newStatus,
+                            currentItem.bidderCount(), currentItem.imageData()
+                    );
+
+                    // Tráo dòng cũ bằng dòng mới trên danh sách gốc
+                    auctionData.set(i, updatedItem);
+                    break;
+                }
+            }
+        });
+    }
+
+    // Cập nhật giá Real-time cho 1 dòng trên bảng danh sách
+    public void updateSingleRowPrice(UUID auctionId, BigDecimal newPrice) {
+        Platform.runLater(() -> {
+            for (int i = 0; i < auctionData.size(); i++) {
+                AuctionSummaryResponse currentItem = auctionData.get(i);
+
+                if (currentItem.auctionId().equals(auctionId.toString())) {
+                    // Tạo bản sao mới và ÉP GIÁ MỚI (newPrice) vào
+                    AuctionSummaryResponse updatedItem = new AuctionSummaryResponse(
+                            currentItem.auctionId(), currentItem.category(), currentItem.itemName(),
+                            currentItem.sellerName(), currentItem.description(), currentItem.startPrice(),
+                            newPrice, // <--- GIÁ VỪA ĐƯỢC CẬP NHẬT TỪ SERVER
+                            currentItem.minimumIncrement(), currentItem.startDateTime(),
+                            currentItem.endDateTime(), currentItem.timeLeft(),
+                            currentItem.status(), currentItem.bidderCount(), currentItem.imageData()
+                    );
+
+                    auctionData.set(i, updatedItem);
+                    break;
+                }
+            }
+        });
     }
 }
