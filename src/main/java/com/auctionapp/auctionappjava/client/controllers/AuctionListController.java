@@ -548,8 +548,8 @@ public class AuctionListController implements Initializable {
             Parent root = loader.load();
 
             // Truyền dữ liệu sang màn hình con
-            AuctionDetailController ctrl = loader.getController();
-            ctrl.loadAuctionData(auction);
+//            AuctionDetailController ctrl = loader.getController();
+//            ctrl.loadAuctionData(auction);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

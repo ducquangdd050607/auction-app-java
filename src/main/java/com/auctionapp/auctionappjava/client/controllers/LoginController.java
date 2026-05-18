@@ -108,7 +108,7 @@ public class LoginController implements Initializable {
                         txtPassword.setDisable(false);
                         hplRegister.setDisable(false);
 
-                        // Báo lỗi sai pass
+                        // Báo lỗi
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                         lblError.setTextFill(Color.web("#FF8A80"));

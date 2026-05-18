@@ -156,7 +156,7 @@ public class DashboardController implements Initializable {
 
         //loadUserDataFromServer();
 
-        loadConditionalAuctionsFromServer();
+        loadFeaturedAuctionsFromServer();
 
 //        setupAuctionCards();
 
@@ -168,7 +168,7 @@ public class DashboardController implements Initializable {
 //    }
 //
 
-    public void loadConditionalAuctionsFromServer() {
+    public void loadFeaturedAuctionsFromServer() {
 
         boxItems.setVisible(false);
         boxItems.setManaged(false);
@@ -203,13 +203,19 @@ public class DashboardController implements Initializable {
                     List<AuctionSummaryResponse> auctionsFromServer = (List<AuctionSummaryResponse>) response.data();
 
                     // Điền dữ liệu mới vào bảng
+                    System.out.println(auctionsFromServer);
                     AuctionSummaryResponse mostBiddedAuction = auctionsFromServer.get(0);
-
+                    AuctionSummaryResponse mostExpiredAuction = auctionsFromServer.get(1);
 
                     lblItemName1.setText(mostBiddedAuction.itemName());
                     endTime1.setText(mostBiddedAuction.endDateTime());
                     lblItemPrice1.setText(MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
                     lblItemDesc1.setText(mostBiddedAuction.description());
+
+                    lblItemName3.setText(mostExpiredAuction.itemName());
+                    endTime3.setText(mostExpiredAuction.endDateTime());
+                    lblItemPrice3.setText(MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
+                    lblItemDesc3.setText(mostExpiredAuction.description());
 
 
 

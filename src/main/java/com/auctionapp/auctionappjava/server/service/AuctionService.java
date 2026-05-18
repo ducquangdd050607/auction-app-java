@@ -92,24 +92,25 @@ public class AuctionService {
     }
 
     public Response handleGetAllFeaturedAuctions() {
-        long counters = 0;
 
         try {
             List<AuctionSummaryResponse> featuredAuctions = new ArrayList<>();;
 
-            Optional<Auction> auctionOpt = auctionDao.findMostBiddedAuction();
+            Optional<Auction> auction1Opt = auctionDao.findMostBiddedAuction();
 
-            if (auctionOpt.isPresent()) {
-                Auction mostBiddedAuction = auctionOpt.get();
-                Optional<Item> itemOpt =  itemDao.findByAuctionId(mostBiddedAuction.getId());
-                if (itemOpt.isPresent()) {
-                    Item item = itemOpt.get();
+//          Optional<Auction> auction3Opt = auctionDao.findTreadingAuction();
+
+            if (auction1Opt.isPresent()) {
+                Auction mostBiddedAuction = auction1Opt.get();
+                Optional<Item> item1Opt = itemDao.findByAuctionId(mostBiddedAuction.getId());
+                if (item1Opt.isPresent()) {
+                    Item item = item1Opt.get();
 
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                     String startFormattedTime = mostBiddedAuction.getStartTime().format(formatter);
                     String endFormattedTime = mostBiddedAuction.getEndTime().format(formatter);
 
-                    AuctionSummaryResponse summaryResponse = new AuctionSummaryResponse(
+                    AuctionSummaryResponse summaryResponse1 = new AuctionSummaryResponse(
                             mostBiddedAuction.getId().toString(),
                             item.getItemType().name(),
                             item.getTitle(),
@@ -124,13 +125,47 @@ public class AuctionService {
                             mostBiddedAuction.getStatus(),
                             mostBiddedAuction.getBiddersCount(),
                             null
-                            );
-                    featuredAuctions.add(summaryResponse);
+                    );
+                    featuredAuctions.add(summaryResponse1);
                 }
             }
 
-            return new Response(true, "Tải dữ liệu thành công!", featuredAuctions);
+            else {
+                return new Response(false, "Hiện không có phiên đấu giá nào đang hoạt động", featuredAuctions);
+            }
 
+            Optional<Auction> auction2Opt = auctionDao.findMostExpiredAuction();
+
+            if (auction2Opt.isPresent()) {
+                Auction mostExpiredAuction = auction2Opt.get();
+                Optional<Item> item2Opt = itemDao.findByAuctionId(mostExpiredAuction.getId());
+                if (item2Opt.isPresent()) {
+                    Item item = item2Opt.get();
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                    String startFormattedTime = mostExpiredAuction.getStartTime().format(formatter);
+                    String endFormattedTime = mostExpiredAuction.getEndTime().format(formatter);
+
+                    AuctionSummaryResponse summaryResponse2 = new AuctionSummaryResponse(
+                            mostExpiredAuction.getId().toString(),
+                            item.getItemType().name(),
+                            item.getTitle(),
+                            userDao.findById(mostExpiredAuction.getSellerId()).get().getFullName(),
+                            item.getDescription(),
+                            item.getStartingPrice(),
+                            mostExpiredAuction.getCurrentPrice(),
+                            mostExpiredAuction.getMinimumIncrement(),
+                            startFormattedTime,
+                            endFormattedTime,
+                            0,
+                            mostExpiredAuction.getStatus(),
+                            mostExpiredAuction.getBiddersCount(),
+                            null
+                    );
+                    featuredAuctions.add(summaryResponse2);
+                }
+            }
+            return new Response(true, "Tải dữ liệu thành công!", featuredAuctions);
         }
         catch (Exception e) {
                 e.printStackTrace();
