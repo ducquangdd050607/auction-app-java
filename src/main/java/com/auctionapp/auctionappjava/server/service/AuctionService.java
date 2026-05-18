@@ -32,7 +32,7 @@ public class AuctionService {
     private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
 
     // Thêm khóa luồng cho việc đặt bid
-    private final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
 
     public Response handleGetAllAuctions() {
         try {
@@ -309,7 +309,11 @@ public class AuctionService {
 
                                     // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
                                     // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
-                                    Object[] pushData = new Object[]{ placeBidData.auctionId(), placeBidData.amount() };
+                                    Object[] pushData = new Object[]{
+                                            placeBidData.auctionId(),
+                                            placeBidData.amount(),
+                                            placeBidData.userId()
+                                    };
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
 

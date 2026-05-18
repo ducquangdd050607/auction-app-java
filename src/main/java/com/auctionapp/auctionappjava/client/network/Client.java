@@ -40,7 +40,7 @@ public class Client {
         System.out.println("Đã kết nối thành công tới Server!");
 
         // Kích hoạt luồng ngầm lắng nghe bằng runAsync
-        CompletableFuture.runAsync(this::listenToServer);
+        CompletableFuture.runAsync(() -> listenToServer());
     }
 
     private void listenToServer() {
