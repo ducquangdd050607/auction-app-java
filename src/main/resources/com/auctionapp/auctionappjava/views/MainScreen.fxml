@@ -54,8 +54,8 @@
                      <HBox prefHeight="260.0" prefWidth="869.0">
                         <children>
                                <VBox alignment="CENTER_LEFT" prefHeight="260.0" prefWidth="490.0" spacing="10">
-                                   <Label alignment="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 38; -fx-font-weight: bold;" text="Bét88" textFill="#1e1e1ec7" />
-                                   <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 26;" text="Nhà cược 3 xu nhất vn" textFill="#1e1e1e" />
+                                   <Label alignment="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 38; -fx-font-weight: bold;" text="Blue88" textFill="#1e1e1ec7" />
+                                   <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: #1e1e1e; -fx-font-size: 26;" text="Nhà cược 3 xu nhất Kivotos😭😭" textFill="#1e1e1e" />
                                   <Button fx:id="btnExplore" alignment="CENTER" contentDisplay="CENTER" onAction="#handleLogin" prefHeight="50.0" prefWidth="187.0" styleClass="explore-btn" text="Khám phá ngay!">
                                  <font>
                                     <Font name="System Bold" size="19.0" />
