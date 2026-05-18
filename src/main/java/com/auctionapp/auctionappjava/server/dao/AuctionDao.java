@@ -22,8 +22,9 @@ public interface AuctionDao {
 
     List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
 
-
     Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
+
+    Optional<Auction> findMostExpiredAuction();
 
     Optional<Auction> findMostBiddedAuction();
 

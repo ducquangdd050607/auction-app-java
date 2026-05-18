@@ -194,6 +194,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
         String sql = """
             SELECT a.* FROM auctions a
             LEFT JOIN bids b ON a.id = b.auction_id
+            WHERE a.status = 'RUNNING'
             GROUP BY a.id
             ORDER BY COUNT(DISTINCT b.bidder_id) DESC, a.created_at DESC
             LIMIT 1
@@ -208,6 +209,27 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Lỗi khi tìm phiên đấu giá đông nhất", exception);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Auction> findMostExpiredAuction() {
+        String sql = """
+            SELECT * FROM auctions
+            WHERE status = 'RUNNING'
+            ORDER BY end_time ASC
+            LIMIT 1
+        """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return Optional.of(mapAuction(resultSet));
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Lỗi khi tìm phiên đấu giá sắp hết hạn", exception);
         }
         return Optional.empty();
     }
