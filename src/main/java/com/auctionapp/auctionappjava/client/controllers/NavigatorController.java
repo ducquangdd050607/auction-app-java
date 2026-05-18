@@ -7,15 +7,34 @@ import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NavigatorController implements Initializable {
 
@@ -23,6 +42,8 @@ public class NavigatorController implements Initializable {
     private static NavigatorController instance;
     public static String modeName;
 
+    @FXML
+    private StackPane rootStackPane;
     @FXML
     private Button btnDashboard;
     @FXML
@@ -59,10 +80,26 @@ public class NavigatorController implements Initializable {
     private BorderPane mainBorderPane;
     @FXML
     private Button setting;
+    @FXML
+    private VBox chatbotPanel;
+    @FXML
+    private Button chatbotToggleButton;
+    @FXML
+    private ScrollPane chatScrollPane;
+    @FXML
+    private VBox chatMessagesBox;
+    @FXML
+    private VBox quickQuestionsBox;
+    @FXML
+    private TextField chatInput;
+
+    private final List<ChatbotAnswer> chatbotAnswers = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         instance = this;
+        loadChatbotAnswers();
+        setupChatbot();
         try {
             show();
         } catch (IOException e) {
@@ -71,6 +108,183 @@ public class NavigatorController implements Initializable {
             // Hàm fire() có tác dụng sẽ bấm thẳng vào nút được fire ngay khi load (initialize) scene hiện tại
             btnDashboard.fire();
         }
+    }
+
+    private void setupChatbot() {
+        chatbotPanel.setVisible(false);
+        chatbotPanel.setManaged(false);
+        chatbotToggleButton.setText("☁");
+        addBotMessage("Xin chào! Tôi có thể hỗ trợ bạn về đăng ký, đăng nhập, đấu giá, nạp tiền và quản lý tài khoản.");
+        renderQuickQuestions();
+    }
+
+    @FXML
+    void toggleChatbot(ActionEvent event) {
+        boolean open = !chatbotPanel.isVisible();
+        chatbotPanel.setVisible(open);
+        chatbotPanel.setManaged(open);
+        chatbotToggleButton.setText(open ? "X" : "☁");
+        if (open) {
+            chatInput.requestFocus();
+            scrollChatToBottom();
+        }
+    }
+
+    @FXML
+    void sendChatMessage(ActionEvent event) {
+        String question = chatInput.getText();
+        if (question == null || question.trim().isEmpty()) {
+            return;
+        }
+
+        chatInput.clear();
+        addUserMessage(question.trim());
+        addBotMessage(findAnswer(question.trim()));
+    }
+
+    private void askQuickQuestion(ChatbotAnswer answer) {
+        addUserMessage(answer.question());
+        addBotMessage(answer.answer());
+    }
+
+    private void renderQuickQuestions() {
+        quickQuestionsBox.getChildren().clear();
+        chatbotAnswers.stream().limit(3).forEach(answer -> {
+            Button button = new Button(answer.question());
+            button.setMaxWidth(Double.MAX_VALUE);
+            button.getStyleClass().add("chatbot-quick-btn");
+            button.setOnAction(event -> askQuickQuestion(answer));
+            quickQuestionsBox.getChildren().add(button);
+        });
+    }
+
+    private void addUserMessage(String message) {
+        addChatMessage(message, "chatbot-user-message", true);
+    }
+
+    private void addBotMessage(String message) {
+        addChatMessage(message, "chatbot-bot-message", false);
+    }
+
+    private void addChatMessage(String message, String styleClass, boolean alignRight) {
+        Label bubble = new Label(message);
+        bubble.setWrapText(true);
+        bubble.setMaxWidth(260);
+        bubble.getStyleClass().add(styleClass);
+
+        Region spacer = new Region();
+        HBox row = new HBox(8);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        if (alignRight) {
+            row.getChildren().addAll(spacer, bubble);
+        } else {
+            row.getChildren().addAll(bubble, spacer);
+        }
+
+        chatMessagesBox.getChildren().add(row);
+        scrollChatToBottom();
+    }
+
+    private void scrollChatToBottom() {
+        Platform.runLater(() -> chatScrollPane.setVvalue(1.0));
+    }
+
+    private String findAnswer(String question) {
+        String normalizedQuestion = normalize(question);
+        ChatbotAnswer bestAnswer = null;
+        int bestScore = 0;
+
+        for (ChatbotAnswer answer : chatbotAnswers) {
+            int score = scoreAnswer(normalizedQuestion, answer);
+            if (score > bestScore) {
+                bestScore = score;
+                bestAnswer = answer;
+            }
+        }
+
+        if (bestAnswer != null && bestScore > 0) {
+            return bestAnswer.answer();
+        }
+
+        return "Tôi chưa có câu trả lời phù hợp. Bạn có thể hỏi về đăng ký, đăng nhập, đấu giá, nạp tiền, lịch sử hoặc tài khoản.";
+    }
+
+    private int scoreAnswer(String normalizedQuestion, ChatbotAnswer answer) {
+        int score = 0;
+        if (normalizedQuestion.contains(normalize(answer.question()))) {
+            score += 5;
+        }
+        for (String keyword : answer.keywords()) {
+            if (normalizedQuestion.contains(normalize(keyword))) {
+                score += 2;
+            }
+        }
+        return score;
+    }
+
+    private void loadChatbotAnswers() {
+        URL resource = getClass().getResource("/com/auctionapp/auctionappjava/data/chatbot-questions.json");
+        if (resource == null) {
+            chatbotAnswers.add(new ChatbotAnswer(
+                    "Chatbot hỗ trợ gì?",
+                    "Hiện chưa tìm thấy file dữ liệu chatbot.",
+                    List.of("chatbot", "hỗ trợ")));
+            return;
+        }
+
+        try (InputStream inputStream = resource.openStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            StringBuilder json = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                json.append(line).append('\n');
+            }
+            chatbotAnswers.addAll(parseChatbotAnswers(json.toString()));
+        } catch (IOException e) {
+            chatbotAnswers.add(new ChatbotAnswer(
+                    "Chatbot hỗ trợ gì?",
+                    "Không thể đọc file dữ liệu chatbot.",
+                    List.of("chatbot", "hỗ trợ")));
+        }
+    }
+
+    private List<ChatbotAnswer> parseChatbotAnswers(String json) {
+        List<ChatbotAnswer> answers = new ArrayList<>();
+        Pattern objectPattern = Pattern.compile("\\{\\s*\"question\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"answer\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"keywords\"\\s*:\\s*\\[(.*?)\\]\\s*}", Pattern.DOTALL);
+        Matcher objectMatcher = objectPattern.matcher(json);
+
+        while (objectMatcher.find()) {
+            String question = unescapeJson(objectMatcher.group(1));
+            String answer = unescapeJson(objectMatcher.group(2));
+            List<String> keywords = parseKeywords(objectMatcher.group(3));
+            answers.add(new ChatbotAnswer(question, answer, keywords));
+        }
+        return answers;
+    }
+
+    private List<String> parseKeywords(String jsonArrayContent) {
+        List<String> keywords = new ArrayList<>();
+        Matcher keywordMatcher = Pattern.compile("\"((?:\\\\.|[^\"])*)\"").matcher(jsonArrayContent);
+        while (keywordMatcher.find()) {
+            keywords.add(unescapeJson(keywordMatcher.group(1)));
+        }
+        return keywords;
+    }
+
+    private String unescapeJson(String value) {
+        return value
+                .replace("\\\"", "\"")
+                .replace("\\n", "\n")
+                .replace("\\\\", "\\");
+    }
+
+    private String normalize(String value) {
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase(Locale.ROOT);
+        return Arrays.stream(normalized.split("[^a-z0-9]+"))
+                .filter(token -> !token.isBlank())
+                .reduce("", (left, right) -> left + " " + right);
     }
 
     public static BorderPane getMainBorderPane() {
@@ -233,5 +447,8 @@ public class NavigatorController implements Initializable {
         if (instance != null) {
             instance.setActiveButton(instance.btnGotoUsersManager);
         }
+    }
+
+    private record ChatbotAnswer(String question, String answer, List<String> keywords) {
     }
 }

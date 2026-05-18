@@ -1,0 +1,52 @@
+[
+  {
+    "question": "Làm sao để đăng ký tài khoản?",
+    "answer": "Ở màn hình đầu, bấm Đăng kí, nhập thông tin bắt buộc rồi xác nhận. Sau khi đăng ký thành công, bạn có thể đăng nhập bằng tài khoản vừa tạo.",
+    "keywords": ["đăng ký", "dang ky", "tạo tài khoản", "tai khoan", "register"]
+  },
+  {
+    "question": "Làm sao để đăng nhập?",
+    "answer": "Bấm Đăng nhập ở màn hình chính, nhập tên đăng nhập và mật khẩu. Nếu thông tin đúng, hệ thống sẽ chuyển bạn vào màn hình phù hợp với vai trò.",
+    "keywords": ["đăng nhập", "dang nhap", "login", "mật khẩu", "mat khau"]
+  },
+  {
+    "question": "Tôi muốn xem danh sách đấu giá ở đâu?",
+    "answer": "Sau khi đăng nhập, chọn mục Danh sách đấu giá ở thanh menu bên trái để xem các phiên đấu giá hiện có.",
+    "keywords": ["danh sách", "danh sach", "đấu giá", "dau gia", "phiên đấu giá", "phien dau gia"]
+  },
+  {
+    "question": "Cách tham gia một phiên đấu giá?",
+    "answer": "Vào Danh sách đấu giá, chọn phiên bạn quan tâm để xem chi tiết. Nếu đủ điều kiện, bạn có thể đặt giá hoặc xác nhận tham gia theo giao diện của phiên đó.",
+    "keywords": ["tham gia", "đặt giá", "dat gia", "bid", "bidding", "phiên"]
+  },
+  {
+    "question": "Tôi xem lịch sử đấu giá như thế nào?",
+    "answer": "Chọn mục Lịch sử đấu giá ở menu bên trái. Màn hình này hiển thị các phiên và giao dịch đấu giá đã liên quan đến tài khoản của bạn.",
+    "keywords": ["lịch sử", "lich su", "history", "giao dịch", "giao dich"]
+  },
+  {
+    "question": "Tôi thay đổi thông tin tài khoản ở đâu?",
+    "answer": "Chọn Tài khoản ở cuối menu bên trái, sau đó dùng chức năng đổi thông tin hoặc đổi mật khẩu nếu tài khoản của bạn được phép thao tác.",
+    "keywords": ["tài khoản", "tai khoan", "thông tin", "thong tin", "đổi mật khẩu", "doi mat khau"]
+  },
+  {
+    "question": "Người bán quản lý vật phẩm thế nào?",
+    "answer": "Nếu đăng nhập với vai trò Seller, bạn sẽ thấy mục Quản lý vật phẩm trong menu. Tại đó bạn có thể xem và thao tác với các vật phẩm đấu giá của mình.",
+    "keywords": ["seller", "người bán", "nguoi ban", "vật phẩm", "vat pham", "quản lý vật phẩm"]
+  },
+  {
+    "question": "Admin quản lý người dùng ở đâu?",
+    "answer": "Nếu đăng nhập với vai trò Admin, chọn Quản lý Users trong menu bên trái để xem và quản lý danh sách người dùng.",
+    "keywords": ["admin", "quản lý user", "quan ly user", "người dùng", "nguoi dung", "users"]
+  },
+  {
+    "question": "Làm sao để đăng xuất?",
+    "answer": "Bấm Sign out ở góc trên bên phải. Hệ thống sẽ hỏi xác nhận trước khi đăng xuất tài khoản hiện tại.",
+    "keywords": ["đăng xuất", "dang xuat", "sign out", "logout", "thoát tài khoản"]
+  },
+  {
+    "question": "Tôi cần hỗ trợ vấn đề khác",
+    "answer": "Bạn hãy nhập câu hỏi cụ thể hơn, ví dụ: đăng nhập, đăng ký, đấu giá, lịch sử, tài khoản, seller hoặc admin.",
+    "keywords": ["hỗ trợ", "ho tro", "help", "trợ giúp", "tro giup"]
+  }
+]
