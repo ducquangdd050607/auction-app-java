@@ -5,6 +5,8 @@ import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.model.*;
+import com.auctionapp.auctionappjava.common.strategy.AntiSnipingExtensionStrategy;
+import com.auctionapp.auctionappjava.common.strategy.AutoBidEngine;
 import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 import com.auctionapp.auctionappjava.server.network.SessionManager;
@@ -21,6 +23,12 @@ public class AuctionService {
     private final AuctionDao auctionDao = new JdbcAuctionDao();
     private final AuctionItemDao itemDao = new JdbcAuctionItemDao();
     private final BidDao bidDao = new JdbcBidDao();
+    // THEM AUTO-BID DAO: dung de luu va doc cau hinh auto-bid.
+    private final AutoBidDao autoBidDao = new JdbcAutoBidDao();
+    // THEM AUTO-BID ENGINE: tinh nguoi auto-bid top 1 va so tien can tra.
+    private final AutoBidEngine autoBidEngine = new AutoBidEngine();
+    // THEM ANTI-SNIPING: neu bid sat gio ket thuc thi gia han them thoi gian.
+    private final AntiSnipingExtensionStrategy antiSnipingStrategy = new AntiSnipingExtensionStrategy(30, 60);
     private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
 
     // Thêm khóa luồng cho việc đặt bid
@@ -71,6 +79,18 @@ public class AuctionService {
     }
 
 
+    public Response handleGetBidRanking(ManagerAndHistoryRequest data) {
+        try {
+            List<BidRankingResponse> responseList =
+                    bidDao.findRankingByAuctionId(UUID.fromString(data.userId()));
+
+            return new Response(true, "Tai bang xep hang thanh cong!", responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Loi may chu khi truy xuat bang xep hang!", null);
+        }
+    }
+
     public Response handleGetAllFeaturedAuctions() {
         long counters = 0;
 
@@ -117,6 +137,42 @@ public class AuctionService {
         }
         return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
 
+    }
+
+    // THEM AUTO-BID API: luu cau hinh auto-bid ma client gui len.
+    public Response handleConfigureAutoBid(ConfigureAutoBidRequest data) {
+        try {
+            Optional<Auction> auctionOpt = auctionDao.findById(data.auctionId());
+            if (auctionOpt.isEmpty()) {
+                return new Response(false, "PhiÃªn Ä‘áº¥u giÃ¡ khÃ´ng tá»“n táº¡i!", null);
+            }
+
+            Auction auction = auctionOpt.get();
+            if (data.maxBid().compareTo(auction.getCurrentPrice()) < 0) {
+                return new Response(false, "Max auto-bid pháº£i lá»›n hÆ¡n hoáº·c báº±ng giÃ¡ hiá»‡n táº¡i!", null);
+            }
+
+            if (data.incrementAmount().compareTo(auction.getMinimumIncrement()) < 0) {
+                return new Response(false, "BÆ°á»›c auto-bid pháº£i tá»« " + auction.getMinimumIncrement() + " trá»Ÿ lÃªn!", null);
+            }
+
+            AutoBidConfig config = new AutoBidConfig(
+                    UUID.randomUUID(),
+                    now(),
+                    now(),
+                    data.auctionId(),
+                    data.bidderId(),
+                    data.maxBid(),
+                    data.incrementAmount(),
+                    data.enabled()
+            );
+            autoBidDao.save(config);
+
+            return new Response(true, "ÄÃ£ cáº¥u hÃ¬nh auto-bid.", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lá»—i mÃ¡y chá»§ khi cáº¥u hÃ¬nh auto-bid: " + e.getMessage(), null);
+        }
     }
 
     public Response handlePlaceBid(PlaceBidRequest placeBidData) {
@@ -212,6 +268,8 @@ public class AuctionService {
                                     auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
                                     auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
                                     auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
+                                    // THEM ANTI-SNIPING: bid sat gio ket thuc thi day endTime ra xa hon.
+                                    applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
                                     // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
@@ -220,7 +278,19 @@ public class AuctionService {
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
 
-                                    return new Response(true, "Đặt giá thành công! Bạn đang dẫn đầu.", null);
+                                    // THEM AUTO-BID ENGINE: sau bid tay, kiem tra cac cau hinh auto-bid va dat gia tu dong neu can.
+                                    processAutoBid(auction.getId());
+
+                                    // THEM AUTO-BID BALANCE: doc lai vi sau auto-bid vi user co the vua duoc hoan tien.
+                                    BigDecimal finalBalance = userDao.findWalletByUserId(currentBidderId)
+                                            .map(Wallet::getBalance)
+                                            .orElse(updatedBalance);
+                                    // THEM AUTO-BID RESULT: tra ca gia cuoi cung sau khi auto-bid da chay de client khong hien gia cu.
+                                    BigDecimal finalAuctionPrice = auctionDao.findById(auction.getId())
+                                            .map(Auction::getCurrentPrice)
+                                            .orElse(placeBidData.amount());
+                                    Object[] resultData = new Object[]{ finalBalance, finalAuctionPrice };
+                                    return new Response(true, "Đặt giá thành công!", resultData);
                                 }
                             }
                         }
@@ -230,6 +300,103 @@ public class AuctionService {
                 e.printStackTrace();
                 return new Response(false, "Lỗi máy chủ khi xử lý đặt giá: " + e.getMessage(), null);
             }
+        }
+    }
+
+    // THEM AUTO-BID ENGINE: doc danh sach auto-bid, sap xep maxBid va tao bid tu dong neu hop le.
+    private void processAutoBid(UUID auctionId) {
+        Optional<Auction> auctionOpt = auctionDao.findById(auctionId);
+        if (auctionOpt.isEmpty()) {
+            return;
+        }
+
+        Auction auction = auctionOpt.get();
+        List<AutoBidConfig> configs = autoBidDao.findEnabledByAuctionId(auctionId);
+        Optional<AutoBidEngine.AutoBidResult> resultOpt =
+                autoBidEngine.calculateNextBid(
+                        configs,
+                        auction.getMinimumIncrement(),
+                        auction.getCurrentPrice(),
+                        auction.getLeadingBidderId()
+                );
+
+        if (resultOpt.isEmpty()) {
+            return;
+        }
+
+        AutoBidEngine.AutoBidResult result = resultOpt.get();
+        if (result.getBidderId().equals(auction.getLeadingBidderId())) {
+            return;
+        }
+
+        BigDecimal minimumNextBid = auction.getCurrentPrice().add(auction.getMinimumIncrement());
+        if (result.getBidAmount().compareTo(minimumNextBid) < 0) {
+            return;
+        }
+
+        placeAutoBid(auction, result.getBidderId(), result.getBidAmount());
+    }
+
+    // THEM AUTO-BID ENGINE: dat gia thay user auto-bid, co tru tien, hoan tien va push realtime.
+    private void placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
+        Optional<Wallet> bidderWalletOpt = userDao.findWalletByUserId(bidderId);
+        if (bidderWalletOpt.isEmpty()) {
+            return;
+        }
+
+        Wallet bidderWallet = bidderWalletOpt.get();
+        if (bidderWallet.getBalance().compareTo(amount) < 0) {
+            return;
+        }
+
+        UUID oldLeaderId = auction.getLeadingBidderId();
+        if (oldLeaderId != null && !oldLeaderId.equals(bidderId)) {
+            Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
+            if (oldLeaderWalletOpt.isPresent()) {
+                Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
+                BigDecimal refundedBalance = oldLeaderWallet.getBalance().add(auction.getCurrentPrice());
+                oldLeaderWallet.setBalance(refundedBalance);
+                userDao.saveWallet(oldLeaderWallet);
+
+                Response refundResponse = new Response(true, "SERVER_PUSH_BALANCE", refundedBalance);
+                SessionManager.getInstance().sendToUser(oldLeaderId.toString(), refundResponse);
+            }
+        }
+
+        BigDecimal updatedBalance = bidderWallet.getBalance().subtract(amount);
+        bidderWallet.setBalance(updatedBalance);
+        userDao.saveWallet(bidderWallet);
+        // THEM AUTO-BID BALANCE: bao cho nguoi duoc auto-bid biet so du da bi tru.
+        Response autoBidderBalanceResponse = new Response(true, "SERVER_PUSH_BALANCE", updatedBalance);
+        SessionManager.getInstance().sendToUser(bidderId.toString(), autoBidderBalanceResponse);
+
+        BidTransaction autoBid = new BidTransaction(
+                UUID.randomUUID(),
+                now(),
+                now(),
+                auction.getId(),
+                bidderId,
+                amount,
+                true,
+                "Giao dich auto-bid"
+        );
+        bidDao.save(autoBid);
+
+        auction.setCurrentPrice(amount);
+        auction.setLeadingBidderId(bidderId);
+        auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
+        applyAntiSnipingExtension(auction);
+        auctionDao.save(auction);
+
+        Object[] pushData = new Object[]{ auction.getId(), amount };
+        Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
+        SessionManager.getInstance().broadcast(newBidResponse);
+    }
+
+    // THEM ANTI-SNIPING: neu bid nam trong nguong cuoi gio thi cap nhat endTime moi.
+    private void applyAntiSnipingExtension(Auction auction) {
+        if (antiSnipingStrategy.shouldExtend(auction, now())) {
+            auction.setEndTime(antiSnipingStrategy.extendTo(auction, now()));
         }
     }
 

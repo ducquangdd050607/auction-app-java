@@ -3,6 +3,7 @@ package com.auctionapp.auctionappjava.server.service;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
@@ -110,9 +111,15 @@ public class AuctionStatusService {
 
                     // Chốt người thắng
                     auction.setWinnerId(auction.getLeadingBidderId());
+                    String winnerName = userDao.findById(auction.getLeadingBidderId())
+                            .map(User::getFullName)
+                            .orElse(auction.getLeadingBidderId().toString());
 
                     // Lấy số tiền thắng cuộc (giá hiện tại)
                     BigDecimal winningAmount = auction.getCurrentPrice();
+                    System.out.println("[AUCTION_WINNER] Auction " + auction.getId()
+                            + " winner: " + winnerName
+                            + " (" + auction.getLeadingBidderId() + "), amount: " + winningAmount);
                     UUID sellerId = auction.getSellerId();
 
                     // Lấy ví của Seller và cộng tiền

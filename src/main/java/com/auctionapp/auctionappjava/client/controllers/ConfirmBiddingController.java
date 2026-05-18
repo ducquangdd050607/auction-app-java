@@ -86,6 +86,11 @@ public class ConfirmBiddingController {
     @FXML
     public void initialize() {
         instance = this;
+        // THEM AUTO-BID OPTIONAL: moi lan mo man confirm thi mac dinh tat auto-bid.
+        isAutoBidding = false;
+        chboxAutoBidding.setSelected(false);
+        boxAutoBidding.setVisible(false);
+        boxAutoBidding.setManaged(false);
 
         btnMore.setManaged(false);
         btnMore.setVisible(false);
@@ -94,6 +99,8 @@ public class ConfirmBiddingController {
         lblMinIncrement.setText(formatMoney(minIncrement) + " VND");
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
+        // THEM AUTO-BID UI: format ca o max auto-bid de parse tien giong cac o khac.
+        settingMoneyFormat(txtSetMaxAuto);
     }
 
     @FXML
@@ -127,17 +134,17 @@ public class ConfirmBiddingController {
             lblError.setText("Hãy nhập giá tiền cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (((txtSetAuto.getText().isEmpty()) || (txtSetMaxAuto.getText().isEmpty())) & (isAutoBidding)) {
+        } else if (isAutoBidding && ((txtSetAuto.getText().isEmpty()) || (txtSetMaxAuto.getText().isEmpty()))) {
             lblError.setText("Hãy nhập giá tiền tự đặt cược.");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if ((((purifyingText(txtSetAuto.getText()).subtract(minIncrement))
-                .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
+        } else if (isAutoBidding && (((purifyingText(txtSetAuto.getText()).subtract(minIncrement))
+                .compareTo(new BigDecimal(0))) < 0)) {
             lblError.setText("Bước tiền tự đặt cược đang nhỏ hơn bước đặt");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if ((((purifyingText(txtSetMaxAuto.getText()).subtract(purifyingText(txtSetPrice.getText())))
-                    .compareTo(new BigDecimal(0))) < 0) & (isAutoBidding)) {
+        } else if (isAutoBidding && (((purifyingText(txtSetMaxAuto.getText()).subtract(purifyingText(txtSetPrice.getText())))
+                    .compareTo(new BigDecimal(0))) < 0)) {
                 lblError.setText("Tiền tự đặt cược tối đa đang nhỏ hơn giá hiện tại");
                 lblError.setTextFill(Color.web("#FF8A80"));
 
@@ -164,6 +171,8 @@ public class ConfirmBiddingController {
 
             // Lấy số tiền người dùng chốt đặt
             BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
+            // THEM AUTO-BID UI: chup lai trang thai checkbox de request async khong bi lech neu UI thay doi.
+            boolean autoBidEnabled = isAutoBidding;
 
             // Gói hàng gửi đi
             PlaceBidRequest payload = new PlaceBidRequest(
@@ -173,6 +182,20 @@ public class ConfirmBiddingController {
             );
             Request bidReq = new Request("PLACE_BID", payload);
 
+            // THEM AUTO-BID UI: neu user bat checkbox thi gui cau hinh auto-bid truoc khi dat gia.
+            Request autoBidReq = null;
+            if (autoBidEnabled) {
+                ConfigureAutoBidRequest autoBidPayload = new ConfigureAutoBidRequest(
+                        UUID.fromString(currentAuctionId),
+                        UUID.fromString(userId),
+                        purifyingText(txtSetMaxAuto.getText()),
+                        purifyingText(txtSetAuto.getText()),
+                        true
+                );
+                autoBidReq = new Request("CONFIGURE_AUTO_BID", autoBidPayload);
+            }
+            Request finalAutoBidReq = autoBidReq;
+
             // Chuẩn bị hình ảnh cho Alert
             Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg")));
             ImageView imageView = new ImageView(image);
@@ -181,6 +204,13 @@ public class ConfirmBiddingController {
 
             CompletableFuture.supplyAsync(() -> {
                 try {
+                    // THEM AUTO-BID UI: luu cau hinh auto-bid truoc, neu fail thi dung va bao loi.
+                    if (finalAutoBidReq != null) {
+                        Response autoBidResponse = Client.getInstance().sendRequest(finalAutoBidReq);
+                        if (!autoBidResponse.success()) {
+                            return autoBidResponse;
+                        }
+                    }
                     return Client.getInstance().sendRequest(bidReq);
                 } catch (Exception e) {
                     return new Response(false, "Lỗi kết nối máy chủ!", null);
@@ -190,13 +220,26 @@ public class ConfirmBiddingController {
                     if (response.success()) {
                         // Cập nhật lại UserSession
                         LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
+                        // THEM AUTO-BID BALANCE: server tra ve so du moi nhat sau khi auto-bid/hoan tien xu ly xong.
+                        BigDecimal latestBalance = oldUser.walletBalance().subtract(finalBidAmount);
+                        BigDecimal latestAuctionPrice = finalBidAmount;
+                        if (response.data() instanceof Object[] resultData) {
+                            if (resultData.length > 0 && resultData[0] instanceof BigDecimal) {
+                                latestBalance = (BigDecimal) resultData[0];
+                            }
+                            if (resultData.length > 1 && resultData[1] instanceof BigDecimal) {
+                                latestAuctionPrice = (BigDecimal) resultData[1];
+                            }
+                        } else if (response.data() instanceof BigDecimal) {
+                            latestBalance = (BigDecimal) response.data();
+                        }
                         LoginResponse updatedUser = new LoginResponse(
                                 oldUser.id(),
                                 oldUser.username(),
                                 oldUser.fullName(),
                                 oldUser.role(),
                                 oldUser.email(),
-                                oldUser.walletBalance().subtract(finalBidAmount),
+                                latestBalance,
                                 oldUser.accStatus()
                         );
                         UserSession.getInstance().setCurrentUser(updatedUser);
@@ -213,7 +256,7 @@ public class ConfirmBiddingController {
                                 oldData.sellerName(),
                                 oldData.description(),
                                 oldData.startPrice(),
-                                finalBidAmount, // Thay currentprice bằng giá vừa đặt thành công
+                                latestAuctionPrice, // THEM AUTO-BID RESULT: dung gia cuoi cung sau auto-bid.
                                 oldData.minimumIncrement(),
                                 oldData.startDateTime(),
                                 oldData.endDateTime(),

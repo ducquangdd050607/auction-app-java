@@ -78,11 +78,18 @@ public class ClientHandler implements Runnable {
                     case "GET_TRANSACTIONS":
                         response = auctionService.handleGetAllBiddedAuctions((ManagerAndHistoryRequest) request.payload());
                         break;
+                    case "GET_BID_RANKING":
+                        response = auctionService.handleGetBidRanking((ManagerAndHistoryRequest) request.payload());
+                        break;
                     case "ADD_ITEM":
                         response = auctionService.handleAddItem((AddItemRequest) request.payload());
                         break;
                     case "PLACE_BID":
                         response = auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
+                        break;
+                    // THEM AUTO-BID REQUEST: nhan cau hinh auto-bid tu client va luu xuong DB.
+                    case "CONFIGURE_AUTO_BID":
+                        response = auctionService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
                         break;
                     case "GET_USERS":
                         response = auctionService.handleGetUsers();

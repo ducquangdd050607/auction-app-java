@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
+import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
@@ -220,6 +221,46 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new IllegalStateException("Khong tai duoc toan bo lich su dau gia", e);
         }
     }
+    @Override
+    public List<BidRankingResponse> findRankingByAuctionId(UUID auctionId) {
+        String sql = """
+                SELECT
+                    u.full_name AS bidder_name,
+                    b.amount,
+                    b.created_at,
+                    b.auto_generated
+                FROM bids b
+                JOIN users u ON u.id = b.bidder_id
+                WHERE b.auction_id = ?
+                ORDER BY b.amount DESC, b.created_at ASC
+                """;
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet rs = statement.executeQuery()) {
+                List<BidRankingResponse> result = new ArrayList<>();
+                int rank = 1;
+
+                while (rs.next()) {
+                    result.add(new BidRankingResponse(
+                            rank++,
+                            rs.getString("bidder_name"),
+                            rs.getBigDecimal("amount"),
+                            localDateTime(rs.getTimestamp("created_at"))
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                            rs.getBoolean("auto_generated")
+                    ));
+                }
+
+                return result;
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Khong tai duoc bang xep hang bid", e);
+        }
+    }
+
     @Override
     public long countByAuctionId(UUID auctionId) {
         return countBySql("SELECT COUNT(*) FROM bids WHERE auction_id = ?", uuid(auctionId));
