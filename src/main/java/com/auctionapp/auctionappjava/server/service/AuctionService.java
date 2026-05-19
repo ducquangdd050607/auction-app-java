@@ -499,87 +499,8 @@ public class AuctionService {
 
     public Response handleGetUsers() {
         try {
-            // 1. Lấy danh sách user
-            List<User> dbUsers = userDao.findAll();
-            List<UserDetailResponse> responseList = new ArrayList<>();
-
-            // 2. Lặp qua từng user
-            for (User user : dbUsers) {
-                int counters = 0;
-                String latestItemTitle = "";
-                if (user.getRole().isBidder()) {
-                    // Lấy bid mới nhất của user này
-                    Optional<BidTransaction> transactionOpt = bidDao.findLatestBidByBidderId(user.getId());
-
-                    if (transactionOpt.isPresent()) {
-                        // Nếu có bid, tìm tên Item tương ứng
-                        BidTransaction bid = transactionOpt.get();
-
-                        // Mẫu gốc:
-                        // latestItemTitle = itemDao.findById(auctionDao.findById(bid.getAuctionId()).get().getItemId()).get().getTitle();
-
-                        Optional<Auction> auctionOpt = auctionDao.findById(bid.getAuctionId());
-
-                        if (auctionOpt.isPresent()) {
-                            Auction auction = auctionOpt.get();
-
-                            Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-
-                            if (itemOpt.isPresent()) {
-                                Item item = itemOpt.get();
-                                latestItemTitle = item.getTitle();
-                                counters = (int) bidDao.countBidsByBidderId(user.getId());
-                            } else {
-                                // Trường hợp phiên bị xóa.(WIP)
-                                latestItemTitle = "Phiên đấu đã bị xóa";
-                            }
-                        } else {
-                            // Nếu không có bid:
-                            latestItemTitle = "Acc mới chưa cược";
-                        }
-                    }
-                    // - You messed up again. And again
-                    // - C*nt. Not Now
-
-                }
-
-                else if (user.getRole().isSeller()) {
-                    Optional<Auction> auctionOpt = auctionDao.findLatestAuctionCreatedBySellerId(user.getId());
-                    if (auctionOpt.isPresent()) {
-                        Auction auction = auctionOpt.get();
-                        Optional<Item> itemOpt = itemDao.findByIdWithoutImage(auction.getItemId());
-                        if (itemOpt.isPresent()) {
-                            Item item = itemOpt.get();
-                            latestItemTitle = item.getTitle();
-                            counters = (int) auctionDao.countAuctionsCreatedBySellerId(user.getId());
-                        } else {
-                            latestItemTitle = "Phiên đấu đã bị xóa";
-                        }
-                    }
-
-                    else {
-                        latestItemTitle = "Acc mới chưa tạo";
-                    }
-                } else {
-                    latestItemTitle = "Admin";
-                }
-
-                // Tạo DTO
-                UserDetailResponse dto = new UserDetailResponse(
-                        String.valueOf(user.getId()),
-                        latestItemTitle,
-                        user.getFullName(),
-                        user.getRole().name(),
-                        userDao.findWalletByUserId(user.getId()).get().getBalance(),
-                        userDao.findById(user.getId()).get().isActive(),
-                        counters
-                );
-                counters = 0;
-                responseList.add(dto);
-            }
-
-            return new Response(true, "Tải dữ liệu thành công!", responseList);
-
+            List<UserDetailResponse> responseList = userDao.findAllDetails();
+            return new Response(true, "Tải danh sách user thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
