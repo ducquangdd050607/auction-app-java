@@ -170,6 +170,7 @@ public class AuctionDetailController {
                             Image realImage = new Image(new ByteArrayInputStream(originalBytes));
                             imgProduct.setImage(realImage);
                             imgProduct.setVisible(true);
+                            return;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
