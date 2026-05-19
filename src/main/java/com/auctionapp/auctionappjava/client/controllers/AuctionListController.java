@@ -5,6 +5,7 @@ import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.animation.Animation;
@@ -242,7 +243,7 @@ public class AuctionListController implements Initializable {
             show();// kiểm tra kiểu người dùng
             setMode(modeName);// thay đổi trong AutionListScreen
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppException("Không thể khởi tạo danh sách đấu giá", e);
         }
 
         // Khởi tạo các cột và set data vào bảng
@@ -514,7 +515,7 @@ public class AuctionListController implements Initializable {
                                 try {
                                     handleRemoveAuction(row.getItem());
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    throw new AppException("Không thể xóa phiên đấu giá", e);
                                 }
                             };
 
@@ -532,7 +533,7 @@ public class AuctionListController implements Initializable {
                             openAuctionDetail(row.getItem());
                         }
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new AppException("Không thể mở chi tiết phiên đấu giá", e);
                     }
                 }
             });

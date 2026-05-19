@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.model.Auction;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import java.sql.Connection;
@@ -33,7 +34,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             statement.executeUpdate();
             return auction;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc auction", exception);
+            throw new DatabaseException("Khong luu duoc auction", exception);
         }
     }
 
@@ -46,7 +47,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return resultSet.next() ? Optional.of(mapAuction(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc auction", exception);
+            throw new DatabaseException("Khong doc duoc auction", exception);
         }
     }
 
@@ -66,7 +67,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return auctions;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach auction theo trang thai", exception);
+            throw new DatabaseException("Khong doc duoc danh sach auction theo trang thai", exception);
         }
     }
 
@@ -150,7 +151,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return resultSet.next() ? Optional.of(mapAuction(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong tim duoc auction moi nhat cua seller: " + sellerId, exception);
+            throw new DatabaseException("Khong tim duoc auction moi nhat cua seller: " + sellerId, exception);
         }
     }
 
@@ -161,7 +162,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             statement.setString(1, uuid(auctionId));
             statement.executeUpdate();
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong xoa duoc auction", exception);
+            throw new DatabaseException("Khong xoa duoc auction", exception);
         }
     }
 
@@ -183,7 +184,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             }
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc so luong auction cho seller: " + sellerId, exception);
+            throw new DatabaseException("Khong dem duoc so luong auction cho seller: " + sellerId, exception);
         }
     }
 
@@ -201,7 +202,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
             }
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc so luong auction đang chạy", exception);
+            throw new DatabaseException("Khong dem duoc so luong auction đang chạy", exception);
         }
     }
 
@@ -226,7 +227,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return Optional.of(mapAuction(resultSet));
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Lỗi khi tìm phiên đấu giá đông nhất", exception);
+            throw new DatabaseException("Lỗi khi tìm phiên đấu giá đông nhất", exception);
         }
         return Optional.empty();
     }
@@ -247,7 +248,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return Optional.of(mapAuction(resultSet));
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Lỗi khi tìm phiên đấu giá sắp hết hạn", exception);
+            throw new DatabaseException("Lỗi khi tìm phiên đấu giá sắp hết hạn", exception);
         }
         return Optional.empty();
     }
@@ -280,7 +281,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return auctions;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach auction", exception);
+            throw new DatabaseException("Khong doc duoc danh sach auction", exception);
         }
     }
 
@@ -297,7 +298,7 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 return summaries;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach auction summary", exception);
+            throw new DatabaseException("Khong doc duoc danh sach auction summary", exception);
         }
     }
 

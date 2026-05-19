@@ -6,6 +6,7 @@ import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -155,7 +156,7 @@ public class DashboardController implements Initializable {
             loadStatDataFromServer();
             show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppException("Không thể khởi tạo dashboard", e);
         }
 
         loadFeaturedAuctionsFromServer();

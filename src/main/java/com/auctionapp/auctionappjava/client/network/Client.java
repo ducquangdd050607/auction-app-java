@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.network;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.exception.NetworkException;
 import javafx.application.Platform;
 
 import java.io.ObjectInputStream;
@@ -67,7 +68,7 @@ public class Client {
     // Hàm dùng chung cho mọi Controller để gửi Request và lấy Response
     public synchronized Response sendRequest(Request request) throws Exception {
         if (socket == null || socket.isClosed()) {
-            throw new Exception("Chưa kết nối đến máy chủ!");
+            throw new NetworkException("Chưa kết nối đến máy chủ!");
         }
 
         // Ném gói tin lên Server

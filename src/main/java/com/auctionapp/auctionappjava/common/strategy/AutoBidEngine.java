@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.common.strategy;
 
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public class AutoBidEngine {
                                                     BigDecimal currentPrice,
                                                     UUID currentLeaderId) {
         if (defaultIncrement == null || defaultIncrement.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Default increment must be greater than zero");
+            throw new ValidationException("Default increment must be greater than zero");
         }
 
         List<BidCandidate> bidList = new ArrayList<>();

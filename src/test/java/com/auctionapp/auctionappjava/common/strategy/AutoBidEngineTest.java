@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.common.strategy;
 
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -150,7 +151,7 @@ public class AutoBidEngineTest {
          * defaultIncrement la buoc gia toi thieu cua phien dau gia.
          * Neu <= 0 thi dau gia khong co cach tinh gia tiep theo hop le.
          */
-        assertThrows(IllegalArgumentException.class, () -> engine.calculateNextBid(
+        assertThrows(ValidationException.class, () -> engine.calculateNextBid(
                 List.of(),
                 BigDecimal.ZERO,
                 new BigDecimal("100"),

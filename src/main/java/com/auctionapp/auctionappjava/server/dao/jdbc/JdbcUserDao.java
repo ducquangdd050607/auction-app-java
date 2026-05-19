@@ -3,6 +3,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
 import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
@@ -37,7 +38,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             statement.executeUpdate();
             return user;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc user", exception);
+            throw new DatabaseException("Khong luu duoc user", exception);
         }
     }
     @Override
@@ -49,7 +50,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
                 return resultSet.next() ? Optional.of(mapWallet(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc wallet", exception);
+            throw new DatabaseException("Khong doc duoc wallet", exception);
         }
     }
     @Override
@@ -79,7 +80,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             statement.executeUpdate();
             return wallet;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc wallet", exception);
+            throw new DatabaseException("Khong luu duoc wallet", exception);
         }
     }
 
@@ -109,7 +110,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             statement.executeUpdate();
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong cap nhat duoc trang thai active cua user", exception);
+            throw new DatabaseException("Khong cap nhat duoc trang thai active cua user", exception);
         }
     }
 
@@ -129,7 +130,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             }
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc so luong users active", exception);
+            throw new DatabaseException("Khong dem duoc so luong users active", exception);
         }
     }
 
@@ -140,7 +141,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
                 return resultSet.next() ? Optional.of(mapUser(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc user", exception);
+            throw new DatabaseException("Khong doc duoc user", exception);
         }
     }
 
@@ -243,7 +244,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             }
             return users;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach user detail", exception);
+            throw new DatabaseException("Khong doc duoc danh sach user detail", exception);
         }
     }
 
@@ -259,7 +260,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             return users;
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach user", exception);
+            throw new DatabaseException("Khong doc duoc danh sach user", exception);
         }
     }
 
@@ -298,7 +299,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             }
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new IllegalStateException(e);
+            throw new DatabaseException("Khong cap nhat duoc user", e);
         }
     }
     private Wallet mapWallet(ResultSet resultSet) throws SQLException {

@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.model.Item;
 import com.auctionapp.auctionappjava.server.dao.AuctionItemDao;
@@ -43,7 +44,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
             statement.executeUpdate();
             return item;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc item", exception);
+            throw new DatabaseException("Khong luu duoc item", exception);
         }
     }
 
@@ -56,7 +57,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 return resultSet.next() ? Optional.of(mapItem(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc item", exception);
+            throw new DatabaseException("Khong doc duoc item", exception);
         }
     }
 
@@ -74,7 +75,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 return resultSet.next() ? Optional.of(mapItemWithoutImage(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc item", exception);
+            throw new DatabaseException("Khong doc duoc item", exception);
         }
     }
 
@@ -104,7 +105,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 return Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc anh san pham cua auction: " + auctionId, exception);
+            throw new DatabaseException("Khong doc duoc anh san pham cua auction: " + auctionId, exception);
         }
     }
 
@@ -121,7 +122,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 return items;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach item", exception);
+            throw new DatabaseException("Khong doc duoc danh sach item", exception);
         }
     }
 
@@ -149,7 +150,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
                 return Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Lỗi khi tìm Item từ Auction ID: " + auctionId, exception);
+            throw new DatabaseException("Lỗi khi tìm Item từ Auction ID: " + auctionId, exception);
         }
     }
 
@@ -160,7 +161,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
             statement.setString(1, uuid(itemId));
             statement.executeUpdate();
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong xoa duoc item", exception);
+            throw new DatabaseException("Khong xoa duoc item", exception);
         }
     }
 
@@ -170,7 +171,7 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong xoa duoc item", exception);
+            throw new DatabaseException("Khong xoa duoc item", exception);
         }
     }
 

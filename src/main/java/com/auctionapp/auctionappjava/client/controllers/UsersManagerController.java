@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -120,7 +121,7 @@ public class UsersManagerController implements Initializable {
         try {
             show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppException("Không thể khởi tạo màn hình quản lý người dùng", e);
         }
 
         setupRowDoubleClick();

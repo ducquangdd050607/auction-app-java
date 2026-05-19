@@ -142,8 +142,11 @@ public class AddItemController implements Initializable {
 
         try {
             startingPrice = new BigDecimal(priceText);
-            if (startingPrice.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
+            lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
+            return;
+        }
+        if (startingPrice.compareTo(BigDecimal.ZERO) <= 0) {
             lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
             return;
         }

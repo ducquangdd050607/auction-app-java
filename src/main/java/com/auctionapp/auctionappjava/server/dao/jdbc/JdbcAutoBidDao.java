@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
 import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
 import java.sql.Connection;
@@ -34,7 +35,7 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
             statement.executeUpdate();
             return config;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc auto-bid", exception);
+            throw new DatabaseException("Khong luu duoc auto-bid", exception);
         }
     }
 
@@ -48,7 +49,7 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
                 return resultSet.next() ? Optional.of(mapConfig(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc auto-bid", exception);
+            throw new DatabaseException("Khong doc duoc auto-bid", exception);
         }
     }
 
@@ -65,7 +66,7 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
                 return configs;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach auto-bid", exception);
+            throw new DatabaseException("Khong doc duoc danh sach auto-bid", exception);
         }
     }
 
@@ -76,7 +77,7 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
             statement.setString(1, uuid(auctionId));
             statement.executeUpdate();
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong xoa duoc auto-bid", exception);
+            throw new DatabaseException("Khong xoa duoc auto-bid", exception);
         }
     }
     @Override
@@ -97,7 +98,7 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
             statement.executeUpdate();
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong the tat auto-bid cua user", exception);
+            throw new DatabaseException("Khong the tat auto-bid cua user", exception);
         }
     }
 

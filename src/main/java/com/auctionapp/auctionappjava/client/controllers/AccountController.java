@@ -4,6 +4,7 @@ import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.LoginResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -57,7 +58,7 @@ public class AccountController implements Initializable {
             getLatestBalanceFromServer();
             show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppException("Không thể khởi tạo màn hình tài khoản", e);
         }
     }
 

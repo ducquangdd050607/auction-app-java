@@ -4,6 +4,7 @@ import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.common.dto.RegisterRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -124,7 +125,7 @@ public class RegisterController {
                             isRegister = true;
                             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            throw new AppException("Không thể chuyển sang màn hình đăng nhập", e);
                         }
                     } else {
                         btnConfirm.setDisable(false);

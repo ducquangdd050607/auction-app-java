@@ -3,6 +3,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
 
@@ -37,7 +38,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             statement.executeUpdate();
             return bidTransaction;
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong luu duoc bid", exception);
+            throw new DatabaseException("Khong luu duoc bid", exception);
         }
     }
 
@@ -54,7 +55,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return bids;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach bid", exception);
+            throw new DatabaseException("Khong doc duoc danh sach bid", exception);
         }
     }
 
@@ -76,7 +77,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return resultSet.next() ? Optional.of(mapBid(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong tim duoc bid moi nhat cua bidder: " + bidderId, exception);
+            throw new DatabaseException("Khong tim duoc bid moi nhat cua bidder: " + bidderId, exception);
         }
     }
 
@@ -94,7 +95,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return resultSet.next() ? Optional.of(mapBid(resultSet)) : Optional.empty();
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong tim thay bid cao nhat cua phien dau gia", exception);
+            throw new DatabaseException("Khong tim thay bid cao nhat cua phien dau gia", exception);
         }
     }
 
@@ -115,7 +116,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return bidHistory;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Không thể tải lịch sử đặt giá của bidder: " + bidderId, exception);
+            throw new DatabaseException("Không thể tải lịch sử đặt giá của bidder: " + bidderId, exception);
         }
     }
 
@@ -133,7 +134,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return transactions;
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong doc duoc danh sach auction", exception);
+            throw new DatabaseException("Khong doc duoc danh sach auction", exception);
         }
     }
 
@@ -176,7 +177,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return result;
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Khong tai duoc lich su dau gia cua bidder", e);
+            throw new DatabaseException("Khong tai duoc lich su dau gia cua bidder", e);
         }
     }
 
@@ -218,7 +219,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
 
             return result;
         } catch (SQLException e) {
-            throw new IllegalStateException("Khong tai duoc toan bo lich su dau gia", e);
+            throw new DatabaseException("Khong tai duoc toan bo lich su dau gia", e);
         }
     }
     @Override
@@ -257,7 +258,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return result;
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Khong tai duoc bang xep hang bid", e);
+            throw new DatabaseException("Khong tai duoc bang xep hang bid", e);
         }
     }
 
@@ -289,7 +290,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             }
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc so luong auction cho bidder_id: " + bidderId, exception);
+            throw new DatabaseException("Khong dem duoc so luong auction cho bidder_id: " + bidderId, exception);
         }
     }
 
@@ -312,7 +313,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             }
 
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc so luong  bidder cho auction_id: " + auctionId, exception);
+            throw new DatabaseException("Khong dem duoc so luong  bidder cho auction_id: " + auctionId, exception);
         }
     }
 
@@ -323,7 +324,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             statement.setString(1, uuid(auctionId));
             statement.executeUpdate();
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong xoa duoc bid", exception);
+            throw new DatabaseException("Khong xoa duoc bid", exception);
         }
     }
 
@@ -335,7 +336,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
                 return resultSet.getLong(1);
             }
         } catch (SQLException exception) {
-            throw new IllegalStateException("Khong dem duoc bid", exception);
+            throw new DatabaseException("Khong dem duoc bid", exception);
         }
     }
 

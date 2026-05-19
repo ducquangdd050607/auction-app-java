@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.event.ActionEvent;
@@ -103,7 +104,7 @@ public class NavigatorController implements Initializable {
         try {
             show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppException("Không thể khởi tạo điều hướng", e);
         } finally {
             // Hàm fire() có tác dụng sẽ bấm thẳng vào nút được fire ngay khi load (initialize) scene hiện tại
             btnDashboard.fire();
@@ -365,7 +366,7 @@ public class NavigatorController implements Initializable {
                 RegisterController.isRegister = false;
                 SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new AppException("Không thể đăng xuất", e);
             }
         };
 

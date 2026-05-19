@@ -3,6 +3,7 @@ package com.auctionapp.auctionappjava.server.service;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.exception.NotFoundException;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
 import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
@@ -122,7 +123,7 @@ public class UserService {
         try {
             // 1. Tìm User đó
             User user = userDao.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng này"));
             // 2. Thay đổi dữ liệu
 
             user.setFullName(newFullName);
@@ -143,7 +144,7 @@ public class UserService {
 
         try {
             User user = userDao.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng này"));
 
             user.setPasswordSalt(PasswordUtils.generateSalt());
             user.setPasswordHash(PasswordUtils.hashPassword(newPassword, user.getPasswordSalt()));
