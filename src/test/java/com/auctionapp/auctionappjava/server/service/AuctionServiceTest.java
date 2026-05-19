@@ -4,6 +4,7 @@ import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
+import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.*;
 import com.auctionapp.auctionappjava.server.dao.*;
@@ -190,6 +191,21 @@ public class AuctionServiceTest {
         @Override public void updatePassword(UUID id, String hash, String salt) {}
         @Override public void updateActiveStatus(UUID id, boolean isActive) {}
         @Override public List<User> findAll() { return new ArrayList<>(users.values()); }
+        @Override public List<UserDetailResponse> findAllDetails() {
+            List<UserDetailResponse> result = new ArrayList<>();
+            for (User user : users.values()) {
+                result.add(new UserDetailResponse(
+                        user.getId().toString(),
+                        "Test",
+                        user.getFullName(),
+                        user.getRole().name(),
+                        findWalletByUserId(user.getId()).map(Wallet::getBalance).orElse(BigDecimal.ZERO),
+                        user.isActive(),
+                        0
+                ));
+            }
+            return result;
+        }
         @Override public long countUsersActive() {
             return users.values().stream()
                     .filter(User::isActive)
