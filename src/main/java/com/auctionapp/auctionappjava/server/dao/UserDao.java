@@ -28,4 +28,6 @@ public interface UserDao {
     Wallet saveWallet(Wallet wallet);
 
     Optional<Wallet> findWalletByUserId(UUID userId);
+
+    long countUsersActive();
 }

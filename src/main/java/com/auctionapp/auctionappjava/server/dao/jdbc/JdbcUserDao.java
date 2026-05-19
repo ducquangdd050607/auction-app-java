@@ -111,6 +111,27 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             throw new IllegalStateException("Khong cap nhat duoc trang thai active cua user", exception);
         }
     }
+
+    @Override
+    public long countUsersActive() {
+        String sql = "SELECT COUNT(DISTINCT id) FROM users WHERE active = 1";
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // Set giá trị id của phiên đấu giá (nhớ parse UUID sang String vì DB bạn dùng VARCHAR(36))
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1); // Lấy kết quả đếm được trả về
+                }
+                return 0L; // Trả về 0 nếu chưa có ai đặt giá
+            }
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc so luong users active", exception);
+        }
+    }
+
     private Optional<User> findUser(String sql, String value) {
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, value);
@@ -142,6 +163,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             throw new IllegalStateException("Khong doc duoc danh sach user", exception);
         }
     }
+
 
     private void bindUser(PreparedStatement statement, User user) throws SQLException {
         statement.setString(1, uuid(user.getId()));

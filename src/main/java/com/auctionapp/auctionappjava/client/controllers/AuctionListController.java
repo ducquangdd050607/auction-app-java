@@ -547,10 +547,6 @@ public class AuctionListController implements Initializable {
                     "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
             Parent root = loader.load();
 
-            // Truyền dữ liệu sang màn hình con
-//            AuctionDetailController ctrl = loader.getController();
-//            ctrl.loadAuctionData(auction);
-
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Chi tiết: " + auction.itemName());
@@ -587,7 +583,9 @@ public class AuctionListController implements Initializable {
             stage.showAndWait();
 
         }
-    } private ImageView getWarnedView() throws IOException {
+    }
+
+    private ImageView getWarnedView() throws IOException {
         Image warningImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Koconut.png")));
         ImageView warningView = new ImageView(warningImage);
         warningView.setPreserveRatio(true);

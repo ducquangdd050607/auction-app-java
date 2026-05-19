@@ -32,4 +32,5 @@ public interface AuctionDao {
 
     void deleteById(UUID auctionId);
 
+    long countRunningAuctions();
 }

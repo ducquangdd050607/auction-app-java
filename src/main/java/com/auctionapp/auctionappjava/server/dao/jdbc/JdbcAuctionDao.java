@@ -188,6 +188,24 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
     }
 
     @Override
+    public long countRunningAuctions() {
+        String sql = "SELECT COUNT(*) FROM auctions WHERE status = 'RUNNING'";
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1); // Lấy kết quả đếm được trả về
+                }
+                return 0L; // Trả về 0 nếu chưa có ai đặt giá
+            }
+
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong dem duoc so luong auction đang chạy", exception);
+        }
+    }
+
+    @Override
     public Optional<Auction> findMostBiddedAuction() {
         // JOIN với bảng bids, GROUP BY để đếm người tham gia (DISTINCT),
         // ORDER BY để đưa ông cao nhất lên đầu và LIMIT 1.
