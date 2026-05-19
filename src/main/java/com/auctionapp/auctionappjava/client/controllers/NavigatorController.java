@@ -39,6 +39,9 @@ import java.util.regex.Pattern;
 
 public class NavigatorController implements Initializable {
 
+    private static final String FAQ_INTRO_MESSAGE =
+            "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.";
+
     private Stage stage;
     private static NavigatorController instance;
     public static String modeName;
@@ -115,7 +118,7 @@ public class NavigatorController implements Initializable {
         chatbotPanel.setVisible(false);
         chatbotPanel.setManaged(false);
         chatbotToggleButton.setText("☁");
-        addBotMessage("Xin chào! Tôi có thể hỗ trợ bạn về đăng ký, đăng nhập, đấu giá, nạp tiền và quản lý tài khoản.");
+        addBotMessage(FAQ_INTRO_MESSAGE);
         renderQuickQuestions();
     }
 
@@ -135,6 +138,7 @@ public class NavigatorController implements Initializable {
     void sendChatMessage(ActionEvent event) {
         String question = chatInput.getText();
         if (question == null || question.trim().isEmpty()) {
+            addBotMessage(FAQ_INTRO_MESSAGE);
             return;
         }
 
@@ -191,6 +195,10 @@ public class NavigatorController implements Initializable {
     }
 
     private String findAnswer(String question) {
+        if (question == null || question.trim().isEmpty()) {
+            return FAQ_INTRO_MESSAGE;
+        }
+
         String normalizedQuestion = normalize(question);
         ChatbotAnswer bestAnswer = null;
         int bestScore = 0;
@@ -207,7 +215,7 @@ public class NavigatorController implements Initializable {
             return bestAnswer.answer();
         }
 
-        return "Tôi chưa có câu trả lời phù hợp. Bạn có thể hỏi về đăng ký, đăng nhập, đấu giá, nạp tiền, lịch sử hoặc tài khoản.";
+        return FAQ_INTRO_MESSAGE;
     }
 
     private int scoreAnswer(String normalizedQuestion, ChatbotAnswer answer) {

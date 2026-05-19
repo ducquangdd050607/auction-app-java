@@ -1,52 +1,207 @@
 [
   {
-    "question": "Làm sao để đăng ký tài khoản?",
-    "answer": "Ở màn hình đầu, bấm Đăng kí, nhập thông tin bắt buộc rồi xác nhận. Sau khi đăng ký thành công, bạn có thể đăng nhập bằng tài khoản vừa tạo.",
-    "keywords": ["đăng ký", "dang ky", "tạo tài khoản", "tai khoan", "register"]
+    "question": "Giới thiệu trợ lý FAQ",
+    "answer": "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.",
+    "keywords": ["giới thiệu", "gioi thieu", "faq", "chatbot", "trợ lý", "tro ly", "hỗ trợ", "ho tro", "help"]
   },
   {
-    "question": "Làm sao để đăng nhập?",
-    "answer": "Bấm Đăng nhập ở màn hình chính, nhập tên đăng nhập và mật khẩu. Nếu thông tin đúng, hệ thống sẽ chuyển bạn vào màn hình phù hợp với vai trò.",
-    "keywords": ["đăng nhập", "dang nhap", "login", "mật khẩu", "mat khau"]
+    "question": "Tôi xem danh sách đấu giá ở đâu?",
+    "answer": "Chọn mục Danh sách đấu giá ở menu bên trái. Màn hình này hiển thị các phiên đấu giá, trạng thái, giá khởi điểm, giá hiện tại, bước giá tối thiểu và số người tham gia.",
+    "keywords": ["danh sách", "danh sach", "đấu giá", "dau gia", "phiên đấu giá", "phien dau gia", "auction list"]
   },
   {
-    "question": "Tôi muốn xem danh sách đấu giá ở đâu?",
-    "answer": "Sau khi đăng nhập, chọn mục Danh sách đấu giá ở thanh menu bên trái để xem các phiên đấu giá hiện có.",
-    "keywords": ["danh sách", "danh sach", "đấu giá", "dau gia", "phiên đấu giá", "phien dau gia"]
+    "question": "Tôi có thể lọc hoặc tìm phiên đấu giá không?",
+    "answer": "Có. Ở màn hình Danh sách đấu giá, bạn có thể tìm theo tên sản phẩm và lọc theo trạng thái hoặc thể loại như nghệ thuật, điện tử, phương tiện.",
+    "keywords": ["lọc danh sách", "loc danh sach", "tìm phiên", "tim phien", "search auction", "lọc trạng thái", "loc trang thai", "lọc thể loại", "loc the loai"]
   },
   {
-    "question": "Cách tham gia một phiên đấu giá?",
-    "answer": "Vào Danh sách đấu giá, chọn phiên bạn quan tâm để xem chi tiết. Nếu đủ điều kiện, bạn có thể đặt giá hoặc xác nhận tham gia theo giao diện của phiên đó.",
-    "keywords": ["tham gia", "đặt giá", "dat gia", "bid", "bidding", "phiên"]
+    "question": "Các trạng thái phiên đấu giá có ý nghĩa gì?",
+    "answer": "OPEN là phiên đã tạo nhưng chưa tới giờ bắt đầu, RUNNING là phiên đang diễn ra và có thể đặt giá, FINISHED là phiên đã kết thúc.",
+    "keywords": ["open", "running", "finished", "trạng thái", "trang thai", "mở", "dang dien ra", "kết thúc"]
+  },
+  {
+    "question": "Tôi xem chi tiết sản phẩm đấu giá như thế nào?",
+    "answer": "Nhấp đúp vào một phiên trong danh sách để mở chi tiết. Màn hình chi tiết hiển thị tên sản phẩm, thể loại, mô tả, giá, bước giá, trạng thái, thời gian kết thúc và ảnh sản phẩm nếu có.",
+    "keywords": ["chi tiết", "chi tiet", "chi tiết sản phẩm", "chi tiet san pham", "mô tả sản phẩm", "mo ta san pham", "màn hình chi tiết", "man hinh chi tiet"]
+  },
+  {
+    "question": "Làm sao phóng to ảnh sản phẩm?",
+    "answer": "Trong màn hình chi tiết phiên đấu giá, bấm vào ảnh sản phẩm để mở cửa sổ xem ảnh lớn hơn. Bấm vào cửa sổ ảnh để đóng lại.",
+    "keywords": ["phóng to", "phong to", "ảnh sản phẩm", "anh san pham", "xem ảnh", "zoom"]
+  },
+  {
+    "question": "Cách đặt giá trong một phiên đấu giá?",
+    "answer": "Mở chi tiết phiên đang RUNNING rồi bấm Đặt cược. Nhập số tiền muốn đặt, kiểm tra giá hiện tại, bước giá tối thiểu và số dư ví trước khi xác nhận.",
+    "keywords": ["đặt giá", "dat gia", "đặt cược", "dat cuoc", "bid", "bidding", "tham gia"]
+  },
+  {
+    "question": "Vì sao tôi không đặt giá được?",
+    "answer": "Bạn có thể không đặt được nếu phiên chưa chạy hoặc đã kết thúc, giá đặt thấp hơn giá hiện tại cộng bước giá tối thiểu, hoặc số dư ví không đủ.",
+    "keywords": ["không đặt được", "khong dat duoc", "lỗi đặt giá", "loi dat gia", "không đủ tiền", "khong du tien", "giá đặt thấp", "gia dat thap"]
+  },
+  {
+    "question": "Bước giá tối thiểu là gì?",
+    "answer": "Bước giá tối thiểu là số tiền tối thiểu phải cộng thêm so với giá hiện tại. Ví dụ giá hiện tại là 1.000.000 và bước giá là 50.000 thì giá đặt tiếp theo phải từ 1.050.000 trở lên.",
+    "keywords": ["bước giá", "buoc gia", "minimum increment", "min increment", "giá tối thiểu", "gia toi thieu"]
+  },
+  {
+    "question": "Auto-bid hoạt động như thế nào?",
+    "answer": "Khi đặt giá, bạn có thể bật auto-bid, nhập bước tự đặt và mức tối đa. Hệ thống sẽ tự đặt giá trong giới hạn bạn cấu hình để cạnh tranh với các người đặt giá khác.",
+    "keywords": ["auto-bid", "autobid", "tự đặt", "tu dat", "đấu giá tự động", "dau gia tu dong"]
+  },
+  {
+    "question": "Điều kiện cấu hình auto-bid là gì?",
+    "answer": "Mức tối đa của auto-bid phải không thấp hơn giá bạn đang đặt, và bước auto-bid phải từ bước giá tối thiểu của phiên trở lên.",
+    "keywords": ["cấu hình auto-bid", "cau hinh auto bid", "max auto", "bước auto", "buoc auto", "tối đa"]
+  },
+  {
+    "question": "Số dư ví thay đổi thế nào khi đặt giá?",
+    "answer": "Khi đặt giá thành công, số tiền đặt sẽ bị trừ khỏi ví. Nếu bạn đang dẫn đầu rồi bị người khác vượt giá, hệ thống hoàn lại số tiền đã giữ cho bạn.",
+    "keywords": ["số dư khi đặt giá", "so du khi dat gia", "ví khi bid", "vi khi bid", "hoàn tiền", "hoan tien", "trừ tiền", "tru tien"]
+  },
+  {
+    "question": "Tôi nạp tiền vào ví ở đâu?",
+    "answer": "Vào Tài khoản rồi chọn Nạp tiền. Nhập số tiền hoặc chọn mức gợi ý, sau đó xác nhận để cập nhật số dư ví.",
+    "keywords": ["nạp tiền", "nap tien", "deposit", "nạp ví", "nap vi", "wallet deposit", "cập nhật số dư", "cap nhat so du"]
+  },
+  {
+    "question": "Số tiền nạp tối thiểu là bao nhiêu?",
+    "answer": "Màn hình nạp tiền yêu cầu số tiền nạp tối thiểu là 10.000 VND.",
+    "keywords": ["nạp tối thiểu", "nap toi thieu", "10000", "10.000", "minimum deposit"]
   },
   {
     "question": "Tôi xem lịch sử đấu giá như thế nào?",
-    "answer": "Chọn mục Lịch sử đấu giá ở menu bên trái. Màn hình này hiển thị các phiên và giao dịch đấu giá đã liên quan đến tài khoản của bạn.",
-    "keywords": ["lịch sử", "lich su", "history", "giao dịch", "giao dich"]
+    "answer": "Chọn mục Lịch sử đấu giá ở menu bên trái. Bidder xem các phiên mình đã đặt giá, còn Admin có thể xem danh sách giao dịch đấu giá.",
+    "keywords": ["lịch sử", "lich su", "history", "giao dịch", "giao dich", "transaction"]
   },
   {
-    "question": "Tôi thay đổi thông tin tài khoản ở đâu?",
-    "answer": "Chọn Tài khoản ở cuối menu bên trái, sau đó dùng chức năng đổi thông tin hoặc đổi mật khẩu nếu tài khoản của bạn được phép thao tác.",
-    "keywords": ["tài khoản", "tai khoan", "thông tin", "thong tin", "đổi mật khẩu", "doi mat khau"]
+    "question": "Lịch sử đấu giá có lọc được không?",
+    "answer": "Có. Màn hình lịch sử cho phép tìm kiếm theo tên sản phẩm, lọc theo trạng thái và lọc theo thể loại. Với Admin, ô tìm kiếm còn có thể khớp tên người đặt giá.",
+    "keywords": ["lọc lịch sử", "loc lich su", "tìm lịch sử", "tim lich su", "history filter", "bidder name"]
   },
   {
-    "question": "Người bán quản lý vật phẩm thế nào?",
-    "answer": "Nếu đăng nhập với vai trò Seller, bạn sẽ thấy mục Quản lý vật phẩm trong menu. Tại đó bạn có thể xem và thao tác với các vật phẩm đấu giá của mình.",
-    "keywords": ["seller", "người bán", "nguoi ban", "vật phẩm", "vat pham", "quản lý vật phẩm"]
+    "question": "Bảng xếp hạng đặt giá nằm ở đâu?",
+    "answer": "Trong màn hình chi tiết phiên đấu giá, bấm Bảng xếp hạng để xem thứ hạng người đặt giá, số tiền, thời gian đặt và giao dịch có phải auto-bid hay không.",
+    "keywords": ["bảng xếp hạng", "bang xep hang", "ranking", "xếp hạng", "rank", "top bid"]
   },
   {
-    "question": "Admin quản lý người dùng ở đâu?",
-    "answer": "Nếu đăng nhập với vai trò Admin, chọn Quản lý Users trong menu bên trái để xem và quản lý danh sách người dùng.",
-    "keywords": ["admin", "quản lý user", "quan ly user", "người dùng", "nguoi dung", "users"]
+    "question": "Người bán thêm vật phẩm đấu giá như thế nào?",
+    "answer": "Với vai trò Seller, vào Quản lý vật phẩm rồi chọn thêm sản phẩm. Nhập tên, giá khởi điểm, bước giá, thời gian mở, thời gian kết thúc, thể loại và ảnh nếu có.",
+    "keywords": ["seller", "người bán", "nguoi ban", "thêm vật phẩm", "them vat pham", "thêm sản phẩm", "add item"]
   },
   {
-    "question": "Làm sao để đăng xuất?",
-    "answer": "Bấm Sign out ở góc trên bên phải. Hệ thống sẽ hỏi xác nhận trước khi đăng xuất tài khoản hiện tại.",
-    "keywords": ["đăng xuất", "dang xuat", "sign out", "logout", "thoát tài khoản"]
+    "question": "Các thể loại vật phẩm được hỗ trợ là gì?",
+    "answer": "App đang hỗ trợ các thể loại Nghệ thuật, Điện tử và Phương tiện. Mỗi thể loại có thêm các thông tin phụ phù hợp với sản phẩm.",
+    "keywords": ["thể loại", "the loai", "nghệ thuật", "nghe thuat", "điện tử", "dien tu", "phương tiện", "phuong tien"]
+  },
+  {
+    "question": "Khi thêm vật phẩm cần nhập thời gian thế nào?",
+    "answer": "Thời gian cần nhập theo định dạng dd/MM/yyyy HH:mm. Thời điểm kết thúc phải sau thời điểm mở và phải sau thời điểm hiện tại.",
+    "keywords": ["thời gian", "thoi gian", "ngày giờ", "ngay gio", "dd/MM/yyyy", "ngày kết thúc", "ngay ket thuc"]
+  },
+  {
+    "question": "Tôi có thể thêm ảnh sản phẩm không?",
+    "answer": "Có. Khi thêm vật phẩm, chọn ảnh định dạng png, jpg, jpeg hoặc gif. App sẽ hiển thị ảnh xem trước và nén ảnh trước khi gửi lên server.",
+    "keywords": ["ảnh", "anh", "upload ảnh", "upload anh", "png", "jpg", "jpeg", "gif"]
+  },
+  {
+    "question": "Seller xóa phiên đấu giá ở đâu?",
+    "answer": "Trong màn hình Quản lý vật phẩm hoặc danh sách dành cho Seller, bật thao tác xóa rồi chọn phiên cần xóa. App sẽ hỏi xác nhận trước khi xóa.",
+    "keywords": ["xóa", "xoa", "xóa phiên", "xoa phien", "remove auction", "quản lý vật phẩm"]
+  },
+  {
+    "question": "Admin quản lý người dùng như thế nào?",
+    "answer": "Với vai trò Admin, chọn Quản lý Users trong menu. Admin có thể xem danh sách người dùng, vai trò, số dư, trạng thái hoạt động và số liệu liên quan.",
+    "keywords": ["admin", "quản lý user", "quan ly user", "người dùng", "nguoi dung", "users", "active"]
+  },
+  {
+    "question": "Admin có thể khóa người dùng không?",
+    "answer": "Có. Trong Quản lý Users, Admin có thể đổi trạng thái active của người dùng để ban hoặc unban. Tài khoản Admin không thể bị chặn.",
+    "keywords": ["ban", "unban", "khóa người dùng", "khoa nguoi dung", "chặn", "chan", "active status"]
+  },
+  {
+    "question": "Tôi đổi thông tin tài khoản ở đâu?",
+    "answer": "Vào Tài khoản rồi chọn chức năng đổi thông tin để cập nhật họ tên hoặc email.",
+    "keywords": ["tài khoản", "tai khoan", "đổi thông tin", "doi thong tin", "họ tên", "ho ten", "email"]
+  },
+  {
+    "question": "Tôi đổi mật khẩu ở đâu?",
+    "answer": "Vào Tài khoản rồi chọn Đổi mật khẩu. Sau khi đổi thành công, app lưu mật khẩu dưới dạng băm kèm salt, không lưu mật khẩu thô.",
+    "keywords": ["đổi mật khẩu", "doi mat khau", "password", "mật khẩu", "mat khau", "salt", "hash"]
+  },
+  {
+    "question": "Dashboard hiển thị những gì?",
+    "answer": "Dashboard hiển thị lời chào, số dư ví, một số chỉ số theo vai trò và các phiên đấu giá nổi bật như phiên đông người đặt giá hoặc sắp hết hạn.",
+    "keywords": ["dashboard", "trang chủ", "trang chu", "thống kê", "thong ke", "nổi bật", "noi bat"]
+  },
+  {
+    "question": "App có cập nhật realtime không?",
+    "answer": "Có. Khi có giá mới, phiên mới hoặc thay đổi số dư do hoàn tiền, server có thể đẩy cập nhật realtime để giao diện làm mới dữ liệu liên quan.",
+    "keywords": ["realtime", "cập nhật realtime", "cap nhat realtime", "server push", "refresh realtime", "làm mới tự động", "lam moi tu dong"]
+  },
+  {
+    "question": "Nếu tôi đặt giá sát giờ kết thúc thì sao?",
+    "answer": "App có cơ chế anti-sniping: nếu có bid trong khoảng cuối phiên, thời gian kết thúc có thể được gia hạn thêm để những người khác còn cơ hội phản hồi.",
+    "keywords": ["anti-sniping", "antisniping", "sát giờ", "sat gio", "gia hạn", "gia han", "cuối phiên", "cuoi phien"]
+  },
+  {
+    "question": "Phiên đấu giá tự mở và tự đóng như thế nào?",
+    "answer": "Server đặt lịch cho từng phiên. Khi tới thời gian bắt đầu, phiên OPEN chuyển sang RUNNING; khi tới thời gian kết thúc, phiên RUNNING chuyển sang FINISHED.",
+    "keywords": ["tự mở", "tu mo", "tự đóng", "tu dong", "schedule", "hẹn giờ", "hen gio", "open running finished"]
+  },
+  {
+    "question": "Khi phiên kết thúc thì người thắng được xác định thế nào?",
+    "answer": "Khi phiên RUNNING kết thúc, người đang dẫn đầu được ghi nhận là winner. Giá hiện tại của phiên là số tiền thắng cuộc.",
+    "keywords": ["người thắng", "nguoi thang", "winner", "kết thúc phiên", "ket thuc phien", "leading bidder"]
+  },
+  {
+    "question": "Seller nhận tiền khi nào?",
+    "answer": "Khi phiên kết thúc và có người thắng, server cộng số tiền thắng cuộc vào ví của Seller và gửi cập nhật số dư realtime nếu Seller đang online.",
+    "keywords": ["seller nhận tiền", "seller nhan tien", "cộng tiền", "cong tien", "winner amount", "ví seller"]
+  },
+  {
+    "question": "Nếu tôi bị người khác vượt giá thì app báo gì?",
+    "answer": "Khi có bid mới cao hơn trên phiên bạn đang xem, app cập nhật giá realtime. Nếu bạn đang ở màn hình đặt giá và người đặt mới không phải bạn, app sẽ cảnh báo bạn đã bị vượt giá.",
+    "keywords": ["bị vượt giá", "bi vuot gia", "outbid", "cảnh báo", "canh bao", "giá mới", "gia moi"]
+  },
+  {
+    "question": "Server khởi động lại có mất lịch đấu giá không?",
+    "answer": "Không. Khi server khởi động, AuctionStatusService đọc lại các phiên chưa FINISHED và đặt lại lịch mở hoặc đóng phiên theo thời gian còn lại.",
+    "keywords": ["server restart", "khởi động lại", "khoi dong lai", "recover", "khôi phục", "khoi phuc", "lịch đấu giá"]
+  },
+  {
+    "question": "Dashboard thống kê khác nhau theo vai trò ra sao?",
+    "answer": "Bidder thấy số phiên đã tham gia đặt giá, Seller thấy số phiên đã tạo, Admin thấy số user active. Dashboard cũng hiển thị tổng số phiên đang RUNNING.",
+    "keywords": ["thống kê theo vai trò", "thong ke theo vai tro", "bidder seller admin", "running auctions", "chỉ số"]
+  },
+  {
+    "question": "Phiên nổi bật trên Dashboard được chọn thế nào?",
+    "answer": "Dashboard lấy các phiên RUNNING nổi bật như phiên có nhiều bidder nhất và phiên sắp hết hạn nhất để hiển thị nhanh cho người dùng.",
+    "keywords": ["phiên nổi bật", "phien noi bat", "featured", "nhiều bidder", "nhieu bidder", "sắp hết hạn", "sap het han"]
+  },
+  {
+    "question": "App lưu ảnh sản phẩm như thế nào?",
+    "answer": "Khi Seller chọn ảnh, client đọc dữ liệu ảnh, hiển thị preview rồi nén byte ảnh trước khi gửi lên server. Khi xem chi tiết, client tải ảnh về và giải nén để hiển thị.",
+    "keywords": ["lưu ảnh", "luu anh", "nén ảnh", "nen anh", "giải nén", "giai nen", "compression", "image data"]
+  },
+  {
+    "question": "Vì sao số người tham gia khác số lượt đặt giá?",
+    "answer": "Số người tham gia trong danh sách đấu giá được đếm theo bidder riêng biệt. Một người có thể đặt nhiều lần nhưng chỉ tính là một bidder trong chỉ số này.",
+    "keywords": ["số người tham gia", "so nguoi tham gia", "bidder count", "distinct bidder", "số lượt đặt", "so luot dat"]
+  },
+  {
+    "question": "Admin xem giao dịch khác Bidder như thế nào?",
+    "answer": "Bidder xem lịch sử các phiên của chính mình. Admin dùng màn hình giao dịch để xem lịch sử toàn hệ thống và có thêm cột tên người đặt giá.",
+    "keywords": ["admin giao dịch", "admin giao dich", "lịch sử toàn hệ thống", "lich su toan he thong", "bidder history"]
+  },
+  {
+    "question": "Điều gì xảy ra khi có phiên mới được đăng bán?",
+    "answer": "Sau khi Seller thêm vật phẩm thành công, server broadcast sự kiện phiên mới để các màn hình danh sách đang mở có thể làm mới dữ liệu.",
+    "keywords": ["phiên mới", "phien moi", "sản phẩm mới", "san pham moi", "new auction", "broadcast"]
   },
   {
     "question": "Tôi cần hỗ trợ vấn đề khác",
-    "answer": "Bạn hãy nhập câu hỏi cụ thể hơn, ví dụ: đăng nhập, đăng ký, đấu giá, lịch sử, tài khoản, seller hoặc admin.",
-    "keywords": ["hỗ trợ", "ho tro", "help", "trợ giúp", "tro giup"]
+    "answer": "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.",
+    "keywords": ["khác", "khac", "ngoài app", "ngoai app", "không liên quan", "khong lien quan"]
   }
 ]
