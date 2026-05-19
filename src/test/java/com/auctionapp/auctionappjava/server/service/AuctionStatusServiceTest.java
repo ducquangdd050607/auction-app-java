@@ -39,6 +39,11 @@ public class AuctionStatusServiceTest {
                     .min(Comparator.comparing(Auction::getEndTime));
         }
         @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
+        @Override public long countRunningAuctions() {
+            return store.values().stream()
+                    .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
+                    .count();
+        }
     }
 
     private FakeAuctionDao fakeAuctionDao;

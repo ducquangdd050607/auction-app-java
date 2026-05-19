@@ -43,6 +43,11 @@ public class AuctionServiceTest {
                     .min(Comparator.comparing(Auction::getEndTime));
         }
         @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
+        @Override public long countRunningAuctions() {
+            return store.values().stream()
+                    .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
+                    .count();
+        }
     }
 
     static class FakeItemDao implements AuctionItemDao {
@@ -185,6 +190,11 @@ public class AuctionServiceTest {
         @Override public void updatePassword(UUID id, String hash, String salt) {}
         @Override public void updateActiveStatus(UUID id, boolean isActive) {}
         @Override public List<User> findAll() { return new ArrayList<>(users.values()); }
+        @Override public long countUsersActive() {
+            return users.values().stream()
+                    .filter(User::isActive)
+                    .count();
+        }
 
         // helpers
         public void putUser(User u) { users.put(u.getId(), u); }
