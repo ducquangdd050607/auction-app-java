@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 
+import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
 import com.auctionapp.auctionappjava.common.model.User;
@@ -146,6 +147,104 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
     @Override
     public List<User> findAll() {
         return queryUsers("SELECT * FROM users ORDER BY created_at");
+    }
+
+    @Override
+    public List<UserDetailResponse> findAllDetails() {
+        String sql = """
+                SELECT
+                    u.id,
+                    u.full_name,
+                    u.role,
+                    COALESCE(w.balance, 0) AS balance,
+                    u.active,
+                    CASE
+                        WHEN u.role = 'BIDDER' THEN COALESCE(bidder_stats.latest_item_title, 'Acc moi chua cuoc')
+                        WHEN u.role = 'SELLER' THEN COALESCE(seller_stats.latest_item_title, 'Acc moi chua tao')
+                        ELSE 'Admin'
+                    END AS latest_item_title,
+                    CASE
+                        WHEN u.role = 'BIDDER' THEN COALESCE(bidder_stats.bid_count, 0)
+                        WHEN u.role = 'SELLER' THEN COALESCE(seller_stats.auction_count, 0)
+                        ELSE 0
+                    END AS counters
+                FROM users u
+                LEFT JOIN Wallet w ON w.user_id = u.id
+                LEFT JOIN (
+                    SELECT
+                        latest_bid.bidder_id,
+                        i.title AS latest_item_title,
+                        bid_counts.bid_count
+                    FROM (
+                        SELECT bidder_id, auction_id
+                        FROM (
+                            SELECT
+                                b.bidder_id,
+                                b.auction_id,
+                                ROW_NUMBER() OVER (PARTITION BY b.bidder_id ORDER BY b.created_at DESC) AS rn
+                            FROM bids b
+                        ) ranked_bids
+                        WHERE rn = 1
+                    ) latest_bid
+                    LEFT JOIN auctions a ON a.id = latest_bid.auction_id
+                    LEFT JOIN auction_items i ON i.id = a.item_id
+                    LEFT JOIN (
+                        SELECT bidder_id, COUNT(DISTINCT auction_id) AS bid_count
+                        FROM bids
+                        GROUP BY bidder_id
+                    ) bid_counts ON bid_counts.bidder_id = latest_bid.bidder_id
+                ) bidder_stats ON bidder_stats.bidder_id = u.id
+                LEFT JOIN (
+                    SELECT
+                        latest_auction.seller_id,
+                        i.title AS latest_item_title,
+                        seller_counts.auction_count
+                    FROM (
+                        SELECT seller_id, item_id
+                        FROM (
+                            SELECT
+                                a.seller_id,
+                                a.item_id,
+                                ROW_NUMBER() OVER (PARTITION BY a.seller_id ORDER BY a.created_at ASC) AS rn
+                            FROM auctions a
+                        ) ranked_auctions
+                        WHERE rn = 1
+                    ) latest_auction
+                    LEFT JOIN auction_items i ON i.id = latest_auction.item_id
+                    LEFT JOIN (
+                        SELECT seller_id, COUNT(DISTINCT item_id) AS auction_count
+                        FROM auctions
+                        GROUP BY seller_id
+                    ) seller_counts ON seller_counts.seller_id = latest_auction.seller_id
+                ) seller_stats ON seller_stats.seller_id = u.id
+                ORDER BY u.created_at
+                """;
+//        No lay cac thong tin:
+//        - Thong tin user: id, ho ten, role, trang thai active.
+//        - So du vi cua user.
+//        - Ten item gan nhat lien quan den user.
+//        - So lan bidder tham gia dau gia hoac seller tao phien dau gia.
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            List<UserDetailResponse> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(new UserDetailResponse(
+                        resultSet.getString("id"),
+                        resultSet.getString("latest_item_title"),
+                        resultSet.getString("full_name"),
+                        resultSet.getString("role"),
+                        resultSet.getBigDecimal("balance"),
+                        resultSet.getBoolean("active"),
+                        resultSet.getInt("counters")
+                ));
+            }
+            return users;
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Khong doc duoc danh sach user detail", exception);
+        }
     }
 
     private List<User> queryUsers(String sql) {

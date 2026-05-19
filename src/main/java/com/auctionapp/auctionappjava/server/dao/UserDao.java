@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao;
 
+import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
@@ -16,6 +17,9 @@ public interface UserDao {
     Optional<User> findByName(String name);
 
     List<User> findAll();
+
+    List<UserDetailResponse> findAllDetails(); // tải lên danh sách người dùng với đầy đủ thông tin cho admin xem
+                                               // chỉ cần trong 1 lần truy vấn
 
     void updateRole(UUID id, Role role);
 
