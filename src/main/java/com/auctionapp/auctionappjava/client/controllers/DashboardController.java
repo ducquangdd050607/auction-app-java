@@ -1,6 +1,7 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
@@ -9,10 +10,15 @@ import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -139,34 +145,61 @@ public class DashboardController implements Initializable {
     @FXML
     private ListView<?> boxLoading;
 
-    @FXML
-    void handleDetail(ActionEvent event) {
 
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             lblGreeting.setText("Xin chào, " + UserSession.getInstance().getCurrentUser().fullName() + "!");
             lblBalance.setText(MoneyUtils.formatMoney(UserSession.getInstance().getCurrentUser().walletBalance()) + " VND");
+            loadStatDataFromServer();
             show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        //loadUserDataFromServer();
-
         loadFeaturedAuctionsFromServer();
-
-//        setupAuctionCards();
-
 
     }
 
-//    public void loadUserDataFromServer() {
-//        Request req = new Request()
-//    }
-//
+    public void loadStatDataFromServer() throws IOException {
+        Request req = new Request("GET_STAT", UserSession.getInstance().getCurrentUser().id());
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(req);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Response(false, "Lỗi kết nối Server", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+
+                if (response.success()) {
+
+                    List<Object> statFromServer =(List<Object>) response.data();
+
+                    Object stat = statFromServer.get(0);
+
+                    if (LoginController.bidderRoute) {
+                        lblHistory.setText(stat.toString());
+
+                    } else if (LoginController.sellerRoute) {
+                        lblCompleted.setText(stat.toString());
+
+                    } else if (LoginController.adminRoute)
+                        lblBidders.setText(stat.toString());
+
+                    Object stat2 = statFromServer.get(1);
+                    lblRUNNINGs.setText(stat2.toString());
+
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+                    alert.show();
+                }
+            });
+        });
+    }
+
 
     public void loadFeaturedAuctionsFromServer() {
 
@@ -217,12 +250,25 @@ public class DashboardController implements Initializable {
                     lblItemPrice3.setText(MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
                     lblItemDesc3.setText(mostExpiredAuction.description());
 
+                    btnGo1.setOnAction(event -> {
+                        try {
+                            AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
+                            handleDetail(mostBiddedAuction);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
 
-
+                    btnGo3.setOnAction(event -> {
+                        try {
+                            AuctionSession.getInstance().setCurrentAuction(mostExpiredAuction);
+                            handleDetail(mostExpiredAuction);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
-                    alert.show();
-                    Label noDataLabel = new Label("Không tìm thấy phiên đấu giá nào khớp yêu cầu.");
+                    Label noDataLabel = new Label("Không tìm thấy phiên đấu giá nào hoạt động.");
                     noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray; ");
                     boxLoading.setPlaceholder(noDataLabel);
                 }
@@ -233,6 +279,44 @@ public class DashboardController implements Initializable {
         });
     }
 
+    @FXML
+    void handleDetail(AuctionSummaryResponse auction) throws IOException {
+        if (LoginController.bidderRoute) {
+            // Bidder
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Chi tiết: " + auction.itemName());
+            stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.showAndWait();
+
+            // Update lại danh sách bảng
+            AuctionSummaryResponse updatedAuction = AuctionSession.getInstance().getCurrentAuction();
+            // Tìm xem cái phiên đấu giá này đang nằm ở dòng thứ mấy trong bảng
+
+            // Sau khi xài xong thì clean AuctionSession
+            AuctionSession.getInstance().cleanAuctionSession();
+        } else {
+            // Seller/Admin
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("BXH – " + auction.itemName());
+            stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
+            stage.showAndWait();
+
+        }
+    }
 
 
     public void show() throws IOException {

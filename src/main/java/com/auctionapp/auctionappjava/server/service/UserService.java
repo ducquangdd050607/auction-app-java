@@ -1,15 +1,21 @@
 package com.auctionapp.auctionappjava.server.service;
 
 import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.factory.UserFactory;
 import com.auctionapp.auctionappjava.common.model.User;
 import com.auctionapp.auctionappjava.common.model.Wallet;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
+import com.auctionapp.auctionappjava.server.dao.AuctionDao;
+import com.auctionapp.auctionappjava.server.dao.BidDao;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +24,8 @@ import static java.time.LocalDateTime.now;
 public class UserService {
     // Service sẽ ôm các DAO tương ứng
     private final UserDao userDao = new JdbcUserDao();
+    private final BidDao bidDao = new JdbcBidDao();
+    private final AuctionDao auctionDao = new JdbcAuctionDao();
 
     public Response handleLogin(LoginRequest loginData) {
         try {
@@ -161,6 +169,48 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi khi lấy số dư", null);
+        }
+    }
+
+    public Response handleGetStats(String userId) {
+        try {
+            Optional<User> userOpt = userDao.findById(UUID.fromString(userId));
+
+            long countersByRole = 0;
+
+            long runningAuctions = auctionDao.countRunningAuctions();
+
+            if (userOpt.isPresent()) {
+
+                User user = userOpt.get();
+                if (user.getRole() == Role.BIDDER) {
+
+                    countersByRole = bidDao.countBidsByBidderId(user.getId());
+
+                }
+
+                else if (user.getRole() == Role.SELLER) {
+
+                    countersByRole = auctionDao.countAuctionsCreatedBySellerId(user.getId());
+
+                }
+
+                else if (user.getRole() == Role.ADMIN) {
+
+                    countersByRole = userDao.countUsersActive();
+
+                }
+                ArrayList<Object> pushData = new ArrayList<>();
+
+                pushData.add(countersByRole);
+                pushData.add(runningAuctions);
+
+                return new Response(true, "Xác định các chỉ số xong", pushData);
+            }
+            return new Response(false, "Người dùng không tồn tại", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi máy chủ", null);
         }
     }
 }

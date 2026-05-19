@@ -61,6 +61,9 @@ public class ClientHandler implements Runnable {
                     case "GET_BALANCE":
                         response = userService.handleGetBalance((String) request.payload());
                         break;
+                    case "GET_STAT":
+                        response = userService.handleGetStats((String) request.payload());
+                        break;
 
                     // Case thuộc auction
                     case "GET_ALL_AUCTIONS":

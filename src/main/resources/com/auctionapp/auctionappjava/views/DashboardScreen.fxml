@@ -42,7 +42,7 @@
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
                            <children>
-                              <Label fx:id="lblRUNNINGs" style="-fx-text-fill: #2E7D9B; -fx-font-size: 28; -fx-font-weight: bold;" text="4" />
+                              <Label fx:id="lblRUNNINGs" style="-fx-text-fill: #2E7D9B; -fx-font-size: 28; -fx-font-weight: bold;" text="..." />
                               <Label fx:id="lblStat1Label" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Phiên đang mở" />
                            </children>
                         </VBox>
@@ -55,7 +55,7 @@
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
                            <children>
-                              <Label fx:id="lblBalance" style="-fx-text-fill: #27AE60; -fx-font-size: 28; -fx-font-weight: bold;" text="36.000.000đ" />
+                              <Label fx:id="lblBalance" style="-fx-text-fill: #27AE60; -fx-font-size: 28; -fx-font-weight: bold;" text="..." />
                               <Label fx:id="lblStat3Label2" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Số dư ví" />
                            </children>
                         </VBox>
@@ -68,8 +68,8 @@
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
                            <children>
-                              <Label fx:id="lblCompleted" style="-fx-text-fill: #F39C12; -fx-font-size: 28; -fx-font-weight: bold;" text="2" />
-                              <Label fx:id="lblStat3Label1" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Số sản phẩm đã bán" />
+                              <Label fx:id="lblCompleted" style="-fx-text-fill: #F39C12; -fx-font-size: 28; -fx-font-weight: bold;" text="..." />
+                              <Label fx:id="lblStat3Label1" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Số sản phẩm đã đăng" />
                            </children>
                         </VBox>
                      </graphic>
@@ -81,8 +81,8 @@
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
                            <children>
-                              <Label fx:id="lblHistory" style="-fx-text-fill: #F39C12; -fx-font-size: 28; -fx-font-weight: bold;" text="2" />
-                              <Label fx:id="lblStat3Label" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Lần đặt cược" />
+                              <Label fx:id="lblHistory" style="-fx-text-fill: #F39C12; -fx-font-size: 28; -fx-font-weight: bold;" text="..." />
+                              <Label fx:id="lblStat3Label" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Phiên đã đặt cược" />
                            </children>
                         </VBox>
                      </graphic>
@@ -94,7 +94,7 @@
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
                            <children>
-                              <Label fx:id="lblBidders" style="-fx-text-fill: #2E7D9B; -fx-font-size: 28; -fx-font-weight: bold;" text="360" />
+                              <Label fx:id="lblBidders" style="-fx-text-fill: #2E7D9B; -fx-font-size: 28; -fx-font-weight: bold;" text="..." />
                               <Label fx:id="lblStat1Label1" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Users Active" />
                            </children>
                         </VBox>
@@ -142,7 +142,7 @@
                               </HBox>
                               <HBox spacing="8">
                                  <children>
-                                    <Button fx:id="btnGo1" maxWidth="Infinity" onAction="#handleDetail" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnGo1" maxWidth="Infinity" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                            </children>
@@ -181,7 +181,7 @@
                               </HBox>
                               <HBox spacing="8">
                                  <children>
-                                    <Button fx:id="btnGo2" maxWidth="Infinity" onAction="#handleDetail" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnGo2" maxWidth="Infinity" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                            </children>
@@ -220,7 +220,7 @@
                               </HBox>
                               <HBox spacing="8">
                                  <children>
-                                    <Button fx:id="btnGo3" maxWidth="Infinity" onAction="#handleDetail" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnGo3" maxWidth="Infinity" style="-fx-background-color: #2E7D9B; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Chi tiết" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                            </children>
