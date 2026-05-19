@@ -37,6 +37,11 @@ public class AuctionServiceTest {
         // Additional helpers used by AuctionService elsewhere
         @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
         @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
+        @Override public Optional<Auction> findMostExpiredAuction() {
+            return store.values().stream()
+                    .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
+                    .min(Comparator.comparing(Auction::getEndTime));
+        }
         @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
     }
 
