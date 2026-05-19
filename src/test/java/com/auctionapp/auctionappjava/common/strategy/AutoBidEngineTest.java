@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,7 +83,7 @@ public class AutoBidEngineTest {
          * Valid bidder vuot manual leader tu 120 len 130.
          */
         Optional<AutoBidEngine.AutoBidResult> result = engine.calculateNextBid(
-                List.of(null, disabled, missingMaxBid, valid),
+                Arrays.asList(null, disabled, missingMaxBid, valid),
                 new BigDecimal("10"),
                 new BigDecimal("120"),
                 manualLeaderId

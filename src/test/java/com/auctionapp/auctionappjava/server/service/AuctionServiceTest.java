@@ -3,7 +3,6 @@ package com.auctionapp.auctionappjava.server.service;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
-import com.auctionapp.auctionappjava.common.dto.ConfigureAutoBidRequest;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.model.*;
@@ -15,8 +14,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
