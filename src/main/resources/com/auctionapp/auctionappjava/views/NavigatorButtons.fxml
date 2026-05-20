@@ -16,37 +16,37 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="rootStackPane" prefHeight="788.0" prefWidth="1354.0" stylesheets="@../css/Navigator.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.NavigatorController">
+<StackPane fx:id="rootStackPane" prefHeight="710.0" prefWidth="1220.0" stylesheets="@../css/Navigator.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.NavigatorController">
    <children>
       <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
          <left>
-            <VBox alignment="CENTER" prefHeight="457.0" prefWidth="178.0" style="-fx-background-color: #1F5A73;" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="664.0" prefWidth="165.0" style="-fx-background-color: #1F5A73;" BorderPane.alignment="CENTER">
                <children>
                   <VBox fx:id="groupHome" alignment="CENTER" prefHeight="18.0" prefWidth="131.0" style="-fx-background-color: #1F5A73;">
                      <children>
-                        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleBackToDash" prefHeight="26.0" prefWidth="235.0" styleClass="nav-menu-btn" text="Trang chủ" />
+                        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleBackToDash" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Trang chủ" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
                   <VBox fx:id="groupBidder" alignment="CENTER" prefHeight="17.0" prefWidth="195.0">
                      <children>
-                        <Button fx:id="btnItemListBidder" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
-                        <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleHistory" prefHeight="0.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
+                        <Button fx:id="btnItemListBidder" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
+                        <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleHistory" prefHeight="0.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
                   <VBox fx:id="groupAdmin" alignment="CENTER" prefHeight="70.0" prefWidth="186.0">
                      <children>
-                        <Button fx:id="btnItemListAdmin" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="6.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
-                        <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Quản lý Users" />
-                        <Button fx:id="btnTransactionList" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleHistory" prefHeight="26.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Danh sách đặt cược" />
+                        <Button fx:id="btnItemListAdmin" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="6.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
+                        <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý Users" />
+                        <Button fx:id="btnTransactionList" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleHistory" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đặt cược" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
                   <VBox fx:id="groupSeller" alignment="CENTER" prefHeight="69.0" prefWidth="82.0">
                      <children>
-                        <Button fx:id="btnItemListSeller" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
-                        <Button fx:id="btnItemManager" layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="26.0" prefWidth="177.0" styleClass="nav-menu-btn" text="Quản lý vật phẩm" />
+                        <Button fx:id="btnItemListSeller" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
+                        <Button fx:id="btnItemManager" layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý vật phẩm" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
@@ -54,37 +54,37 @@
                   <VBox fx:id="groupAccount" alignment="CENTER" prefHeight="53.0" prefWidth="181.0">
                      <children>
                         <Separator prefWidth="200.0" />
-                        <Button fx:id="setting" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleAccount" prefHeight="50.0" prefWidth="178.0" styleClass="nav-menu-btn" text="Tài khoản" />
+                        <Button fx:id="setting" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleAccount" prefHeight="45.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Tài khoản" />
                      </children>
                   </VBox>
                </children>
             </VBox>
          </left>
          <center>
-            <AnchorPane prefHeight="736.0" prefWidth="1089.0" BorderPane.alignment="CENTER" />
+            <AnchorPane prefHeight="664.0" prefWidth="1000.0" BorderPane.alignment="CENTER" />
          </center>
          <top>
-            <HBox alignment="CENTER" prefHeight="46.0" prefWidth="1082.0" style="-fx-background-color: #2E7D9B;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="42.0" prefWidth="1055.0" style="-fx-background-color: #2E7D9B;" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="44.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="40.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/IconApp.png" />
                      </image>
                   </ImageView>
-                  <Pane prefHeight="46.0" prefWidth="10.0" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
+                  <Pane prefHeight="42.0" prefWidth="10.0" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
                   <Region prefHeight="50.0" prefWidth="302.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="identity" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" styleClass="route-btn" text="&quot;for Route&quot;" />
-                  <Region prefHeight="46.0" prefWidth="22.0" />
-                  <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="43.0" prefWidth="74.0" styleClass="logout-btn" text="Sign out" />
-                  <Button fx:id="btnExit" mnemonicParsing="false" onAction="#handleExit" prefHeight="43.0" prefWidth="62.0" styleClass="logout-btn" text="Exit" />
+                  <Region prefHeight="42.0" prefWidth="18.0" />
+                  <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="39.0" prefWidth="74.0" styleClass="logout-btn" text="Sign out" />
+                  <Button fx:id="btnExit" mnemonicParsing="false" onAction="#handleExit" prefHeight="39.0" prefWidth="62.0" styleClass="logout-btn" text="Exit" />
                </children>
             </HBox>
          </top>
       </BorderPane>
       <VBox alignment="BOTTOM_RIGHT" pickOnBounds="false" spacing="10.0" StackPane.alignment="BOTTOM_RIGHT">
          <children>
-            <VBox fx:id="chatbotPanel" managed="false" maxHeight="460.0" maxWidth="360.0" minHeight="420.0" prefHeight="420.0" prefWidth="360.0" styleClass="chatbot-panel" visible="false">
+            <VBox fx:id="chatbotPanel" managed="false" maxHeight="430.0" maxWidth="340.0" minHeight="390.0" prefHeight="395.0" prefWidth="340.0" styleClass="chatbot-panel" visible="false">
                <children>
                   <HBox alignment="CENTER_LEFT" styleClass="chatbot-header">
                      <children>

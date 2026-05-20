@@ -1,14 +1,15 @@
 package com.auctionapp.auctionappjava.client;
 
+import java.io.IOException;
+
 import com.auctionapp.auctionappjava.client.network.Client;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class ClientLauncher extends Application {
     @Override
@@ -27,7 +28,7 @@ public class ClientLauncher extends Application {
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(ClientLauncher.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 950, 650);
+        Scene scene = new Scene(fxmlLoader.load(), 920, 620);
         stage.setTitle("Bíd88");
         stage.setScene(scene);
         stage.show();

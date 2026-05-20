@@ -65,6 +65,25 @@ public class AutoBidEngine {
 
         // Neu nguoi auto-bid max cao nhat dang dan dau san roi thi khong can tao bid moi.
         if (firstBidder.getBidderId().equals(currentLeaderId)) {
+            Optional<BidCandidate> tiedCompetitor = findTiedAutoBidCompetitor(
+                    bidList,
+                    firstBidder,
+                    currentLeaderId
+            );
+            if (tiedCompetitor.isPresent() && currentPrice != null) {
+                BidCandidate competitor = tiedCompetitor.get();
+                BigDecimal bidAmount = competitor.getMaxBid();
+
+                if (bidAmount.compareTo(currentPrice) > 0) {
+                    return Optional.of(new AutoBidResult(
+                            competitor.getAuctionId(),
+                            competitor.getBidderId(),
+                            bidAmount,
+                            competitor.getMaxBid(),
+                            currentPrice
+                    ));
+                }
+            }
             return Optional.empty();
         }
 
@@ -110,6 +129,26 @@ public class AutoBidEngine {
         }
 
         return result;
+    }
+
+    private Optional<BidCandidate> findTiedAutoBidCompetitor(List<BidCandidate> bidList,
+                                                             BidCandidate currentLeader,
+                                                             UUID currentLeaderId) {
+        for (BidCandidate candidate : bidList) {
+            if (!candidate.isAutoBid()) {
+                continue;
+            }
+
+            if (candidate.getBidderId().equals(currentLeaderId)) {
+                continue;
+            }
+
+            if (candidate.getMaxBid().compareTo(currentLeader.getMaxBid()) == 0) {
+                return Optional.of(candidate);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private BigDecimal getIncrement(AutoBidConfig config, BigDecimal defaultIncrement) {

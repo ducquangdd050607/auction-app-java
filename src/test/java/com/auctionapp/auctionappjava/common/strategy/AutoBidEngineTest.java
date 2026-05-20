@@ -122,6 +122,34 @@ public class AutoBidEngineTest {
     }
 
     @Test
+    @DisplayName("Neu leader va top 2 cung maxBid thi top 2 auto-bid len maxBid")
+    public void testSecondPlaceAutoBidderJumpsToMaxBidWhenMaxBidTiesCurrentLeader() {
+        UUID auctionId = UUID.randomUUID();
+        UUID leaderId = UUID.randomUUID();
+        UUID secondPlaceId = UUID.randomUUID();
+
+        /*
+         * Ca hai cung max 1,000,000. Leader dang giu 100,000, top 2 phai nhay auto-bid
+         * len thang 1,000,000 de phan thang tie maxBid.
+         */
+        AutoBidConfig leader = config(auctionId, leaderId, "1000000", "15000", true, 1);
+        AutoBidConfig secondPlace = config(auctionId, secondPlaceId, "1000000", "15000", true, 2);
+
+        Optional<AutoBidEngine.AutoBidResult> result = engine.calculateNextBid(
+                List.of(leader, secondPlace),
+                new BigDecimal("15000"),
+                new BigDecimal("100000"),
+                leaderId
+        );
+
+        assertTrue(result.isPresent());
+        assertEquals(secondPlaceId, result.get().getBidderId());
+        assertEquals(new BigDecimal("1000000"), result.get().getBidAmount());
+        assertEquals(new BigDecimal("1000000"), result.get().getFirstMaxBid());
+        assertEquals(new BigDecimal("100000"), result.get().getSecondMaxBid());
+    }
+
+    @Test
     @DisplayName("Khong auto-bid khi nguoi dat tay dang co gia cao nhat")
     public void testNoAutoBidWhenManualLeaderIsHighest() {
         UUID auctionId = UUID.randomUUID();
