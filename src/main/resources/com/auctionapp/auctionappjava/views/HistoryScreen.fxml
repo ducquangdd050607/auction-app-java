@@ -27,6 +27,7 @@
                 <ComboBox fx:id="cbFilterStatus" prefHeight="32" prefWidth="140" promptText="Trạng thái" style="-fx-font-size: 13;" />
             <ComboBox fx:id="cbType" layoutX="471.0" layoutY="14.0" prefHeight="32" prefWidth="140" promptText="Thể loại" style="-fx-font-size: 13;" />
                 <Button fx:id="btnSearch" onAction="#handleSearch" prefHeight="32" prefWidth="70" styleClass="confirm-btn" text="Tìm" />
+            <Button fx:id="btnReload" onAction="#handleReload" style="-fx-background-color: transparent; -fx-text-fill: #B0D8E8;                            -fx-font-size: 13; -fx-cursor: hand; -fx-underline: true;" text="Tải lại" />
             </HBox>
             <padding><Insets bottom="10.0" left="30.0" right="10.0" top="10.0" /></padding>
          <BorderPane.margin>
