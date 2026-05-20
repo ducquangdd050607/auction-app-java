@@ -11,7 +11,7 @@
 
 <!-- Slide 15 (User) / Slide 16 (Seller: Hà Minh) -->
 
-<BorderPane prefHeight="615.0" prefWidth="979.0" stylesheets="@../css/WalletAndChangePasswordScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AccountController">
+<BorderPane prefHeight="664.0" prefWidth="1000.0" stylesheets="@../css/WalletAndChangePasswordScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AccountController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
    <center>
         <VBox spacing="4" style="-fx-background-color: #2E7D9B; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
@@ -86,7 +86,7 @@
             </opaqueInsets>
    
            </VBox>
-         <Region prefHeight="413.0" prefWidth="879.0" />
+         <Region prefHeight="308.0" prefWidth="900.0" />
            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="800.0" spacing="20">
                <Button fx:id="btnDeposit" onAction="#handleDeposit" prefHeight="44" prefWidth="193.0" styleClass="confirm-btn" text="Nạp tiền" />
                <Button onAction="#handleChangingInformation" prefHeight="44" prefWidth="193.0" styleClass="confirm-btn" text="Chỉnh sửa thông tin" />

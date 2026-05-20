@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,6 +33,9 @@ public class UsersManagerController implements Initializable {
     private boolean ban =  false;
 
     private ObservableList<UserDetailResponse> usersData = FXCollections.observableArrayList();
+
+    // Thêm danh sách bọc ngoài dùng để LỌC (FilteredList)
+    private FilteredList<UserDetailResponse> filteredData;
 
     @FXML
     private HBox box;
@@ -61,6 +65,10 @@ public class UsersManagerController implements Initializable {
     private TableColumn<UserDetailResponse, String> clmRoute;
     @FXML
     private TextField txtSearch;
+    @FXML
+    private Button btnSearch;
+    @FXML
+    private Button btnReload;
 
 
     @FXML
@@ -99,7 +107,38 @@ public class UsersManagerController implements Initializable {
 
     @FXML
     void handleSearch(ActionEvent event) {
+        // Lấy điều kiện lọc
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        String selectedStatus = cbFilterRoute.getValue();
+        String selectedRole = cbFilterAccountStatus.getValue();
 
+        // Cập nhật điều kiện lọc cho FilteredList
+        filteredData.setPredicate(user -> {
+            // 1. Khớp Tên
+            boolean matchName = keyword.isEmpty() ||
+                    (user.fullName() != null && user.fullName().toLowerCase().contains(keyword));
+
+            // 2. Khớp Trạng thái (Cần map tiếng Việt với Enum AuctionStatus của bạn)
+            boolean matchStatus = false;
+            if (selectedStatus == null || selectedStatus.equals("Tất cả trạng thái")) {
+                matchStatus = true;
+            } else {
+                // Nếu accStatus == true -> HOẠT ĐỘNG, false -> CHẶN
+                String translatedStatus = user.accStatus() ? "HOẠT ĐỘNG" : "CHẶN";
+                matchStatus = translatedStatus.equals(selectedStatus);
+            }
+
+            // Điều kiện 3: Khớp Vai trò (Role)
+            boolean matchRole = false;
+            if (selectedRole == null || selectedRole.equals("Tất cả vai trò")) {
+                matchRole = true;
+            } else {
+                matchRole = user.role() != null && user.role().equalsIgnoreCase(selectedRole);
+            }
+
+            // Dòng nào thỏa mãn cả 3 điều kiện thì mới được hiện lên bảng
+            return matchName && matchStatus && matchRole;
+        });
     }
 
     @FXML
@@ -109,14 +148,22 @@ public class UsersManagerController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) { 
-        String[] status = {"HOẠT DỘNG", "CHẶN", "XÓA"}; //trạng thái tài khoản
+        String[] status = {"Tất cả trạng thái", "HOẠT DỘNG", "CHẶN"}; //trạng thái tài khoản
         cbFilterAccountStatus.getItems().addAll(status);
+        cbFilterAccountStatus.setValue("Tất cả trạng thái");
 
-        String[] routes = {"BIDDER", "ADMIN", "SELLER"};// route
+        String[] routes = {"Tất cả vai trò", "BIDDER", "ADMIN", "SELLER"};// route
         cbFilterRoute.getItems().addAll(routes);
+        cbFilterRoute.setValue("Tất cả vai trò");
 
         setupColumns();
-        listUsers.setItems(usersData);
+
+        filteredData = new FilteredList<>(usersData, p -> true); // Mặc định hiển thị tất cả
+        javafx.collections.transformation.SortedList<UserDetailResponse> sortedData = new javafx.collections.transformation.SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(listUsers.comparatorProperty());
+
+        // Nhét sortedData vào bảng
+        listUsers.setItems(sortedData);
 
         loadUserFromServer();
 
@@ -144,6 +191,12 @@ public class UsersManagerController implements Initializable {
     }
 
     private void loadUserFromServer() {
+        // Khóa search trong lúc laod data
+        txtSearch.setDisable(true);
+        cbFilterRoute.setDisable(true);
+        cbFilterAccountStatus.setDisable(true);
+        btnSearch.setDisable(true);
+        btnReload.setDisable(true);
 
         ProgressIndicator loadingSpinner = new ProgressIndicator();
         loadingSpinner.setMaxSize(50, 50);
@@ -161,6 +214,13 @@ public class UsersManagerController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
+                // Mở lại search
+                txtSearch.setDisable(false);
+                cbFilterRoute.setDisable(false);
+                cbFilterAccountStatus.setDisable(false);
+                btnSearch.setDisable(false);
+                btnReload.setDisable(false);
+
                 if (response.success()) {
                     List<UserDetailResponse> listFromServer = (List<UserDetailResponse>) response.data();
 

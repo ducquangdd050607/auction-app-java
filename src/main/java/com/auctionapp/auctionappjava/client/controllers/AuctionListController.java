@@ -48,7 +48,7 @@ import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatPriceCo
 
 public class AuctionListController implements Initializable {
 
-    private ObservableList<AuctionSummaryResponse> auctionData = FXCollections.observableArrayList();
+    private final ObservableList<AuctionSummaryResponse> auctionData = FXCollections.observableArrayList();
     private boolean removeAuction = false;
 
     @FXML
@@ -63,6 +63,8 @@ public class AuctionListController implements Initializable {
     private Button btnRemove;
     @FXML
     private Button btnSearch;
+    @FXML
+    private Button btnReload;
     @FXML
     private ComboBox<String> cbFilterStatus;
     @FXML
@@ -276,6 +278,7 @@ public class AuctionListController implements Initializable {
         cbFilterStatus.setDisable(true);
         cbType.setDisable(true);
         btnSearch.setDisable(true);
+        btnReload.setDisable(true);
 
         // Thêm vòng tròn loading trong lúc đợi lấy data từ server
         ProgressIndicator loadingSpinner = new ProgressIndicator();
@@ -306,6 +309,7 @@ public class AuctionListController implements Initializable {
                 cbFilterStatus.setDisable(false);
                 cbType.setDisable(false);
                 btnSearch.setDisable(false);
+                btnReload.setDisable(false);
 
                 if (response.success()) {
                     // Ép kiểu lấy danh sách từ Response
