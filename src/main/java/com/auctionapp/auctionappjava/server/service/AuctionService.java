@@ -1,8 +1,11 @@
 package com.auctionapp.auctionappjava.server.service;
 
+import com.auctionapp.auctionappjava.client.session.AuctionSession;
+import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.common.model.*;
 import com.auctionapp.auctionappjava.common.strategy.AntiSnipingExtensionStrategy;
@@ -509,16 +512,40 @@ public class AuctionService {
 
     public Response handleRemoveAuction(RemoveAuctionRequest data) {
         try {
-            // Khi ta xóa Item đi, Auction, Transaction cũng bị xóa theo do...
-            itemDao.deleteById(itemDao.findByAuctionId(UUID.fromString(data.auctionId())).get().getId());
+            UUID userId = UUID.fromString(data.userId());
+            UUID auctionId = UUID.fromString(data.auctionId());
 
-            return new Response(true, "Đã xóa phiên đấu giá", null);
+            Optional<User> currentUserOpt = userDao.findById(userId);
+            if (currentUserOpt.isEmpty()) {
+                return new Response(false, "Người dùng không tồn tại!", null);
+            }
+            User currentUser = currentUserOpt.get();
 
-        } catch(Exception e) {
+            if (currentUser.getRole() == Role.SELLER) {
+                Optional<User> sellerOpt = userDao.findSellerByAuctionId(auctionId);
+
+                if (sellerOpt.isEmpty() || !sellerOpt.get().getId().equals(currentUser.getId())) {
+                    return new Response(false, "SELLER không thể xóa các phiên của SELLER khác", null);
+                }
+            }
+
+            else if (currentUser.getRole() == Role.ADMIN) {
+                return new Response(true, "Đã xóa phiên đấu giá thành công", null);
+            }
+
+            Optional<Item> itemOpt = itemDao.findByAuctionId(auctionId);
+            if (itemOpt.isPresent()) {
+                itemDao.deleteById(itemOpt.get().getId());
+                return new Response(true, "Đã xóa phiên đấu giá thành công", null);
+            } else {
+                return new Response(false, "Không tìm thấy vật phẩm của phiên đấu giá này", null);
+            }
+
+        } catch (IllegalArgumentException e) {
+            return new Response(false, "Định dạng UUID không hợp lệ!", null);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
-
-            // - Good luck.
+            return new Response(false, "Lỗi máy chủ khi thực hiện xóa!", null);
         }
     }
 

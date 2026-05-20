@@ -2,10 +2,10 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
-import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
-import com.auctionapp.auctionappjava.common.dto.ManagerAndHistoryRequest;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -45,6 +45,9 @@ public class RankingListController {
 
     @FXML
     private Button btnExportWinner;
+
+    @FXML
+    private Button btnRemove;
 
     @FXML
     private TableColumn<BidRankingResponse, BigDecimal> colBidAmount;
@@ -97,10 +100,22 @@ public class RankingListController {
         lblStatus.setText(currentAuction.status().toString());
         lblTopBidder.setText("Dang tai...");
 
+        show();
+
         setupColumns();
         setupChart();
         tableBidders.setItems(bidderData);
         loadBiddersFromServer();
+    }
+
+    private void show() {
+        if (LoginController.bidderRoute) {
+            btnRemove.setVisible(false);
+            btnRemove.setManaged(false);
+        } else {
+            btnRemove.setVisible(true);
+            btnRemove.setManaged(true);
+        }
     }
 
     private void setupColumns() {
@@ -187,10 +202,60 @@ public class RankingListController {
     @FXML
     void handleRemove(ActionEvent event) {
         if (LoginController.adminRoute) {
-            // force-remove
+            removeAuction();
         } else if (LoginController.sellerRoute) {
-            // seller remove flow
+
+            if (AuctionSession.getInstance().getCurrentAuction().status().equals(AuctionStatus.RUNNING)) {
+                AlertUtils.AnnouncementController("Không đủ tư cách xóa", "SELLER không thể xóa các phiên đang chạy", null, null);
+            } else {
+                removeAuction();
+
+            }
         }
+    }
+
+    private void removeAuction() {
+
+        Runnable remove = () -> {
+
+            RemoveAuctionRequest removeReq = new RemoveAuctionRequest(
+                    UserSession.getInstance().getCurrentUser().id(),
+                    AuctionSession.getInstance().getCurrentAuction().auctionId());
+            Request req = new Request("REMOVE_AUCTION", removeReq);
+
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Client.getInstance().sendRequest(req);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return new Response(false, "Lỗi kết nối Server", null);
+                }
+            }).thenAccept(response -> {
+                Platform.runLater(() -> {
+                    if (response.success()) {
+                        AlertUtils.AnnouncementController(
+                                "Đã xong",
+                                "Phiên đấu đã bay màu",
+                                null,
+                                null
+                        );
+                        Stage stage = (Stage) btnRemove.getScene().getWindow();
+                        stage.close();
+
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, response.message());
+                        alert.show();
+                    }
+                });
+            });
+        };
+
+        AlertUtils.AnnouncementController(
+                "Chắc chắn chưa?",
+                "Phiên đấu này sẽ bay màu",
+                remove,
+                null
+        );
     }
 
     @FXML
@@ -223,9 +288,9 @@ public class RankingListController {
                 + ", bidTime: " + winner.bidTime());
         new Alert(
                 Alert.AlertType.INFORMATION,
-                "Nguoi thang: " + winner.bidderName()
-                        + "\nGia thang: " + formatMoney(winner.amount()) + " VND"
-                        + "\nThoi gian dat: " + winner.bidTime()
+                "Người thắng: " + winner.bidderName()
+                        + "\nGiá thắng: " + formatMoney(winner.amount()) + " VND"
+                        + "\nThời gian đặt: " + winner.bidTime()
         ).show();
     }
 }
