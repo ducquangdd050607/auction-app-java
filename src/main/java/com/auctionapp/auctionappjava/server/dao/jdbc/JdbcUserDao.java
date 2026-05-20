@@ -146,8 +146,14 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
     }
 
     @Override
-    public List<User> findAll() {
-        return queryUsers("SELECT * FROM users ORDER BY created_at");
+    public Optional<User> findSellerByAuctionId(UUID auctionId) {
+        String sql = """
+        SELECT u.* FROM users u
+        INNER JOIN auctions a ON u.id = a.seller_id
+        WHERE a.id = ?
+        """;
+
+        return findUser(sql, uuid(auctionId));
     }
 
     @Override

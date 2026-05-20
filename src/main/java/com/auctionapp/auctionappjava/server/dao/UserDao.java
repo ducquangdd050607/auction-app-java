@@ -16,7 +16,7 @@ public interface UserDao {
 
     Optional<User> findByName(String name);
 
-    List<User> findAll();
+    Optional<User> findSellerByAuctionId(UUID auctionId);
 
     List<UserDetailResponse> findAllDetails(); // tải lên danh sách người dùng với đầy đủ thông tin cho admin xem
                                                // chỉ cần trong 1 lần truy vấn
