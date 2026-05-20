@@ -54,8 +54,6 @@ public class UsersManagerController implements Initializable {
     @FXML
     private TableColumn<UserDetailResponse, Integer> clmBids;
     @FXML
-    private TableColumn<UserDetailResponse, ?> clmChoose;
-    @FXML
     private TableColumn<UserDetailResponse, String> clmName;
     @FXML
     private TableColumn<UserDetailResponse, String> clmRecentBid;
@@ -85,7 +83,6 @@ public class UsersManagerController implements Initializable {
 
                 btnConfirm.setVisible(false);
                 btnConfirm.setManaged(false);
-                clmChoose.setVisible(false);
             } else {//xử lý hủy(chắc chỉ thế này)
                 alert.close();
 
@@ -104,7 +101,12 @@ public class UsersManagerController implements Initializable {
     void handleSearch(ActionEvent event) {
 
     }
-    
+
+    @FXML
+    void handleReload(ActionEvent event) throws IOException {
+
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) { 
         String[] status = {"HOẠT DỘNG", "CHẶN", "XÓA"}; //trạng thái tài khoản
@@ -131,7 +133,6 @@ public class UsersManagerController implements Initializable {
         // nút xác nhận-hủy-khung chọn chỉ khi bấm remove/ban/promoteAdmin
         btnConfirm.setVisible(choose);
         btnConfirm.setManaged(choose);
-        clmChoose.setVisible(choose);
         btnCancel.setVisible(choose);
         btnCancel.setManaged(choose);
         btnBan.setManaged(!choose);

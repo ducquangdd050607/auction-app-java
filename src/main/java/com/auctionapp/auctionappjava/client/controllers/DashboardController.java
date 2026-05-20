@@ -296,11 +296,6 @@ public class DashboardController implements Initializable {
             stage.centerOnScreen();
             stage.showAndWait();
 
-            // Update lại danh sách bảng
-            AuctionSummaryResponse updatedAuction = AuctionSession.getInstance().getCurrentAuction();
-            // Tìm xem cái phiên đấu giá này đang nằm ở dòng thứ mấy trong bảng
-
-            // Sau khi xài xong thì clean AuctionSession
             AuctionSession.getInstance().cleanAuctionSession();
         } else {
             // Seller/Admin

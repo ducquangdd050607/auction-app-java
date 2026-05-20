@@ -62,8 +62,6 @@ public class AuctionListController implements Initializable {
     @FXML
     private Button btnRemove;
     @FXML
-    private Button btnTest;
-    @FXML
     private Button btnSearch;
     @FXML
     private ComboBox<String> cbFilterStatus;
@@ -86,13 +84,11 @@ public class AuctionListController implements Initializable {
     @FXML
     private TableColumn<AuctionSummaryResponse, String> clmStatus;
     @FXML
-    private TableColumn<AuctionSummaryResponse, /*Integer*/String> clmTime; // Thời gian còn lại
+    private TableColumn<AuctionSummaryResponse, String> clmTime; // Thời gian còn lại
     @FXML
     private TableColumn<AuctionSummaryResponse, ?> clmBiddingMoney;
     @FXML
     private TableColumn<AuctionSummaryResponse, ?> clmBiddedTime; // Thời điểm đặt
-    @FXML
-    private TableColumn<AuctionSummaryResponse, ?> clmChoose;
     @FXML
     private TextField txtSearch;
     @FXML
@@ -203,13 +199,10 @@ public class AuctionListController implements Initializable {
     }
 
     @FXML
-    void handleTest(ActionEvent event) throws IOException {
-        if (LoginController.bidderRoute) {
-            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
-        } else {
-            SceneSwitcherUtils.PopupController(event, "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml", "BXH");
-        }
+    void handleReload(ActionEvent event) throws IOException {
+
     }
+
 
     @FXML
     void handleAdd(ActionEvent event) throws IOException {
@@ -335,7 +328,9 @@ public class AuctionListController implements Initializable {
 
     private void handleRemoveAuction(AuctionSummaryResponse auction) throws IOException {
 
-        RemoveAuctionRequest removeReq = new RemoveAuctionRequest(auction.auctionId());
+        RemoveAuctionRequest removeReq = new RemoveAuctionRequest(
+                UserSession.getInstance().getCurrentUser().id(),
+                auction.auctionId());
         Request req = new Request("REMOVE_AUCTION", removeReq);
 
         CompletableFuture.supplyAsync(() -> {
@@ -467,7 +462,6 @@ public class AuctionListController implements Initializable {
         // nút xác nhận-hủy-khung chọn chỉ khi bấm remove
         btnConfirm.setVisible(false);
         btnConfirm.setManaged(false);
-        clmChoose.setVisible(false);
         btnCancel.setVisible(false);
         btnCancel.setManaged(false);
 
@@ -486,7 +480,6 @@ public class AuctionListController implements Initializable {
         // Hành vi các nút khi thao tác xóa(admin)
         btnConfirm.setVisible(admin);
         btnConfirm.setManaged(admin);
-        clmChoose.setVisible(admin);
         btnCancel.setVisible(admin);
         btnCancel.setManaged(admin);
     }

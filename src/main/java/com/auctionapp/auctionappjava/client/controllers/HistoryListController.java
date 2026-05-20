@@ -13,6 +13,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
@@ -24,8 +26,10 @@ import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatPriceCo
 
 public class HistoryListController implements Initializable {
     private ObservableList<BidHistoryResponse> historyDataList = FXCollections.observableArrayList();
+
     // Everything that happened in this shit is due to THIS mtfking Response.
     // Bản chất là HLC này == ULC, nhưng khác chí mạng ở việc khác Response.
+
     @FXML
     private ComboBox<String> cbFilterStatus;
     @FXML
@@ -55,6 +59,11 @@ public class HistoryListController implements Initializable {
 
     // Thêm FilteredList để làm bộ lọc
     private FilteredList<BidHistoryResponse> filteredData;
+
+    @FXML
+    void handleReload(ActionEvent event) throws IOException {
+
+    }
 
     @FXML
     void handleSearch(ActionEvent event) {
