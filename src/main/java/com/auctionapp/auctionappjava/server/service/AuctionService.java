@@ -427,7 +427,7 @@ public class AuctionService {
         applyAntiSnipingExtension(auction);
         auctionDao.save(auction);
 
-        Object[] pushData = new Object[]{ auction.getId(), amount };
+        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId };
         Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
         SessionManager.getInstance().broadcast(newBidResponse);
     }

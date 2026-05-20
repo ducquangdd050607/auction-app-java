@@ -3,9 +3,12 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
+import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.dto.ImageRequest;
 import com.auctionapp.auctionappjava.common.dto.ImageResponse;
+import com.auctionapp.auctionappjava.common.dto.ManagerAndHistoryRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.CompressionUtils;
@@ -28,6 +31,7 @@ import javafx.stage.Stage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
@@ -137,6 +141,8 @@ public class AuctionDetailController {
         lblStatus.setText(String.valueOf(auction.status()));
         lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
+        lblCurrentLeader.setText("Dang tai...");
+        loadCurrentLeaderFromRanking(auction.auctionId());
 
         // Hiện vòng xoay, giấu khung ảnh và chữ đi
         imgSpinner.setVisible(true);
@@ -184,6 +190,30 @@ public class AuctionDetailController {
         });
     }
 
+    private void loadCurrentLeaderFromRanking(String auctionId) {
+        Request rankingReq = new Request("GET_BID_RANKING", new ManagerAndHistoryRequest(auctionId));
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(rankingReq);
+            } catch (Exception e) {
+                return new Response(false, "Loi ket noi Server", null);
+            }
+        }).thenAccept(response -> Platform.runLater(() -> {
+            if (response == null || !response.success() || !(response.data() instanceof List<?> rows) || rows.isEmpty()) {
+                lblCurrentLeader.setText("Chua co");
+                return;
+            }
+
+            Object firstRow = rows.get(0);
+            if (firstRow instanceof BidRankingResponse winner) {
+                lblCurrentLeader.setText(winner.bidderName());
+            } else {
+                lblCurrentLeader.setText("Chua co");
+            }
+        }));
+    }
+
     @FXML
     void handleBack(ActionEvent event) {
         Stage stage = (Stage) btnBack.getScene().getWindow();
@@ -212,6 +242,10 @@ public class AuctionDetailController {
         Platform.runLater(() -> {
             lblCurrentPrice.setText(formatMoney(newPrice) + " VND");
         });
+        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
+        if (currentAuction != null) {
+            loadCurrentLeaderFromRanking(currentAuction.auctionId());
+        }
     }
 
     // Thêm hàm update status theo thời gian thực
