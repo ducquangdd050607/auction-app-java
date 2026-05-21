@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.server.network;
 
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.server.service.AuctionService;
+import com.auctionapp.auctionappjava.server.service.AuctionTrendService;
 import com.auctionapp.auctionappjava.server.service.UserService;
 
 import java.io.ObjectInputStream;
@@ -14,6 +15,7 @@ public class ClientHandler implements Runnable {
     // Khởi tạo các Service
     private final UserService userService = new UserService();
     private final AuctionService auctionService = new AuctionService();
+    private final AuctionTrendService auctionTrendService = new AuctionTrendService();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -74,6 +76,9 @@ public class ClientHandler implements Runnable {
                         break;
                     case "GET_ALL_FEATURED_AUCTIONS":
                         response = auctionService.handleGetAllFeaturedAuctions();
+                        break;
+                    case "GET_AUCTION_TRENDS":
+                        response = auctionTrendService.handleGetAuctionTrends();
                         break;
                     case "GET_HISTORY":
                         response = auctionService.handleGetAllPersonalBiddedAuctions((ManagerAndHistoryRequest) request.payload());
