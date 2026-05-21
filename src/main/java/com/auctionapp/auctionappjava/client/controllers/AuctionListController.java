@@ -455,6 +455,9 @@ public class AuctionListController implements Initializable {
 
     public void show() throws IOException {
 
+        box.setVisible(false);
+        box.setManaged(false);
+
         // bidder không thêm bỏ sp
         btnAdd.setVisible(false);
         btnAdd.setManaged(false);
@@ -471,10 +474,14 @@ public class AuctionListController implements Initializable {
 
         //nút admin
         if (LoginController.adminRoute) {
+            box.setVisible(true);
+            box.setManaged(true);
             btnRemove.setVisible(true);
             btnRemove.setManaged(true);
 
         } else if (LoginController.sellerRoute) {
+            box.setVisible(true);
+            box.setManaged(true);
             btnAdd.setVisible(true);
             btnAdd.setManaged(true);
         }

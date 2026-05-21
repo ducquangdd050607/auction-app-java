@@ -206,6 +206,7 @@ public class RankingListController {
         } else if (LoginController.sellerRoute) {
 
             if (AuctionSession.getInstance().getCurrentAuction().status().equals(AuctionStatus.RUNNING)) {
+                //TODO: Sửa trạng thái
                 AlertUtils.AnnouncementController("Không đủ tư cách xóa", "SELLER không thể xóa các phiên đang chạy", null, null);
             } else {
                 removeAuction();

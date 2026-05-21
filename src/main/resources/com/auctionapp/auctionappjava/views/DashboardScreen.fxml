@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="664.0" prefWidth="1000.0" stylesheets="@../css/Navigator.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.DashboardController">
@@ -37,7 +38,7 @@
                <children>
                   <Button layoutX="1054.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleOpenList" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard1" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard1" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -50,7 +51,7 @@
                   </Button>
                   <Button fx:id="btnWallet" layoutX="1054.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleWallet" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard2" alignment="CENTER_LEFT" prefHeight="90.0" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard2" alignment="CENTER_LEFT" prefHeight="90.0" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -63,7 +64,7 @@
                   </Button>
                   <Button fx:id="btnSellerItemManager" mnemonicParsing="false" onAction="#handleManager" prefHeight="96.0" prefWidth="160.0" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard31" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard31" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -76,7 +77,7 @@
                   </Button>
                   <Button fx:id="btnHistory" layoutX="1054.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleHistory" prefHeight="96.0" prefWidth="160.0" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard3" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="160.0" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard3" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="160.0" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -89,7 +90,7 @@
                   </Button>
                   <Button fx:id="btnShowActiveUsers" mnemonicParsing="false" onAction="#handleOpenUsersList" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard11" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="170.0" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard11" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="170.0" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -105,32 +106,47 @@
 
             <!-- Section Title -->
             <Label style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #333;" text="Các phiên đấu giá nổi bật:" />
-            <ListView fx:id="boxLoading" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: tranparent;" />
+            <ListView fx:id="boxLoading" prefHeight="122.0" prefWidth="952.0" style="-fx-background-color: tranparent;">
+               <cursor>
+                  <Cursor fx:constant="WAIT" />
+               </cursor></ListView>
 
             <!-- Item Cards 3 columns -->
-            <HBox fx:id="boxItems" prefHeight="275.0" prefWidth="952.0" spacing="14.0">
+            <HBox fx:id="boxItems" alignment="CENTER" prefWidth="952.0" spacing="14.0">
                <children>
 
-                  <!-- Card 1 -->
-                  <VBox fx:id="itemCard1" prefHeight="275.0" prefWidth="292.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                        <!-- Card 1 -->
+                  <VBox fx:id="itemCard1" prefHeight="317.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
-                           <padding><Insets bottom="10" left="14" right="14" top="10" /></padding>
+                           <padding>
+                              <Insets bottom="10" left="14" right="14" top="10" />
+                           </padding>
                            <children>
                               <Label style="-fx-text-fill: #B0EED8; -fx-font-size: 11;" text="Thời gian còn lại:" />
                               <Label fx:id="lblTimer1" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="deltaTime1" />
                            </children>
                         </HBox>
-                        <VBox prefHeight="222.0" prefWidth="292.0" spacing="8" VBox.vgrow="ALWAYS">
-                           <padding><Insets bottom="16" left="16" right="16" top="14" /></padding>
+                        <VBox prefWidth="310.0" spacing="8" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets bottom="16" left="16" right="16" top="14" />
+                           </padding>
                            <children>
-                              <Label fx:id="lblItemName1" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title1" />
-                              <Label fx:id="lblItemDesc1" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Dép lê size 36, còn mới 95%, màu đen." />
-                              <HBox alignment="CENTER_LEFT" spacing="6">
+                              <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <Label prefWidth="53.0" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc: " />
-                                    <Label fx:id="endTime1" layoutX="302.0" layoutY="10.0" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                    <VBox prefHeight="71.0" spacing="8.0">
+                                       <children>
+                                          <Label fx:id="lblItemName1" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title1" />
+                                          <Label fx:id="lblItemDesc1" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Dép lê size 36, còn mới 95%, màu đen." />
+                                          <HBox alignment="CENTER_LEFT" prefHeight="16.0" prefWidth="254.0" spacing="6" VBox.vgrow="NEVER">
+                                             <children>
+                                                <Label prefWidth="53.0" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc: " />
+                                                <Label fx:id="endTime1" layoutX="302.0" layoutY="10.0" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">
@@ -150,26 +166,38 @@
                      </children>
                   </VBox>
 
-                  <!-- Card 2 -->
-                  <VBox fx:id="itemCard2" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                              <!-- Card 2 -->
+                  <VBox fx:id="itemCard2" prefHeight="317.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
-                           <padding><Insets bottom="10" left="14" right="14" top="10" /></padding>
+                           <padding>
+                              <Insets bottom="10" left="14" right="14" top="10" />
+                           </padding>
                            <children>
                               <Label style="-fx-text-fill: #B0EED8; -fx-font-size: 11;" text="Thời gian còn lại:" />
                               <Label fx:id="lblTimer2" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="deltaTime2" />
                            </children>
                         </HBox>
                         <VBox spacing="8" VBox.vgrow="ALWAYS">
-                           <padding><Insets bottom="16" left="16" right="16" top="14" /></padding>
+                           <padding>
+                              <Insets bottom="16" left="16" right="16" top="14" />
+                           </padding>
                            <children>
-                              <Label fx:id="lblItemName2" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title2" />
-                              <Label fx:id="lblItemDesc2" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Ví da thật, ngăn nhiều, dáng dài, màu nâu đậm." />
-                              <HBox alignment="CENTER_LEFT" spacing="6">
+                              <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc: " />
-                                    <Label fx:id="endTime2" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                    <VBox prefHeight="71.0" spacing="8.0">
+                                       <children>
+                                          <Label fx:id="lblItemName2" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title2" />
+                                          <Label fx:id="lblItemDesc2" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Ví da thật, ngăn nhiều, dáng dài, màu nâu đậm." />
+                                          <HBox alignment="CENTER_LEFT" spacing="6">
+                                             <children>
+                                                <Label style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc: " />
+                                                <Label fx:id="endTime2" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">
@@ -189,26 +217,38 @@
                      </children>
                   </VBox>
 
-                  <!-- Card 3 -->
-                  <VBox fx:id="itemCard3" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                        <!-- Card 3 -->
+                  <VBox fx:id="itemCard3" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
-                           <padding><Insets bottom="10" left="14" right="14" top="10" /></padding>
+                           <padding>
+                              <Insets bottom="10" left="14" right="14" top="10" />
+                           </padding>
                            <children>
                               <Label style="-fx-text-fill: #B0EED8; -fx-font-size: 11;" text="Thời gian còn lại:" />
                               <Label fx:id="lblTimer3" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="deltaTime3" />
                            </children>
                         </HBox>
                         <VBox spacing="8" VBox.vgrow="ALWAYS">
-                           <padding><Insets bottom="16" left="16" right="16" top="14" /></padding>
+                           <padding>
+                              <Insets bottom="16" left="16" right="16" top="14" />
+                           </padding>
                            <children>
-                              <Label fx:id="lblItemName3" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title3" />
-                              <Label fx:id="lblItemDesc3" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Bộ truyện tranh NX full tập, bìa cứng, tình trạng tốt." />
-                              <HBox alignment="CENTER_LEFT" spacing="6">
+                              <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc:  " />
-                                    <Label fx:id="endTime3" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                    <VBox prefHeight="71.0" spacing="8.0">
+                                       <children>
+                                          <Label fx:id="lblItemName3" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="title3" />
+                                          <Label fx:id="lblItemDesc3" maxWidth="Infinity" style="-fx-font-size: 12; -fx-text-fill: #888; -fx-wrap-text: true;" text="Bộ truyện tranh NX full tập, bìa cứng, tình trạng tốt." />
+                                          <HBox alignment="CENTER_LEFT" spacing="6">
+                                             <children>
+                                                <Label style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="Kết thúc:  " />
+                                                <Label fx:id="endTime3" style="-fx-font-size: 11; -fx-text-fill: #AAA;" text="endTime" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">

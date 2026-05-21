@@ -1,7 +1,5 @@
 package com.auctionapp.auctionappjava.server.service;
 
-import com.auctionapp.auctionappjava.client.session.AuctionSession;
-import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
