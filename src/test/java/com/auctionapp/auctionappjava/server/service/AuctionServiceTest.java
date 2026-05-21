@@ -190,7 +190,7 @@ public class AuctionServiceTest {
         @Override public void updateProfile(UUID id, String fullName, String email) {}
         @Override public void updatePassword(UUID id, String hash, String salt) {}
         @Override public void updateActiveStatus(UUID id, boolean isActive) {}
-        @Override public Optional<User> findSellerByAuctionId(UUID auctionId) { return new ArrayList<>(users.values()); }
+        @Override public Optional<User> findSellerByAuctionId(UUID auctionId) { return users.values().stream().findFirst(); }
         @Override public List<UserDetailResponse> findAllDetails() {
             List<UserDetailResponse> result = new ArrayList<>();
             for (User user : users.values()) {

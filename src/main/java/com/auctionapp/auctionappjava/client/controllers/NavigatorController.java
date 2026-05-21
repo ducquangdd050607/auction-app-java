@@ -65,6 +65,8 @@ public class NavigatorController implements Initializable {
     @FXML
     private Button btnItemManager;
     @FXML
+    private Button btnTrend;
+    @FXML
     private Button btnTransactionList;
     @FXML
     private Button btnSignout;
@@ -344,6 +346,12 @@ public class NavigatorController implements Initializable {
     }
 
     @FXML
+    void handleTrend(ActionEvent event) throws IOException {
+        setActiveButton(btnTrend);
+        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionTrendScreen.fxml");
+    }
+
+    @FXML
     void handleHistory(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
         activateHistory();
@@ -437,6 +445,12 @@ public class NavigatorController implements Initializable {
     public static void activateItemListSeller() {
         if (instance != null) {
             instance.setActiveButton(instance.btnItemListSeller);
+        }
+    }
+
+    public static void activateTrend() {
+        if (instance != null) {
+            instance.setActiveButton(instance.btnTrend);
         }
     }
 

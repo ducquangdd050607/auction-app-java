@@ -203,5 +203,45 @@
     "question": "Tôi cần hỗ trợ vấn đề khác",
     "answer": "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.",
     "keywords": ["khác", "khac", "ngoài app", "ngoai app", "không liên quan", "khong lien quan"]
+  },
+  {
+    "question": "Màn hình Xu hướng đấu giá dùng để làm gì?",
+    "answer": "Màn hình Xu hướng giúp Seller xem nhanh phiên nào đang có mức độ quan tâm cao. Hệ thống xếp hạng các phiên theo điểm xu hướng, dựa trên tốc độ bid gần đây, số auto-bid đang bật, áp lực thời gian gần kết thúc và mức tăng giá so với giá khởi điểm.",
+    "keywords": ["xu hướng", "xu huong", "trend", "màn hình xu hướng", "man hinh xu huong", "đấu giá nóng", "dau gia nong", "phiên hot", "phien hot"]
+  },
+  {
+    "question": "Công thức tính điểm xu hướng là gì?",
+    "answer": "Điểm xu hướng là tổng điểm của 4 nhóm tín hiệu: tốc độ bid gần đây, áp lực auto-bid, áp lực thời gian và mức tăng giá. Tốc độ bid có thể cộng tối đa 35 điểm, auto-bid tối đa 25 điểm, áp lực thời gian tối đa 30 điểm, và tăng giá tối đa 25 điểm.",
+    "keywords": ["công thức xu hướng", "cong thuc xu huong", "tính điểm xu hướng", "tinh diem xu huong", "trend score", "điểm trend", "diem trend", "cách tính xu hướng", "cach tinh xu huong"]
+  },
+  {
+    "question": "Tốc độ bid ảnh hưởng đến điểm xu hướng như thế nào?",
+    "answer": "Hệ thống xét các lượt bid trong 60 giây gần nhất. Nếu có từ 5 bid trở lên thì cộng 35 điểm và xem là đang nóng. Nếu có từ 2 bid trở lên thì cộng 18 điểm. Nếu có bid nhưng chưa bùng nổ thì cộng 5 điểm.",
+    "keywords": ["tốc độ bid", "toc do bid", "bid velocity", "60 giây", "60 giay", "bid gần đây", "bid gan day", "đang nóng"]
+  },
+  {
+    "question": "Auto-bid ảnh hưởng đến xu hướng như thế nào?",
+    "answer": "Nếu một phiên có nhiều cấu hình auto-bid đang bật, hệ thống xem đó là dấu hiệu cạnh tranh cao. Từ 3 auto-bid trở lên cộng 25 điểm, từ 1 auto-bid trở lên cộng 12 điểm.",
+    "keywords": ["auto-bid xu hướng", "auto bid xu huong", "bot war", "áp lực auto-bid", "ap luc auto bid", "auto-bid đang bật"]
+  },
+  {
+    "question": "Áp lực thời gian trong điểm xu hướng là gì?",
+    "answer": "Áp lực thời gian xuất hiện khi phiên còn dưới 10 phút. Nếu còn dưới 5 phút và có ít nhất 2 bid sát giờ kết thúc thì cộng 30 điểm FOMO. Nếu chỉ còn dưới 10 phút thì cộng 12 điểm sắp kết thúc.",
+    "keywords": ["áp lực thời gian", "ap luc thoi gian", "FOMO", "sát giờ", "sat gio", "sắp kết thúc", "sap ket thuc", "10 phút cuối"]
+  },
+  {
+    "question": "Mức tăng giá ảnh hưởng đến xu hướng như thế nào?",
+    "answer": "Hệ thống so sánh giá hiện tại với giá khởi điểm. Nếu giá tăng từ 100% trở lên thì cộng 25 điểm. Nếu giá tăng từ 30% trở lên thì cộng 12 điểm.",
+    "keywords": ["tăng giá", "tang gia", "price growth", "giá hiện tại", "gia hien tai", "giá khởi điểm", "gia khoi diem", "100%", "30%"]
+  },
+  {
+    "question": "Các nhãn xu hướng có ý nghĩa gì?",
+    "answer": "Điểm từ 70 trở lên là Rất nóng, từ 40 trở lên là Đang nóng, từ 20 trở lên là Đang tăng, còn thấp hơn là Bình thường. Nhãn này giúp nhận biết nhanh mức độ cạnh tranh của từng phiên.",
+    "keywords": ["nhãn xu hướng", "nhan xu huong", "rất nóng", "rat nong", "đang nóng", "dang nong", "đang tăng", "dang tang", "bình thường", "binh thuong"]
+  },
+  {
+    "question": "Vì sao điểm xu hướng thay đổi liên tục?",
+    "answer": "Điểm xu hướng có thể thay đổi khi có bid mới, khi auto-bid được bật, khi phiên tiến gần thời điểm kết thúc hoặc khi giá hiện tại tăng so với giá khởi điểm. Vì vậy bấm Làm mới sẽ lấy lại điểm mới nhất từ server.",
+    "keywords": ["điểm xu hướng thay đổi", "diem xu huong thay doi", "làm mới xu hướng", "lam moi xu huong", "refresh trend", "vì sao điểm thay đổi", "vi sao diem thay doi"]
   }
 ]
