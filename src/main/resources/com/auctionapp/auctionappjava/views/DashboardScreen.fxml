@@ -26,7 +26,7 @@
                   <VBox spacing="4.0">
                      <children>
                         <Label fx:id="lblGreeting" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" />
-                        <Label fx:id="lblGreetingSub" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Gôd day ni99a" />
+                        <Label fx:id="lblGreetingSub" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Have a nice day :D" />
                      </children>
                   </VBox>
                </children>
@@ -50,7 +50,7 @@
                   </Button>
                   <Button fx:id="btnWallet" layoutX="1054.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleWallet" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <VBox fx:id="statCard2" alignment="CENTER_LEFT" prefHeight="90.0" spacing="5.0" style="-fx-background-color: whit transparente; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                        <VBox fx:id="statCard2" alignment="CENTER_LEFT" prefHeight="90.0" spacing="5.0" style="-fx-background-color: transparent; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                            <padding>
                               <Insets bottom="18" left="20" right="20" top="18" />
                            </padding>
@@ -104,7 +104,7 @@
             </HBox>
 
             <!-- Section Title -->
-            <Label style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #333;" text="Truy cập nhanh" />
+            <Label style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #333;" text="Các phiên đấu giá nổi bật:" />
             <ListView fx:id="boxLoading" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: tranparent;" />
 
             <!-- Item Cards 3 columns -->

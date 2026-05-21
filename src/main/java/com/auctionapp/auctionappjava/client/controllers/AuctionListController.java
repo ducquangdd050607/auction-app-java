@@ -126,9 +126,9 @@ public class AuctionListController implements Initializable {
                 String translatedStatus = "";
                 if (auction.status() != null) {
                     translatedStatus = switch (auction.status()) {
-                        case OPEN -> "MỞ";
-                        case RUNNING -> "ĐANG DIỄN RA";
-                        case FINISHED -> "KẾT THÚC";
+                        case OPEN -> "Đã mở";
+                        case RUNNING -> "Đang diễn ra";
+                        case FINISHED -> "Đã kết thúc";
                         default -> translatedStatus;
                     };
                 }
@@ -143,7 +143,7 @@ public class AuctionListController implements Initializable {
                 String serverCategory = switch (selectedCategory) {
                     case "Nghệ thuật" -> "ART";
                     case "Điện tử" -> "ELECTRONICS";
-                    case "Xe cộ" -> "VEHICLE";
+                    case "Phương tiện" -> "VEHICLE";
                     default -> "";
                 };
                 matchCategory = auction.category() != null &&
@@ -226,7 +226,7 @@ public class AuctionListController implements Initializable {
         instance = this;
 
         //lọc và kiểm tra kiểu người dùng - đưa ra các btn tương ứng
-        String[] statuses = {"Tất cả trạng thái", "MỞ", "ĐANG DIỄN RA", "KẾT THÚC"};
+        String[] statuses = {"Tất cả trạng thái", "Đã mở", "Đang diễn ra", "Kết thúc"};
         cbFilterStatus.getItems().addAll(statuses);
         cbFilterStatus.setValue("Tất cả trạng thái"); // Chọn mặc định
 
@@ -413,7 +413,7 @@ public class AuctionListController implements Initializable {
 
                     // Pha 1: Chưa tới giờ mở -> Đếm ngược đến lúc Mở
                     if (now.isBefore(startTime)) {
-                        displayTime = "Mở sau " + formatDuration(java.time.Duration.between(now, startTime));
+                        displayTime = "Diễn ra sau " + formatDuration(java.time.Duration.between(now, startTime));
                     }
                     // Pha 2: Đã mở nhưng chưa kết thúc -> Đếm ngược đến lúc Kết thúc
                     else if (!now.isBefore(startTime) && now.isBefore(endTime)) {

@@ -79,7 +79,7 @@ public class ConfirmBiddingController {
     @FXML
     void handleAutoBidding(ActionEvent event) {
         boxAutoBidding.setVisible(chboxAutoBidding.isSelected());
-        boxAutoBidding.setManaged(chboxAutoBidding.isSelected());
+        /*boxAutoBidding.setManaged(chboxAutoBidding.isSelected());*/
         isAutoBidding = chboxAutoBidding.isSelected();
     }
 
@@ -90,7 +90,7 @@ public class ConfirmBiddingController {
         isAutoBidding = false;
         chboxAutoBidding.setSelected(false);
         boxAutoBidding.setVisible(false);
-        boxAutoBidding.setManaged(false);
+        /*boxAutoBidding.setManaged(false);*/
 
         btnMore.setManaged(false);
         btnMore.setVisible(false);
@@ -107,8 +107,6 @@ public class ConfirmBiddingController {
     void handleBack(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml", "Thông tin sản phẩm");
         isAutoBidding = false;
-        // TODO: SỬA LẠI CÁCH BACK HOẠT ĐỘNG
-
     }
 
     @FXML

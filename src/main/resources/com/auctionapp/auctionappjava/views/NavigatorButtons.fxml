@@ -74,7 +74,7 @@
                   <Pane prefHeight="42.0" prefWidth="10.0" />
                   <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 18; -fx-font-weight: bold;" text="Bét88" textAlignment="CENTER" textFill="WHITE" />
                   <Region prefHeight="50.0" prefWidth="302.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="identity" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" styleClass="route-btn" text="&quot;for Route&quot;" />
+                  <Button fx:id="identity" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" style="-fx-font-weight: bold; -fx-text-fill: rgb(46, 125, 155);" styleClass="route-btn" text="&quot;for Route&quot;" />
                   <Region prefHeight="42.0" prefWidth="18.0" />
                   <Button fx:id="btnSignout" mnemonicParsing="false" onAction="#handleSignOut" prefHeight="39.0" prefWidth="74.0" styleClass="logout-btn" text="Sign out" />
                   <Button fx:id="btnExit" mnemonicParsing="false" onAction="#handleExit" prefHeight="39.0" prefWidth="62.0" styleClass="logout-btn" text="Exit" />

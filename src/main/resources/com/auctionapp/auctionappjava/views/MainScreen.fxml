@@ -23,7 +23,7 @@
       
           <!-- ===== NAVBAR TOP ===== -->
           <top>
-              <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="880.0" style="-fx-background-color: rgb(0, 113, 166); -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+              <HBox alignment="CENTER_RIGHT" prefHeight="42.0" prefWidth="922.0" style="-fx-background-color: rgb(0, 113, 166); -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="680.0" spacing="10.0">
                      <children>

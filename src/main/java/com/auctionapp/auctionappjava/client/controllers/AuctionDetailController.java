@@ -141,7 +141,7 @@ public class AuctionDetailController {
         lblStatus.setText(String.valueOf(auction.status()));
         lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
-        lblCurrentLeader.setText("Dang tai...");
+        lblCurrentLeader.setText("Đang tải...");
         loadCurrentLeaderFromRanking(auction.auctionId());
 
         // Hiện vòng xoay, giấu khung ảnh và chữ đi
@@ -197,21 +197,35 @@ public class AuctionDetailController {
             try {
                 return Client.getInstance().sendRequest(rankingReq);
             } catch (Exception e) {
-                return new Response(false, "Loi ket noi Server", null);
+                return new Response(false, "Lỗi kết nối Server", null);
             }
-        }).thenAccept(response -> Platform.runLater(() -> {
-            if (response == null || !response.success() || !(response.data() instanceof List<?> rows) || rows.isEmpty()) {
-                lblCurrentLeader.setText("Chua co");
-                return;
-            }
+        }).thenAccept(response ->
+            Platform.runLater(() -> {
+                // Check lỗi mạng hoặc lỗi server
+                if (response == null || !response.success()) {
+                    String errorMsg = (response != null && response.message() != null)
+                            ? "Lỗi" + response.message()
+                            : "Lỗi tải dữ liệu";
+                    lblCurrentLeader.setText(errorMsg);
+                    return;
+                }
 
-            Object firstRow = rows.get(0);
-            if (firstRow instanceof BidRankingResponse winner) {
-                lblCurrentLeader.setText(winner.bidderName());
-            } else {
-                lblCurrentLeader.setText("Chua co");
-            }
-        }));
+                // Check xem có ai đặt chưa
+                if (!(response.data() instanceof List<?> rows) || rows.isEmpty()) {
+                    lblCurrentLeader.setText("Chưa có ai đặt bid");
+                    return;
+                }
+
+                // Check dữ liệu hợp lệ
+                Object firstRow = rows.get(0);
+                if (firstRow instanceof BidRankingResponse winner) {
+                    lblCurrentLeader.setText(winner.bidderName());
+                } else {
+                    // Đề phòng trường hợp Server trả về List nhưng sai kiểu object
+                    lblCurrentLeader.setText("Dữ liệu không hợp lệ");
+                }
+            })
+        );
     }
 
     @FXML

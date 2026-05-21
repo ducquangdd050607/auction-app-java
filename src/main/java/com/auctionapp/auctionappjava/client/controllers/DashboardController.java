@@ -8,6 +8,9 @@ import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.MoneyUtils;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,9 +23,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
@@ -30,123 +36,90 @@ import java.util.concurrent.CompletableFuture;
 import static com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils.NavSceneController;
 
 public class DashboardController implements Initializable {
+    // Lưu thông tin các response để lấy dữ liệu làm timeline
+    private AuctionSummaryResponse mostBiddedAuction;
+    private AuctionSummaryResponse featuredAuction2;
+    private AuctionSummaryResponse mostExpiredAuction;
+    private Timeline dashboardTimer;
 
     @FXML
     private Button btnGo1;
-
     @FXML
     private Button btnGo2;
-
     @FXML
     private Button btnGo3;
-
     @FXML
     private Button btnHistory;
-
     @FXML
     private Button btnSellerItemManager;
-
     @FXML
     private Button btnWallet;
     @FXML
     private Button btnShowActiveUsers;
     @FXML
     private Label endTime1;
-
     @FXML
     private Label endTime2;
-
     @FXML
     private Label endTime3;
-
     @FXML
     private VBox itemCard1;
-
     @FXML
     private VBox itemCard2;
-
     @FXML
     private VBox itemCard3;
-
     @FXML
     private Label lblBalance;
-
     @FXML
     private Label lblBidders;
-
     @FXML
     private Label lblCompleted;
-
     @FXML
     private Label lblGreeting;
-
     @FXML
     private Label lblGreetingSub;
-
     @FXML
     private Label lblHistory;
-
     @FXML
     private Label lblItemDesc1;
-
     @FXML
     private Label lblItemDesc2;
-
     @FXML
     private Label lblItemDesc3;
-
     @FXML
     private Label lblItemName1;
-
     @FXML
     private Label lblItemName2;
-
     @FXML
     private Label lblItemName3;
-
     @FXML
     private Label lblItemPrice1;
-
     @FXML
     private Label lblItemPrice2;
-
     @FXML
     private Label lblItemPrice3;
-
     @FXML
     private Label lblRUNNINGs;
-
     @FXML
     private Label lblStat1Label;
-
     @FXML
     private Label lblStat1Label1;
-
     @FXML
     private Label lblStat3Label;
-
     @FXML
     private Label lblStat3Label1;
-
     @FXML
     private Label lblStat3Label2;
-
     @FXML
     private Label lblTimer1;
-
     @FXML
     private Label lblTimer2;
-
     @FXML
     private Label lblTimer3;
-
     @FXML
     private HBox boxItems;
-
     @FXML
     private ListView<?> boxLoading;
-
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -161,6 +134,53 @@ public class DashboardController implements Initializable {
 
         loadFeaturedAuctionsFromServer();
 
+        // Khởi tạo bộ đếm
+        dashboardTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateTimersUI();
+        }));
+        dashboardTimer.setCycleCount(Animation.INDEFINITE);
+        dashboardTimer.play();
+    }
+
+    // Hàm tắt bộ đếm (gọi hàm này khi thoát app hoặc chuyển scene)
+    public void stopTimer() {
+        if (dashboardTimer != null) dashboardTimer.stop();
+    }
+
+    // Hàm quét qua các thẻ và cập nhật Label
+    private void updateTimersUI() {
+        if (mostBiddedAuction != null) lblTimer1.setText(calculateRemainingTime(mostBiddedAuction));
+        if (featuredAuction2 != null) lblTimer2.setText(calculateRemainingTime(featuredAuction2));
+        if (mostExpiredAuction != null) lblTimer3.setText(calculateRemainingTime(mostExpiredAuction));
+    }
+
+    // Logic tính toán chuỗi thời gian
+    private String calculateRemainingTime(AuctionSummaryResponse auction) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startTime = LocalDateTime.parse(auction.startDateTime(), formatter);
+            LocalDateTime endTime = LocalDateTime.parse(auction.endDateTime(), formatter);
+
+            if (now.isBefore(startTime)) {
+                return "Mở sau " + formatDuration(java.time.Duration.between(now, startTime));
+            } else if (now.isBefore(endTime)) {
+                return formatDuration(java.time.Duration.between(now, endTime));
+            } else {
+                return "Đã kết thúc";
+            }
+        } catch (Exception e) {
+            return "00:00:00";
+        }
+    }
+
+    // Hàm format giây sang formatter chuẩn
+    private String formatDuration(java.time.Duration duration) {
+        if (duration.isNegative() || duration.isZero()) return "00:00:00";
+        long hours = duration.toHours();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     public void loadStatDataFromServer() throws IOException {
@@ -203,7 +223,6 @@ public class DashboardController implements Initializable {
 
 
     public void loadFeaturedAuctionsFromServer() {
-
         boxItems.setVisible(false);
         boxItems.setManaged(false);
 
@@ -224,9 +243,7 @@ public class DashboardController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
-
                 if (response.success()) {
-
                     boxLoading.setVisible(false);
                     boxLoading.setManaged(false);
 
@@ -237,9 +254,8 @@ public class DashboardController implements Initializable {
                     List<AuctionSummaryResponse> auctionsFromServer = (List<AuctionSummaryResponse>) response.data();
 
                     // Điền dữ liệu mới vào bảng
-                    System.out.println(auctionsFromServer);
-                    AuctionSummaryResponse mostBiddedAuction = auctionsFromServer.get(0);
-                    AuctionSummaryResponse mostExpiredAuction = auctionsFromServer.get(1);
+                    mostBiddedAuction = auctionsFromServer.get(0);
+                    mostExpiredAuction = auctionsFromServer.get(1);
 
                     lblItemName1.setText(mostBiddedAuction.itemName());
                     endTime1.setText(mostBiddedAuction.endDateTime());
@@ -268,6 +284,8 @@ public class DashboardController implements Initializable {
                             e.printStackTrace();
                         }
                     });
+
+                    updateTimersUI();
                 } else {
                     Label noDataLabel = new Label("Không tìm thấy phiên đấu giá nào hoạt động.");
                     noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray; ");
@@ -310,13 +328,11 @@ public class DashboardController implements Initializable {
             stage.sizeToScene();
             stage.centerOnScreen();
             stage.showAndWait();
-
         }
     }
 
 
     public void show() throws IOException {
-
         // Mặc định theo Admin
         btnHistory.setVisible(false);
         btnHistory.setManaged(false);
@@ -342,8 +358,8 @@ public class DashboardController implements Initializable {
             btnShowActiveUsers.setVisible(false);
             btnShowActiveUsers.setManaged(false);
         }
-
     }
+
     public void btnBehaviour(boolean bool) {
         btnHistory.setVisible(bool);
         btnHistory.setManaged(bool);
