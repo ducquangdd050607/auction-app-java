@@ -38,6 +38,9 @@ import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
+
 public class AddItemController implements Initializable {
 
     private static final DateTimeFormatter DATE_FORMATTER =
@@ -120,8 +123,6 @@ public class AddItemController implements Initializable {
 
     @FXML
     void handleAddItem(ActionEvent event) {
-        lblError.setText("");
-
         String name = txtItemName.getText().trim();
         String description = txtDescription.getText().trim();
         String priceText = txtStartingPrice.getText().trim();
@@ -130,24 +131,38 @@ public class AddItemController implements Initializable {
         String category = cbCategory.getValue();
         String attribute1 = txtExtraInfo1.getText().trim();
         String attribute2 = txtExtraInfo2.getText().trim();
-        String minIncrement = txtMinIncrement.getText().trim();
+        String minIncrementText = txtMinIncrement.getText().trim();
 
         if (name.isEmpty() || priceText.isEmpty() || openDateText.isEmpty()
-                || endDateText.isEmpty() || minIncrement.isEmpty() || category == null) {
+                || endDateText.isEmpty() || minIncrementText.isEmpty() || category == null) {
             lblError.setText("Vui lòng điền đầy đủ thông tin bắt buộc.");
             return;
         }
 
         BigDecimal startingPrice;
+        BigDecimal minIncrement;
 
         try {
-            startingPrice = new BigDecimal(priceText);
+            startingPrice = purifyingText(priceText);
         } catch (NumberFormatException e) {
             lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
             return;
         }
+
+        try {
+            minIncrement = purifyingText(minIncrementText);
+        } catch (NumberFormatException e) {
+            lblError.setText("Bước giá phải là số dương hợp lệ.");
+            return;
+        }
+
         if (startingPrice.compareTo(BigDecimal.ZERO) <= 0) {
             lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
+            return;
+        }
+
+        if (minIncrement.compareTo(BigDecimal.ZERO) <= 0) {
+            lblError.setText("Bước giá phải là số dương hợp lệ.");
             return;
         }
 
@@ -186,7 +201,7 @@ public class AddItemController implements Initializable {
         }
 
         AddItemRequest payload = new AddItemRequest(UserSession.getInstance().getCurrentUser().id(), name,
-                description, startingPrice, MoneyUtils.purifyingText(minIncrement), type, openTime, endTime,
+                description, startingPrice, minIncrement, type, openTime, endTime,
                 attribute1, attribute2, selectedImageData);
         Request addItemReq = new Request("ADD_ITEM", payload);
 
@@ -248,6 +263,9 @@ public class AddItemController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        settingMoneyFormat(txtStartingPrice);
+        settingMoneyFormat(txtMinIncrement);
+
         isAddedSuccess = false;
 
         alertImage = new Image(getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg"));

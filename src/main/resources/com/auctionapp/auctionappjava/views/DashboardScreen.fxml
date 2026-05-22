@@ -146,7 +146,10 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="imgProduct1" fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></ImageView>
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">
@@ -178,7 +181,7 @@
                               <Label fx:id="lblTimer2" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="deltaTime2" />
                            </children>
                         </HBox>
-                        <VBox spacing="8" VBox.vgrow="ALWAYS">
+                        <VBox prefWidth="310.0" spacing="8" VBox.vgrow="ALWAYS">
                            <padding>
                               <Insets bottom="16" left="16" right="16" top="14" />
                            </padding>
@@ -197,7 +200,10 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="imgProduct2" fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></ImageView>
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">
@@ -229,7 +235,7 @@
                               <Label fx:id="lblTimer3" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="deltaTime3" />
                            </children>
                         </HBox>
-                        <VBox spacing="8" VBox.vgrow="ALWAYS">
+                        <VBox prefWidth="310.0" spacing="8" VBox.vgrow="ALWAYS">
                            <padding>
                               <Insets bottom="16" left="16" right="16" top="14" />
                            </padding>
@@ -248,7 +254,10 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="imgProduct3" fitHeight="101.0" fitWidth="116.0" pickOnBounds="true" preserveRatio="true">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></ImageView>
                                  </children>
                               </HBox>
                               <HBox alignment="BASELINE_LEFT" spacing="5">

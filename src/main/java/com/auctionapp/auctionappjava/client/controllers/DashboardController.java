@@ -3,10 +3,9 @@ package com.auctionapp.auctionappjava.client.controllers;
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
-import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.exception.AppException;
+import com.auctionapp.auctionappjava.common.util.CompressionUtils;
 import com.auctionapp.auctionappjava.common.util.MoneyUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -19,6 +18,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -120,6 +121,12 @@ public class DashboardController implements Initializable {
     private HBox boxItems;
     @FXML
     private ListView<?> boxLoading;
+    @FXML
+    private ImageView imgProduct1;
+    @FXML
+    private ImageView imgProduct2;
+    @FXML
+    private ImageView imgProduct3;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -261,11 +268,15 @@ public class DashboardController implements Initializable {
                     endTime1.setText(mostBiddedAuction.endDateTime());
                     lblItemPrice1.setText(MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
                     lblItemDesc1.setText(mostBiddedAuction.description());
+                    loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
+
+                    // TODO: thêm thông tin card 2
 
                     lblItemName3.setText(mostExpiredAuction.itemName());
                     endTime3.setText(mostExpiredAuction.endDateTime());
                     lblItemPrice3.setText(MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
                     lblItemDesc3.setText(mostExpiredAuction.description());
+                    loadImageForCard(mostExpiredAuction.auctionId(), imgProduct3);
 
                     btnGo1.setOnAction(event -> {
                         try {
@@ -409,5 +420,66 @@ public class DashboardController implements Initializable {
     void handleWallet(ActionEvent event) throws IOException{
         NavigatorController.activateAccountButton();
         NavSceneController(event, NavigatorController.getMainBorderPane(), "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
+    }
+
+    // Hàm tải ảnh ngầm cho từng khung
+    private void loadImageForCard(String auctionId, ImageView targetImageView) {
+        Request imgReq = new Request("GET_IMAGE", new ImageRequest(auctionId));
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(imgReq);
+            } catch (Exception e) {
+                return null;
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response != null && response.success() && response.data() != null) {
+                    ImageResponse imgRes = (ImageResponse) response.data();
+                    byte[] compressedBytes = imgRes.imageData();
+
+                    if (compressedBytes != null && compressedBytes.length > 0) {
+                        try {
+                            // Giải nén và vẽ ảnh lên UI
+                            byte[] originalBytes = CompressionUtils.decompress(compressedBytes);
+                            Image realImage = new Image(new java.io.ByteArrayInputStream(originalBytes));
+                            targetImageView.setImage(realImage);
+
+                            // Bật tính năng click để zoom ngay sau khi ảnh load xong
+                            setupZoomImage(targetImageView);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    // Hàm phóng to ảnh khi click vào
+    private void setupZoomImage(ImageView imageView) {
+        imageView.setOnMouseClicked((javafx.scene.input.MouseEvent event) -> {
+            if (imageView.getImage() == null) {
+                imageView.setCursor(javafx.scene.Cursor.NONE);
+                return;
+            }
+
+            Stage zoomStage = new Stage();
+            zoomStage.initModality(Modality.APPLICATION_MODAL);
+            zoomStage.setTitle("Xem chi tiết ảnh");
+
+            ImageView zoomedImageView = new ImageView(imageView.getImage());
+            zoomedImageView.setPreserveRatio(true);
+            zoomedImageView.setFitWidth(800);
+            zoomedImageView.setFitHeight(600);
+
+            javafx.scene.layout.StackPane root = new javafx.scene.layout.StackPane(zoomedImageView);
+            root.setOnMouseClicked(e -> zoomStage.close()); // Click ra ngoài để đóng
+
+            Scene scene = new Scene(root, 900, 700);
+            zoomStage.setScene(scene);
+            zoomStage.centerOnScreen();
+            zoomStage.showAndWait();
+        });
     }
 }
