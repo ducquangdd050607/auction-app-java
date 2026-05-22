@@ -267,7 +267,7 @@ public class DashboardController implements Initializable {
                     lblItemName1.setText(mostBiddedAuction.itemName());
                     endTime1.setText(mostBiddedAuction.endDateTime());
                     lblItemPrice1.setText(MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
-                    lblItemDesc1.setText(mostBiddedAuction.description());
+                    lblItemDesc1.setText(isDescriptionEmpty(mostBiddedAuction.description()));
                     loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
 
                     // TODO: thêm thông tin card 2
@@ -275,7 +275,7 @@ public class DashboardController implements Initializable {
                     lblItemName3.setText(mostExpiredAuction.itemName());
                     endTime3.setText(mostExpiredAuction.endDateTime());
                     lblItemPrice3.setText(MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
-                    lblItemDesc3.setText(mostExpiredAuction.description());
+                    lblItemDesc3.setText(isDescriptionEmpty(mostExpiredAuction.description()));
                     loadImageForCard(mostExpiredAuction.auctionId(), imgProduct3);
 
                     btnGo1.setOnAction(event -> {
@@ -481,5 +481,9 @@ public class DashboardController implements Initializable {
             zoomStage.centerOnScreen();
             zoomStage.showAndWait();
         });
+    }
+
+    private String isDescriptionEmpty(String description) {
+        return (description == null || description.trim().isEmpty()) ? "Không có mô tả" : description;
     }
 }
