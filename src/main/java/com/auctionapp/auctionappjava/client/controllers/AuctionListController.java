@@ -56,8 +56,6 @@ public class AuctionListController implements Initializable {
     @FXML
     private Button btnAdd;
     @FXML
-    private Button btnConfirm;
-    @FXML
     private Button btnCancel;
     @FXML
     private Button btnRemove;
@@ -177,27 +175,6 @@ public class AuctionListController implements Initializable {
         btnRemove.setDisable(false);
         removeBehaviour(false);
         removeAuction = false;
-    }
-
-    @FXML
-    void handleConfirm(ActionEvent event) throws IOException { //WIP
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Chắc chưa?");
-        alert.setHeaderText("Bạn có muốn xóa sản phẩm không?");
-
-        alert.showAndWait().ifPresent(response -> {
-
-            if (response == ButtonType.OK) {
-                removeBehaviour(false);
-                alert.close();
-                btnRemove.setDisable(false);
-            } else {
-                //xử lý hủy(chắc chỉ thế này)
-                alert.close();
-                btnRemove.setDisable(false);
-            }
-        });
     }
 
     @FXML
@@ -331,7 +308,6 @@ public class AuctionListController implements Initializable {
     }
 
     private void handleRemoveAuction(AuctionSummaryResponse auction) throws IOException {
-
         RemoveAuctionRequest removeReq = new RemoveAuctionRequest(
                 UserSession.getInstance().getCurrentUser().id(),
                 auction.auctionId());
@@ -454,7 +430,6 @@ public class AuctionListController implements Initializable {
     }
 
     public void show() throws IOException {
-
         box.setVisible(false);
         box.setManaged(false);
 
@@ -466,9 +441,7 @@ public class AuctionListController implements Initializable {
         btnRemove.setVisible(false);
         btnRemove.setManaged(false);
 
-        // nút xác nhận-hủy-khung chọn chỉ khi bấm remove
-        btnConfirm.setVisible(false);
-        btnConfirm.setManaged(false);
+        // nút hủy-khung chọn chỉ khi bấm remove
         btnCancel.setVisible(false);
         btnCancel.setManaged(false);
 
@@ -489,8 +462,6 @@ public class AuctionListController implements Initializable {
 
     public void removeBehaviour(boolean admin) {
         // Hành vi các nút khi thao tác xóa(admin)
-        btnConfirm.setVisible(admin);
-        btnConfirm.setManaged(admin);
         btnCancel.setVisible(admin);
         btnCancel.setManaged(admin);
     }
@@ -512,12 +483,14 @@ public class AuctionListController implements Initializable {
 
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    AuctionSummaryResponse clickedAuction = row.getItem();
+
                     try {
-                        AuctionSession.getInstance().setCurrentAuction(row.getItem());
+                        AuctionSession.getInstance().setCurrentAuction(clickedAuction);
                         if (removeAuction) {
                             Runnable finalWarning = () -> {
                                 try {
-                                    handleRemoveAuction(row.getItem());
+                                    handleRemoveAuction(clickedAuction);
                                 } catch (IOException e) {
                                     throw new AppException("Không thể xóa phiên đấu giá", e);
                                 }

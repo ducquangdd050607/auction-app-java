@@ -69,7 +69,6 @@
                <children>
                   <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" styleClass="confirm-btn" text="Thêm sản phẩm" />
                   <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" styleClass="confirm-btn" text="Xóa sản phẩm" />
-                  <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" styleClass="confirm-btn" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" styleClass="confirm-btn" text="Hủy bỏ" />
                </children>
             </HBox>
