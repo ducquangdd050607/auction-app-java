@@ -88,6 +88,10 @@ public class AuctionDetailController {
     @FXML
     public void initialize() {
         instance = this;
+        if (!LoginController.bidderRoute) {
+            btnGamble.setVisible(false);
+            btnGamble.setManaged(false);
+        }
 
         // Tự động kéo dữ liệu từ session ra mỗi khi mở màn hình
         AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();

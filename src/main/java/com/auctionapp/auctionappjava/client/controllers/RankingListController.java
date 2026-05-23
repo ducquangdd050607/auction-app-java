@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -98,13 +99,19 @@ public class RankingListController {
         lblCategory.setText(currentAuction.category());
         lblItemName.setText(currentAuction.itemName());
         lblStatus.setText(currentAuction.status().toString());
-        lblTopBidder.setText("Dang tai...");
+        lblTopBidder.setText("Đang tải...");
 
         show();
 
         setupColumns();
         setupChart();
-        tableBidders.setItems(bidderData);
+
+        // Bọc dữ liệu để hỗ trợ sort khi click vào Header cột (Giống bên AuctionList)
+        SortedList<BidRankingResponse> sortedData = new SortedList<>(bidderData);
+        sortedData.comparatorProperty().bind(tableBidders.comparatorProperty());
+
+        tableBidders.setItems(sortedData);
+
         loadBiddersFromServer();
     }
 
@@ -133,7 +140,7 @@ public class RankingListController {
     }
 
     private void setupChart() {
-        bidLineChart.setTitle("Bien dong gia bid");
+        bidLineChart.setTitle("Biểu đồ biến động giá");
         bidLineChart.setLegendVisible(false);
         bidLineChart.setAnimated(false);
     }
@@ -144,6 +151,7 @@ public class RankingListController {
         ProgressIndicator loadingSpinner = new ProgressIndicator();
         loadingSpinner.setMaxSize(50, 50);
         tableBidders.setPlaceholder(loadingSpinner);
+
         bidderData.clear();
         bidLineChart.getData().clear();
 
@@ -155,29 +163,38 @@ public class RankingListController {
                 return Client.getInstance().sendRequest(req);
             } catch (Exception e) {
                 e.printStackTrace();
-                return new Response(false, "Loi ket noi Server", null);
+                return new Response(false, "Lỗi kết nối Server", null);
             }
-        }).thenAccept(response -> Platform.runLater(() -> {
-            btnExportWinner.setDisable(false);
+        }).thenAccept(response ->
+                Platform.runLater(() -> {
+                    btnExportWinner.setDisable(false);
 
-            if (response.success()) {
-                List<BidRankingResponse> rows = (List<BidRankingResponse>) response.data();
-                bidderData.setAll(rows);
-                updateWinner(rows);
-                updateChart(rows);
-            } else {
-                new Alert(Alert.AlertType.ERROR, response.message()).show();
-            }
+                    if (response.success()) {
+                        List<BidRankingResponse> rows = (List<BidRankingResponse>) response.data();
+                        bidderData.setAll(rows);
+                        updateWinner(rows);
+                        updateChart(rows);
 
-            Label noDataLabel = new Label("Chua co lich su bid cho phien nay.");
-            noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
-            tableBidders.setPlaceholder(noDataLabel);
-        }));
+                        // Dữ liệu trống thì hiện thông báo
+                        if (rows.isEmpty()) {
+                            Label noDataLabel = new Label("Chưa có lịch sử bid cho phiên này");
+                            noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #ffffff;");
+                            tableBidders.setPlaceholder(noDataLabel);
+                        }
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, response.message()).show();
+
+                        // Bị lỗi mạng thì cũng hiện chữ báo lỗi
+                        Label errorLabel = new Label("Lỗi tải dữ liệu");
+                        errorLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #E74C3C;");
+                        tableBidders.setPlaceholder(errorLabel);
+                    }
+                }));
     }
 
     private void updateWinner(List<BidRankingResponse> rows) {
         if (rows == null || rows.isEmpty()) {
-            lblTopBidder.setText("Chua co");
+            lblTopBidder.setText("Chưa có ai đặt bid");
             return;
         }
 

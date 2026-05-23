@@ -546,48 +546,31 @@ public class AuctionListController implements Initializable {
     }
 
     private void openAuctionDetail(AuctionSummaryResponse auction) throws IOException {
-        if (LoginController.bidderRoute) {
-            // Bidder
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
-            Parent root = loader.load();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml"));
+        Parent root = loader.load();
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Chi tiết: " + auction.itemName());
-            stage.setScene(new Scene(root));
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.showAndWait();
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Chi tiết: " + auction.itemName());
+        stage.setScene(new Scene(root));
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.showAndWait();
 
-            // Update lại danh sách bảng
-            AuctionSummaryResponse updatedAuction = AuctionSession.getInstance().getCurrentAuction();
-            // Tìm xem cái phiên đấu giá này đang nằm ở dòng thứ mấy trong bảng
-            for (int i = 0; i < auctionData.size(); i++) {
-                if (auctionData.get(i).auctionId().equals(updatedAuction.auctionId())) {
-                    // Tráo đổi dòng cũ bằng dòng mới
-                    auctionData.set(i, updatedAuction);
-                    break;
-                }
+        // Update lại danh sách bảng
+        AuctionSummaryResponse updatedAuction = AuctionSession.getInstance().getCurrentAuction();
+        // Tìm xem cái phiên đấu giá này đang nằm ở dòng thứ mấy trong bảng
+        for (int i = 0; i < auctionData.size(); i++) {
+            if (auctionData.get(i).auctionId().equals(updatedAuction.auctionId())) {
+                // Tráo đổi dòng cũ bằng dòng mới
+                auctionData.set(i, updatedAuction);
+                break;
             }
-
-            // Sau khi xài xong thì clean AuctionSession
-            AuctionSession.getInstance().cleanAuctionSession();
-        } else {
-            // Seller/Admin
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/auctionapp/auctionappjava/views/RankingListScreen.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("BXH – " + auction.itemName());
-            stage.setScene(new Scene(root));
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.showAndWait();
-
         }
+
+        // Sau khi xài xong thì clean AuctionSession
+        AuctionSession.getInstance().cleanAuctionSession();
     }
 
     private ImageView getWarnedView() throws IOException {
