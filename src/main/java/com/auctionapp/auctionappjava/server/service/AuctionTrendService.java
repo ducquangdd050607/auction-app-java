@@ -143,4 +143,25 @@ public class AuctionTrendService {
                 finalReason
         ));
     }
+
+    public Response handleGetMostTrendingAuction() {
+        try {
+            Response allTrends = handleGetAuctionTrends();
+
+            List<AuctionTrendResponse> trends = (List<AuctionTrendResponse>) allTrends.data();
+
+            if (trends == null || trends.isEmpty()) {
+                return new Response(false, "Không có phiên đấu giá nào đang chạy", null);
+            }
+
+            AuctionTrendResponse top = trends.get(0);
+
+            return new Response(true, "Phiên đấu giá xu hướng nhất", top);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Lỗi khi xác định phiên xu hướng: " + e.getMessage(), null);
+        }
+    }
+
 }

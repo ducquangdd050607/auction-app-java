@@ -34,6 +34,12 @@ public class AuctionService {
 
     // Thêm khóa luồng cho việc đặt bid
     private static final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
+    private final AuctionTrendService auctionTrendService;
+
+    public AuctionService(AuctionTrendService auctionTrendService) {
+        this.auctionTrendService = auctionTrendService;
+    }
+
 
     public Response handleGetAllAuctions() {
         try {
@@ -99,7 +105,7 @@ public class AuctionService {
 
             Optional<Auction> auction1Opt = auctionDao.findMostBiddedAuction();
 
-//          Optional<Auction> auction3Opt = auctionDao.findTreadingAuction();
+
 
             if (auction1Opt.isPresent()) {
                 Auction mostBiddedAuction = auction1Opt.get();
@@ -162,6 +168,47 @@ public class AuctionService {
                     featuredAuctions.add(summaryResponse2);
                 }
             }
+
+            Response trendResponse = auctionTrendService.handleGetMostTrendingAuction();
+            if (trendResponse.success() && trendResponse.data() != null) {
+
+                AuctionTrendResponse topTrend = (AuctionTrendResponse) trendResponse.data();
+
+                Optional<Auction> auction3Opt = auctionDao.findById(UUID.fromString(topTrend.auctionId()));
+
+                if  (auction3Opt.isPresent()) {
+                    Auction mostTrendingAuction = auction3Opt.get();
+
+                    Optional<Item> item2Opt = itemDao.findByAuctionId(mostTrendingAuction.getId());
+                    if (item2Opt.isPresent()) {
+                        Item item = item2Opt.get();
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                        String startFormattedTime = mostTrendingAuction.getStartTime().format(formatter);
+                        String endFormattedTime = mostTrendingAuction.getEndTime().format(formatter);
+
+                        AuctionSummaryResponse summaryResponse3 = new AuctionSummaryResponse(
+                                mostTrendingAuction.getId().toString(),
+                                item.getItemType().name(),
+                                item.getTitle(),
+                                userDao.findById(mostTrendingAuction.getSellerId()).get().getFullName(),
+                                item.getDescription(),
+                                item.getStartingPrice(),
+                                mostTrendingAuction.getCurrentPrice(),
+                                mostTrendingAuction.getMinimumIncrement(),
+                                startFormattedTime,
+                                endFormattedTime,
+                                0,
+                                mostTrendingAuction.getStatus(),
+                                mostTrendingAuction.getBiddersCount(),
+                                null
+                        );
+                        featuredAuctions.add(summaryResponse3);
+                    }
+                }
+            }
+
+
 
             if (featuredAuctions.isEmpty()) {
                 return new Response(false, "Hiện không có phiên đấu giá nào nổi bật", featuredAuctions);

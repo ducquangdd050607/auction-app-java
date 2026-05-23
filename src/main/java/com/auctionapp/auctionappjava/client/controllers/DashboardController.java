@@ -39,7 +39,7 @@ import static com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils.NavSc
 public class DashboardController implements Initializable {
     // Lưu thông tin các response để lấy dữ liệu làm timeline
     private AuctionSummaryResponse mostBiddedAuction;
-    private AuctionSummaryResponse featuredAuction2;
+    private AuctionSummaryResponse mostTreadingAuction;
     private AuctionSummaryResponse mostExpiredAuction;
     private Timeline dashboardTimer;
 
@@ -157,7 +157,7 @@ public class DashboardController implements Initializable {
     // Hàm quét qua các thẻ và cập nhật Label
     private void updateTimersUI() {
         if (mostBiddedAuction != null) lblTimer1.setText(calculateRemainingTime(mostBiddedAuction));
-        if (featuredAuction2 != null) lblTimer2.setText(calculateRemainingTime(featuredAuction2));
+        if (mostTreadingAuction != null) lblTimer2.setText(calculateRemainingTime(mostTreadingAuction));
         if (mostExpiredAuction != null) lblTimer3.setText(calculateRemainingTime(mostExpiredAuction));
     }
 
@@ -263,6 +263,7 @@ public class DashboardController implements Initializable {
                     // Điền dữ liệu mới vào bảng
                     mostBiddedAuction = auctionsFromServer.get(0);
                     mostExpiredAuction = auctionsFromServer.get(1);
+                    mostTreadingAuction = auctionsFromServer.get(2);
 
                     lblItemName1.setText(mostBiddedAuction.itemName());
                     endTime1.setText(mostBiddedAuction.endDateTime());
@@ -270,7 +271,11 @@ public class DashboardController implements Initializable {
                     lblItemDesc1.setText(isDescriptionEmpty(mostBiddedAuction.description()));
                     loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
 
-                    // TODO: thêm thông tin card 2
+                    lblItemName2.setText(mostTreadingAuction.itemName());
+                    endTime2.setText(mostTreadingAuction.endDateTime());
+                    lblItemPrice2.setText(MoneyUtils.formatMoney(mostTreadingAuction.currentPrice()));
+                    lblItemDesc2.setText(isDescriptionEmpty(mostTreadingAuction.description()));
+                    loadImageForCard(mostTreadingAuction.auctionId(), imgProduct2);
 
                     lblItemName3.setText(mostExpiredAuction.itemName());
                     endTime3.setText(mostExpiredAuction.endDateTime());
@@ -282,6 +287,15 @@ public class DashboardController implements Initializable {
                         try {
                             AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
                             handleDetail(mostBiddedAuction);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    btnGo2.setOnAction(event -> {
+                        try {
+                            AuctionSession.getInstance().setCurrentAuction(mostTreadingAuction);
+                            handleDetail(mostTreadingAuction);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

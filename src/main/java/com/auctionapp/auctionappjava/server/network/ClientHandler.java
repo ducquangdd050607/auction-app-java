@@ -14,8 +14,8 @@ public class ClientHandler implements Runnable {
 
     // Khởi tạo các Service
     private final UserService userService = new UserService();
-    private final AuctionService auctionService = new AuctionService();
     private final AuctionTrendService auctionTrendService = new AuctionTrendService();
+    private final AuctionService auctionService = new AuctionService(auctionTrendService);
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
