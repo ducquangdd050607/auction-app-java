@@ -131,10 +131,6 @@ public class AuctionService {
                 }
             }
 
-            else {
-                return new Response(false, "Hiện không có phiên đấu giá nào đang hoạt động", featuredAuctions);
-            }
-
             Optional<Auction> auction2Opt = auctionDao.findMostExpiredAuction();
 
             if (auction2Opt.isPresent()) {
@@ -166,6 +162,11 @@ public class AuctionService {
                     featuredAuctions.add(summaryResponse2);
                 }
             }
+
+            if (featuredAuctions.isEmpty()) {
+                return new Response(false, "Hiện không có phiên đấu giá nào nổi bật", featuredAuctions);
+            }
+
             return new Response(true, "Tải dữ liệu thành công!", featuredAuctions);
         }
         catch (Exception e) {
@@ -253,13 +254,19 @@ public class AuctionService {
                             } else {
                                 Wallet currentBidderWallet = currentBidderWalletOpt.get();
 
-                                if (currentBidderWallet.getBalance().compareTo(placeBidData.amount()) < 0) {
-                                    // Nếu Số dư < Số tiền muốn đặt
+                                // Tính toán số dư thực tế nếu họ tự bid đè lên chính mình
+                                BigDecimal availableBalance = currentBidderWallet.getBalance();
+                                UUID oldLeaderId = auction.getLeadingBidderId();
+
+                                if (oldLeaderId != null && oldLeaderId.equals(currentBidderId)) {
+                                    availableBalance = availableBalance.add(auction.getCurrentPrice());
+                                }
+
+                                // Dùng availableBalance để kiểm tra thay vì getBalance() gốc
+                                if (availableBalance.compareTo(placeBidData.amount()) < 0) {
                                     return new Response(false, "Số dư trong ví không đủ để đặt giá!", null);
                                 } else {
                                     // Hoàn tiền người dẫn đầu cũ (nếu có)
-                                    UUID oldLeaderId = auction.getLeadingBidderId();
-
                                     if (oldLeaderId != null) {
                                         // Xử lý case hiếm: Người dùng tự bid đè lên chính mình
                                         if (oldLeaderId.equals(currentBidderId)) {
@@ -325,11 +332,17 @@ public class AuctionService {
                                     BigDecimal finalBalance = userDao.findWalletByUserId(currentBidderId)
                                             .map(Wallet::getBalance)
                                             .orElse(updatedBalance);
+
                                     // THEM AUTO-BID RESULT: tra ca gia cuoi cung sau khi auto-bid da chay de client khong hien gia cu.
                                     BigDecimal finalAuctionPrice = auctionDao.findById(auction.getId())
                                             .map(Auction::getCurrentPrice)
                                             .orElse(placeBidData.amount());
-                                    Object[] resultData = new Object[]{ finalBalance, finalAuctionPrice };
+
+                                    // Đếm số lượng Bidder thực tế từ Database
+                                    int currentBidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
+
+                                    // Đóng gói 3 thông tin: [Số dư mới, Giá mới, Số lượng Bidder mới]
+                                    Object[] resultData = new Object[]{ finalBalance, finalAuctionPrice, currentBidderCount };
                                     return new Response(true, "Đặt giá thành công!", resultData);
                                 }
                             }
@@ -527,10 +540,6 @@ public class AuctionService {
                 }
             }
 
-            else if (currentUser.getRole() == Role.ADMIN) {
-                return new Response(true, "Đã xóa phiên đấu giá thành công", null);
-            }
-
             Optional<Item> itemOpt = itemDao.findByAuctionId(auctionId);
             if (itemOpt.isPresent()) {
                 itemDao.deleteById(itemOpt.get().getId());
@@ -572,9 +581,6 @@ public class AuctionService {
         }  catch(Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
-
-            // - Good luck.
-
         }
     }
 

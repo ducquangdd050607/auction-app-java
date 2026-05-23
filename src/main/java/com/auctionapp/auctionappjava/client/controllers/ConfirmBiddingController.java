@@ -6,9 +6,7 @@ import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -39,7 +37,6 @@ public class ConfirmBiddingController {
     private final String userId = UserSession.getInstance().getCurrentUser().id();
     private final String currentAuctionId = AuctionSession.getInstance().getCurrentAuction().auctionId();
     private final BidDao bidDao = new JdbcBidDao();
-    private final AuctionDao auctionDao = new JdbcAuctionDao();
 
     @FXML
     private Button btnMore;
@@ -151,14 +148,6 @@ public class ConfirmBiddingController {
             lblError.setText("Tiền cược đang nhỏ hơn hiện tại!");
             lblError.setTextFill(Color.web("#FF8A80"));
 
-        } else if (balance.subtract(purifyingText(txtSetPrice.getText()))
-                .compareTo(new BigDecimal(0)) < 0) {
-
-            lblError.setText("Không đủ tiền trong số dư!");
-            lblError.setTextFill(Color.web("#FF8A80"));
-            btnMore.setManaged(true);
-            btnMore.setVisible(true);
-
         } else if ((((purifyingText(txtSetPrice.getText())).subtract(best)).compareTo(minIncrement)) < 0) {
             lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
             lblError.setVisible(true);
@@ -218,15 +207,22 @@ public class ConfirmBiddingController {
                     if (response.success()) {
                         // Cập nhật lại UserSession
                         LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
-                        // THEM AUTO-BID BALANCE: server tra ve so du moi nhat sau khi auto-bid/hoan tien xu ly xong.
                         BigDecimal latestBalance = oldUser.walletBalance().subtract(finalBidAmount);
                         BigDecimal latestAuctionPrice = finalBidAmount;
+
+                        // Khởi tạo biến lấy số lượng Bidder (mặc định lấy số cũ nếu lỗi)
+                        AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
+                        int latestBidderCount = oldData.bidderCount();
+
                         if (response.data() instanceof Object[] resultData) {
                             if (resultData.length > 0 && resultData[0] instanceof BigDecimal) {
                                 latestBalance = (BigDecimal) resultData[0];
                             }
                             if (resultData.length > 1 && resultData[1] instanceof BigDecimal) {
                                 latestAuctionPrice = (BigDecimal) resultData[1];
+                            }
+                            if (resultData.length > 2 && resultData[2] instanceof Integer) {
+                                latestBidderCount = (Integer) resultData[2];
                             }
                         } else if (response.data() instanceof BigDecimal) {
                             latestBalance = (BigDecimal) response.data();
@@ -242,11 +238,7 @@ public class ConfirmBiddingController {
                         );
                         UserSession.getInstance().setCurrentUser(updatedUser);
 
-                        // Cập nhật số bidders
-                        long bidders = bidDao.countBiddersByAuctionId(UUID.fromString(currentAuctionId));
-
                         // Cập nhật lại AuctionSession
-                        AuctionSummaryResponse oldData = AuctionSession.getInstance().getCurrentAuction();
                         AuctionSummaryResponse updatedData = new AuctionSummaryResponse(
                                 oldData.auctionId(),
                                 oldData.category(),
@@ -260,7 +252,7 @@ public class ConfirmBiddingController {
                                 oldData.endDateTime(),
                                 oldData.timeLeft(),
                                 oldData.status(),
-                                (int) bidders,
+                                latestBidderCount,
                                 null // Later
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
@@ -284,6 +276,12 @@ public class ConfirmBiddingController {
                         lblError.setText(response.message());
                         lblError.setVisible(true);
                         lblError.setTextFill(Color.web("#FF8A80"));
+
+                        // Nếu Server báo lỗi do thiếu tiền thì hiện nút nạp thêm
+                        if (response.message().toLowerCase().contains("số dư")) {
+                            btnMore.setManaged(true);
+                            btnMore.setVisible(true);
+                        }
 
                         // Hiện lại nút bấm để người dùng có thể thao tác lại
                         btnConfirm.setDisable(false);
