@@ -20,6 +20,8 @@ public interface AuctionDao {
 
     List<AuctionSummaryResponse> findAllSummaries();
 
+    List<AuctionSummaryResponse> findRunningAuctionSummaries();
+
     List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
 
     Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);

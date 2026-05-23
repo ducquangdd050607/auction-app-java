@@ -13,7 +13,7 @@ public record AuctionTrendResponse(
         AuctionStatus status,
         int bidderCount,
         int bidCount,
-        int trendScore,
+        BigDecimal trendScore,
         String trendLabel,
         String reason
 ) implements Serializable {

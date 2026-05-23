@@ -138,6 +138,35 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 """, sellerId);
     }
 
+    @Override
+    public List<AuctionSummaryResponse> findRunningAuctionSummaries() {
+        return queryAuctionSummaries("""
+                SELECT
+                    a.id AS auction_id,
+                    i.item_type,
+                    i.title,
+                    u.full_name AS seller_name,
+                    i.description,
+                    i.starting_price,
+                    a.current_price,
+                    a.minimum_increment,
+                    a.start_time,
+                    a.end_time,
+                    a.status,
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                FROM auctions a
+                JOIN auction_items i ON i.id = a.item_id
+                JOIN users u ON u.id = a.seller_id
+                LEFT JOIN bids b ON b.auction_id = a.id
+                WHERE a.status = 'RUNNING'
+                GROUP BY
+                    a.id, i.item_type, i.title, u.full_name, i.description,
+                    i.starting_price, a.current_price, a.minimum_increment,
+                    a.start_time, a.end_time, a.status, a.created_at
+                ORDER BY a.created_at DESC
+                """, null);
+    }
+
 
     @Override
     public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {

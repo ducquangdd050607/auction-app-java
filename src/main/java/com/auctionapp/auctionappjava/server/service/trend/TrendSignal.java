@@ -1,7 +1,14 @@
 package com.auctionapp.auctionappjava.server.service.trend;
 
-public record TrendSignal(int score, String label, String reason) {
-    public static TrendSignal none(String reason) {
-        return new TrendSignal(0, "Bình thường", reason);
+import java.math.BigDecimal;
+
+public record TrendSignal(
+        BigDecimal value,
+        BigDecimal coefficient,
+        String label,
+        String reason) {
+
+    public static TrendSignal notEnoughData(String reason) {
+        return new TrendSignal(BigDecimal.ZERO, BigDecimal.ONE, "Bình thường", reason);
     }
 }

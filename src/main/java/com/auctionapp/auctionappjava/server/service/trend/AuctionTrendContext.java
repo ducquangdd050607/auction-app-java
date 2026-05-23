@@ -2,7 +2,6 @@ package com.auctionapp.auctionappjava.server.service.trend;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.model.Auction;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 
 import java.time.LocalDateTime;
@@ -12,7 +11,7 @@ public record AuctionTrendContext(
         Auction auction,
         AuctionSummaryResponse summary,
         List<BidTransaction> bids,
-        List<AutoBidConfig> autoBidConfigs,
+        int botsCounter,
         LocalDateTime now
 ) {
 }

@@ -125,10 +125,6 @@ public class Auction extends BaseEntity {
         return !now.isBefore(endTime);
     }
 
-    public boolean isAcceptingBids(LocalDateTime now) {
-        return status == AuctionStatus.RUNNING && hasStarted(now) && !hasEnded(now);
-    }
-
     public int getBiddersCount() {
         return biddersCount;
     }

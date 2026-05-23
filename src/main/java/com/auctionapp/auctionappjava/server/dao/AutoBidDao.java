@@ -14,6 +14,8 @@ public interface AutoBidDao {
 
     void deleteByAuctionId(UUID auctionId); // xóa all cấu hình autobid nếu phiên bị hủy
 
-    void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId); // 1 người dùng muốn tắt cấu hin autobid
+    void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId); // 1 người dùng muốn tắt autobid
+
+    int countBotsByAuctionId(UUID auctionId);
 }
 

@@ -43,7 +43,7 @@ public class AuctionTrendController implements Initializable {
     @FXML
     private TableColumn<AuctionTrendResponse, BigDecimal> clmCurrentPrice;
     @FXML
-    private TableColumn<AuctionTrendResponse, Integer> clmScore;
+    private TableColumn<AuctionTrendResponse, BigDecimal> clmScore;
     @FXML
     private TableColumn<AuctionTrendResponse, String> clmLabel;
     @FXML
@@ -66,7 +66,7 @@ public class AuctionTrendController implements Initializable {
         clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(
                 cell.getValue().status() == null ? "UNKNOWN" : cell.getValue().status().name()));
         clmCurrentPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().currentPrice()));
-        clmScore.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().trendScore()).asObject());
+        clmScore.setCellValueFactory(cell -> new SimpleObjectProperty(cell.getValue().trendScore()));
         clmLabel.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().trendLabel()));
         clmReason.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().reason()));
         formatPriceColumn(clmCurrentPrice);
@@ -94,10 +94,7 @@ public class AuctionTrendController implements Initializable {
         if (response.success()) {
             List<AuctionTrendResponse> trends = (List<AuctionTrendResponse>) response.data();
             trendData.setAll(trends);
-            long hotCount = trendData.stream()
-                    .filter(trend -> trend.trendScore() >= 40)
-                    .count();
-            lblSummary.setText("Tổng " + trendData.size() + " phiên | " + hotCount + " phiên đang nóng");
+            lblSummary.setText("Tổng " + trendData.size() + " phiên | ");
         } else {
             lblSummary.setText(response.message());
         }

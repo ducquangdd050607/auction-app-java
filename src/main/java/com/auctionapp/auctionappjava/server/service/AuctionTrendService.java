@@ -4,7 +4,6 @@ import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.AuctionTrendResponse;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.model.Auction;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
@@ -12,52 +11,49 @@ import com.auctionapp.auctionappjava.server.dao.BidDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAutoBidDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
-import com.auctionapp.auctionappjava.server.service.trend.AuctionActivityAnalyzer;
-import com.auctionapp.auctionappjava.server.service.trend.AuctionTrendContext;
-import com.auctionapp.auctionappjava.server.service.trend.AutoBidPressureAnalyzer;
-import com.auctionapp.auctionappjava.server.service.trend.BidVelocityAnalyzer;
-import com.auctionapp.auctionappjava.server.service.trend.PriceGrowthAnalyzer;
-import com.auctionapp.auctionappjava.server.service.trend.TimePressureAnalyzer;
-import com.auctionapp.auctionappjava.server.service.trend.TrendSignal;
+import com.auctionapp.auctionappjava.server.service.trend.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AuctionTrendService {
+
+    private static final BigDecimal growthWeightValue = new BigDecimal("0.40");
+    private static final BigDecimal freqWeightValue = new BigDecimal("0.35");
+    private static final BigDecimal autobidWeightValue = new BigDecimal("0.25");
+
     private final AuctionDao auctionDao;
     private final BidDao bidDao;
-    private final AutoBidDao autoBidDao;
-    private final List<AuctionActivityAnalyzer> analyzers;
+    private final AutoBidDao botsDao;
+
+    private final FrequencyAnalyzer frequencyAnalyzer;
+    private final AutoBiddersAnalyzer autoBiddersAnalyzer;
+    private final PriceGrowthAnalyzer priceGrowthAnalyzer;
+    private final TimePressureAnalyzer timePressureAnalyzer;
 
     public AuctionTrendService() {
-        this(new JdbcAuctionDao(), new JdbcBidDao(), new JdbcAutoBidDao(),
-                List.of(
-                        new BidVelocityAnalyzer(),
-                        new AutoBidPressureAnalyzer(),
-                        new TimePressureAnalyzer(),
-                        new PriceGrowthAnalyzer()
-                ));
-    }
+        this.auctionDao = new JdbcAuctionDao();
+        this.bidDao = new JdbcBidDao();
+        this.botsDao = new JdbcAutoBidDao();
 
-    AuctionTrendService(AuctionDao auctionDao,
-                        BidDao bidDao,
-                        AutoBidDao autoBidDao,
-                        List<AuctionActivityAnalyzer> analyzers) {
-        this.auctionDao = auctionDao;
-        this.bidDao = bidDao;
-        this.autoBidDao = autoBidDao;
-        this.analyzers = analyzers;
+        this.frequencyAnalyzer = new FrequencyAnalyzer(this.bidDao);
+        this.priceGrowthAnalyzer = new PriceGrowthAnalyzer();
+        this.autoBiddersAnalyzer = new AutoBiddersAnalyzer();
+        this.timePressureAnalyzer = new TimePressureAnalyzer();
     }
 
     public Response handleGetAuctionTrends() {
         try {
-            List<AuctionTrendResponse> trends = auctionDao.findAllSummaries().stream()
+            List<AuctionTrendResponse> trends = auctionDao.findRunningAuctionSummaries().stream()
                     .map(this::buildTrend)
                     .flatMap(Optional::stream)
-                    .sorted(Comparator.comparingInt(AuctionTrendResponse::trendScore).reversed())
+                    .sorted(Comparator.comparing(
+                            AuctionTrendResponse::trendScore,
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                    ))
                     .collect(Collectors.toList());
 
             return new Response(true, "Tải xu hướng đấu giá thành công", trends);
@@ -68,35 +64,71 @@ public class AuctionTrendService {
     }
 
     private Optional<AuctionTrendResponse> buildTrend(AuctionSummaryResponse summary) {
-        Optional<Auction> auctionOpt = auctionDao.findById(java.util.UUID.fromString(summary.auctionId()));
+
+        Optional<Auction> auctionOpt = auctionDao.findById(UUID.fromString(summary.auctionId()));
         if (auctionOpt.isEmpty()) {
             return Optional.empty();
         }
 
         Auction auction = auctionOpt.get();
+
+        if (bidDao.countBiddersByAuctionId(auction.getId()) == 0) {
+            return Optional.empty();
+        }
+
         List<BidTransaction> bids = bidDao.findByAuctionId(auction.getId());
-        List<AutoBidConfig> autoBidConfigs = autoBidDao.findEnabledByAuctionId(auction.getId());
+        int bots = botsDao.countBotsByAuctionId(UUID.fromString(summary.auctionId()));
+
         AuctionTrendContext context = new AuctionTrendContext(
                 auction,
                 summary,
                 bids,
-                autoBidConfigs,
+                bots,
                 LocalDateTime.now()
         );
 
-        List<TrendSignal> signals = analyzers.stream()
-                .map(analyzer -> analyzer.analyze(context))
-                .toList();
+        TrendSignal freqSignal = frequencyAnalyzer.analyze(context);
+        TrendSignal autoBidSignal = autoBiddersAnalyzer.analyze(context);
+        TrendSignal growthSignal = priceGrowthAnalyzer.analyze(context);
+        TrendSignal timeSignal = timePressureAnalyzer.analyze(context);
 
-        int score = signals.stream().mapToInt(TrendSignal::score).sum();
-        String label = chooseLabel(score);
-        String reason = signals.stream()
-                .filter(signal -> signal.score() > 0)
+        BigDecimal growthVal = growthSignal.value();
+        BigDecimal freqVal = freqSignal.value();
+        BigDecimal autoBidVal = autoBidSignal.value();
+        BigDecimal timePressureMultiplier = timeSignal.value();
+
+        BigDecimal freqCoeff = freqSignal.coefficient();
+        BigDecimal autoBidCoeff = autoBidSignal.coefficient();
+        BigDecimal growthCoeff = growthSignal.coefficient();
+
+        // BaseScore = (0.40 * Growth * GC + 0.35 * Freq * FC + 0.25 * AutoBid * AtBC)
+        BigDecimal baseScore = growthVal.multiply(growthWeightValue).multiply(growthCoeff)
+                .add(freqVal.multiply(freqWeightValue).multiply(freqCoeff))
+                .add(autoBidVal.multiply(autobidWeightValue).multiply(autoBidCoeff));
+
+        // FinalScore = BaseScore * TimePressure / (sigma(Weight * Coefficient))
+        BigDecimal finalScore = baseScore.multiply(timePressureMultiplier)
+
+                .divide( (growthWeightValue.multiply(growthCoeff)
+                        .add(freqWeightValue.multiply(freqCoeff))
+                        .add(autobidWeightValue.multiply(autoBidCoeff))),4, RoundingMode.HALF_UP)
+
+                .setScale(4, RoundingMode.HALF_UP);
+        // Debug
+        System.out.printf("[Trend] %s | G=%.4f F=%.4f A=%.4f TP=%.4f → Score=%.4f%n",
+                summary.auctionId(),
+                growthVal.doubleValue(), freqVal.doubleValue(),
+                autoBidVal.doubleValue(), timePressureMultiplier.doubleValue(),
+                finalScore.doubleValue());
+
+        // Gom reason hiển thị UI
+        String finalReason = List.of(autoBidSignal, freqSignal, growthSignal, timeSignal)
+                .stream()
                 .map(TrendSignal::reason)
+                .filter(r -> r != null && !r.isBlank())
                 .collect(Collectors.joining("; "));
-        if (reason.isBlank()) {
-            reason = "chưa có dữ liệu nổi bật";
-        }
+
+        if (finalReason.isBlank()) finalReason = "Chưa có dữ liệu nổi bật";
 
         return Optional.of(new AuctionTrendResponse(
                 summary.auctionId(),
@@ -106,22 +138,9 @@ public class AuctionTrendService {
                 summary.status(),
                 summary.bidderCount(),
                 bids.size(),
-                score,
-                label,
-                reason
+                finalScore,
+                null,
+                finalReason
         ));
-    }
-
-    private String chooseLabel(int score) {
-        if (score >= 70) {
-            return "Rất nóng";
-        }
-        if (score >= 40) {
-            return "Đang nóng";
-        }
-        if (score >= 20) {
-            return "Đang tăng";
-        }
-        return "Bình thường";
     }
 }

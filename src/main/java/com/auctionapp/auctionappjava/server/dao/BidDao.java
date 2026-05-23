@@ -4,6 +4,7 @@ import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.model.BidTransaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +33,8 @@ public interface BidDao {
     long countBiddersByAuctionId(UUID auctionId);
 
     long countBidsByBidderId(UUID bidderId);
+
+    long countBidsInWindowTime(UUID auctionId, LocalDateTime fromTime, LocalDateTime toTime);
 
     Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId);
 

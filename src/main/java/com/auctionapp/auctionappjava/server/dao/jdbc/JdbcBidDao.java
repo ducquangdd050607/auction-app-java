@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -222,6 +223,8 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
             throw new DatabaseException("Khong tai duoc toan bo lich su dau gia", e);
         }
     }
+
+
     @Override
     public List<BidRankingResponse> findRankingByAuctionId(UUID auctionId) {
         String sql = """
@@ -291,6 +294,28 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
 
         } catch (SQLException exception) {
             throw new DatabaseException("Khong dem duoc so luong auction cho bidder_id: " + bidderId, exception);
+        }
+    }
+
+    @Override
+    public long countBidsInWindowTime(UUID auctionId, LocalDateTime fromTime, LocalDateTime toTime) {
+        String sql = "SELECT COUNT(*) FROM bids WHERE auction_id = ? AND created_at >= ? AND created_at < ?";
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId));
+            statement.setTimestamp(2, timestamp(fromTime));
+            statement.setTimestamp(3, timestamp(toTime));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+                return 0L;
+            }
+        } catch (SQLException exception) {
+            throw new DatabaseException("Khong dem duoc so luong bid trong khoảng thời gian", exception);
         }
     }
 
