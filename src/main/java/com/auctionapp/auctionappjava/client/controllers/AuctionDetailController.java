@@ -31,6 +31,8 @@ import javafx.stage.Stage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -142,11 +144,30 @@ public class AuctionDetailController {
         lblStartingPrice.setText(formatMoney(auction.startPrice()) + " VND");
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
-        lblStatus.setText(String.valueOf(auction.status()));
+        /*lblStatus.setText(String.valueOf(auction.status()));*/
         lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
         lblCurrentLeader.setText("Đang tải...");
         loadCurrentLeaderFromRanking(auction.auctionId());
+
+        // Double-check status để biết nên cho phép đặt bid hay k - xét thời điểm đóng/mở bid với hiện tại
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startTime = LocalDateTime.parse(auction.startDateTime(), formatter);
+            LocalDateTime endTime = LocalDateTime.parse(auction.endDateTime(), formatter);
+
+            if (now.isBefore(startTime)) {
+                lblStatus.setText("OPEN");
+            } else if (!now.isBefore(startTime) && now.isBefore(endTime)) {
+                lblStatus.setText("RUNNING");
+            } else {
+                lblStatus.setText("FINISHED");
+            }
+        } catch (Exception e) {
+            // Fallback nếu lỗi parse ngày tháng
+            lblStatus.setText(String.valueOf(auction.status()));
+        }
 
         // Hiện vòng xoay, giấu khung ảnh và chữ đi
         imgSpinner.setVisible(true);
@@ -240,13 +261,29 @@ public class AuctionDetailController {
 
     @FXML
     void handleBidding(ActionEvent event) throws IOException {
-        if (AuctionStatus.RUNNING.equals(AuctionStatus.valueOf(lblStatus.getText()))) {
+        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
+        boolean isRunning = false;
+
+        // So sánh thời gian thực ngay khoảnh khắc bấm nút
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startTime = LocalDateTime.parse(currentAuction.startDateTime(), formatter);
+            LocalDateTime endTime = LocalDateTime.parse(currentAuction.endDateTime(), formatter);
+
+            isRunning = !now.isBefore(startTime) && now.isBefore(endTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Chặn hoặc cho phép dựa trên thời gian thực
+        if (isRunning) {
             SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/ConfirmBiddingScreen.fxml", "Đặt cược");
         } else {
             Runnable unableToGamble = () -> {
                 btnGamble.setDisable(true);
             };
-            AlertUtils.AnnouncementController("oops", "Phiên đấu giá hiện không thể tham gia", unableToGamble, null);
+            AlertUtils.AnnouncementController("Oops", "Phiên đấu giá hiện không thể tham gia do chưa mở cửa hoặc đã kết thúc!", unableToGamble, null);
         }
     }
 
@@ -267,7 +304,7 @@ public class AuctionDetailController {
     }
 
     // Thêm hàm update status theo thời gian thực
-    public void updateStatusRealtime(com.auctionapp.auctionappjava.common.enums.AuctionStatus newStatus) {
+    public void updateStatusRealtime(AuctionStatus newStatus) {
         Platform.runLater(() -> {
             lblStatus.setText(newStatus.name());
         });
