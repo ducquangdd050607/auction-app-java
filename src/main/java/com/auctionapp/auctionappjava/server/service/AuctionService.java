@@ -542,7 +542,19 @@ public class AuctionService {
 
             Optional<Item> itemOpt = itemDao.findByAuctionId(auctionId);
             if (itemOpt.isPresent()) {
+                // Xóa lịch sử bid của phiên đó
+                bidDao.deleteByAuctionId(auctionId);
+                autoBidDao.deleteByAuctionId(auctionId);
+
+                // Xóa phiên đấu giá
+                auctionDao.deleteById(auctionId);
+
+                // Xóa Vật phẩm
                 itemDao.deleteById(itemOpt.get().getId());
+
+                // Báo cho các client khác biết để tải lại danh sách
+                SessionManager.getInstance().broadcast(new Response(true, "SERVER_PUSH_NEW_AUCTION", null));
+
                 return new Response(true, "Đã xóa phiên đấu giá thành công", null);
             } else {
                 return new Response(false, "Không tìm thấy vật phẩm của phiên đấu giá này", null);
