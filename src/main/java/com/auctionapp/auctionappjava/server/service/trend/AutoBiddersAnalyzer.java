@@ -20,7 +20,7 @@ public class AutoBiddersAnalyzer implements AuctionActivityAnalyzer {
                     "Không có auto-bid"
             );
         }
-        // Xác định mức dộ bots trong phiên:
+        // Xác định mức độ bots trong phiên:
         // Số bots trong phiên(lấy từ auto_bid_config) / Số bidders
 
         BigDecimal ratio = new BigDecimal(autobidEnabledCount)

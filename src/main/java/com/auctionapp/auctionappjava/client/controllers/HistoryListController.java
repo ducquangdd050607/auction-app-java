@@ -196,7 +196,7 @@ public class HistoryListController implements Initializable {
                     alert.show();
                 }
 
-                // Nếu tải xong mà danh sách vẫn trống trơn hoc search không có bid nào phù hợp, đổi vòng xoay thành dòng chữ
+                // Nếu tải xong mà danh sách vẫn trống trơn hoặc search không có bid nào phù hợp, đổi vòng xoay thành dòng chữ
                 Label noDataLabel = new Label("Chưa tham gia phiên đấu giá nào hoặc không tìm thấy kết quả phù hợp.");
                 noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
                 historyTable.setPlaceholder(noDataLabel);

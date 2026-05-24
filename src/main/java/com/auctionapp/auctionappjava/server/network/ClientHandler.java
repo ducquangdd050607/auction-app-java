@@ -95,7 +95,7 @@ public class ClientHandler implements Runnable {
                     case "PLACE_BID":
                         response = auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
                         break;
-                    // THEM AUTO-BID REQUEST: nhan cau hinh auto-bid tu client va luu xuong DB.
+                    // THÊM AUTO-BID REQUEST: nhận cấu hình auto-bid từ client và lưu xuống DB.
                     case "CONFIGURE_AUTO_BID":
                         response = auctionService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
                         break;

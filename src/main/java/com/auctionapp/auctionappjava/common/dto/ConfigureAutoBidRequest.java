@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-// THEM AUTO-BID REQUEST: DTO gui cau hinh auto-bid tu client len server.
+// THÊM AUTO-BID REQUEST: DTO gửi cấu hình auto-bid từ client lên server.
 public record ConfigureAutoBidRequest(
         UUID auctionId,
         UUID bidderId,

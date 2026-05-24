@@ -281,7 +281,7 @@ public class AuctionListController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
-                // Mở laại search khi dữ liệu được trả về
+                // Mở lại search khi dữ liệu được trả về
                 txtSearch.setDisable(false);
                 cbFilterStatus.setDisable(false);
                 cbType.setDisable(false);

@@ -34,8 +34,8 @@ public class AutoBidEngine {
             ));
         }
 
-        // THEM AUTO-BID MANUAL: nguoi khong bat auto-bid van duoc dua vao list de so sanh.
-        // maxBid cua nguoi manual = gia ho vua dat, increment = buoc gia co dinh cua san pham.
+        // THÊM AUTO-BID MANUAL: người không bật auto-bid vẫn được đưa vào list để so sánh.
+        // maxBid của người manual = giá họ vừa đặt, increment = bước giá cố định của sản phẩm.
         if (currentPrice != null && currentLeaderId != null) {
             bidList.add(new BidCandidate(
                     null,
@@ -58,12 +58,12 @@ public class AutoBidEngine {
         BidCandidate firstBidder = bidList.get(0);
         BidCandidate secondBidder = bidList.get(1);
 
-        // Neu nguoi maxBid cao nhat la manual thi khong co auto-bid nao vuot duoc.
+        // Nếu người maxBid cao nhất là manual thì không có auto-bid nào vượt được.
         if (!firstBidder.isAutoBid()) {
             return Optional.empty();
         }
 
-        // Neu nguoi auto-bid max cao nhat dang dan dau san roi thi khong can tao bid moi.
+        // Nếu người auto-bid max cao nhất đang dẫn đầu sẵn rồi thì không cần tạo bid mới.
         if (firstBidder.getBidderId().equals(currentLeaderId)) {
             Optional<BidCandidate> tiedCompetitor = findTiedAutoBidCompetitor(
                     bidList,

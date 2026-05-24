@@ -24,11 +24,11 @@ public class AuctionService {
     private final AuctionDao auctionDao = new JdbcAuctionDao();
     private final AuctionItemDao itemDao = new JdbcAuctionItemDao();
     private final BidDao bidDao = new JdbcBidDao();
-    // THEM AUTO-BID DAO: dung de luu va doc cau hinh auto-bid.
+    // THÊM AUTO-BID DAO: dùng để lưu và đọc cấu hình auto-bid.
     private final AutoBidDao autoBidDao = new JdbcAutoBidDao();
-    // THEM AUTO-BID ENGINE: tinh nguoi auto-bid top 1 va so tien can tra.
+    // THÊM AUTO-BID ENGINE: tính người auto-bid top 1 và số tiền cần trả.
     private final AutoBidEngine autoBidEngine = new AutoBidEngine();
-    // THEM ANTI-SNIPING: neu bid sat gio ket thuc thi gia han them thoi gian.
+    // THÊM ANTI-SNIPING: nếu bid sát giờ kết thúc thì gia hạn thêm thời gian.
     private final AntiSnipingExtensionStrategy antiSnipingStrategy = new AntiSnipingExtensionStrategy(30, 60);
     private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
 
@@ -218,7 +218,7 @@ public class AuctionService {
 
     }
 
-    // THEM AUTO-BID API: luu cau hinh auto-bid ma client gui len.
+    // THÊM AUTO-BID API: lưu cấu hình auto-bid mà client gửi lên.
     public Response handleConfigureAutoBid(ConfigureAutoBidRequest data) {
         try {
             Optional<Auction> auctionOpt = auctionDao.findById(data.auctionId());
@@ -353,7 +353,7 @@ public class AuctionService {
                                     auction.setCurrentPrice(placeBidData.amount());         // Cập nhật giá cao nhất mới
                                     auction.setLeadingBidderId(placeBidData.userId());      // Cập nhật người đang dẫn đầu
                                     auction.setBiddersCount((int) bidDao.countBiddersByAuctionId(auction.getId()));
-                                    // THEM ANTI-SNIPING: bid sat gio ket thuc thi day endTime ra xa hon.
+                                    // THÊM ANTI-SNIPING: bid sát giờ kết thúc thì đẩy endTime ra xa hơn.
                                     applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
@@ -367,15 +367,15 @@ public class AuctionService {
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
 
-                                    // THEM AUTO-BID ENGINE: sau bid tay, kiem tra cac cau hinh auto-bid va dat gia tu dong neu can.
+                                    // THÊM AUTO-BID ENGINE: sau bid tay, kiểm tra các cấu hình auto-bid và đặt giá tự động nếu cần.
                                     processAutoBid(auction.getId());
 
-                                    // THEM AUTO-BID BALANCE: doc lai vi sau auto-bid vi user co the vua duoc hoan tien.
+                                    // THÊM AUTO-BID BALANCE: đọc lại ví sau auto-bid vì user có thể vừa được hoàn tiền.
                                     BigDecimal finalBalance = userDao.findWalletByUserId(currentBidderId)
                                             .map(Wallet::getBalance)
                                             .orElse(updatedBalance);
 
-                                    // THEM AUTO-BID RESULT: tra ca gia cuoi cung sau khi auto-bid da chay de client khong hien gia cu.
+                                    // THÊM AUTO-BID RESULT: trả cả giá cuối cùng sau khi auto-bid đã chạy để client không hiện giá cũ.
                                     BigDecimal finalAuctionPrice = auctionDao.findById(auction.getId())
                                             .map(Auction::getCurrentPrice)
                                             .orElse(placeBidData.amount());
@@ -398,7 +398,7 @@ public class AuctionService {
         }
     }
 
-    // THEM AUTO-BID ENGINE: doc danh sach auto-bid, sap xep maxBid va tao bid tu dong neu hop le.
+    // THÊM AUTO-BID ENGINE: đọc danh sách auto-bid, sắp xếp maxBid và tạo bid tự động nếu hợp lệ.
     private void processAutoBid(UUID auctionId) {
         Optional<Auction> auctionOpt = auctionDao.findById(auctionId);
         if (auctionOpt.isEmpty()) {
@@ -432,7 +432,7 @@ public class AuctionService {
         placeAutoBid(auction, result.getBidderId(), result.getBidAmount());
     }
 
-    // THEM AUTO-BID ENGINE: dat gia thay user auto-bid, co tru tien, hoan tien va push realtime.
+    // THÊM AUTO-BID ENGINE: đặt giá thay user auto-bid, có trừ tiền, hoàn tiền và push realtime.
     private void placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
         Optional<Wallet> bidderWalletOpt = userDao.findWalletByUserId(bidderId);
         if (bidderWalletOpt.isEmpty()) {
@@ -461,7 +461,7 @@ public class AuctionService {
         BigDecimal updatedBalance = bidderWallet.getBalance().subtract(amount);
         bidderWallet.setBalance(updatedBalance);
         userDao.saveWallet(bidderWallet);
-        // THEM AUTO-BID BALANCE: bao cho nguoi duoc auto-bid biet so du da bi tru.
+        // THÊM AUTO-BID BALANCE: báo cho người được auto-bid biết số dư đã bị trừ.
         Response autoBidderBalanceResponse = new Response(true, "SERVER_PUSH_BALANCE", updatedBalance);
         SessionManager.getInstance().sendToUser(bidderId.toString(), autoBidderBalanceResponse);
 
@@ -488,7 +488,7 @@ public class AuctionService {
         SessionManager.getInstance().broadcast(newBidResponse);
     }
 
-    // THEM ANTI-SNIPING: neu bid nam trong nguong cuoi gio thi cap nhat endTime moi.
+    // THÊM ANTI-SNIPING: nếu bid nằm trong ngưỡng cuối giờ thì cập nhật endTime mới.
     private void applyAntiSnipingExtension(Auction auction) {
         if (antiSnipingStrategy.shouldExtend(auction, now())) {
             auction.setEndTime(antiSnipingStrategy.extendTo(auction, now()));

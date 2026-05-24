@@ -83,7 +83,7 @@ public class ConfirmBiddingController {
     @FXML
     public void initialize() {
         instance = this;
-        // THEM AUTO-BID OPTIONAL: moi lan mo man confirm thi mac dinh tat auto-bid.
+        // THÊM AUTO-BID OPTIONAL: mỗi lần mở màn confirm thì mặc định tắt auto-bid.
         isAutoBidding = false;
         chboxAutoBidding.setSelected(false);
         boxAutoBidding.setVisible(false);
@@ -96,7 +96,7 @@ public class ConfirmBiddingController {
         lblMinIncrement.setText(formatMoney(minIncrement) + " VND");
         settingMoneyFormat(txtSetPrice);
         settingMoneyFormat(txtSetAuto);
-        // THEM AUTO-BID UI: format ca o max auto-bid de parse tien giong cac o khac.
+        // THÊM AUTO-BID UI: format cả ô max auto-bid để parse tiền giống các ô khác.
         settingMoneyFormat(txtSetMaxAuto);
     }
 
@@ -158,7 +158,7 @@ public class ConfirmBiddingController {
 
             // Lấy số tiền người dùng chốt đặt
             BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
-            // THEM AUTO-BID UI: chup lai trang thai checkbox de request async khong bi lech neu UI thay doi.
+            // THÊM AUTO-BID UI: chụp lại trạng thái checkbox để request async không bị lệch nếu UI thay đổi.
             boolean autoBidEnabled = isAutoBidding;
 
             // Gói hàng gửi đi
@@ -169,7 +169,7 @@ public class ConfirmBiddingController {
             );
             Request bidReq = new Request("PLACE_BID", payload);
 
-            // THEM AUTO-BID UI: neu user bat checkbox thi gui cau hinh auto-bid truoc khi dat gia.
+            // THÊM AUTO-BID UI: nếu user bật checkbox thì gửi cấu hình auto-bid trước khi đặt giá.
             Request autoBidReq = null;
             if (autoBidEnabled) {
                 ConfigureAutoBidRequest autoBidPayload = new ConfigureAutoBidRequest(
@@ -191,7 +191,7 @@ public class ConfirmBiddingController {
 
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    // THEM AUTO-BID UI: luu cau hinh auto-bid truoc, neu fail thi dung va bao loi.
+                    // THÊM AUTO-BID UI: lưu cấu hình auto-bid trước, nếu fail thì dừng và báo lỗi.
                     if (finalAutoBidReq != null) {
                         Response autoBidResponse = Client.getInstance().sendRequest(finalAutoBidReq);
                         if (!autoBidResponse.success()) {
@@ -246,7 +246,7 @@ public class ConfirmBiddingController {
                                 oldData.sellerName(),
                                 oldData.description(),
                                 oldData.startPrice(),
-                                latestAuctionPrice, // THEM AUTO-BID RESULT: dung gia cuoi cung sau auto-bid.
+                                latestAuctionPrice, // THÊM AUTO-BID RESULT: dùng giá cuối cùng sau auto-bid.
                                 oldData.minimumIncrement(),
                                 oldData.startDateTime(),
                                 oldData.endDateTime(),

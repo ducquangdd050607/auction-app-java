@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class UsersManagerController implements Initializable {
 
-    //để confirm thực hiện đúng mục dích
+    //để confirm thực hiện đúng mục đích
     private boolean ban =  false;
 
     private ObservableList<UserDetailResponse> usersData = FXCollections.observableArrayList();
@@ -191,7 +191,7 @@ public class UsersManagerController implements Initializable {
     }
 
     private void loadUserFromServer() {
-        // Khóa search trong lúc laod data
+        // Khóa search trong lúc load data
         txtSearch.setDisable(true);
         cbFilterRoute.setDisable(true);
         cbFilterAccountStatus.setDisable(true);

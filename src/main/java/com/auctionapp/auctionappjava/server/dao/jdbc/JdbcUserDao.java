@@ -226,11 +226,11 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
                 ) seller_stats ON seller_stats.seller_id = u.id
                 ORDER BY u.created_at
                 """;
-//        No lay cac thong tin:
-//        - Thong tin user: id, ho ten, role, trang thai active.
-//        - So du vi cua user.
-//        - Ten item gan nhat lien quan den user.
-//        - So lan bidder tham gia dau gia hoac seller tao phien dau gia.
+//        Nó lấy các thông tin:
+//        - Thông tin user: id, họ tên, role, trạng thái active.
+//        - Số dư ví của user.
+//        - Tên item gần nhất liên quan đến user.
+//        - Số lần bidder tham gia đấu giá hoặc seller tạo phiên đấu giá.
 
         try (Connection connection = connection();
              PreparedStatement statement = connection.prepareStatement(sql);
