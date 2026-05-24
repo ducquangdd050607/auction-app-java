@@ -34,12 +34,7 @@ public class AuctionService {
 
     // Thêm khóa luồng cho việc đặt bid
     private static final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
-    private final AuctionTrendService auctionTrendService;
-
-    public AuctionService(AuctionTrendService auctionTrendService) {
-        this.auctionTrendService = auctionTrendService;
-    }
-
+    private final AuctionTrendService auctionTrendService = new AuctionTrendService();
 
     public Response handleGetAllAuctions() {
         try {
