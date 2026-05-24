@@ -280,7 +280,7 @@ public class AuctionService {
                         return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
                     }
                     // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
-                    // TODO: Check lại validate 2 này, vì nếu nhớ k nhầm đã xử lí ở controller rồi
+                    // TODO: Check lại validate 2 này, vì nếu nhớ không nhầm đã xử lý ở controller rồi
                     else {
                         BigDecimal minRequiredPrice = auction.getCurrentPrice().add(auction.getMinimumIncrement());
 
