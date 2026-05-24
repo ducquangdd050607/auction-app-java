@@ -595,22 +595,19 @@ public class AuctionListController implements Initializable {
     }
 
     // Cập nhật giá Real-time cho 1 dòng trên bảng danh sách
-    public void updateSingleRowPrice(UUID auctionId, BigDecimal newPrice) {
+    public void updateSingleRowPriceAndEndTime(UUID auctionId, BigDecimal newPrice, String newEndTime) {
         Platform.runLater(() -> {
             for (int i = 0; i < auctionData.size(); i++) {
                 AuctionSummaryResponse currentItem = auctionData.get(i);
 
                 if (currentItem.auctionId().equals(auctionId.toString())) {
-                    // Tạo bản sao mới và ÉP GIÁ MỚI (newPrice) vào
                     AuctionSummaryResponse updatedItem = new AuctionSummaryResponse(
                             currentItem.auctionId(), currentItem.category(), currentItem.itemName(),
                             currentItem.sellerName(), currentItem.description(), currentItem.startPrice(),
-                            newPrice, // <--- GIÁ VỪA ĐƯỢC CẬP NHẬT TỪ SERVER
-                            currentItem.minimumIncrement(), currentItem.startDateTime(),
-                            currentItem.endDateTime(), currentItem.timeLeft(),
-                            currentItem.status(), currentItem.bidderCount(), currentItem.imageData()
+                            newPrice, currentItem.minimumIncrement(), currentItem.startDateTime(),
+                            newEndTime, // Lấy thêm tgian nếu có anti-snipping
+                            currentItem.timeLeft(), currentItem.status(), currentItem.bidderCount(), currentItem.imageData()
                     );
-
                     auctionData.set(i, updatedItem);
                     break;
                 }

@@ -48,22 +48,21 @@ public class RealtimeHandler {
                 UUID updatedAuctionId = (UUID) pushData[0];
                 BigDecimal newPrice = (BigDecimal) pushData[1];
                 UUID newBidderId = (UUID) pushData[2];
+                String newEndTime = (String) pushData[3];
 
                 if (AuctionListController.instance != null) {
-                    AuctionListController.instance.updateSingleRowPrice(updatedAuctionId, newPrice);
+                    // Đổi tên hàm thành updateSingleRowPriceAndEndTime
+                    AuctionListController.instance.updateSingleRowPriceAndEndTime(updatedAuctionId, newPrice, newEndTime);
                 }
 
                 AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
-
                 if (currentAuction != null && currentAuction.auctionId().equals(updatedAuctionId.toString())) {
-                    // Cập nhật giá lên màn hình detail
                     if (AuctionDetailController.instance != null) {
-                        AuctionDetailController.instance.updatePriceRealtime(newPrice);
+                        // Đổi tên hàm để truyền thêm endTime
+                        AuctionDetailController.instance.updatePriceAndEndTimeRealtime(newPrice, newEndTime);
                     }
 
-                    // Khóa không cho đặt bid nếu không phải chính mình đặt
                     String myUserId = UserSession.getInstance().getCurrentUser().id();
-
                     if (ConfirmBiddingController.instance != null && !newBidderId.toString().equals(myUserId)) {
                         ConfirmBiddingController.instance.showOutbidWarning();
                     }

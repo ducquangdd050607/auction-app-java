@@ -293,12 +293,24 @@ public class AuctionDetailController {
     }
 
     // Thêm hàm này để Router gọi
-    public void updatePriceRealtime(BigDecimal newPrice) {
+    public void updatePriceAndEndTimeRealtime(BigDecimal newPrice, String newEndTime) {
         Platform.runLater(() -> {
             lblCurrentPrice.setText(formatMoney(newPrice) + " VND");
+            lblEndDate.setText(newEndTime);
         });
+
         AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
         if (currentAuction != null) {
+            // Cập nhật lại Session để nếu User bấm "Back" xong vào lại, dữ liệu không bị lùi về cũ
+            AuctionSummaryResponse updatedSession = new AuctionSummaryResponse(
+                    currentAuction.auctionId(), currentAuction.category(), currentAuction.itemName(),
+                    currentAuction.sellerName(), currentAuction.description(), currentAuction.startPrice(),
+                    newPrice, currentAuction.minimumIncrement(), currentAuction.startDateTime(),
+                    newEndTime, // Lấy thêm tgian nếu có anti-snipping
+                    currentAuction.timeLeft(), currentAuction.status(), currentAuction.bidderCount(), currentAuction.imageData()
+            );
+            AuctionSession.getInstance().setCurrentAuction(updatedSession);
+
             loadCurrentLeaderFromRanking(currentAuction.auctionId());
         }
     }

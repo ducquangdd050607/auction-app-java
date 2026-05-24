@@ -384,12 +384,16 @@ public class AuctionService {
                                     applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
-                                    // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
-                                    // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
+                                    // Ép kiểu Date ra String để đồng bộ với định dạng hiển thị của Client
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                                    String newEndTime = auction.getEndTime().format(formatter);
+
+                                    // Đóng gói 4 thông tin: [ID phiên, Giá mới, ID người đặt, Tgian kết thúc mới nếu có anti-snipping]
                                     Object[] pushData = new Object[]{
                                             placeBidData.auctionId(),
                                             placeBidData.amount(),
-                                            placeBidData.userId()
+                                            placeBidData.userId(),
+                                            newEndTime
                                     };
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
@@ -510,7 +514,16 @@ public class AuctionService {
         applyAntiSnipingExtension(auction);
         auctionDao.save(auction);
 
-        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId };
+        // Update data endtime nếu có anti-snipping
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String newEndTime = auction.getEndTime().format(formatter);
+
+        Object[] pushData = new Object[]{
+                auction.getId(),
+                amount,
+                bidderId,
+                newEndTime // Lấy thêm tgian nếu có anti-snipping
+        };
         Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
         SessionManager.getInstance().broadcast(newBidResponse);
     }
