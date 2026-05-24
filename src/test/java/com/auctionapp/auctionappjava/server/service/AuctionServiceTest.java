@@ -26,25 +26,77 @@ public class AuctionServiceTest {
     static class FakeAuctionDao implements AuctionDao {
         final Map<UUID, Auction> store = new HashMap<>();
 
-        @Override public Auction save(Auction auction) { store.put(auction.getId(), auction); return auction; }
-        @Override public Optional<Auction> findById(UUID auctionId) { return Optional.ofNullable(store.get(auctionId)); }
-        @Override public List<Auction> findByStatus(com.auctionapp.auctionappjava.common.enums.AuctionStatus status) { return new ArrayList<>(); }
-        @Override public List<Auction> findAll() { return new ArrayList<>(store.values()); }
-        @Override public List<Auction> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
-        @Override public List<AuctionSummaryResponse> findAllSummaries() { return new ArrayList<>(); }
-        @Override public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) { return new ArrayList<>(); }
-        @Override public void deleteById(UUID auctionId) { store.remove(auctionId); }
+        @Override
+        public Auction save(Auction auction) {
+            store.put(auction.getId(), auction);
+            return auction;
+        }
+
+        @Override
+        public Optional<Auction> findById(UUID auctionId) {
+            return Optional.ofNullable(store.get(auctionId));
+        }
+
+        @Override
+        public List<Auction> findByStatus(com.auctionapp.auctionappjava.common.enums.AuctionStatus status) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<Auction> findAll() {
+            return new ArrayList<>(store.values());
+        }
+
+        @Override
+        public List<Auction> findBySellerId(UUID sellerId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<AuctionSummaryResponse> findAllSummaries() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<AuctionSummaryResponse> findRunningAuctionSummaries() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void deleteById(UUID auctionId) {
+            store.remove(auctionId);
+        }
 
         // Additional helpers used by AuctionService elsewhere
-        @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
-        @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
-        @Override public Optional<Auction> findMostExpiredAuction() {
+        @Override
+        public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {
+            return Optional.empty();
+        }
+
+        @Override
+        public long countAuctionsCreatedBySellerId(UUID sellerId) {
+            return 0;
+        }
+
+        @Override
+        public Optional<Auction> findMostExpiredAuction() {
             return store.values().stream()
                     .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
                     .min(Comparator.comparing(Auction::getEndTime));
         }
-        @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
-        @Override public long countRunningAuctions() {
+
+        @Override
+        public Optional<Auction> findMostBiddedAuction() {
+            return Optional.empty();
+        }
+
+        @Override
+        public long countRunningAuctions() {
             return store.values().stream()
                     .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
                     .count();
@@ -54,12 +106,36 @@ public class AuctionServiceTest {
     static class FakeItemDao implements AuctionItemDao {
         final Map<UUID, Item> store = new HashMap<>();
 
-        @Override public Item save(Item item) { store.put(item.getId(), item); return item; }
-        @Override public Optional<Item> findById(UUID itemId) { return Optional.ofNullable(store.get(itemId)); }
-        @Override public Optional<byte[]> findImageByAuctionId(UUID auctionId) { return Optional.empty(); }
-        @Override public Optional<Item> findByIdWithoutImage(UUID itemId) { return Optional.ofNullable(store.get(itemId)); }
-        @Override public List<Item> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
-        @Override public void deleteById(UUID itemId) { store.remove(itemId); }
+        @Override
+        public Item save(Item item) {
+            store.put(item.getId(), item);
+            return item;
+        }
+
+        @Override
+        public Optional<Item> findById(UUID itemId) {
+            return Optional.ofNullable(store.get(itemId));
+        }
+
+        @Override
+        public Optional<byte[]> findImageByAuctionId(UUID auctionId) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Item> findByIdWithoutImage(UUID itemId) {
+            return Optional.ofNullable(store.get(itemId));
+        }
+
+        @Override
+        public List<Item> findBySellerId(UUID sellerId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void deleteById(UUID itemId) {
+            store.remove(itemId);
+        }
 
         // Implement required method from AuctionItemDao:
         @Override
@@ -78,33 +154,52 @@ public class AuctionServiceTest {
 
     static class FakeBidDao implements BidDao {
         final Map<UUID, BidTransaction> store = new LinkedHashMap<>(); // keep insertion order
-        @Override public BidTransaction save(BidTransaction bidTransaction) { store.put(bidTransaction.getId(), bidTransaction); return bidTransaction; }
-        @Override public List<BidTransaction> findByAuctionId(UUID auctionId) {
+
+        @Override
+        public BidTransaction save(BidTransaction bidTransaction) {
+            store.put(bidTransaction.getId(), bidTransaction);
+            return bidTransaction;
+        }
+
+        @Override
+        public List<BidTransaction> findByAuctionId(UUID auctionId) {
             List<BidTransaction> l = new ArrayList<>();
             for (BidTransaction b : store.values()) if (auctionId.equals(b.getAuctionId())) l.add(b);
             return l;
         }
-        @Override public List<BidTransaction> findByBidderId(UUID bidderId) {
+
+        @Override
+        public List<BidTransaction> findByBidderId(UUID bidderId) {
             List<BidTransaction> l = new ArrayList<>();
             for (BidTransaction b : store.values()) if (bidderId.equals(b.getBidderId())) l.add(b);
             return l;
         }
-        @Override public List<BidTransaction> findAll() { return new ArrayList<>(store.values()); }
-        @Override public List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId) {
+
+        @Override
+        public List<BidTransaction> findAll() {
+            return new ArrayList<>(store.values());
+        }
+
+        @Override
+        public List<BidHistoryResponse> findHistoryByBidderId(UUID bidderId) {
             List<BidHistoryResponse> history = new ArrayList<>();
             for (BidTransaction bid : findByBidderId(bidderId)) {
                 history.add(toHistoryResponse(null, bid));
             }
             return history;
         }
-        @Override public List<BidHistoryResponse> findAllHistory() {
+
+        @Override
+        public List<BidHistoryResponse> findAllHistory() {
             List<BidHistoryResponse> history = new ArrayList<>();
             for (BidTransaction bid : store.values()) {
                 history.add(toHistoryResponse("Test Bidder", bid));
             }
             return history;
         }
-        @Override public List<BidRankingResponse> findRankingByAuctionId(UUID auctionId) {
+
+        @Override
+        public List<BidRankingResponse> findRankingByAuctionId(UUID auctionId) {
             List<BidTransaction> bids = findByAuctionId(auctionId);
             bids.sort(Comparator
                     .comparing(BidTransaction::getAmount, Comparator.reverseOrder())
@@ -123,23 +218,35 @@ public class AuctionServiceTest {
             }
             return ranking;
         }
-        @Override public long countByAuctionId(UUID auctionId) {
+
+        @Override
+        public long countByAuctionId(UUID auctionId) {
             return findByAuctionId(auctionId).size();
         }
-        @Override public long countByBidderId(UUID bidderId) {
+
+        @Override
+        public long countByBidderId(UUID bidderId) {
             return findByBidderId(bidderId).size();
         }
-        @Override public long countBiddersByAuctionId(UUID auctionId) {
+
+        @Override
+        public long countBiddersByAuctionId(UUID auctionId) {
             return findByAuctionId(auctionId).stream().map(BidTransaction::getBidderId).distinct().count();
         }
-        @Override public Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId) {
+
+        @Override
+        public Optional<BidTransaction> findHighestBidByAuctionId(UUID auctionId) {
             return findByAuctionId(auctionId).stream().max(Comparator.comparing(BidTransaction::getAmount));
         }
-        @Override public Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId) {
+
+        @Override
+        public Optional<BidTransaction> findLatestBidByBidderId(UUID bidderId) {
             List<BidTransaction> bids = findByBidderId(bidderId);
             return bids.stream().max(Comparator.comparing(BidTransaction::getCreatedAt));
         }
-        @Override public void deleteByAuctionId(UUID auctionId) {
+
+        @Override
+        public void deleteByAuctionId(UUID auctionId) {
             store.values().removeIf(b -> auctionId.equals(b.getAuctionId()));
         }
 
@@ -164,6 +271,15 @@ public class AuctionServiceTest {
                     .distinct()
                     .count();
         }
+
+        @Override
+        public long countBidsInWindowTime(UUID auctionId, LocalDateTime fromTime, LocalDateTime toTime) {
+            return findByAuctionId(auctionId).stream()
+                    .filter(bid -> bid.getCreatedAt() != null)
+                    .filter(bid -> !bid.getCreatedAt().isBefore(fromTime) && !bid.getCreatedAt().isAfter(toTime))
+                    .count();
+        }
+
         private BidHistoryResponse toHistoryResponse(String bidderName, BidTransaction bid) {
             return new BidHistoryResponse(
                     bidderName,
@@ -181,17 +297,56 @@ public class AuctionServiceTest {
         final Map<UUID, User> users = new HashMap<>();
         final Map<UUID, Wallet> wallets = new HashMap<>();
 
-        @Override public User save(User user) { users.put(user.getId(), user); return user; }
-        @Override public Optional<Wallet> findWalletByUserId(UUID userId) { return Optional.ofNullable(wallets.get(userId)); }
-        @Override public Optional<User> findById(UUID userId) { return Optional.ofNullable(users.get(userId)); }
-        @Override public Optional<User> findByName(String username) { return users.values().stream().filter(u -> u.getUsername().equals(username)).findFirst(); }
-        @Override public Wallet saveWallet(Wallet wallet) { wallets.put(wallet.getUserId(), wallet); return wallet; }
-        @Override public void updateRole(UUID id, com.auctionapp.auctionappjava.common.enums.Role role) {}
-        @Override public void updateProfile(UUID id, String fullName, String email) {}
-        @Override public void updatePassword(UUID id, String hash, String salt) {}
-        @Override public void updateActiveStatus(UUID id, boolean isActive) {}
-        @Override public Optional<User> findSellerByAuctionId(UUID auctionId) { return users.values().stream().findFirst(); }
-        @Override public List<UserDetailResponse> findAllDetails() {
+        @Override
+        public User save(User user) {
+            users.put(user.getId(), user);
+            return user;
+        }
+
+        @Override
+        public Optional<Wallet> findWalletByUserId(UUID userId) {
+            return Optional.ofNullable(wallets.get(userId));
+        }
+
+        @Override
+        public Optional<User> findById(UUID userId) {
+            return Optional.ofNullable(users.get(userId));
+        }
+
+        @Override
+        public Optional<User> findByName(String username) {
+            return users.values().stream().filter(u -> u.getUsername().equals(username)).findFirst();
+        }
+
+        @Override
+        public Wallet saveWallet(Wallet wallet) {
+            wallets.put(wallet.getUserId(), wallet);
+            return wallet;
+        }
+
+        @Override
+        public void updateRole(UUID id, com.auctionapp.auctionappjava.common.enums.Role role) {
+        }
+
+        @Override
+        public void updateProfile(UUID id, String fullName, String email) {
+        }
+
+        @Override
+        public void updatePassword(UUID id, String hash, String salt) {
+        }
+
+        @Override
+        public void updateActiveStatus(UUID id, boolean isActive) {
+        }
+
+        @Override
+        public Optional<User> findSellerByAuctionId(UUID auctionId) {
+            return users.values().stream().findFirst();
+        }
+
+        @Override
+        public List<UserDetailResponse> findAllDetails() {
             List<UserDetailResponse> result = new ArrayList<>();
             for (User user : users.values()) {
                 result.add(new UserDetailResponse(
@@ -206,15 +361,22 @@ public class AuctionServiceTest {
             }
             return result;
         }
-        @Override public long countUsersActive() {
+
+        @Override
+        public long countUsersActive() {
             return users.values().stream()
                     .filter(User::isActive)
                     .count();
         }
 
         // helpers
-        public void putUser(User u) { users.put(u.getId(), u); }
-        public void putWallet(Wallet w) { wallets.put(w.getUserId(), w); }
+        public void putUser(User u) {
+            users.put(u.getId(), u);
+        }
+
+        public void putWallet(Wallet w) {
+            wallets.put(w.getUserId(), w);
+        }
     }
 
     static class FakeAutoBidDao implements AutoBidDao {
@@ -250,6 +412,11 @@ public class AuctionServiceTest {
         @Override
         public void disableByAuctionIdAndBidderId(UUID auctionId, UUID bidderId) {
             findByAuctionIdAndBidderId(auctionId, bidderId).ifPresent(config -> config.setEnabled(false));
+        }
+
+        @Override
+        public int countBotsByAuctionId(UUID auctionId) {
+            return (int) findEnabledByAuctionId(auctionId).size();
         }
 
         private String key(UUID auctionId, UUID bidderId) {
@@ -390,3 +557,4 @@ public class AuctionServiceTest {
         assertTrue(response.message().contains("Số dư trong ví không đủ"));
     }
 }
+

@@ -16,14 +16,45 @@ public class AuctionStatusServiceTest {
 
     static class FakeAuctionDao implements AuctionDao {
         final Map<UUID, Auction> store = new HashMap<>();
-        @Override public Auction save(Auction auction) { store.put(auction.getId(), auction); return auction; }
-        @Override public Optional<Auction> findById(UUID auctionId) { return Optional.ofNullable(store.get(auctionId)); }
-        @Override public List<Auction> findByStatus(com.auctionapp.auctionappjava.common.enums.AuctionStatus status) { return new ArrayList<>(); }
-        @Override public List<Auction> findAll() { return new ArrayList<>(store.values()); }
-        @Override public List<Auction> findBySellerId(UUID sellerId) { return new ArrayList<>(); }
-        @Override public void deleteById(UUID auctionId) { store.remove(auctionId); }
+
+        @Override
+        public Auction save(Auction auction) {
+            store.put(auction.getId(), auction);
+            return auction;
+        }
+
+        @Override
+        public Optional<Auction> findById(UUID auctionId) {
+            return Optional.ofNullable(store.get(auctionId));
+        }
+
+        @Override
+        public List<Auction> findByStatus(com.auctionapp.auctionappjava.common.enums.AuctionStatus status) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<Auction> findAll() {
+            return new ArrayList<>(store.values());
+        }
+
+        @Override
+        public List<Auction> findBySellerId(UUID sellerId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void deleteById(UUID auctionId) {
+            store.remove(auctionId);
+        }
+
         @Override
         public List<AuctionSummaryResponse> findAllSummaries() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<AuctionSummaryResponse> findRunningAuctionSummaries() {
             return new ArrayList<>();
         }
 
@@ -31,15 +62,31 @@ public class AuctionStatusServiceTest {
         public List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId) {
             return new ArrayList<>();
         }
-        @Override public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) { return Optional.empty(); }
-        @Override public long countAuctionsCreatedBySellerId(UUID sellerId) { return 0; }
-        @Override public Optional<Auction> findMostExpiredAuction() {
+
+        @Override
+        public Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId) {
+            return Optional.empty();
+        }
+
+        @Override
+        public long countAuctionsCreatedBySellerId(UUID sellerId) {
+            return 0;
+        }
+
+        @Override
+        public Optional<Auction> findMostExpiredAuction() {
             return store.values().stream()
                     .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
                     .min(Comparator.comparing(Auction::getEndTime));
         }
-        @Override public Optional<Auction> findMostBiddedAuction() {return Optional.empty();}
-        @Override public long countRunningAuctions() {
+
+        @Override
+        public Optional<Auction> findMostBiddedAuction() {
+            return Optional.empty();
+        }
+
+        @Override
+        public long countRunningAuctions() {
             return store.values().stream()
                     .filter(auction -> auction.getStatus() == AuctionStatus.RUNNING)
                     .count();
@@ -84,3 +131,4 @@ public class AuctionStatusServiceTest {
         assertEquals(AuctionStatus.FINISHED, result.getStatus(), "Auction should be marked FINISHED");
     }
 }
+
