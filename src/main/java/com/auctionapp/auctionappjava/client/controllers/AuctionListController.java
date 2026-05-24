@@ -7,7 +7,6 @@ import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
-import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -85,10 +84,6 @@ public class AuctionListController implements Initializable {
     private TableColumn<AuctionSummaryResponse, String> clmStatus;
     @FXML
     private TableColumn<AuctionSummaryResponse, String> clmTime; // Thời gian còn lại
-    @FXML
-    private TableColumn<AuctionSummaryResponse, ?> clmBiddingMoney;
-    @FXML
-    private TableColumn<AuctionSummaryResponse, ?> clmBiddedTime; // Thời điểm đặt
     @FXML
     private TextField txtSearch;
     @FXML

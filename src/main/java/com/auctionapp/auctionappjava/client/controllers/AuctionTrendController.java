@@ -39,8 +39,6 @@ public class AuctionTrendController implements Initializable {
     @FXML
     private TableColumn<AuctionTrendResponse, String> clmItemName;
     @FXML
-    private TableColumn<AuctionTrendResponse, String> clmStatus;
-    @FXML
     private TableColumn<AuctionTrendResponse, BigDecimal> clmCurrentPrice;
     @FXML
     private TableColumn<AuctionTrendResponse, BigDecimal> clmScore;
@@ -63,10 +61,8 @@ public class AuctionTrendController implements Initializable {
 
     private void setupColumns() {
         clmItemName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().itemName()));
-        clmStatus.setCellValueFactory(cell -> new SimpleStringProperty(
-                cell.getValue().status() == null ? "UNKNOWN" : cell.getValue().status().name()));
         clmCurrentPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().currentPrice()));
-        clmScore.setCellValueFactory(cell -> new SimpleObjectProperty(cell.getValue().trendScore()));
+        clmScore.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().trendScore()));
         clmLabel.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().trendLabel()));
         clmReason.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().reason()));
         formatPriceColumn(clmCurrentPrice);

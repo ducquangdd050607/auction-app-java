@@ -32,7 +32,6 @@
                      <children>
                         <Button fx:id="btnItemListBidder" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
                         <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleHistory" prefHeight="0.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Lịch sử đấu giá" />
-                        <Button fx:id="btnTrend1" mnemonicParsing="false" onAction="#handleTrend" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Xu hướng" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
@@ -41,6 +40,7 @@
                         <Button fx:id="btnItemListAdmin" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="6.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý phiên đấu giá" />
                         <Button fx:id="btnGotoUsersManager" mnemonicParsing="false" onAction="#handleGotoUsersManager" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý Users" />
                         <Button fx:id="btnTransactionList" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleHistory" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đặt cược" />
+                        <Button fx:id="btnTrend" mnemonicParsing="false" onAction="#handleTrend" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Xu hướng" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>
@@ -48,7 +48,6 @@
                      <children>
                         <Button fx:id="btnItemListSeller" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Danh sách đấu giá" />
                         <Button fx:id="btnItemManager" layoutX="10.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleItemsList" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Quản lý vật phẩm" />
-                        <Button fx:id="btnTrend" mnemonicParsing="false" onAction="#handleTrend" prefHeight="25.0" prefWidth="165.0" styleClass="nav-menu-btn" text="Xu hướng" />
                         <Separator prefWidth="200.0" />
                      </children>
                   </VBox>

@@ -128,6 +128,13 @@ public class AuctionTrendService {
                 .filter(r -> r != null && !r.isBlank())
                 .collect(Collectors.joining("; "));
 
+        String label = List.of(autoBidSignal, freqSignal, growthSignal, timeSignal)
+                .stream()
+                .map(TrendSignal::label)
+                .filter(r -> r != null && !r.isBlank())
+                .collect(Collectors.joining("; "));
+
+
         if (finalReason.isBlank()) finalReason = "Chưa có dữ liệu nổi bật";
 
         return Optional.of(new AuctionTrendResponse(
@@ -139,7 +146,7 @@ public class AuctionTrendService {
                 summary.bidderCount(),
                 bids.size(),
                 finalScore,
-                null,
+                label,
                 finalReason
         ));
     }

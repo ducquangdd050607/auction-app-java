@@ -30,12 +30,11 @@
     <center>
         <TableView fx:id="tblTrends" prefHeight="420.0" prefWidth="820.0" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="clmItemName" prefWidth="170.0" text="Sản phẩm" />
-                <TableColumn fx:id="clmStatus" prefWidth="90.0" text="Trạng thái" />
-                <TableColumn fx:id="clmCurrentPrice" prefWidth="120.0" text="Giá hiện tại" />
-                <TableColumn fx:id="clmScore" prefWidth="70.0" text="Điểm" />
-                <TableColumn fx:id="clmLabel" prefWidth="110.0" text="Nhãn" />
-                <TableColumn fx:id="clmReason" prefWidth="260.0" text="Lý do" />
+                <TableColumn fx:id="clmItemName" prefWidth="115.0" text="Sản phẩm" />
+                <TableColumn fx:id="clmCurrentPrice" prefWidth="107.0" text="Giá hiện tại" />
+                <TableColumn fx:id="clmScore" prefWidth="67.0" text="Điểm" />
+                <TableColumn fx:id="clmLabel" prefWidth="211.0" text="Nhãn" />
+                <TableColumn fx:id="clmReason" prefWidth="318.0" text="Lý do" />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

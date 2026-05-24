@@ -52,7 +52,6 @@
             <TableColumn fx:id="clmBiddedTime" prefWidth="144.0001220703125" text="Thời điểm đặt" visible="false" />
             <TableColumn fx:id="clmTime" prefWidth="109.0" text="Thời gian còn lại" />
             <TableColumn fx:id="clmBidders" prefWidth="131.0" text="Số Bidders quan tâm" />
-            <TableColumn fx:id="clmTrendsPoint" prefWidth="94.0" text="Điểm Trends" />
         </columns>
          <BorderPane.margin>
             <Insets bottom="10.0" top="10.0" />
