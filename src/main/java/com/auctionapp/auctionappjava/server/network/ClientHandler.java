@@ -1,13 +1,26 @@
 package com.auctionapp.auctionappjava.server.network;
 
-import com.auctionapp.auctionappjava.common.dto.*;
-import com.auctionapp.auctionappjava.server.service.AuctionService;
-import com.auctionapp.auctionappjava.server.service.AuctionTrendService;
-import com.auctionapp.auctionappjava.server.service.UserService;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+
+import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
+import com.auctionapp.auctionappjava.common.dto.ChangeInformationRequest;
+import com.auctionapp.auctionappjava.common.dto.ChangePasswordRequest;
+import com.auctionapp.auctionappjava.common.dto.ConfigureAutoBidRequest;
+import com.auctionapp.auctionappjava.common.dto.DepositRequest;
+import com.auctionapp.auctionappjava.common.dto.ImageRequest;
+import com.auctionapp.auctionappjava.common.dto.LoginRequest;
+import com.auctionapp.auctionappjava.common.dto.LoginResponse;
+import com.auctionapp.auctionappjava.common.dto.ManagerAndHistoryRequest;
+import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
+import com.auctionapp.auctionappjava.common.dto.RegisterRequest;
+import com.auctionapp.auctionappjava.common.dto.RemoveAuctionRequest;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.server.service.AuctionService;
+import com.auctionapp.auctionappjava.server.service.AuctionTrendService;
+import com.auctionapp.auctionappjava.server.service.UserService;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -95,7 +108,7 @@ public class ClientHandler implements Runnable {
                     case "PLACE_BID":
                         response = auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
                         break;
-                    // THÊM AUTO-BID REQUEST: nhận cấu hình auto-bid từ client và lưu xuống DB.
+                    // THEM AUTO-BID REQUEST: nhan cau hinh auto-bid tu client va luu xuong DB.
                     case "CONFIGURE_AUTO_BID":
                         response = auctionService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
                         break;
