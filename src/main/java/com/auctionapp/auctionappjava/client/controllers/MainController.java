@@ -15,15 +15,6 @@ public class MainController {
     private Stage stage;
 
     @FXML
-    private Button btnLogin;
-    @FXML
-    private Button btnRegister;
-    @FXML
-    private Button btnExplore;
-    @FXML
-    private Button btnExit;
-
-    @FXML
     void handleLogin(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/LoginScreen.fxml", "Đăng nhập");
 

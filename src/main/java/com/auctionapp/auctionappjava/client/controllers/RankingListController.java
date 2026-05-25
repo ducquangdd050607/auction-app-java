@@ -63,6 +63,9 @@ public class RankingListController {
     private TableColumn<BidRankingResponse, String> colUsername;
 
     @FXML
+    private Label lblDescription;
+
+    @FXML
     private Label lblMinIncrement;
 
     @FXML
@@ -99,6 +102,7 @@ public class RankingListController {
         lblCategory.setText(currentAuction.category());
         lblItemName.setText(currentAuction.itemName());
         lblStatus.setText(currentAuction.status().toString());
+        lblDescription.setText(currentAuction.description());
         lblTopBidder.setText("Đang tải...");
 
         show();
@@ -222,11 +226,11 @@ public class RankingListController {
             removeAuction();
         } else if (LoginController.sellerRoute) {
 
-            if (AuctionSession.getInstance().getCurrentAuction().status().equals(AuctionStatus.RUNNING)) {
-                //TODO: Sửa trạng thái
-                AlertUtils.AnnouncementController("Không đủ tư cách xóa", "SELLER không thể xóa các phiên đang chạy", null, null);
-            } else {
+            if (AuctionSession.getInstance().getCurrentAuction().status().equals(AuctionStatus.OPEN)) {
                 removeAuction();
+
+               } else {
+                AlertUtils.AnnouncementController("Không đủ tư cách xóa", "SELLER không thể xóa các phiên đang chạy hoặc đã kết thúc", null, null);
 
             }
         }

@@ -69,10 +69,10 @@
                <Label fx:id="lblCurrentLeader" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>
-         <HBox prefHeight="69.0" prefWidth="239.0">
+         <HBox prefHeight="74.0" prefWidth="239.0">
             <children>
-               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả: " />
-               <Label fx:id="txtDescription" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
+               <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="Mô tả: " HBox.hgrow="NEVER" />
+               <Label fx:id="txtDescription" prefHeight="0.0" prefWidth="194.0" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" />
             </children>
          </HBox>
 

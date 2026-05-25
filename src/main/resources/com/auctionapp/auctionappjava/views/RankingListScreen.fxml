@@ -14,8 +14,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Slide 13 / 14: Seller – xem danh sách người đặt cược -->
-
 <BorderPane prefHeight="692.0" prefWidth="900" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/RankingListScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.RankingListController">
     <padding><Insets bottom="28" left="40" right="40" top="28" /></padding>
 
@@ -24,9 +22,8 @@
             <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
             <Button fx:id="btnBack" alignment="TOP_LEFT" onAction="#handleBack" prefHeight="30.0" prefWidth="83.0" styleClass="underline-link" text="← Quay lại" />
 
-            <!-- Auction summary row -->
             <HBox alignment="CENTER_LEFT" spacing="14.0">
-                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14;" text="[Type]" />
+                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14; -fx-font-weight: bold;" text="[Type]" />
                 <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="[Name]" />
                 <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 12; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 3 10 3 10;" text="[STATUS]" />
             </HBox>

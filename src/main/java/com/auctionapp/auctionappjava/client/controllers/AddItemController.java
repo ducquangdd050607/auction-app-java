@@ -185,6 +185,11 @@ public class AddItemController implements Initializable {
             return;
         }
 
+        if (txtDescription.getText().length() > 99) {
+            lblError.setText("Quá số lượng chữ cái cho phép (99 kí tự)");
+            return;
+        }
+
         // Các thuộc tính
         String type = null;
 

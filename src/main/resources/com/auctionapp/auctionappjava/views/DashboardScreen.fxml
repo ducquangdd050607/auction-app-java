@@ -64,9 +64,9 @@
                                 </VBox>
                             </graphic>
                         </Button>
-                        <Button fx:id="btnSellerItemManager" mnemonicParsing="false" onAction="#handleManager" prefHeight="96.0" prefWidth="160.0" styleClass="stat-btn" HBox.hgrow="ALWAYS">
+                        <Button fx:id="btnSellerItemManager" mnemonicParsing="false" onAction="#handleManager" prefHeight="102.0" prefWidth="186.0" styleClass="stat-btn" HBox.hgrow="ALWAYS">
                             <graphic>
-                                <VBox fx:id="statCard31" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
+                                <VBox fx:id="statCard31" alignment="CENTER_LEFT" prefHeight="94.0" prefWidth="178.0" spacing="5.0" style="-fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),6,0,0,2);">
                                     <padding>
                                         <Insets bottom="18" left="20" right="20" top="18" />
                                     </padding>
@@ -116,7 +116,7 @@
 
                     <HBox fx:id="boxItems" alignment="CENTER" prefWidth="952.0" spacing="14.0">
                         <children>
-                            <VBox fx:id="itemCard1" prefHeight="290.0" maxHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard1" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                                 <children>
                                     <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>
@@ -171,7 +171,7 @@
                                 </children>
                             </VBox>
 
-                            <VBox fx:id="itemCard2" prefHeight="290.0" maxHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard2" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                                 <children>
                                     <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>
@@ -226,7 +226,7 @@
                                 </children>
                             </VBox>
 
-                            <VBox fx:id="itemCard3" prefHeight="290.0" maxHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard3" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
                                 <children>
                                     <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>

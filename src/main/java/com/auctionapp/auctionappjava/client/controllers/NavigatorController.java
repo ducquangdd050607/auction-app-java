@@ -333,6 +333,11 @@ public class NavigatorController implements Initializable {
     }
 
     @FXML
+    void handleNotify() {
+
+    }
+
+    @FXML
     void handleAccount(ActionEvent event) throws IOException {
         SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
         activateAccountButton();
