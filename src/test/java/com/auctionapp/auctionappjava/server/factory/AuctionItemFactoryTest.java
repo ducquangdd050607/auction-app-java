@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.common.factory;
+package com.auctionapp.auctionappjava.server.factory;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;

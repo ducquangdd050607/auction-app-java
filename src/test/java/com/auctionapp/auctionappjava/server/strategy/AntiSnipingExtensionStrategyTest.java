@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.common.strategy;
+package com.auctionapp.auctionappjava.server.strategy;
 
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.server.model.Auction;
