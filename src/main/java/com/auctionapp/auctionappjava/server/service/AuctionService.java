@@ -126,17 +126,14 @@ public class AuctionService {
 
         try {
             List<AuctionSummaryResponse> featuredAuctions = new ArrayList<>();
-            ;
 
             Optional<Auction> auction1Opt = auctionDao.findMostBiddedAuction();
-
 
             if (auction1Opt.isPresent()) {
                 Auction mostBiddedAuction = auction1Opt.get();
                 Optional<Item> item1Opt = itemDao.findByAuctionId(mostBiddedAuction.getId());
                 if (item1Opt.isPresent()) {
                     Item item = item1Opt.get();
-
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                     String startFormattedTime = mostBiddedAuction.getStartTime().format(formatter);
                     String endFormattedTime = mostBiddedAuction.getEndTime().format(formatter);

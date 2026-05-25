@@ -16,7 +16,7 @@
 
     <top>
         <VBox spacing="6">
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Wallet – Nạp tiền" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Blue88 Wallet – Nạp tiền" />
             <Button onAction="#handleBack" styleClass="underline-link" text="← Quay lại" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>

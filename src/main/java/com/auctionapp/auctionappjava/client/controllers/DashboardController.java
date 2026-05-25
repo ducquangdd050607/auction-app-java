@@ -102,15 +102,7 @@ public class DashboardController implements Initializable {
     @FXML
     private Label lblRUNNINGs;
     @FXML
-    private Label lblStat1Label;
-    @FXML
-    private Label lblStat1Label1;
-    @FXML
-    private Label lblStat3Label;
-    @FXML
-    private Label lblStat3Label1;
-    @FXML
-    private Label lblStat3Label2;
+    private Label lblCrowdedAuction;
     @FXML
     private Label lblTimer1;
     @FXML

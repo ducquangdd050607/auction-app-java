@@ -385,7 +385,7 @@ public class NavigatorController implements Initializable {
                 UserSession.getInstance().cleanUserSession();
                 AuctionSession.getInstance().cleanAuctionSession();
                 RegisterController.isRegister = false;
-                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Bíd88");
+                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Blue88");
             } catch (IOException e) {
                 throw new AppException("Không thể đăng xuất", e);
             }

@@ -4,7 +4,6 @@ import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public record AuctionSummaryResponse(
         String auctionId,

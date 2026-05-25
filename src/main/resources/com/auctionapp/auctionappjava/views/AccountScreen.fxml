@@ -15,7 +15,7 @@
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
    <center>
         <VBox spacing="4" style="-fx-background-color: #2E7D9B; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 User Account">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Blue88 User Account">
             <VBox.margin>
                <Insets left="30.0" right="25.0" top="25.0" />
             </VBox.margin>

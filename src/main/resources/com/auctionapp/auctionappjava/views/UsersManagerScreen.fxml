@@ -17,7 +17,7 @@
 
     <top>
         <VBox prefHeight="106.0" prefWidth="820.0" spacing="14" style="-fx-background-color: #2E7D9B; -fx-background-radius: 18;">
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Bét88 Users Manager" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Blue88 Users Manager" />
 
             <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="726.0" spacing="10" style="-fx-background-color: #2E7D9B;">
                 <TextField fx:id="txtSearch" prefHeight="32" prefWidth="231.0" promptText="Tìm kiếm người dùng..." style="-fx-background-radius: 4; -fx-font-size: 13;" />

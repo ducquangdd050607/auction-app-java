@@ -464,11 +464,11 @@ public class AuctionListController implements Initializable {
     public void setMode(String mode) {
 
         if (Objects.equals(mode, "Danh sách đấu giá")) {
-            txtVersatile.setText("Bét88 Live Auction Services");
+            txtVersatile.setText("Blue88 Live Auction Services");
         } else if (Objects.equals(mode, "Quản lý vật phẩm")) {
-            txtVersatile.setText("Bét88 Items Manager");
+            txtVersatile.setText("Blue88 Items Manager");
         } else if (Objects.equals(mode, "Quản lý phiên đấu giá")) {
-            txtVersatile.setText("Bét88 Live Auction Manager");
+            txtVersatile.setText("Blue88 Live Auction Manager");
         }
     }
 

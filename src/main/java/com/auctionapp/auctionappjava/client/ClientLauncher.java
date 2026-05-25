@@ -29,7 +29,7 @@ public class ClientLauncher extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(ClientLauncher.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 920, 620);
-        stage.setTitle("Bíd88");
+        stage.setTitle("Blue88");
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);

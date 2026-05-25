@@ -77,7 +77,7 @@ public class LoginController implements Initializable {
                                 adminRoute = true;
                                 sellerRoute = false;
                                 bidderRoute = false;
-                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Blue88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -87,7 +87,7 @@ public class LoginController implements Initializable {
                                 adminRoute = false;
                                 sellerRoute = true;
                                 bidderRoute = false;
-                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Blue88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -97,7 +97,7 @@ public class LoginController implements Initializable {
                                 adminRoute = false;
                                 sellerRoute = false;
                                 bidderRoute = true;
-                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Bíd88");
+                                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml", "Blue88");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

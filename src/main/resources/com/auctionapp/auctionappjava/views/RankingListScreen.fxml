@@ -19,7 +19,7 @@
 
     <top>
         <VBox>
-            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Live Auction Services" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Blue88 Live Auction Services" />
             <Button fx:id="btnBack" alignment="TOP_LEFT" onAction="#handleBack" prefHeight="30.0" prefWidth="83.0" styleClass="underline-link" text="← Quay lại" />
 
             <HBox alignment="CENTER_LEFT" spacing="14.0">
