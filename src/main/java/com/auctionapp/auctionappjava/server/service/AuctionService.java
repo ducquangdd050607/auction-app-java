@@ -385,12 +385,16 @@ public class AuctionService {
                                     applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                                    String newEndTime = auction.getEndTime().format(formatter);
+
                                     // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
-                                    // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
+                                    // Đóng gói ID phiên, giá mới, người đặt và endTime mới vào 1 mảng Object
                                     Object[] pushData = new Object[]{
                                             placeBidData.auctionId(),
                                             placeBidData.amount(),
-                                            placeBidData.userId()
+                                            placeBidData.userId(),
+                                            newEndTime
                                     };
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
@@ -511,7 +515,10 @@ public class AuctionService {
         applyAntiSnipingExtension(auction);
         auctionDao.save(auction);
 
-        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId };
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String newEndTime = auction.getEndTime().format(formatter);
+
+        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId, newEndTime };
         Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
         SessionManager.getInstance().broadcast(newBidResponse);
     }
