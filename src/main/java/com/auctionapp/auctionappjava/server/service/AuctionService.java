@@ -113,10 +113,10 @@ public class AuctionService {
             List<BidRankingResponse> responseList =
                     bidDao.findRankingByAuctionId(UUID.fromString(data.userId()));
 
-            return new Response(true, "Tai bang xep hang thanh cong!", responseList);
+            return new Response(true, "Tải bảng xếp hạng thành công!", responseList);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Loi may chu khi truy xuat bang xep hang!", null);
+            return new Response(false, "Lỗi máy chủ khi truy xuất xếp hạng!", null);
         }
     }
 
@@ -231,8 +231,9 @@ public class AuctionService {
             }
 
 
-
-            if (featuredAuctions.isEmpty()) {
+// sửa dữ liệu
+            if (featuredAuctions.isEmpty()) 
+            {
                 return new Response(false, "Hiện không có phiên đấu giá nào nổi bật", featuredAuctions);
             }
 
@@ -245,7 +246,7 @@ public class AuctionService {
 
     }
 
-    // THEM AUTO-BID API: luu cau hinh auto-bid ma client gui len.
+    // THÊM AUTO-BID API: lưu cấu hình auto-bid mà client gửi lên.
     public Response handleConfigureAutoBid(ConfigureAutoBidRequest data) {
         try {
             Optional<Auction> auctionOpt = auctionDao.findById(data.auctionId());
@@ -384,16 +385,12 @@ public class AuctionService {
                                     applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
-                                    // Ép kiểu Date ra String để đồng bộ với định dạng hiển thị của Client
-                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                                    String newEndTime = auction.getEndTime().format(formatter);
-
-                                    // Đóng gói 4 thông tin: [ID phiên, Giá mới, ID người đặt, Tgian kết thúc mới nếu có anti-snipping]
+                                    // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
+                                    // Đóng gói cả ID phiên và Giá mới vào 1 mảng Object
                                     Object[] pushData = new Object[]{
                                             placeBidData.auctionId(),
                                             placeBidData.amount(),
-                                            placeBidData.userId(),
-                                            newEndTime
+                                            placeBidData.userId()
                                     };
                                     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                                     SessionManager.getInstance().broadcast(newBidResponse);
@@ -514,16 +511,7 @@ public class AuctionService {
         applyAntiSnipingExtension(auction);
         auctionDao.save(auction);
 
-        // Update data endtime nếu có anti-snipping
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        String newEndTime = auction.getEndTime().format(formatter);
-
-        Object[] pushData = new Object[]{
-                auction.getId(),
-                amount,
-                bidderId,
-                newEndTime // Lấy thêm tgian nếu có anti-snipping
-        };
+        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId };
         Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
         SessionManager.getInstance().broadcast(newBidResponse);
     }
