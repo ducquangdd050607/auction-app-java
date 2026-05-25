@@ -62,6 +62,11 @@ public class RealtimeHandler {
                         AuctionDetailController.instance.updatePriceAndEndTimeRealtime(newPrice, newEndTime);
                     }
 
+                    if (RankingListController.instance != null) {
+                        // Gọi hàm làm mới bảng và biểu đồ
+                        RankingListController.instance.refreshRankingRealtime();
+                    }
+
                     String myUserId = UserSession.getInstance().getCurrentUser().id();
                     if (ConfirmBiddingController.instance != null && !newBidderId.toString().equals(myUserId)) {
                         ConfirmBiddingController.instance.showOutbidWarning();

@@ -174,7 +174,7 @@ public class AuctionListController implements Initializable {
 
     @FXML
     void handleReload(ActionEvent event) throws IOException {
-
+        loadAuctionsFromServer(true);
     }
 
 
@@ -189,7 +189,7 @@ public class AuctionListController implements Initializable {
         stage.showAndWait();
 
         if (addItemController.isAddedSuccess()) {
-            loadAuctionsFromServer();
+            loadAuctionsFromServer(true);
         }
     }
 
@@ -225,7 +225,7 @@ public class AuctionListController implements Initializable {
         listAuctions.setItems(sortedData);
 
         // Tự động kéo dữ liệu từ mạng khi mở màn hình
-        loadAuctionsFromServer();
+        loadAuctionsFromServer(true);
 
         // Cho phép Double-click truy cập sản phẩm
         setupRowDoubleClick();
@@ -244,19 +244,22 @@ public class AuctionListController implements Initializable {
     }
 
     // Luồng xử lý ngầm gọi Server
-    private void loadAuctionsFromServer() {
-        // Khóa search trong lúc loading
-        txtSearch.setDisable(true);
-        cbFilterStatus.setDisable(true);
-        cbType.setDisable(true);
-        btnSearch.setDisable(true);
-        btnReload.setDisable(true);
+    private void loadAuctionsFromServer(boolean isInitialLoad) {
+        // Chỉ khóa nút và hiện vòng xoay khi lần đầu load list
+        if (isInitialLoad) {
+            txtSearch.setDisable(true);
+            cbFilterStatus.setDisable(true);
+            cbType.setDisable(true);
+            btnSearch.setDisable(true);
+            btnReload.setDisable(true);
 
-        // Thêm vòng tròn loading trong lúc đợi lấy data từ server
-        ProgressIndicator loadingSpinner = new ProgressIndicator();
-        loadingSpinner.setMaxSize(50, 50);
-        listAuctions.setPlaceholder(loadingSpinner);
-        auctionData.clear();
+            ProgressIndicator loadingSpinner = new ProgressIndicator();
+            loadingSpinner.setMaxSize(50, 50);
+            listAuctions.setPlaceholder(loadingSpinner);
+
+            // Xóa sạch list cũ để màn hình trống trong lúc hiện vòng xoay
+            auctionData.clear();
+        }
 
         Request req = new Request("GET_ALL_AUCTIONS", null);
         if ((modeName.equals("Danh sách đấu giá")) || (modeName.equals("Quản lý phiên đấu giá"))) {
@@ -276,12 +279,14 @@ public class AuctionListController implements Initializable {
             }
         }).thenAccept(response -> {
             Platform.runLater(() -> {
-                // Mở lại search khi dữ liệu được trả về
-                txtSearch.setDisable(false);
-                cbFilterStatus.setDisable(false);
-                cbType.setDisable(false);
-                btnSearch.setDisable(false);
-                btnReload.setDisable(false);
+                // Mở lại nút nếu đã khóa ở trên
+                if (isInitialLoad) {
+                    txtSearch.setDisable(false);
+                    cbFilterStatus.setDisable(false);
+                    cbType.setDisable(false);
+                    btnSearch.setDisable(false);
+                    btnReload.setDisable(false);
+                }
 
                 if (response.success()) {
                     // Ép kiểu lấy danh sách từ Response
@@ -565,7 +570,7 @@ public class AuctionListController implements Initializable {
     }
 
     public void refreshListRealtime() {
-        Platform.runLater(this::loadAuctionsFromServer);
+        Platform.runLater(() -> loadAuctionsFromServer(false));
     }
 
     // Hàm nhận lệnh từ Router để chỉ cập nhật dòng bị thay đổi

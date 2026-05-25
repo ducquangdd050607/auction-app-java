@@ -40,6 +40,7 @@ public class RankingListController {
 
     private final ObservableList<BidRankingResponse> bidderData = FXCollections.observableArrayList();
     private static final DateTimeFormatter BID_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    public static RankingListController instance;
 
     @FXML
     private Button btnBack;
@@ -94,7 +95,8 @@ public class RankingListController {
 
     @FXML
     void initialize() {
-        var currentAuction = AuctionSession.getInstance().getCurrentAuction();
+        instance = this;
+        AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
 
         lblStartingPrice.setText(formatMoney(currentAuction.startPrice()) + " VND");
         lblTopBid.setText(formatMoney(currentAuction.currentPrice()) + " VND");
@@ -116,7 +118,7 @@ public class RankingListController {
 
         tableBidders.setItems(sortedData);
 
-        loadBiddersFromServer();
+        loadBiddersFromServer(true);
     }
 
     private void show() {
@@ -149,15 +151,19 @@ public class RankingListController {
         bidLineChart.setAnimated(false);
     }
 
-    private void loadBiddersFromServer() {
+    private void loadBiddersFromServer(boolean isInitialLoad) {
         btnExportWinner.setDisable(true);
 
-        ProgressIndicator loadingSpinner = new ProgressIndicator();
-        loadingSpinner.setMaxSize(50, 50);
-        tableBidders.setPlaceholder(loadingSpinner);
+        // Chỉ hiện vòng xoay và dọn dẹp bảng nếu là lần đầu tiên mở màn hình
+        if (isInitialLoad) {
+            ProgressIndicator loadingSpinner = new ProgressIndicator();
+            loadingSpinner.setMaxSize(50, 50);
+            tableBidders.setPlaceholder(loadingSpinner);
 
-        bidderData.clear();
-        bidLineChart.getData().clear();
+            // Xóa data cũ ngay lập tức để màn hình trống trong lúc xoay vòng vòng
+            bidderData.clear();
+            bidLineChart.getData().clear();
+        }
 
         String auctionId = AuctionSession.getInstance().getCurrentAuction().auctionId();
         Request req = new Request("GET_BID_RANKING", new ManagerAndHistoryRequest(auctionId));
@@ -175,6 +181,13 @@ public class RankingListController {
 
                     if (response.success()) {
                         List<BidRankingResponse> rows = (List<BidRankingResponse>) response.data();
+
+                        // Nếu là tải Realtime ngầm, đợi có data mới mang về rỗi mới xóa data cũ
+                        if (!isInitialLoad) {
+                            bidderData.clear();
+                            bidLineChart.getData().clear();
+                        }
+
                         bidderData.setAll(rows);
                         updateWinner(rows);
                         updateChart(rows);
@@ -239,7 +252,6 @@ public class RankingListController {
     private void removeAuction() {
 
         Runnable remove = () -> {
-
             RemoveAuctionRequest removeReq = new RemoveAuctionRequest(
                     UserSession.getInstance().getCurrentUser().id(),
                     AuctionSession.getInstance().getCurrentAuction().auctionId());
@@ -292,7 +304,7 @@ public class RankingListController {
 
     @FXML
     void handleBidders(ActionEvent event) {
-        loadBiddersFromServer();
+        loadBiddersFromServer(true);
     }
 
     @FXML
@@ -303,16 +315,17 @@ public class RankingListController {
         }
 
         BidRankingResponse winner = bidderData.get(0);
-        System.out.println("[RANKING_WINNER] Auction "
-                + AuctionSession.getInstance().getCurrentAuction().auctionId()
-                + " winner: " + winner.bidderName()
-                + ", amount: " + winner.amount()
-                + ", bidTime: " + winner.bidTime());
+
         new Alert(
                 Alert.AlertType.INFORMATION,
                 "Người thắng: " + winner.bidderName()
                         + "\nGiá thắng: " + formatMoney(winner.amount()) + " VND"
                         + "\nThời gian đặt: " + winner.bidTime()
         ).show();
+    }
+
+    public void refreshRankingRealtime() {
+        // Đơn giản là gọi lại hàm tải dữ liệu
+        Platform.runLater(() -> loadBiddersFromServer(false));
     }
 }
