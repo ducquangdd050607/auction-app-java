@@ -15,7 +15,7 @@ public class ClientLauncher extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            System.out.println("Đang thử kết nối tới Server Đấu giá...");
+            System.out.println("Dang ket noi den server...");
             // IP 127.0.0.1 dùng khi chạy server-client cùng 1 máy
             Client.getInstance().connect("127.0.0.1", 8080);
         } catch (Exception e) {
@@ -24,7 +24,7 @@ public class ClientLauncher extends Application {
             errorAlert.setHeaderText("Không thể kết nối đến máy chủ!");
             errorAlert.setContentText("Vui lòng kiểm tra lại mạng hoặc đảm bảo Server đang chạy.\nChi tiết lỗi: " + e.getMessage());
             errorAlert.showAndWait();
-            System.err.println("Lỗi: Không thể kết nối đến Server! " + e.getMessage());
+            System.err.println("Loi khong ket noi duoc voi server: " + e.getMessage());
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(ClientLauncher.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
@@ -59,9 +59,9 @@ public class ClientLauncher extends Application {
         // Gửi tín hiệu ngắt kết nối lên Server
         try {
             Client.getInstance().disconnect();
-            System.out.println("Đã ngắt kết nối với máy chủ.");
+            System.out.println("Da ngat ket noi voi server");
         } catch (Exception e) {
-            System.err.println("Lỗi khi ngắt kết nối: " + e.getMessage());
+            System.err.println("Loi khi ngat ket noi: " + e.getMessage());
         }
 
         // Gọi super ở đây vì khi stage close thì Application (lớp cha của class này) cx sẽ chạy stop

@@ -10,25 +10,25 @@ import java.net.ServerSocket;
 
 public class Server {
     public static void startServer(int port, int maxClients) {
-        System.out.println("Khởi động Server");
+        System.out.println("Khoi dong server");
         AuctionStatusService.recoverAndScheduleAll();
         ExecutorService threadPool = Executors.newFixedThreadPool(maxClients);
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server đang lắng nghe ở cổng " + port + "...");
+            System.out.println("Server dang lang nghe o cong " + port + "...");
 
             // While ở đây để khi nào client ngắt kết nối mới dừng, không thì server luôn mở để nhận request từ client
             while (true) {
                 // Đứng đợi Client kết nối
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Có Client mới kết nối: " + clientSocket.getInetAddress());
+                System.out.println("Co client moi ket noi: " + clientSocket.getInetAddress());
 
                 // TODO: Đẩy request sang ClientHandler và add socket vào thread pool
                 ClientHandler handler = new ClientHandler(clientSocket);
                 threadPool.execute(handler);
             }
         } catch (IOException e) {
-            System.err.println("Lỗi khởi động Server: " + e.getMessage());
+            System.err.println("Loi khoi dong server: " + e.getMessage());
         } finally {
             if (!threadPool.isShutdown()) {
                 threadPool.shutdown();

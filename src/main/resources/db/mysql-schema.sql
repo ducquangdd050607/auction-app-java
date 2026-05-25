@@ -1,7 +1,5 @@
 CREATE TABLE IF NOT EXISTS users ( # người dùng
-    id VARCHAR(36) PRIMARY KEY,  /* khóa chính tương tự căn cước công dân, 1 bảng chỉ có 1 khóa chính, bắt buộc khóa chính
-    phải có dữ liệu, không bỏ trống được, từ khóa chính của bảng này thì có thể là khóa ngoại của bảng khác.
-    thông qua việc gọi khóa ngoại thì ta truy xuất được thông tin cụ thẻ */
+    id VARCHAR(36) PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE, # varchar(100) là kiểu dữ liệu quy định tối đa 100 ký tư
     password_hash VARCHAR(255) NOT NULL,
     password_salt VARCHAR(255) NOT NULL,
@@ -26,9 +24,6 @@ CREATE TABLE IF NOT EXISTS auction_items (  # chứa các sản phẩm đấu gi
     created_at DATETIME NOT NULL,   # thời gian đăng sản phẩm này lên
     updated_at DATETIME NOT NULL,    # thay đổi về giá,...
     CONSTRAINT fk_items_seller FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
-    /* khóa ngoại, nó sẽ gọi đến khóa chính, cho biết được thông tin đầy đủ của seller thông qua id của họ
-    CONSTRAINT fk_items_seller là đặt tên cho khóa
-    FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE  cú pháp, sẽ gọi đến thông tin của seller trong bảng user*/
 );
 
 CREATE TABLE IF NOT EXISTS auctions ( /* lưu thông tin các phiên đấu giá*/
@@ -45,7 +40,6 @@ CREATE TABLE IF NOT EXISTS auctions ( /* lưu thông tin các phiên đấu giá
     created_at DATETIME NOT NULL,  # thời gian tạo phiên
     updated_at DATETIME NOT NULL,    # các thay đổi của phiên
     CONSTRAINT fk_auctions_item FOREIGN KEY (item_id) REFERENCES auction_items(id) ON DELETE CASCADE,
-    /* truy xuất thông tin của item*/
     CONSTRAINT fk_auctions_seller FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -68,21 +62,14 @@ CREATE TABLE IF NOT EXISTS auto_bid_configs ( # chức năng tự động đặt
     bidder_id VARCHAR(36) NOT NULL,
     max_bid DECIMAL(19, 2) NOT NULL, # tự động đặt giá tới giá cao nhất bidder có thể đồng ý trả max bid
     increment_amount DECIMAL(19, 2) NOT NULL,
-    /* quy định khoảng tăng so với lượt đặt giá trước vd 50k, increment_amount >= minimum_increment của phiên */
     enabled BOOLEAN NOT NULL, # mình có đồng ý sử dụng tính năng này ko ( bật hoặc tắt)
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL, # ghi lại lịch sử thay đổi của max_bid hoặc increment_amount
     CONSTRAINT uq_auto_bid UNIQUE (auction_id, bidder_id),
-    /* UNIQUE (auction_id, bidder_id) quy định trong 1 bảng thì không có 2 cặp giá trị
-    (auction_id, bidder_id) giống nhau
-    tức là mỗi 1 phiên với 1 bidder thì chỉ có thể dùng 1 auto_bid_configs thôi
-    */
     CONSTRAINT fk_auto_bid_auction FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE,
     CONSTRAINT fk_auto_bid_user FOREIGN KEY (bidder_id) REFERENCES users(id) ON DELETE CASCADE
 );
-/* ON DELETE CASCADE quy tắc này cho phép tự động xóa các bản ghi ở bảng con khi bản ghi tương ứng ở bảng cha bị xóa.
-ví dụ xóa 1 user thì sẽ xóa ở cả các bảng khác khi nó chứa user
-*/
+
 CREATE TABLE IF NOT EXISTS Wallet (
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
@@ -92,6 +79,5 @@ CREATE TABLE IF NOT EXISTS Wallet (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     constraint fk_user_id foreign key(user_id) references users(id) ON DELETE RESTRICT,
-    /* ON DELETE RESTRICT nếu xóa user mà vẫn còn tiền thì không cho xóa */
 	UNIQUE KEY unique_user_currency (user_id, currency) # buộc mỗi ví của mỗi người dùng chỉ có 1 đơn vị tiền tệ
 );

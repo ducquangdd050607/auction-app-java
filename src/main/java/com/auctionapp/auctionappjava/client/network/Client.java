@@ -61,7 +61,7 @@ public class Client {
                 }
             }
         } catch (Exception e) {
-            System.out.println("[NETWORK] Luồng lắng nghe ngắt kết nối: " + e.getMessage());
+            System.out.println("Luong lang nghe da ngat ket noi: " + e.getMessage());
         }
     }
 

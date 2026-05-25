@@ -117,9 +117,6 @@ public class AuctionStatusService {
 
                     // Lấy số tiền thắng cuộc (giá hiện tại)
                     BigDecimal winningAmount = auction.getCurrentPrice();
-                    System.out.println("[AUCTION_WINNER] Auction " + auction.getId()
-                            + " winner: " + winnerName
-                            + " (" + auction.getLeadingBidderId() + "), amount: " + winningAmount);
                     UUID sellerId = auction.getSellerId();
 
                     // Lấy ví của Seller và cộng tiền
@@ -150,26 +147,22 @@ public class AuctionStatusService {
 
     // Recover bộ đếm giờ khi khởi động lại server sau tắt
     public static void recoverAndScheduleAll() {
-        System.out.println("[MONITOR] Aloalo - Đã vào trong hàm!");
         try {
-            System.out.println("[MONITOR] 1. Đang khởi tạo JdbcAuctionDao...");
             AuctionDao auctionDao = new JdbcAuctionDao();
 
-            System.out.println("[MONITOR] 2. Khởi tạo DAO xong! Đang gọi lệnh findAll() xuống DB...");
+            System.out.println("Dang tim cac phien dau gia can hen gio...");
             List<Auction> allAuctions = auctionDao.findAll();
 
-            System.out.println("[MONITOR] 3. Đã lấy được dữ liệu từ DB! Đang lọc danh sách...");
             List<Auction> activeAuctions = allAuctions.stream()
                     .filter(a -> a.getStatus() != AuctionStatus.FINISHED)
                     .toList();
 
-            System.out.println("[MONITOR] 4. Thành công! Đã tìm thấy " + activeAuctions.size() + " phiên cần hẹn giờ.");
+            System.out.println("Thanh cong! Da tim thay " + activeAuctions.size() + " phien can hen gio.");
 
             for (Auction auction : activeAuctions) {
                 scheduleAuctionEvents(auction);
             }
         } catch (Exception e) {
-            System.out.println("[MONITOR] PHÁT HIỆN LỖI RỒI NÀY:");
             e.printStackTrace();
         }
     }
