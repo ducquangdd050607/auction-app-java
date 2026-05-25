@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.server.db;
+package com.auctionapp.auctionappjava.server.dao.db;
 
 import com.auctionapp.auctionappjava.server.config.ServerProperties;
 import java.sql.Connection;

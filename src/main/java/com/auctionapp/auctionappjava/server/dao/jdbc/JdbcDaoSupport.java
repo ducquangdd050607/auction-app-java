@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
-import com.auctionapp.auctionappjava.server.db.DatabaseManager;
+import com.auctionapp.auctionappjava.server.dao.db.DatabaseManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
