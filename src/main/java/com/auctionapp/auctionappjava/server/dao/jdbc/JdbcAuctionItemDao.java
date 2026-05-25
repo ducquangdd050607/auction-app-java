@@ -2,8 +2,8 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
-import com.auctionapp.auctionappjava.common.model.Item;
+import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
+import com.auctionapp.auctionappjava.server.model.Item;
 import com.auctionapp.auctionappjava.server.dao.AuctionItemDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

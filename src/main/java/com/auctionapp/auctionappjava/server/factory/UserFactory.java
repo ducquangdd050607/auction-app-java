@@ -1,7 +1,10 @@
-package com.auctionapp.auctionappjava.common.factory;
+package com.auctionapp.auctionappjava.server.factory;
 
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.model.*;
+import com.auctionapp.auctionappjava.server.model.Admin;
+import com.auctionapp.auctionappjava.server.model.Bidder;
+import com.auctionapp.auctionappjava.server.model.Seller;
+import com.auctionapp.auctionappjava.server.model.User;
 
 public final class UserFactory {
 

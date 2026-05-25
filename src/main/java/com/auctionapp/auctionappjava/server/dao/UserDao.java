@@ -2,8 +2,8 @@ package com.auctionapp.auctionappjava.server.dao;
 
 import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
 
 import java.util.Optional;
 import java.util.UUID;

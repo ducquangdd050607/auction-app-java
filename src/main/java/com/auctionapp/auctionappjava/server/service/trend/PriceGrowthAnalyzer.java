@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.server.service.trend;
 
-import com.auctionapp.auctionappjava.common.model.BidTransaction;
+import com.auctionapp.auctionappjava.server.model.BidTransaction;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

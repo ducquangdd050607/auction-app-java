@@ -1,7 +1,7 @@
-package com.auctionapp.auctionappjava.common.strategy;
+package com.auctionapp.auctionappjava.server.strategy;
 
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

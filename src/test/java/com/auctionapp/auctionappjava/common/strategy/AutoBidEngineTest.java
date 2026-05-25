@@ -1,7 +1,8 @@
 package com.auctionapp.auctionappjava.common.strategy;
 
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.strategy.AutoBidEngine;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,8 @@
 package com.auctionapp.auctionappjava.common.strategy;
 
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
-import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.server.model.Auction;
+import com.auctionapp.auctionappjava.server.strategy.AntiSnipingExtensionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

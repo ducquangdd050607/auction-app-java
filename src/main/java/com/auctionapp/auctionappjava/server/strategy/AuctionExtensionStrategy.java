@@ -1,6 +1,6 @@
-package com.auctionapp.auctionappjava.common.strategy;
+package com.auctionapp.auctionappjava.server.strategy;
 
-import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.server.model.Auction;
 
 import java.time.LocalDateTime;
 // là 1 interface định nghĩa chiến lược gia hạn phiên đấu giá (auction extension)

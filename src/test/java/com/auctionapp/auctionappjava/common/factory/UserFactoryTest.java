@@ -1,10 +1,11 @@
 package com.auctionapp.auctionappjava.common.factory;
 
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.model.Admin;
-import com.auctionapp.auctionappjava.common.model.Bidder;
-import com.auctionapp.auctionappjava.common.model.Seller;
-import com.auctionapp.auctionappjava.common.model.User;
+import com.auctionapp.auctionappjava.server.factory.UserFactory;
+import com.auctionapp.auctionappjava.server.model.Admin;
+import com.auctionapp.auctionappjava.server.model.Bidder;
+import com.auctionapp.auctionappjava.server.model.Seller;
+import com.auctionapp.auctionappjava.server.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,9 @@
 package com.auctionapp.auctionappjava.server.service;
 
 import java.math.BigDecimal;
+
 import static java.time.LocalDateTime.now;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +27,15 @@ import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.factory.AuctionItemFactory;
-import com.auctionapp.auctionappjava.common.model.Auction;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
-import com.auctionapp.auctionappjava.common.model.BidTransaction;
-import com.auctionapp.auctionappjava.common.model.Item;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
-import com.auctionapp.auctionappjava.common.strategy.AntiSnipingExtensionStrategy;
-import com.auctionapp.auctionappjava.common.strategy.AutoBidEngine;
+import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
+import com.auctionapp.auctionappjava.server.model.Auction;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.BidTransaction;
+import com.auctionapp.auctionappjava.server.model.Item;
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
+import com.auctionapp.auctionappjava.server.strategy.AntiSnipingExtensionStrategy;
+import com.auctionapp.auctionappjava.server.strategy.AutoBidEngine;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.AuctionItemDao;
 import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
@@ -123,10 +125,10 @@ public class AuctionService {
     public Response handleGetAllFeaturedAuctions() {
 
         try {
-            List<AuctionSummaryResponse> featuredAuctions = new ArrayList<>();;
+            List<AuctionSummaryResponse> featuredAuctions = new ArrayList<>();
+            ;
 
             Optional<Auction> auction1Opt = auctionDao.findMostBiddedAuction();
-
 
 
             if (auction1Opt.isPresent()) {
@@ -198,7 +200,7 @@ public class AuctionService {
 
                 Optional<Auction> auction3Opt = auctionDao.findById(UUID.fromString(topTrend.auctionId()));
 
-                if  (auction3Opt.isPresent()) {
+                if (auction3Opt.isPresent()) {
                     Auction mostTrendingAuction = auction3Opt.get();
 
                     Optional<Item> item2Opt = itemDao.findByAuctionId(mostTrendingAuction.getId());
@@ -230,20 +232,15 @@ public class AuctionService {
                 }
             }
 
-
-// sửa dữ liệu
-            if (featuredAuctions.isEmpty()) 
-            {
+            if (featuredAuctions.isEmpty()) {
                 return new Response(false, "Hiện không có phiên đấu giá nào nổi bật", featuredAuctions);
             }
 
             return new Response(true, "Tải dữ liệu thành công!", featuredAuctions);
-        }
-        catch (Exception e) {
-                e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
-
     }
 
     // THÊM AUTO-BID API: lưu cấu hình auto-bid mà client gửi lên.
@@ -298,18 +295,14 @@ public class AuctionService {
                 } else {
                     Auction auction = auctionOpt.get();
 
-                    // 2. SO SÁNH GIÁ (Chặn người đến sau nếu giá đã bị người đến trước đẩy lên)
+                    // Chặn người đến sau nếu giá đã bị người đến trước đẩy lên
                     if (placeBidData.amount().compareTo(auction.getCurrentPrice()) <= 0) {
                         return new Response(false, "Đã có người nhanh tay hơn đặt giá cao hơn hoặc bằng bạn! Vui lòng làm mới.", null);
                     }
 
-                    // 2. Validate 1: Phiên đấu giá có đang mở cửa không?
                     if (auction.getStatus() != AuctionStatus.OPEN && auction.getStatus() != AuctionStatus.RUNNING) {
                         return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
-                    }
-                    // 3. Validate 2: Giá đặt có hợp lệ không? (Phải lớn hơn Giá hiện tại + Bước giá tối thiểu)
-                    // TODO: Check lại validate 2 này, vì nếu nhớ k nhầm đã xử lí ở controller rồi
-                    else {
+                    } else {
                         BigDecimal minRequiredPrice = auction.getCurrentPrice().add(auction.getMinimumIncrement());
 
                         if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
@@ -385,19 +378,17 @@ public class AuctionService {
                                     applyAntiSnipingExtension(auction);
                                     auctionDao.save(auction);                       // Lưu phiên đấu giá xuống DB
 
+                                    // Ép kiểu Date ra String để đồng bộ với định dạng hiển thị của Client
                                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                                     String newEndTime = auction.getEndTime().format(formatter);
 
-                                    // THÊM MỚI: BÁO CHO TẤT CẢ BIẾT CÓ GIÁ MỚI
-                                    // Đóng gói ID phiên, giá mới, người đặt và endTime mới vào 1 mảng Object
+                                    // Đóng gói 4 thông tin: [ID phiên, Giá mới, ID người đặt, Tgian kết thúc mới dành cho anti-snipping]
                                     Object[] pushData = new Object[]{
                                             placeBidData.auctionId(),
                                             placeBidData.amount(),
                                             placeBidData.userId(),
                                             newEndTime
                                     };
-                                    Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
-                                    SessionManager.getInstance().broadcast(newBidResponse);
 
                                     // THÊM AUTO-BID ENGINE: sau bid tay, kiểm tra các cấu hình auto-bid và đặt giá tự động nếu cần..
                                     processAutoBid(auction.getId());
@@ -416,7 +407,7 @@ public class AuctionService {
                                     int currentBidderCount = (int) bidDao.countBiddersByAuctionId(auction.getId());
 
                                     // Đóng gói 3 thông tin: [Số dư mới, Giá mới, Số lượng Bidder mới]
-                                    Object[] resultData = new Object[]{ finalBalance, finalAuctionPrice, currentBidderCount };
+                                    Object[] resultData = new Object[]{finalBalance, finalAuctionPrice, currentBidderCount};
                                     return new Response(true, "Đặt giá thành công!", resultData);
                                 }
                             }
@@ -515,10 +506,16 @@ public class AuctionService {
         applyAntiSnipingExtension(auction);
         auctionDao.save(auction);
 
+        // Update data endtime nếu có anti-snipping
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String newEndTime = auction.getEndTime().format(formatter);
 
-        Object[] pushData = new Object[]{ auction.getId(), amount, bidderId, newEndTime };
+        Object[] pushData = new Object[]{
+                auction.getId(),
+                amount,
+                bidderId,
+                newEndTime // Lấy thêm tgian nếu có anti-snipping
+        };
         Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
         SessionManager.getInstance().broadcast(newBidResponse);
     }
@@ -667,7 +664,7 @@ public class AuctionService {
             } else {
                 return new Response(true, "Đã Unban người này", null);
             }
-        }  catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
         }

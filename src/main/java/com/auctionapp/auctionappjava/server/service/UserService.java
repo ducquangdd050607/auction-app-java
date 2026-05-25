@@ -1,12 +1,11 @@
 package com.auctionapp.auctionappjava.server.service;
 
 import com.auctionapp.auctionappjava.common.dto.*;
-import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.exception.NotFoundException;
-import com.auctionapp.auctionappjava.common.factory.UserFactory;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.server.factory.UserFactory;
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.BidDao;

@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao;
 
-import com.auctionapp.auctionappjava.common.model.Item;
+import com.auctionapp.auctionappjava.server.model.Item;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

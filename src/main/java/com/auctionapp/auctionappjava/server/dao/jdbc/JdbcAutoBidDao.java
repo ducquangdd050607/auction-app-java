@@ -1,7 +1,7 @@
 package com.auctionapp.auctionappjava.server.dao.jdbc;
 
 import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
 import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

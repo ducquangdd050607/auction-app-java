@@ -2,7 +2,7 @@ package com.auctionapp.auctionappjava.server.dao;
 
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
-import com.auctionapp.auctionappjava.common.model.BidTransaction;
+import com.auctionapp.auctionappjava.server.model.BidTransaction;
 
 import java.time.LocalDateTime;
 import java.util.List;

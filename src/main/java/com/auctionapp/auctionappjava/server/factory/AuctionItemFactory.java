@@ -1,7 +1,11 @@
-package com.auctionapp.auctionappjava.common.factory;
+package com.auctionapp.auctionappjava.server.factory;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
-import com.auctionapp.auctionappjava.common.model.*;
+import com.auctionapp.auctionappjava.server.model.ArtItem;
+import com.auctionapp.auctionappjava.server.model.ElectronicsItem;
+import com.auctionapp.auctionappjava.server.model.Item;
+import com.auctionapp.auctionappjava.server.model.VehicleItem;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;

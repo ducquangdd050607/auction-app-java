@@ -4,7 +4,7 @@ import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.model.BidTransaction;
+import com.auctionapp.auctionappjava.server.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
 
 import java.sql.Connection;

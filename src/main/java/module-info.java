@@ -10,6 +10,6 @@ module com.auctionapp.auctionappjava {
 
     exports com.auctionapp.auctionappjava.client;
     exports com.auctionapp.auctionappjava.server;
-    exports com.auctionapp.auctionappjava.common.model;
+    exports com.auctionapp.auctionappjava.server.model;
 
 }

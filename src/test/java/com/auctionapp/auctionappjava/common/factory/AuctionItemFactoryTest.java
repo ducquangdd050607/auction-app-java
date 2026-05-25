@@ -1,10 +1,11 @@
 package com.auctionapp.auctionappjava.common.factory;
 
 import com.auctionapp.auctionappjava.common.enums.ItemType;
-import com.auctionapp.auctionappjava.common.model.ArtItem;
-import com.auctionapp.auctionappjava.common.model.ElectronicsItem;
-import com.auctionapp.auctionappjava.common.model.Item;
-import com.auctionapp.auctionappjava.common.model.VehicleItem;
+import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
+import com.auctionapp.auctionappjava.server.model.ArtItem;
+import com.auctionapp.auctionappjava.server.model.ElectronicsItem;
+import com.auctionapp.auctionappjava.server.model.Item;
+import com.auctionapp.auctionappjava.server.model.VehicleItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

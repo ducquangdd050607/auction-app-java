@@ -3,7 +3,7 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

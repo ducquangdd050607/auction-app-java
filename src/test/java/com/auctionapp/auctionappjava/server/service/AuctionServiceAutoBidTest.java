@@ -3,9 +3,9 @@ package com.auctionapp.auctionappjava.server.service;
 import com.auctionapp.auctionappjava.common.dto.ConfigureAutoBidRequest;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
-import com.auctionapp.auctionappjava.common.model.Auction;
-import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.Auction;
+import com.auctionapp.auctionappjava.server.model.Wallet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

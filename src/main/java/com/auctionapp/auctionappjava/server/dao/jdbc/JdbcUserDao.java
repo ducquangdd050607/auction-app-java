@@ -4,9 +4,9 @@ package com.auctionapp.auctionappjava.server.dao.jdbc;
 import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.factory.UserFactory;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.server.factory.UserFactory;
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
 
 import java.sql.Connection;

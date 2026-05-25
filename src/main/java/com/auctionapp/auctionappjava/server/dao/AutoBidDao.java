@@ -1,6 +1,6 @@
 package com.auctionapp.auctionappjava.server.dao;
 
-import com.auctionapp.auctionappjava.common.model.AutoBidConfig;
+import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
