@@ -588,7 +588,7 @@ public class AuctionListController implements Initializable {
                             currentItem.currentPrice(), currentItem.minimumIncrement(), currentItem.startDateTime(),
                             currentItem.endDateTime(), currentItem.timeLeft(),
                             newStatus,
-                            currentItem.bidderCount(), currentItem.imageData()
+                            currentItem.bidderCount(), currentItem.imageData(),currentItem.bots()
                     );
 
                     // Tráo dòng cũ bằng dòng mới trên danh sách gốc
@@ -611,7 +611,8 @@ public class AuctionListController implements Initializable {
                             currentItem.sellerName(), currentItem.description(), currentItem.startPrice(),
                             newPrice, currentItem.minimumIncrement(), currentItem.startDateTime(),
                             newEndTime, // Lấy thêm tgian nếu có anti-snipping
-                            currentItem.timeLeft(), currentItem.status(), currentItem.bidderCount(), currentItem.imageData()
+                            currentItem.timeLeft(), currentItem.status(), currentItem.bidderCount(), currentItem.imageData(),
+                            currentItem.bots()
                     );
                     auctionData.set(i, updatedItem);
                     break;

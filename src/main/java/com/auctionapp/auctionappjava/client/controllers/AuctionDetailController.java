@@ -144,7 +144,6 @@ public class AuctionDetailController {
         lblStartingPrice.setText(formatMoney(auction.startPrice()) + " VND");
         lblMinIncrement.setText(formatMoney(auction.minimumIncrement()) + " VND");
         lblCurrentPrice.setText(formatMoney(auction.currentPrice()) + " VND");
-        /*lblStatus.setText(String.valueOf(auction.status()));*/
         lblEndDate.setText(auction.endDateTime());
         txtDescription.setText(auction.description());
         lblCurrentLeader.setText("Đang tải...");
@@ -307,7 +306,8 @@ public class AuctionDetailController {
                     currentAuction.sellerName(), currentAuction.description(), currentAuction.startPrice(),
                     newPrice, currentAuction.minimumIncrement(), currentAuction.startDateTime(),
                     newEndTime, // Lấy thêm tgian nếu có anti-snipping
-                    currentAuction.timeLeft(), currentAuction.status(), currentAuction.bidderCount(), currentAuction.imageData()
+                    currentAuction.timeLeft(), currentAuction.status(), currentAuction.bidderCount(), currentAuction.imageData(),
+                    currentAuction.bots()
             );
             AuctionSession.getInstance().setCurrentAuction(updatedSession);
 

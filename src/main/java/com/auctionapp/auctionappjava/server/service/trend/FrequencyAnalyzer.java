@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class FrequencyAnalyzer implements AuctionActivityAnalyzer {
@@ -32,15 +33,18 @@ public class FrequencyAnalyzer implements AuctionActivityAnalyzer {
         LocalDateTime cutoff = now.minusSeconds(timeGapSeconds);
         LocalDateTime previousCutoff = cutoff.minusSeconds(timeGapSeconds);
 
-        long recentBids = bidDao.countBidsInWindowTime(auctionId, cutoff, now);
-        long lastRecentBids = bidDao.countBidsInWindowTime(auctionId, previousCutoff, cutoff);
+        List<Long> bids = bidDao.countBidsInWindowTime(auctionId, previousCutoff, cutoff, now);
+
+        long recentBids = bids.getFirst();
+
+        long lastRecentBids = bids.getLast();
 
         if (lastRecentBids == 0) {
             // Đợt tăng tốc đầu tiên → giá trị = 1.0
             return new TrendSignal(
                     BigDecimal.ONE,
                     BigDecimal.ONE,
-                    "Tăng tốc",
+                    "Tăng tốc đầu tiên",
                     recentBids + " bid trong thời gian gần đây"
             );
         }

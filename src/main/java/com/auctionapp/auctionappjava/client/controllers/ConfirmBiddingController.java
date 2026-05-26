@@ -253,7 +253,8 @@ public class ConfirmBiddingController {
                                 oldData.timeLeft(),
                                 oldData.status(),
                                 latestBidderCount,
-                                null // Later
+                                null,
+                                oldData.bots()
                         );
                         AuctionSession.getInstance().setCurrentAuction(updatedData);
 

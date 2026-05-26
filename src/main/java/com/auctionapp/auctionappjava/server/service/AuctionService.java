@@ -152,7 +152,9 @@ public class AuctionService {
                             0,
                             mostBiddedAuction.getStatus(),
                             mostBiddedAuction.getBiddersCount(),
-                            null
+                            null,
+                            0
+
                     );
                     featuredAuctions.add(summaryResponse1);
                 }
@@ -184,7 +186,8 @@ public class AuctionService {
                             0,
                             mostExpiredAuction.getStatus(),
                             mostExpiredAuction.getBiddersCount(),
-                            null
+                            null,
+                            0
                     );
                     featuredAuctions.add(summaryResponse2);
                 }
@@ -222,7 +225,8 @@ public class AuctionService {
                                 0,
                                 mostTrendingAuction.getStatus(),
                                 mostTrendingAuction.getBiddersCount(),
-                                null
+                                null,
+                                0
                         );
                         featuredAuctions.add(summaryResponse3);
                     }
