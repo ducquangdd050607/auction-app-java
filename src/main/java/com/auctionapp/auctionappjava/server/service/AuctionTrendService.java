@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AuctionTrendService {
@@ -87,21 +88,13 @@ public class AuctionTrendService {
         if (auctionOpt.isEmpty()) return Optional.empty();
 
         Auction auction = auctionOpt.get();
+        if (summary.bidderCount() == 0) return Optional.empty();
 
-        if (bidDao.countBiddersByAuctionId(auction.getId()) == 0) {
-            return Optional.empty();
-        }
-
-        List<BidTransaction> bids = bidDao.findByAuctionId(auction.getId());
-        int bots = botsDao.countBotsByAuctionId(UUID.fromString(summary.auctionId()));
+        List<BidTransaction> bids = bidsFuture.join();
+        int bots = summary.bots();
 
         AuctionTrendContext context = new AuctionTrendContext(
-                auction,
-                summary,
-                bids,
-                bots,
-                LocalDateTime.now()
-        );
+                auction, summary, bids, bots, LocalDateTime.now());
 
         TrendSignal freqSignal = frequencyAnalyzer.analyze(context);
         TrendSignal autoBidSignal = autoBiddersAnalyzer.analyze(context);
