@@ -131,7 +131,7 @@ public class AuctionService {
 
             if (auction1Opt.isPresent()) {
                 Auction mostBiddedAuction = auction1Opt.get();
-                Optional<Item> item1Opt = itemDao.findByAuctionId(mostBiddedAuction.getId());
+                Optional<Item> item1Opt = itemDao.findByAuctionIdWithoutImage(mostBiddedAuction.getId());
                 if (item1Opt.isPresent()) {
                     Item item = item1Opt.get();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -164,7 +164,7 @@ public class AuctionService {
 
             if (auction2Opt.isPresent()) {
                 Auction mostExpiredAuction = auction2Opt.get();
-                Optional<Item> item2Opt = itemDao.findByAuctionId(mostExpiredAuction.getId());
+                Optional<Item> item2Opt = itemDao.findByAuctionIdWithoutImage(mostExpiredAuction.getId());
                 if (item2Opt.isPresent()) {
                     Item item = item2Opt.get();
 

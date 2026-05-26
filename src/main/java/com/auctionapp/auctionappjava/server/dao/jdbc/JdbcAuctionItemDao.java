@@ -155,6 +155,30 @@ public class JdbcAuctionItemDao extends JdbcDaoSupport implements AuctionItemDao
     }
 
     @Override
+    public Optional<Item> findByAuctionIdWithoutImage(UUID auctionId) {
+        String sql = """
+                SELECT i.id, i.seller_id, i.title, i.description, i.starting_price,
+                       i.item_type, i.attribute_one, i.attribute_two,
+                       i.created_at, i.updated_at
+                FROM auction_items i
+                JOIN auctions a ON i.id = a.item_id
+                WHERE a.id = ?
+                """;
+
+        try (Connection connection = connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, uuid(auctionId));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? Optional.of(mapItemWithoutImage(resultSet)) : Optional.empty();
+            }
+        } catch (SQLException exception) {
+            throw new DatabaseException("Loi khi tim Item khong kem anh tu Auction ID: " + auctionId, exception);
+        }
+    }
+
+    @Override
     public void deleteById(UUID itemId) {
         String sql = "DELETE FROM auction_items WHERE id = ?";
         try (Connection connection = connection(); PreparedStatement statement = connection.prepareStatement(sql)) {

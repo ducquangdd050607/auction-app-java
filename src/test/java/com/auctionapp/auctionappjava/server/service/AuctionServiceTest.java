@@ -145,6 +145,11 @@ public class AuctionServiceTest {
             return Optional.empty();
         }
 
+        @Override
+        public Optional<Item> findByAuctionIdWithoutImage(UUID auctionId) {
+            return findByAuctionId(auctionId);
+        }
+
         // Implement the oddly named method from interface (no-op for tests)
         @Override
         public void nookzzAll() {
@@ -273,11 +278,16 @@ public class AuctionServiceTest {
         }
 
         @Override
-        public long countBidsInWindowTime(UUID auctionId, LocalDateTime fromTime, LocalDateTime toTime) {
-            return findByAuctionId(auctionId).stream()
+        public List<Long> countBidsInWindowTime(UUID auctionId, LocalDateTime pastTime, LocalDateTime fromTime, LocalDateTime toTime) {
+            long previousWindow = findByAuctionId(auctionId).stream()
                     .filter(bid -> bid.getCreatedAt() != null)
-                    .filter(bid -> !bid.getCreatedAt().isBefore(fromTime) && !bid.getCreatedAt().isAfter(toTime))
+                    .filter(bid -> !bid.getCreatedAt().isBefore(pastTime) && bid.getCreatedAt().isBefore(fromTime))
                     .count();
+            long currentWindow = findByAuctionId(auctionId).stream()
+                    .filter(bid -> bid.getCreatedAt() != null)
+                    .filter(bid -> !bid.getCreatedAt().isBefore(fromTime) && bid.getCreatedAt().isBefore(toTime))
+                    .count();
+            return List.of(previousWindow, currentWindow);
         }
 
         private BidHistoryResponse toHistoryResponse(String bidderName, BidTransaction bid) {
@@ -414,7 +424,6 @@ public class AuctionServiceTest {
             findByAuctionIdAndBidderId(auctionId, bidderId).ifPresent(config -> config.setEnabled(false));
         }
 
-        @Override
         public int countBotsByAuctionId(UUID auctionId) {
             return (int) findEnabledByAuctionId(auctionId).size();
         }

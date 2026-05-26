@@ -18,6 +18,8 @@ public interface AuctionItemDao {
 
     Optional<Item> findByAuctionId(UUID auctionId);
 
+    Optional<Item> findByAuctionIdWithoutImage(UUID auctionId);
+
     void deleteById(UUID itemId);
 
     void nookzzAll();
