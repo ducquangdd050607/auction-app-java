@@ -47,8 +47,16 @@ public class AuctionTrendService {
 
     public Response handleGetAuctionTrends() {
         try {
-            List<AuctionTrendResponse> trends = auctionDao.findRunningAuctionSummaries().stream()
-                    .map(this::buildTrend)
+            List<AuctionSummaryResponse> summaries = auctionDao.findRunningAuctionSummaries();
+
+            // Tạo tất cả CompletableFuture cùng lúc — không chờ từng cái
+            List<CompletableFuture<Optional<AuctionTrendResponse>>> futures = summaries.stream()
+                    .map(summary -> CompletableFuture.supplyAsync(() -> buildTrend(summary)))
+                    .toList();
+
+            // Chờ tất cả xong 1 lần
+            List<AuctionTrendResponse> trends = futures.stream()
+                    .map(CompletableFuture::join)
                     .flatMap(Optional::stream)
                     .sorted(Comparator.comparing(
                             AuctionTrendResponse::trendScore,
@@ -65,10 +73,18 @@ public class AuctionTrendService {
 
     private Optional<AuctionTrendResponse> buildTrend(AuctionSummaryResponse summary) {
 
-        Optional<Auction> auctionOpt = auctionDao.findById(UUID.fromString(summary.auctionId()));
-        if (auctionOpt.isEmpty()) {
-            return Optional.empty();
-        }
+        UUID auctionId = UUID.fromString(summary.auctionId());
+
+        // 2 query chạy cùng lúc
+        CompletableFuture<Optional<Auction>> auctionFuture = CompletableFuture
+                .supplyAsync(() -> auctionDao.findById(auctionId));
+
+        CompletableFuture<List<BidTransaction>> bidsFuture = CompletableFuture
+                .supplyAsync(() -> bidDao.findByAuctionId(auctionId));
+
+        // Chờ cả 2 xong
+        Optional<Auction> auctionOpt = auctionFuture.join();
+        if (auctionOpt.isEmpty()) return Optional.empty();
 
         Auction auction = auctionOpt.get();
 
