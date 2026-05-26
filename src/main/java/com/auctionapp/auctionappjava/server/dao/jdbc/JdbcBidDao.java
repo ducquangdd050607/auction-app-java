@@ -298,25 +298,39 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
     }
 
     @Override
-    public long countBidsInWindowTime(UUID auctionId, LocalDateTime fromTime, LocalDateTime toTime) {
+    public List<Long> countBidsInWindowTime(UUID auctionId, LocalDateTime pastTime, LocalDateTime fromTime, LocalDateTime toTime) {
         String sql = "SELECT COUNT(*) FROM bids WHERE auction_id = ? AND created_at >= ? AND created_at < ?";
+        List<Long> result = new ArrayList<>();
 
-        try (Connection connection = connection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = connection()) {
 
-            statement.setString(1, uuid(auctionId));
-            statement.setTimestamp(2, timestamp(fromTime));
-            statement.setTimestamp(3, timestamp(toTime));
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getLong(1);
+            // 1. Đếm số người cược "Gần đây" (Từ fromTime đến toTime)
+            try (PreparedStatement stmt1 = connection.prepareStatement(sql)) {
+                stmt1.setString(1, uuid(auctionId));
+                stmt1.setTimestamp(2, timestamp(fromTime));
+                stmt1.setTimestamp(3, timestamp(toTime));
+                try (ResultSet rs = stmt1.executeQuery()) {
+                    if (rs.next()) result.add(rs.getLong(1));
+                    else result.add(0L);
                 }
-                return 0L;
             }
-        } catch (SQLException exception) {
-            throw new DatabaseException("Khong dem duoc so luong bid trong khoảng thời gian", exception);
+
+            // 2. Đếm số người cược "Trước đó" (Từ pastTime đến fromTime)
+            try (PreparedStatement stmt2 = connection.prepareStatement(sql)) {
+                stmt2.setString(1, uuid(auctionId));
+                stmt2.setTimestamp(2, timestamp(pastTime));
+                stmt2.setTimestamp(3, timestamp(fromTime));
+                try (ResultSet rs = stmt2.executeQuery()) {
+                    if (rs.next()) result.add(rs.getLong(1));
+                    else result.add(0L);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
+        return result; // Trả về List gồm 2 phần tử [recentCount, previousCount]
     }
 
     @Override
