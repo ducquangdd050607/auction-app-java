@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
+
 public class AuctionStatusService {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(50);
     private static AuctionDao auctionDao = new JdbcAuctionDao();
@@ -108,7 +110,6 @@ public class AuctionStatusService {
                 auction.setStatus(AuctionStatus.FINISHED);
                 // Nếu có người đặt giá cao nhất (leading_bidder_id != null), nghĩa là phiên thành công
                 if (auction.getLeadingBidderId() != null) {
-
                     // Chốt người thắng
                     auction.setWinnerId(auction.getLeadingBidderId());
                     String winnerName = userDao.findById(auction.getLeadingBidderId())
@@ -131,11 +132,28 @@ public class AuctionStatusService {
                         // Lưu lại ví
                         userDao.saveWallet(sellerWallet);
 
-                        // THÊM MỚI: BÁO CỘNG TIỀN CHO SELLER
+                        // Cộng tiền cho seller
                         Response sellerPaidMsg = new Response(true, "SERVER_PUSH_BALANCE", sellerWallet.getBalance());
                         SessionManager.getInstance().sendToUser(sellerId.toString(), sellerPaidMsg);
+
+                        // 1. Gửi thông báo cho Seller (Người bán)
+                        String sellerNotiMsg = "💰 Phiên đấu giá của bạn đã kết thúc thành công! Số tiền " + formatMoney(winningAmount) + " VNĐ đã được cộng vào ví.";
+                        SessionManager.getInstance().sendToUser(sellerId.toString(),
+                                new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", sellerNotiMsg));
+
+                        // 2. Gửi thông báo cho Winner (Người thắng)
+                        String winnerNotiMsg = "🎉 Chúc mừng! Bạn đã thắng phiên đấu giá. Hệ thống đã khấu trừ " + formatMoney(winningAmount) + " VNĐ từ ví của bạn.";
+                        SessionManager.getInstance().sendToUser(auction.getLeadingBidderId().toString(),
+                                new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", winnerNotiMsg));
                     }
+                } else {
+                    // Xử lý khi phiên đấu giá kết thúc nhưng không có ai đặt giá
+                    UUID sellerId = auction.getSellerId();
+                    String sellerNotiMsg = "❌ Phiên đấu giá của bạn đã kết thúc nhưng không có lượt đặt giá nào. Sản phẩm chưa được bán và không có tiền cộng vào ví.";
+                    SessionManager.getInstance().sendToUser(sellerId.toString(),
+                            new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", sellerNotiMsg));
                 }
+
                 auctionDao.save(auction);
 
                 SessionManager.getInstance().broadcast(new Response(true, "SERVER_PUSH_AUCTION_FINISHED", auction.getId()));

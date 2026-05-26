@@ -56,7 +56,9 @@ public class RealtimeHandler {
                 }
 
                 AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
-                if (currentAuction != null && currentAuction.auctionId().equals(updatedAuctionId.toString())) {
+                if (currentAuction != null
+                        && currentAuction != null
+                        && currentAuction.auctionId().equals(updatedAuctionId.toString())) {
                     if (AuctionDetailController.instance != null) {
                         // Đổi tên hàm để truyền thêm endTime
                         AuctionDetailController.instance.updatePriceAndEndTimeRealtime(newPrice, newEndTime);
@@ -80,7 +82,13 @@ public class RealtimeHandler {
                 if (AuctionListController.instance != null) {
                     AuctionListController.instance.updateSingleRowStatus(finishedAuctionId, AuctionStatus.FINISHED);
                 }
-                if (AuctionDetailController.instance != null && AuctionSession.getInstance().getCurrentAuction().auctionId().equals(finishedAuctionId.toString())) {
+
+                AuctionSummaryResponse currentActiveAuction = AuctionSession.getInstance().getCurrentAuction();
+
+                if (AuctionDetailController.instance != null
+                        && currentActiveAuction != null  // Chặn NullPointerException
+                        && currentActiveAuction.auctionId().equals(finishedAuctionId.toString())) {
+
                     AuctionDetailController.instance.updateStatusRealtime(AuctionStatus.FINISHED);
                 }
                 break;
@@ -96,6 +104,22 @@ public class RealtimeHandler {
                     if (AuctionDetailController.instance != null) {
                         AuctionDetailController.instance.updateStatusRealtime(AuctionStatus.RUNNING);
                     }
+                }
+                break;
+
+            // Gói tin thông báo bình thường (Chỉ đọc, không click được)
+            case "SERVER_PUSH_NOTIFICATION":
+                String normalMsg = (String) response.data();
+                if (NavigatorController.instance != null) {
+                    NavigatorController.instance.addNotification(normalMsg, false);
+                }
+                break;
+
+            // Gói tin thông báo về tiền (Click để chuyển trang)
+            case "SERVER_PUSH_WALLET_NOTIFICATION":
+                String walletMsg = (String) response.data();
+                if (NavigatorController.instance != null) {
+                    NavigatorController.instance.addNotification(walletMsg, true);
                 }
                 break;
         }

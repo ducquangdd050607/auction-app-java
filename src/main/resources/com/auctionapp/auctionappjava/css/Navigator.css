@@ -208,3 +208,48 @@
     -fx-fill: #111111;
     -fx-stroke: transparent;
 }
+
+.close-noti-btn {
+    -fx-background-color: #E4E6EB;
+    -fx-text-fill: #050505;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 50;
+    -fx-cursor: hand;
+    -fx-padding: 6 12 6 12;
+}
+
+.close-noti-btn:hover {
+    -fx-background-color: #D8DADF;
+}
+
+.close-noti-btn:pressed {
+    -fx-background-color: rgb(166, 168, 172);
+    -fx-translate-y: 1px;
+}
+
+.noti-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Ép vùng hiển thị nội dung (viewport) phải bo góc ở 2 góc dưới */
+.noti-scroll .viewport {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 0 10 10;
+}
+
+.noti-item {
+    -fx-padding: 12;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.noti-item:hover {
+    -fx-background-color: #F2F3F5;
+}
