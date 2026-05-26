@@ -19,7 +19,8 @@ public record AuctionSummaryResponse(
         long timeLeft, // Thời gian còn lại
         AuctionStatus status,
         int bidderCount,// Số bidder quan tâm
-        byte[] imageData
+        byte[] imageData,
+        int bots
 ) implements Serializable {}
 
 // 1. Lần này là lần cuối thay đổi (mong vậy)

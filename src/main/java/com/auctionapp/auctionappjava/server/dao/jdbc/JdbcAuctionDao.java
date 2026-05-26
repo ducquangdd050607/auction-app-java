@@ -96,7 +96,8 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                     a.start_time,
                     a.end_time,
                     a.status,
-                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count,
+                    (SELECT COUNT(DISTINCT abc.bidder_id) FROM auto_bid_configs abc WHERE abc.auction_id = a.id AND abc.enabled = 1) AS auto_bidder_count
                 FROM auctions a
                 JOIN auction_items i ON i.id = a.item_id
                 JOIN users u ON u.id = a.seller_id
@@ -124,7 +125,8 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                     a.start_time,
                     a.end_time,
                     a.status,
-                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count,
+                    (SELECT COUNT(DISTINCT abc.bidder_id) FROM auto_bid_configs abc WHERE abc.auction_id = a.id AND abc.enabled = 1) AS auto_bidder_count
                 FROM auctions a
                 JOIN auction_items i ON i.id = a.item_id
                 JOIN users u ON u.id = a.seller_id
@@ -153,7 +155,8 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                     a.start_time,
                     a.end_time,
                     a.status,
-                    COUNT(DISTINCT b.bidder_id) AS bidder_count
+                    COUNT(DISTINCT b.bidder_id) AS bidder_count,
+                    (SELECT COUNT(DISTINCT abc.bidder_id) FROM auto_bid_configs abc WHERE abc.auction_id = a.id AND abc.enabled = 1) AS auto_bidder_count
                 FROM auctions a
                 JOIN auction_items i ON i.id = a.item_id
                 JOIN users u ON u.id = a.seller_id
@@ -346,7 +349,8 @@ public class JdbcAuctionDao extends JdbcDaoSupport implements AuctionDao {
                 0,
                 AuctionStatus.valueOf(resultSet.getString("status")),
                 resultSet.getInt("bidder_count"),
-                null
+                null,
+                resultSet.getInt("auto_bidder_count")
         );
     }
 

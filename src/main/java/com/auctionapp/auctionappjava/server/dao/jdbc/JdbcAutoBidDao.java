@@ -102,27 +102,6 @@ public class JdbcAutoBidDao extends JdbcDaoSupport implements AutoBidDao {
         }
     }
 
-    @Override
-    public int countBotsByAuctionId(UUID auctionId) {
-        String sql = "SELECT COUNT(DISTINCT bidder_id) FROM auto_bid_configs WHERE auction_id = ? AND enabled = 1";
-
-        try (Connection connection = connection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, uuid(auctionId));
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1);
-                }
-                return 0;
-            }
-
-        } catch (SQLException exception) {
-            throw new DatabaseException("Khong dem duoc so luong bots", exception);
-        }
-    }
-
     private AutoBidConfig mapConfig(ResultSet resultSet) throws SQLException {
         return new AutoBidConfig(
                 uuid(resultSet.getString("id")),
