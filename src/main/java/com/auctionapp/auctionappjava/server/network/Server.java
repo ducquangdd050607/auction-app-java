@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.network;
 
+import com.auctionapp.auctionappjava.server.dao.db.DatabaseManager;
 import com.auctionapp.auctionappjava.server.service.AuctionStatusService;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class Server {
                 threadPool.shutdown();
             }
             AuctionStatusService.shutdown();
+            DatabaseManager.getInstance().shutdown();
         }
     }
 }

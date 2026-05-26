@@ -3,6 +3,7 @@ module com.auctionapp.auctionappjava {
     requires javafx.fxml;
     requires java.sql;
     requires mysql.connector.j;
+    requires com.zaxxer.hikari;
 
 
     opens com.auctionapp.auctionappjava.client.controllers to javafx.fxml;
