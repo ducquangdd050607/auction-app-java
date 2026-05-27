@@ -3,8 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -54,15 +56,29 @@
 
                 <!-- Thời gian mở sàn -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.rowIndex="6" />
-                <TextField fx:id="txtOpenDate" onAction="#handleAddItem" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <!-- Thời gian kết thúc -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.rowIndex="7" />
-                <TextField fx:id="txtEndDate" onAction="#handleAddItem" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
                 <!-- Mô tả -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.rowIndex="8" />
             <TextField fx:id="txtDescription" onAction="#handleAddItem" prefHeight="60.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+               <children>
+                  <DatePicker fx:id="datePickerStart" prefHeight="26.0" prefWidth="240.0" />
+                  <Spinner fx:id="cbHoursStart" prefHeight="26.0" />
+                  <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text=":" />
+                  <Spinner fx:id="cbMinutesStart" layoutX="162.0" layoutY="10.0" prefHeight="26.0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+               <children>
+                  <DatePicker fx:id="datePickerEnd" prefHeight="26.0" prefWidth="240.0" />
+                  <Spinner fx:id="cbHoursEnd" prefHeight="26.0" />
+                  <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text=":" />
+                  <Spinner fx:id="cbMinutesEnd" layoutX="162.0" layoutY="10.0" prefHeight="26.0" />
+               </children>
+            </HBox>
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints />

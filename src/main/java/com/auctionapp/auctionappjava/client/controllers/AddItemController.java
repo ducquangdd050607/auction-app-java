@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.client.controllers;
 
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.ValidationUtils.*;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.UserSession;
@@ -9,6 +10,7 @@ import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.CompressionUtils;
 import java.io.ByteArrayInputStream;
@@ -16,9 +18,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.LocalTime;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -32,7 +34,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -41,26 +42,25 @@ import javafx.stage.Stage;
 
 public class AddItemController implements Initializable {
 
-  private static final DateTimeFormatter DATE_FORMATTER =
-      DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-  @FXML private RowConstraints extra1;
-  @FXML private RowConstraints extra2;
   @FXML private ComboBox<String> cbCategory;
   @FXML private Label lblError;
   @FXML private Label lblExtraInfo1;
   @FXML private Label lblExtraInfo2;
   @FXML private TextField txtDescription;
-  @FXML private TextField txtEndDate;
   @FXML private TextField txtExtraInfo1;
   @FXML private TextField txtExtraInfo2;
   @FXML private TextField txtItemName;
-  @FXML private TextField txtOpenDate;
   @FXML private TextField txtStartingPrice;
   @FXML private TextField txtMinIncrement;
   @FXML private Button btnAddItem;
   @FXML private Button btnCancel;
   @FXML private ImageView imgPreview;
+  @FXML private Spinner<Integer> cbHoursEnd;
+  @FXML private Spinner<Integer> cbHoursStart;
+  @FXML private Spinner<Integer> cbMinutesEnd;
+  @FXML private Spinner<Integer> cbMinutesStart;
+  @FXML private DatePicker datePickerEnd;
+  @FXML private DatePicker datePickerStart;
 
   private Image alertImage;
   private byte[] selectedImageData = null;
@@ -71,7 +71,7 @@ public class AddItemController implements Initializable {
   }
 
   @FXML
-  void handleChooseImage(ActionEvent event) {
+  void handleChooseImage() {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Chọn ảnh sản phẩm");
 
@@ -110,71 +110,64 @@ public class AddItemController implements Initializable {
     String name = txtItemName.getText().trim();
     String description = txtDescription.getText().trim();
     String priceText = txtStartingPrice.getText().trim();
-    String openDateText = txtOpenDate.getText().trim();
-    String endDateText = txtEndDate.getText().trim();
     String category = cbCategory.getValue();
     String attribute1 = txtExtraInfo1.getText().trim();
     String attribute2 = txtExtraInfo2.getText().trim();
     String minIncrementText = txtMinIncrement.getText().trim();
-
-    if (name.isEmpty()
-        || priceText.isEmpty()
-        || openDateText.isEmpty()
-        || endDateText.isEmpty()
-        || minIncrementText.isEmpty()
-        || category == null) {
-      lblError.setText("Vui lòng điền đầy đủ thông tin bắt buộc.");
-      return;
-    }
-
     BigDecimal startingPrice;
     BigDecimal minIncrement;
+    LocalDate startDate = datePickerStart.getValue();
+    LocalTime startTime = LocalTime.of(cbHoursStart.getValue(), cbMinutesStart.getValue());
+    LocalDateTime openTime = LocalDateTime.of(startDate, startTime);
+
+    LocalDate endDate = datePickerEnd.getValue();
+    LocalTime endTimeOfDate = LocalTime.of(cbHoursEnd.getValue(), cbMinutesEnd.getValue());
+    LocalDateTime endTime = LocalDateTime.of(endDate, endTimeOfDate);
 
     try {
-      startingPrice = purifyingText(priceText);
-    } catch (NumberFormatException e) {
-      lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
-      return;
-    }
+      // 1. Kiểm tra các trường văn bản bắt buộc không được bỏ trống
+      requireText(name, "Tên sản phẩm");
+      requireText(description, "Mô tả");
+      requireText(priceText, "Giá bắt đầu");
+      requireText(minIncrementText, "Bước giá");
 
-    try {
-      minIncrement = purifyingText(minIncrementText);
-    } catch (NumberFormatException e) {
-      lblError.setText("Bước giá phải là số dương hợp lệ.");
-      return;
-    }
+      if (category == null || "Chọn thể loại".equals(category)) {
+        throw new ValidationException("Thể loại không được bỏ trống");
+      }
 
-    if (startingPrice.compareTo(BigDecimal.ZERO) <= 0) {
-      lblError.setText("Giá khởi điểm phải là số dương hợp lệ.");
-      return;
-    }
+      // 2. Định dạng số từ chuỗi nhập vào
+      try {
+        startingPrice = purifyingText(priceText);
+      } catch (NumberFormatException e) {
+        throw new ValidationException("Giá khởi điểm phải là số hợp lệ");
+      }
 
-    if (minIncrement.compareTo(BigDecimal.ZERO) <= 0) {
-      lblError.setText("Bước giá phải là số dương hợp lệ.");
-      return;
-    }
+      try {
+        minIncrement = purifyingText(minIncrementText);
+      } catch (NumberFormatException e) {
+        throw new ValidationException("Bước giá phải là số hợp lệ");
+      }
 
-    LocalDateTime openTime, endTime;
-    try {
-      openTime = LocalDateTime.parse(openDateText, DATE_FORMATTER);
-      endTime = LocalDateTime.parse(endDateText, DATE_FORMATTER);
-    } catch (DateTimeParseException e) {
-      lblError.setText("Định dạng ngày phải là: dd/MM/yyyy HH:mm");
-      return;
-    }
+      // 3. Kiểm tra số dương (> 0) bằng utils
+      requirePositive(startingPrice, "Giá khởi điểm");
+      requirePositive(minIncrement, "Bước giá");
 
-    if (!endTime.isAfter(openTime)) {
-      lblError.setText("Thời điểm kết thúc phải sau thời điểm mở.");
-      return;
-    }
+      // 4. Kiểm tra logic khoảng thời gian bằng utils
+      requireTimeRange(openTime, endTime);
 
-    if (!endTime.isAfter(LocalDateTime.now())) {
-      lblError.setText("Thời điểm kết thúc phải sau thời điểm hiện tại.");
-      return;
-    }
+      if (!endTime.isAfter(LocalDateTime.now())) {
+        throw new ValidationException("Thời điểm kết thúc phải sau thời điểm hiện tại");
+      }
 
-    if (txtDescription.getText().length() > 99) {
-      lblError.setText("Quá số lượng chữ cái cho phép (99 kí tự)");
+      // 5. Kiểm tra giới hạn độ dài ký tự của mô tả (Tối đa 90 ký tự)
+      if (description.length() > 90) {
+        requireUnderMaximumLetters(description);
+      }
+
+    } catch (ValidationException e) {
+      lblError.setText(e.getMessage());
+      lblError.setVisible(true);
+      lblError.setTextFill(Color.web("#FF8A80"));
       return;
     }
 
@@ -265,6 +258,18 @@ public class AddItemController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+
+    cbHoursStart.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
+    cbHoursEnd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
+
+    cbMinutesStart.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+    cbMinutesEnd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+
+    setupSpinnerProperties(cbHoursStart, 23);
+    setupSpinnerProperties(cbHoursEnd, 23);
+    setupSpinnerProperties(cbMinutesStart, 59);
+    setupSpinnerProperties(cbMinutesEnd, 59);
+
     settingMoneyFormat(txtStartingPrice);
     settingMoneyFormat(txtMinIncrement);
 
@@ -352,5 +357,38 @@ public class AddItemController implements Initializable {
   void handleCancel(ActionEvent event) {
     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  private void setupSpinnerProperties(Spinner<Integer> spinner, int maxLimit) {
+    // 1. Cho phép người dùng chỉnh sửa nhập text trực tiếp từ bàn phím
+    spinner.setEditable(true);
+
+    // 2. Chặn chữ
+    TextField editor = spinner.getEditor();
+    TextFormatter<String> numericFilter =
+        new TextFormatter<>(
+            change -> {
+              if (!change.isContentChange()) {
+                return change;
+              }
+
+              // Ký tự vừa gõ/paste vào
+              String addedText = change.getText();
+
+              // Nếu chứa ký tự không phải là số -> Từ chối lập tức (chữ không thể hiện lên màn
+              // hình)
+              if (!addedText.isEmpty() && !addedText.matches("\\d+")) {
+                return null;
+              }
+
+              // Giới hạn số lượng ký tự nhập vào tối đa là 2
+              String newText = change.getControlNewText();
+              if (newText.length() > 2) {
+                return null;
+              }
+
+              return change;
+            });
+    editor.setTextFormatter(numericFilter);
   }
 }
