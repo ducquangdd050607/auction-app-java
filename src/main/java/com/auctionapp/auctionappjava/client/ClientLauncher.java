@@ -1,9 +1,7 @@
 package com.auctionapp.auctionappjava.client;
 
-import java.io.IOException;
-
 import com.auctionapp.auctionappjava.client.network.Client;
-
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,63 +10,72 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 public class ClientLauncher extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
-        try {
-            System.out.println("Dang ket noi den server...");
-            // IP 127.0.0.1 dùng khi chạy server-client cùng 1 máy
-            Client.getInstance().connect("127.0.0.1", 8080);
-        } catch (Exception e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Lỗi kết nối");
-            errorAlert.setHeaderText("Không thể kết nối đến máy chủ!");
-            errorAlert.setContentText("Vui lòng kiểm tra lại mạng hoặc đảm bảo Server đang chạy.\nChi tiết lỗi: " + e.getMessage());
-            errorAlert.showAndWait();
-            System.err.println("Loi khong ket noi duoc voi server: " + e.getMessage());
-        }
-
-        FXMLLoader fxmlLoader = new FXMLLoader(ClientLauncher.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 920, 620);
-        stage.setTitle("Blue88");
-        stage.setScene(scene);
-        stage.show();
-        stage.setResizable(false);
-
-        // thông báo tắt bằng "X"
-        stage.setOnCloseRequest(event -> {
-            // Ngăn chặn việc đóng cửa sổ ngay lập tức để chờ xác nhận
-            event.consume();
-            handleExit(stage);
-        });
+  @Override
+  public void start(Stage stage) throws IOException {
+    try {
+      System.out.println("Dang ket noi den server...");
+      // IP 127.0.0.1 dùng khi chạy server-client cùng 1 máy
+      Client.getInstance().connect("127.0.0.1", 8080);
+    } catch (Exception e) {
+      Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+      errorAlert.setTitle("Lỗi kết nối");
+      errorAlert.setHeaderText("Không thể kết nối đến máy chủ!");
+      errorAlert.setContentText(
+          "Vui lòng kiểm tra lại mạng hoặc đảm bảo Server đang chạy.\nChi tiết lỗi: "
+              + e.getMessage());
+      errorAlert.showAndWait();
+      System.err.println("Loi khong ket noi duoc voi server: " + e.getMessage());
     }
 
-    private void handleExit(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Xác nhận thoát");
-        alert.setHeaderText("Bạn có chắc chắn muốn thoát ứng dụng không?");
+    FXMLLoader fxmlLoader =
+        new FXMLLoader(
+            ClientLauncher.class.getResource(
+                "/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 920, 620);
+    stage.setTitle("Blue88");
+    stage.setScene(scene);
+    stage.show();
+    stage.setResizable(false);
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
+    // thông báo tắt bằng "X"
+    stage.setOnCloseRequest(
+        event -> {
+          // Ngăn chặn việc đóng cửa sổ ngay lập tức để chờ xác nhận
+          event.consume();
+          handleExit(stage);
+        });
+  }
+
+  private void handleExit(Stage stage) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle("Xác nhận thoát");
+    alert.setHeaderText("Bạn có chắc chắn muốn thoát ứng dụng không?");
+
+    alert
+        .showAndWait()
+        .ifPresent(
+            response -> {
+              if (response == ButtonType.OK) {
                 stage.close();
-            }
-        });
+              }
+            });
+  }
+
+  @Override
+  public void stop() throws Exception {
+    // Gửi tín hiệu ngắt kết nối lên Server
+    try {
+      Client.getInstance().disconnect();
+      System.out.println("Da ngat ket noi voi server");
+    } catch (Exception e) {
+      System.err.println("Loi khi ngat ket noi: " + e.getMessage());
     }
 
-    @Override
-    public void stop() throws Exception {
-        // Gửi tín hiệu ngắt kết nối lên Server
-        try {
-            Client.getInstance().disconnect();
-            System.out.println("Da ngat ket noi voi server");
-        } catch (Exception e) {
-            System.err.println("Loi khi ngat ket noi: " + e.getMessage());
-        }
+    // Gọi super ở đây vì khi stage close thì Application (lớp cha của class này) cx sẽ chạy stop
+    super.stop();
+  }
 
-        // Gọi super ở đây vì khi stage close thì Application (lớp cha của class này) cx sẽ chạy stop
-        super.stop();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+  public static void main(String[] args) {
+    launch(args);
+  }
 }

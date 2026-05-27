@@ -6,36 +6,33 @@ import java.util.UUID;
 
 public class Wallet extends BaseEntity {
 
-    private UUID userId;
-    private BigDecimal balance = BigDecimal.ZERO;
+  private UUID userId;
+  private BigDecimal balance = BigDecimal.ZERO;
 
-    public Wallet() {
-        super();
-    }
+  public Wallet() {
+    super();
+  }
 
-    public Wallet(UUID id,
-                  LocalDateTime createdAt,
-                  LocalDateTime updatedAt,
-                  UUID userId,
-                  BigDecimal balance) {
-        super(id, createdAt, updatedAt);
-        this.userId = userId;
-        this.balance = balance == null ? BigDecimal.ZERO : balance;
-    }
+  public Wallet(
+      UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, UUID userId, BigDecimal balance) {
+    super(id, createdAt, updatedAt);
+    this.userId = userId;
+    this.balance = balance == null ? BigDecimal.ZERO : balance;
+  }
 
-    public UUID getUserId() {
-        return userId;
-    }
+  public UUID getUserId() {
+    return userId;
+  }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
+  public void setUserId(UUID userId) {
+    this.userId = userId;
+  }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
+  public BigDecimal getBalance() {
+    return balance;
+  }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance == null ? BigDecimal.ZERO : balance;
-    }
+  public void setBalance(BigDecimal balance) {
+    this.balance = balance == null ? BigDecimal.ZERO : balance;
+  }
 }

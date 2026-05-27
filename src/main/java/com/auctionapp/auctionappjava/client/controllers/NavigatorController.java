@@ -9,24 +9,6 @@ import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,608 +24,615 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 public class NavigatorController implements Initializable {
 
-    private static final String FAQ_INTRO_MESSAGE =
-            "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.";
+  private static final String FAQ_INTRO_MESSAGE =
+      "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.";
 
-    private Stage stage;
-    public static NavigatorController instance;
-    public static String modeName;
+  private Stage stage;
+  public static NavigatorController instance;
+  public static String modeName;
 
-    @FXML
-    private StackPane rootStackPane;
-    @FXML
-    private Button btnDashboard;
-    @FXML
-    private Button btnExit;
-    @FXML
-    private Button btnGotoUsersManager;
-    @FXML
-    private Button btnHistory;
-    @FXML
-    private Button btnItemListAdmin;
-    @FXML
-    private Button btnItemListBidder;
-    @FXML
-    private Button btnItemListSeller;
-    @FXML
-    private Button btnItemManager;
-    @FXML
-    private Button btnTrend;
-    @FXML
-    private Button btnTransactionList;
-    @FXML
-    private Button btnSignout;
-    @FXML
-    private VBox groupAccount;
-    @FXML
-    private VBox groupAdmin;
-    @FXML
-    private VBox groupBidder;
-    @FXML
-    private VBox groupHome;
-    @FXML
-    private VBox groupSeller;
-    @FXML
-    private Button identity;
-    @FXML
-    private BorderPane mainBorderPane;
-    @FXML
-    private VBox notificationPanel;
-    @FXML
-    private ScrollPane notiScrollPane;
-    @FXML
-    private VBox notificationList;
-    @FXML
-    private Circle notificationBadge;
-    @FXML
-    private Button setting;
-    @FXML
-    private VBox chatbotPanel;
-    @FXML
-    private Button chatbotToggleButton;
-    @FXML
-    private ScrollPane chatScrollPane;
-    @FXML
-    private VBox chatMessagesBox;
-    @FXML
-    private VBox quickQuestionsBox;
-    @FXML
-    private TextField chatInput;
+  @FXML private StackPane rootStackPane;
+  @FXML private Button btnDashboard;
+  @FXML private Button btnExit;
+  @FXML private Button btnGotoUsersManager;
+  @FXML private Button btnHistory;
+  @FXML private Button btnItemListAdmin;
+  @FXML private Button btnItemListBidder;
+  @FXML private Button btnItemListSeller;
+  @FXML private Button btnItemManager;
+  @FXML private Button btnTrend;
+  @FXML private Button btnTransactionList;
+  @FXML private Button btnSignout;
+  @FXML private VBox groupAccount;
+  @FXML private VBox groupAdmin;
+  @FXML private VBox groupBidder;
+  @FXML private VBox groupHome;
+  @FXML private VBox groupSeller;
+  @FXML private Button identity;
+  @FXML private BorderPane mainBorderPane;
+  @FXML private VBox notificationPanel;
+  @FXML private ScrollPane notiScrollPane;
+  @FXML private VBox notificationList;
+  @FXML private Circle notificationBadge;
+  @FXML private Button setting;
+  @FXML private VBox chatbotPanel;
+  @FXML private Button chatbotToggleButton;
+  @FXML private ScrollPane chatScrollPane;
+  @FXML private VBox chatMessagesBox;
+  @FXML private VBox quickQuestionsBox;
+  @FXML private TextField chatInput;
 
-    private final List<ChatbotAnswer> chatbotAnswers = new ArrayList<>();
+  private final List<ChatbotAnswer> chatbotAnswers = new ArrayList<>();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        instance = this;
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    instance = this;
 
-        notificationPanel.setVisible(false);
-        notificationPanel.setManaged(false);
-        notificationBadge.setVisible(false);
-        notificationBadge.setManaged(false);
+    notificationPanel.setVisible(false);
+    notificationPanel.setManaged(false);
+    notificationBadge.setVisible(false);
+    notificationBadge.setManaged(false);
 
-        loadChatbotAnswers();
-        setupChatbot();
+    loadChatbotAnswers();
+    setupChatbot();
 
-        // Lắng nghe sự thay đổi chiều cao của cái danh sách bên trong (notificationList)
-        notificationList.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double contentHeight = newValue.doubleValue();
+    // Lắng nghe sự thay đổi chiều cao của cái danh sách bên trong (notificationList)
+    notificationList
+        .heightProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              double contentHeight = newValue.doubleValue();
 
-            // Phần Header chữ "Thông báo" và khoảng trắng chiếm khoảng 75px
-            double headerHeight = 75;
+              // Phần Header chữ "Thông báo" và khoảng trắng chiếm khoảng 75px
+              double headerHeight = 75;
 
-            // Nếu danh sách ngắn (ít thông báo)
-            if (contentHeight < 400) {
+              // Nếu danh sách ngắn (ít thông báo)
+              if (contentHeight < 400) {
                 notiScrollPane.setPrefHeight(contentHeight + 5); // Thu nhỏ vùng cuộn
 
                 // Ép cả cái khung ngoài cùng phải nhỏ lại
                 notificationPanel.setMaxHeight(contentHeight + 5 + headerHeight);
-            }
-            // Nếu danh sách dài (đạt ngưỡng 400px)
-            else {
+              }
+              // Nếu danh sách dài (đạt ngưỡng 400px)
+              else {
                 notiScrollPane.setPrefHeight(400); // Khóa vùng cuộn
 
                 // Khóa khung ngoài ở độ cao cố định
                 notificationPanel.setMaxHeight(400 + headerHeight);
-            }
-        });
+              }
+            });
 
-        loadNotificationsFromServer();
+    loadNotificationsFromServer();
 
-        try {
-            show();
-        } catch (IOException e) {
-            throw new AppException("Không thể khởi tạo điều hướng", e);
-        } finally {
-            // Hàm fire() có tác dụng sẽ bấm thẳng vào nút được fire ngay khi load (initialize) scene hiện tại
-            btnDashboard.fire();
-        }
+    try {
+      show();
+    } catch (IOException e) {
+      throw new AppException("Không thể khởi tạo điều hướng", e);
+    } finally {
+      // Hàm fire() có tác dụng sẽ bấm thẳng vào nút được fire ngay khi load (initialize) scene hiện
+      // tại
+      btnDashboard.fire();
+    }
+  }
+
+  private void setupChatbot() {
+    chatbotPanel.setVisible(false);
+    chatbotPanel.setManaged(false);
+    chatbotToggleButton.setText("☁");
+    addBotMessage(FAQ_INTRO_MESSAGE);
+    renderQuickQuestions();
+  }
+
+  @FXML
+  void toggleChatbot(ActionEvent event) {
+    boolean open = !chatbotPanel.isVisible();
+    chatbotPanel.setVisible(open);
+    chatbotPanel.setManaged(open);
+    chatbotToggleButton.setText(open ? "X" : "☁");
+    if (open) {
+      chatInput.requestFocus();
+      scrollChatToBottom();
+    }
+  }
+
+  @FXML
+  void sendChatMessage(ActionEvent event) {
+    String question = chatInput.getText();
+    if (question == null || question.trim().isEmpty()) {
+      addBotMessage(FAQ_INTRO_MESSAGE);
+      return;
     }
 
-    private void setupChatbot() {
-        chatbotPanel.setVisible(false);
-        chatbotPanel.setManaged(false);
-        chatbotToggleButton.setText("☁");
-        addBotMessage(FAQ_INTRO_MESSAGE);
-        renderQuickQuestions();
+    chatInput.clear();
+    addUserMessage(question.trim());
+    addBotMessage(findAnswer(question.trim()));
+  }
+
+  private void askQuickQuestion(ChatbotAnswer answer) {
+    addUserMessage(answer.question());
+    addBotMessage(answer.answer());
+  }
+
+  private void renderQuickQuestions() {
+    quickQuestionsBox.getChildren().clear();
+    chatbotAnswers.stream()
+        .limit(3)
+        .forEach(
+            answer -> {
+              Button button = new Button(answer.question());
+              button.setMaxWidth(Double.MAX_VALUE);
+              button.getStyleClass().add("chatbot-quick-btn");
+              button.setOnAction(event -> askQuickQuestion(answer));
+              quickQuestionsBox.getChildren().add(button);
+            });
+  }
+
+  private void addUserMessage(String message) {
+    addChatMessage(message, "chatbot-user-message", true);
+  }
+
+  private void addBotMessage(String message) {
+    addChatMessage(message, "chatbot-bot-message", false);
+  }
+
+  private void addChatMessage(String message, String styleClass, boolean alignRight) {
+    Label bubble = new Label(message);
+    bubble.setWrapText(true);
+    bubble.setMaxWidth(260);
+    bubble.getStyleClass().add(styleClass);
+
+    Region spacer = new Region();
+    HBox row = new HBox(8);
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    if (alignRight) {
+      row.getChildren().addAll(spacer, bubble);
+    } else {
+      row.getChildren().addAll(bubble, spacer);
     }
 
-    @FXML
-    void toggleChatbot(ActionEvent event) {
-        boolean open = !chatbotPanel.isVisible();
-        chatbotPanel.setVisible(open);
-        chatbotPanel.setManaged(open);
-        chatbotToggleButton.setText(open ? "X" : "☁");
-        if (open) {
-            chatInput.requestFocus();
-            scrollChatToBottom();
-        }
+    chatMessagesBox.getChildren().add(row);
+    scrollChatToBottom();
+  }
+
+  private void scrollChatToBottom() {
+    Platform.runLater(() -> chatScrollPane.setVvalue(1.0));
+  }
+
+  private String findAnswer(String question) {
+    if (question == null || question.trim().isEmpty()) {
+      return FAQ_INTRO_MESSAGE;
     }
 
-    @FXML
-    void sendChatMessage(ActionEvent event) {
-        String question = chatInput.getText();
-        if (question == null || question.trim().isEmpty()) {
-            addBotMessage(FAQ_INTRO_MESSAGE);
-            return;
-        }
+    String normalizedQuestion = normalize(question);
+    ChatbotAnswer bestAnswer = null;
+    int bestScore = 0;
 
-        chatInput.clear();
-        addUserMessage(question.trim());
-        addBotMessage(findAnswer(question.trim()));
+    for (ChatbotAnswer answer : chatbotAnswers) {
+      int score = scoreAnswer(normalizedQuestion, answer);
+      if (score > bestScore) {
+        bestScore = score;
+        bestAnswer = answer;
+      }
     }
 
-    private void askQuickQuestion(ChatbotAnswer answer) {
-        addUserMessage(answer.question());
-        addBotMessage(answer.answer());
+    if (bestAnswer != null && bestScore > 0) {
+      return bestAnswer.answer();
     }
 
-    private void renderQuickQuestions() {
-        quickQuestionsBox.getChildren().clear();
-        chatbotAnswers.stream().limit(3).forEach(answer -> {
-            Button button = new Button(answer.question());
-            button.setMaxWidth(Double.MAX_VALUE);
-            button.getStyleClass().add("chatbot-quick-btn");
-            button.setOnAction(event -> askQuickQuestion(answer));
-            quickQuestionsBox.getChildren().add(button);
-        });
+    return FAQ_INTRO_MESSAGE;
+  }
+
+  private int scoreAnswer(String normalizedQuestion, ChatbotAnswer answer) {
+    int score = 0;
+    if (normalizedQuestion.contains(normalize(answer.question()))) {
+      score += 5;
+    }
+    for (String keyword : answer.keywords()) {
+      if (normalizedQuestion.contains(normalize(keyword))) {
+        score += 2;
+      }
+    }
+    return score;
+  }
+
+  private void loadChatbotAnswers() {
+    URL resource =
+        getClass().getResource("/com/auctionapp/auctionappjava/data/chatbot-questions.json");
+    if (resource == null) {
+      chatbotAnswers.add(
+          new ChatbotAnswer(
+              "Chatbot hỗ trợ gì?",
+              "Hiện chưa tìm thấy file dữ liệu chatbot.",
+              List.of("chatbot", "hỗ trợ")));
+      return;
     }
 
-    private void addUserMessage(String message) {
-        addChatMessage(message, "chatbot-user-message", true);
+    try (InputStream inputStream = resource.openStream();
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+      StringBuilder json = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        json.append(line).append('\n');
+      }
+      chatbotAnswers.addAll(parseChatbotAnswers(json.toString()));
+    } catch (IOException e) {
+      chatbotAnswers.add(
+          new ChatbotAnswer(
+              "Chatbot hỗ trợ gì?",
+              "Không thể đọc file dữ liệu chatbot.",
+              List.of("chatbot", "hỗ trợ")));
     }
+  }
 
-    private void addBotMessage(String message) {
-        addChatMessage(message, "chatbot-bot-message", false);
+  private List<ChatbotAnswer> parseChatbotAnswers(String json) {
+    List<ChatbotAnswer> answers = new ArrayList<>();
+    Pattern objectPattern =
+        Pattern.compile(
+            "\\{\\s*\"question\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"answer\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"keywords\"\\s*:\\s*\\[(.*?)\\]\\s*}",
+            Pattern.DOTALL);
+    Matcher objectMatcher = objectPattern.matcher(json);
+
+    while (objectMatcher.find()) {
+      String question = unescapeJson(objectMatcher.group(1));
+      String answer = unescapeJson(objectMatcher.group(2));
+      List<String> keywords = parseKeywords(objectMatcher.group(3));
+      answers.add(new ChatbotAnswer(question, answer, keywords));
     }
+    return answers;
+  }
 
-    private void addChatMessage(String message, String styleClass, boolean alignRight) {
-        Label bubble = new Label(message);
-        bubble.setWrapText(true);
-        bubble.setMaxWidth(260);
-        bubble.getStyleClass().add(styleClass);
-
-        Region spacer = new Region();
-        HBox row = new HBox(8);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        if (alignRight) {
-            row.getChildren().addAll(spacer, bubble);
-        } else {
-            row.getChildren().addAll(bubble, spacer);
-        }
-
-        chatMessagesBox.getChildren().add(row);
-        scrollChatToBottom();
+  private List<String> parseKeywords(String jsonArrayContent) {
+    List<String> keywords = new ArrayList<>();
+    Matcher keywordMatcher = Pattern.compile("\"((?:\\\\.|[^\"])*)\"").matcher(jsonArrayContent);
+    while (keywordMatcher.find()) {
+      keywords.add(unescapeJson(keywordMatcher.group(1)));
     }
+    return keywords;
+  }
 
-    private void scrollChatToBottom() {
-        Platform.runLater(() -> chatScrollPane.setVvalue(1.0));
+  private String unescapeJson(String value) {
+    return value.replace("\\\"", "\"").replace("\\n", "\n").replace("\\\\", "\\");
+  }
+
+  private String normalize(String value) {
+    String normalized =
+        Normalizer.normalize(value, Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toLowerCase(Locale.ROOT);
+    return Arrays.stream(normalized.split("[^a-z0-9]+"))
+        .filter(token -> !token.isBlank())
+        .reduce("", (left, right) -> left + " " + right);
+  }
+
+  public static BorderPane getMainBorderPane() {
+    return instance.mainBorderPane;
+  }
+
+  public void show() throws IOException {
+    // Ẩn tất cả đi trước
+    groupAdmin.setVisible(false);
+    groupAdmin.setManaged(false);
+    groupSeller.setVisible(false);
+    groupSeller.setManaged(false);
+    groupBidder.setVisible(false);
+    groupBidder.setManaged(false);
+
+    // Lấy giá trị boolean từ class LoginController ra kiểm tra
+    if (LoginController.adminRoute) {
+      groupAdmin.setVisible(true);
+      groupAdmin.setManaged(true);
+      identity.setText("ADMIN");
+      identity.setDisable(true);
+
+    } else if (LoginController.sellerRoute) {
+      groupSeller.setVisible(true);
+      groupSeller.setManaged(true);
+      identity.setText("SELLER");
+      identity.setDisable(true);
+
+    } else if (LoginController.bidderRoute) {
+      groupBidder.setVisible(true);
+      groupBidder.setManaged(true);
+      identity.setText("BIDDER");
+      identity.setDisable(true);
     }
+  }
 
-    private String findAnswer(String question) {
-        if (question == null || question.trim().isEmpty()) {
-            return FAQ_INTRO_MESSAGE;
-        }
+  @FXML
+  void handleNotify(ActionEvent event) {
+    // Đảo ngược trạng thái hiện tại (Đang bật thì tắt, đang tắt thì bật)
+    boolean isOpen = !notificationPanel.isVisible();
 
-        String normalizedQuestion = normalize(question);
-        ChatbotAnswer bestAnswer = null;
-        int bestScore = 0;
+    notificationPanel.setVisible(isOpen);
+    notificationPanel.setManaged(isOpen);
 
-        for (ChatbotAnswer answer : chatbotAnswers) {
-            int score = scoreAnswer(normalizedQuestion, answer);
-            if (score > bestScore) {
-                bestScore = score;
-                bestAnswer = answer;
-            }
-        }
+    // Nếu mở lên thì tắt chatbot đi (để 2 cái không đè lên nhau)
+    if (isOpen) {
+      chatbotPanel.setVisible(false);
+      chatbotPanel.setManaged(false);
+      chatbotToggleButton.setText("☁");
 
-        if (bestAnswer != null && bestScore > 0) {
-            return bestAnswer.answer();
-        }
-
-        return FAQ_INTRO_MESSAGE;
+      // Khi người dùng đã click mở bảng ra xem, ẩn chấm đỏ đi
+      notificationBadge.setVisible(false);
+      notificationBadge.setManaged(false);
     }
+  }
 
-    private int scoreAnswer(String normalizedQuestion, ChatbotAnswer answer) {
-        int score = 0;
-        if (normalizedQuestion.contains(normalize(answer.question()))) {
-            score += 5;
-        }
-        for (String keyword : answer.keywords()) {
-            if (normalizedQuestion.contains(normalize(keyword))) {
-                score += 2;
-            }
-        }
-        return score;
-    }
+  // Gọi hàm này ở trong initialize() thay cho hàm load txt cũ
+  private void loadNotificationsFromServer() {
+    if (UserSession.getInstance().getCurrentUser() == null) return;
 
-    private void loadChatbotAnswers() {
-        URL resource = getClass().getResource("/com/auctionapp/auctionappjava/data/chatbot-questions.json");
-        if (resource == null) {
-            chatbotAnswers.add(new ChatbotAnswer(
-                    "Chatbot hỗ trợ gì?",
-                    "Hiện chưa tìm thấy file dữ liệu chatbot.",
-                    List.of("chatbot", "hỗ trợ")));
-            return;
-        }
+    String userId = UserSession.getInstance().getCurrentUser().id();
+    Request req = new Request("GET_NOTIFICATIONS", userId);
 
-        try (InputStream inputStream = resource.openStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            StringBuilder json = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                json.append(line).append('\n');
-            }
-            chatbotAnswers.addAll(parseChatbotAnswers(json.toString()));
-        } catch (IOException e) {
-            chatbotAnswers.add(new ChatbotAnswer(
-                    "Chatbot hỗ trợ gì?",
-                    "Không thể đọc file dữ liệu chatbot.",
-                    List.of("chatbot", "hỗ trợ")));
-        }
-    }
-
-    private List<ChatbotAnswer> parseChatbotAnswers(String json) {
-        List<ChatbotAnswer> answers = new ArrayList<>();
-        Pattern objectPattern = Pattern.compile("\\{\\s*\"question\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"answer\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"\\s*,\\s*\"keywords\"\\s*:\\s*\\[(.*?)\\]\\s*}", Pattern.DOTALL);
-        Matcher objectMatcher = objectPattern.matcher(json);
-
-        while (objectMatcher.find()) {
-            String question = unescapeJson(objectMatcher.group(1));
-            String answer = unescapeJson(objectMatcher.group(2));
-            List<String> keywords = parseKeywords(objectMatcher.group(3));
-            answers.add(new ChatbotAnswer(question, answer, keywords));
-        }
-        return answers;
-    }
-
-    private List<String> parseKeywords(String jsonArrayContent) {
-        List<String> keywords = new ArrayList<>();
-        Matcher keywordMatcher = Pattern.compile("\"((?:\\\\.|[^\"])*)\"").matcher(jsonArrayContent);
-        while (keywordMatcher.find()) {
-            keywords.add(unescapeJson(keywordMatcher.group(1)));
-        }
-        return keywords;
-    }
-
-    private String unescapeJson(String value) {
-        return value
-                .replace("\\\"", "\"")
-                .replace("\\n", "\n")
-                .replace("\\\\", "\\");
-    }
-
-    private String normalize(String value) {
-        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "")
-                .toLowerCase(Locale.ROOT);
-        return Arrays.stream(normalized.split("[^a-z0-9]+"))
-                .filter(token -> !token.isBlank())
-                .reduce("", (left, right) -> left + " " + right);
-    }
-
-    public static BorderPane getMainBorderPane() {
-        return instance.mainBorderPane;
-    }
-
-    public void show() throws IOException {
-        // Ẩn tất cả đi trước
-        groupAdmin.setVisible(false);
-        groupAdmin.setManaged(false);
-        groupSeller.setVisible(false);
-        groupSeller.setManaged(false);
-        groupBidder.setVisible(false);
-        groupBidder.setManaged(false);
-
-        // Lấy giá trị boolean từ class LoginController ra kiểm tra
-        if (LoginController.adminRoute) {
-            groupAdmin.setVisible(true);
-            groupAdmin.setManaged(true);
-            identity.setText("ADMIN");
-            identity.setDisable(true);
-
-        } else if (LoginController.sellerRoute) {
-            groupSeller.setVisible(true);
-            groupSeller.setManaged(true);
-            identity.setText("SELLER");
-            identity.setDisable(true);
-
-        } else if (LoginController.bidderRoute) {
-            groupBidder.setVisible(true);
-            groupBidder.setManaged(true);
-            identity.setText("BIDDER");
-            identity.setDisable(true);
-        }
-    }
-
-    @FXML
-    void handleNotify(ActionEvent event) {
-        // Đảo ngược trạng thái hiện tại (Đang bật thì tắt, đang tắt thì bật)
-        boolean isOpen = !notificationPanel.isVisible();
-
-        notificationPanel.setVisible(isOpen);
-        notificationPanel.setManaged(isOpen);
-
-        // Nếu mở lên thì tắt chatbot đi (để 2 cái không đè lên nhau)
-        if (isOpen) {
-            chatbotPanel.setVisible(false);
-            chatbotPanel.setManaged(false);
-            chatbotToggleButton.setText("☁");
-
-            // Khi người dùng đã click mở bảng ra xem, ẩn chấm đỏ đi
-            notificationBadge.setVisible(false);
-            notificationBadge.setManaged(false);
-        }
-    }
-
-    // Gọi hàm này ở trong initialize() thay cho hàm load txt cũ
-    private void loadNotificationsFromServer() {
-        if (UserSession.getInstance().getCurrentUser() == null) return;
-
-        String userId = UserSession.getInstance().getCurrentUser().id();
-        Request req = new Request("GET_NOTIFICATIONS", userId);
-
-        CompletableFuture.supplyAsync(() -> {
-            try {
+    CompletableFuture.supplyAsync(
+            () -> {
+              try {
                 return Client.getInstance().sendRequest(req);
-            } catch (Exception e) {
+              } catch (Exception e) {
                 return new Response(false, "Lỗi kết nối", null);
-            }
-        }).thenAccept(response -> {
-            Platform.runLater(() -> {
-                if (response.success()) {
-                    // Ép kiểu trực tiếp sang danh sách DTO
-                    List<NotificationResponse> list = (List<NotificationResponse>) response.data();
+              }
+            })
+        .thenAccept(
+            response -> {
+              Platform.runLater(
+                  () -> {
+                    if (response.success()) {
+                      // Ép kiểu trực tiếp sang danh sách DTO
+                      List<NotificationResponse> list =
+                          (List<NotificationResponse>) response.data();
 
-                    // Duyệt ngược để sắp xếp noti theo nhiều mới nhất
-                    for (int i = list.size() - 1; i >= 0; i--) {
+                      // Duyệt ngược để sắp xếp noti theo nhiều mới nhất
+                      for (int i = list.size() - 1; i >= 0; i--) {
                         var noti = list.get(i);
 
-                        // Lấy dữ liệu bằng phương thức của record rất rõ ràng, không dùng index [0], [1] nữa
+                        // Lấy dữ liệu bằng phương thức của record rất rõ ràng, không dùng index
+                        // [0], [1] nữa
                         boolean isWallet = "WALLET".equals(noti.type());
                         buildNotificationUI(noti.message(), isWallet, false);
+                      }
                     }
-                }
-                // Cuối cùng kiểm tra xem có trống không để hiện chữ "Chưa có thông báo"
-                checkEmptyNotification();
+                    // Cuối cùng kiểm tra xem có trống không để hiện chữ "Chưa có thông báo"
+                    checkEmptyNotification();
+                  });
             });
-        });
+  }
+
+  // Hàm kiểm tra nếu trống thì hiện chữ "Chưa có thông báo"
+  private void checkEmptyNotification() {
+    if (notificationList.getChildren().isEmpty()) {
+      Label emptyLabel = new Label("Hiện chưa có thông báo nào.");
+      emptyLabel.setStyle(
+          "-fx-text-fill: gray; -fx-padding: 20; -fx-alignment: center; -fx-font-size: 13;");
+      emptyLabel.setId("emptyNotiLabel"); // Đánh dấu ID để lát dễ tìm mà xóa
+
+      notificationList.getChildren().add(emptyLabel);
     }
+  }
 
-    // Hàm kiểm tra nếu trống thì hiện chữ "Chưa có thông báo"
-    private void checkEmptyNotification() {
-        if (notificationList.getChildren().isEmpty()) {
-            Label emptyLabel = new Label("Hiện chưa có thông báo nào.");
-            emptyLabel.setStyle("-fx-text-fill: gray; -fx-padding: 20; -fx-alignment: center; -fx-font-size: 13;");
-            emptyLabel.setId("emptyNotiLabel"); // Đánh dấu ID để lát dễ tìm mà xóa
+  // Hàm công khai cho Socket gọi (Mặc định là tin mới -> isNew = true)
+  public void addNotification(String message, boolean isWalletAction) {
+    buildNotificationUI(message, isWalletAction, true);
+  }
 
-            notificationList.getChildren().add(emptyLabel);
-        }
-    }
+  // Hàm vẽ giao diện thực sự (Dùng chung cho cả load DB và Socket)
+  private void buildNotificationUI(String message, boolean isWalletAction, boolean isNew) {
+    Platform.runLater(
+        () -> {
+          // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
+          notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
 
-    // Hàm công khai cho Socket gọi (Mặc định là tin mới -> isNew = true)
-    public void addNotification(String message, boolean isWalletAction) {
-        buildNotificationUI(message, isWalletAction, true);
-    }
+          HBox notiItem = new HBox();
+          notiItem.setSpacing(12);
+          notiItem.getStyleClass().add("noti-item");
 
-    // Hàm vẽ giao diện thực sự (Dùng chung cho cả load DB và Socket)
-    private void buildNotificationUI(String message, boolean isWalletAction, boolean isNew) {
-        Platform.runLater(() -> {
-            // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
-            notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
+          if (isNew && !notificationPanel.isVisible()) {
+            notificationBadge.setVisible(true);
+            notificationBadge.setManaged(true);
+          }
 
-            HBox notiItem = new HBox();
-            notiItem.setSpacing(12);
-            notiItem.getStyleClass().add("noti-item");
-
-            if (isNew && !notificationPanel.isVisible()) {
-                notificationBadge.setVisible(true);
-                notificationBadge.setManaged(true);
-            }
-
-            if (isWalletAction) {
-                notiItem.setStyle("-fx-cursor: hand;");
-                notiItem.setOnMouseClicked(e -> {
-                    notificationPanel.setVisible(false);
-                    notificationPanel.setManaged(false);
-                    if (setting != null) {
-                        setting.fire();
-                    }
+          if (isWalletAction) {
+            notiItem.setStyle("-fx-cursor: hand;");
+            notiItem.setOnMouseClicked(
+                e -> {
+                  notificationPanel.setVisible(false);
+                  notificationPanel.setManaged(false);
+                  if (setting != null) {
+                    setting.fire();
+                  }
                 });
-            }
+          }
 
-            Label iconLabel = new Label("🔔");
-            iconLabel.setStyle("" +
-                    "-fx-font-size: 14; " +
-                    "-fx-background-color: #E7F3FF; " +
-                    "-fx-text-fill: #1877F2; " +
-                    "-fx-padding: 8; " +
-                    "-fx-background-radius: 50; " +
-                    "-fx-alignment: center; " +
-                    "-fx-pref-width: 32; " +
-                    "-fx-pref-height: 32;"
-            );
+          Label iconLabel = new Label("🔔");
+          iconLabel.setStyle(
+              ""
+                  + "-fx-font-size: 14; "
+                  + "-fx-background-color: #E7F3FF; "
+                  + "-fx-text-fill: #1877F2; "
+                  + "-fx-padding: 8; "
+                  + "-fx-background-radius: 50; "
+                  + "-fx-alignment: center; "
+                  + "-fx-pref-width: 32; "
+                  + "-fx-pref-height: 32;");
 
-            Label txtMessage = new Label(message);
-            txtMessage.setWrapText(true);
-            txtMessage.setMaxWidth(260);
-            txtMessage.setStyle("" +
-                    "-fx-font-size: 13; " +
-                    "-fx-text-fill: #050505; " +
-                    "-fx-line-spacing: 1.15;"
-            );
+          Label txtMessage = new Label(message);
+          txtMessage.setWrapText(true);
+          txtMessage.setMaxWidth(260);
+          txtMessage.setStyle(
+              "" + "-fx-font-size: 13; " + "-fx-text-fill: #050505; " + "-fx-line-spacing: 1.15;");
 
-            notiItem.getChildren().addAll(iconLabel, txtMessage);
-            notificationList.getChildren().add(0, notiItem);
+          notiItem.getChildren().addAll(iconLabel, txtMessage);
+          notificationList.getChildren().add(0, notiItem);
         });
-    }
-    @FXML
-    void handleCloseNotify(ActionEvent event) {
-        notificationPanel.setVisible(false);
-        notificationPanel.setManaged(false);
-    }
+  }
 
-    @FXML
-    void handleAccount(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
-        activateAccountButton();
-    }
+  @FXML
+  void handleCloseNotify(ActionEvent event) {
+    notificationPanel.setVisible(false);
+    notificationPanel.setManaged(false);
+  }
 
-    @FXML
-    void handleItemsList(ActionEvent event) throws IOException {
-        modeName = ((Button) event.getSource()).getText();
-        setActiveButton((Button) event.getSource());
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
-    }
+  @FXML
+  void handleAccount(ActionEvent event) throws IOException {
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AccountScreen.fxml");
+    activateAccountButton();
+  }
 
-    @FXML
-    void handleTrend(ActionEvent event) throws IOException {
-        setActiveButton(btnTrend);
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionTrendScreen.fxml");
-    }
+  @FXML
+  void handleItemsList(ActionEvent event) throws IOException {
+    modeName = ((Button) event.getSource()).getText();
+    setActiveButton((Button) event.getSource());
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionListScreen.fxml");
+  }
 
-    @FXML
-    void handleHistory(ActionEvent event) throws IOException {
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
-        activateHistory();
-    }
+  @FXML
+  void handleTrend(ActionEvent event) throws IOException {
+    setActiveButton(btnTrend);
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/AuctionTrendScreen.fxml");
+  }
 
-    @FXML
-    void handleBackToDash(ActionEvent event) throws IOException {
-        activateDashboardButton();
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/DashboardScreen.fxml");
-    }
+  @FXML
+  void handleHistory(ActionEvent event) throws IOException {
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/HistoryScreen.fxml");
+    activateHistory();
+  }
 
-    @FXML
-    void handleGotoUsersManager(ActionEvent event) throws IOException {
-        NavigatorController.activateUserManager();
-        SceneSwitcherUtils.NavSceneController(event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManagerScreen.fxml");
-    }
+  @FXML
+  void handleBackToDash(ActionEvent event) throws IOException {
+    activateDashboardButton();
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/DashboardScreen.fxml");
+  }
 
-    @FXML
-    void handleSignOut(ActionEvent event) throws IOException {
+  @FXML
+  void handleGotoUsersManager(ActionEvent event) throws IOException {
+    NavigatorController.activateUserManager();
+    SceneSwitcherUtils.NavSceneController(
+        event, mainBorderPane, "/com/auctionapp/auctionappjava/views/UsersManagerScreen.fxml");
+  }
 
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+  @FXML
+  void handleSignOut(ActionEvent event) throws IOException {
 
-        Runnable switchScene = () -> {
-            try {
-                // Xóa thông tin user trong session này
-                UserSession.getInstance().cleanUserSession();
-                AuctionSession.getInstance().cleanAuctionSession();
-                RegisterController.isRegister = false;
-                SceneSwitcherUtils.NewSceneController(event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Blue88");
-            } catch (IOException e) {
-                throw new AppException("Không thể đăng xuất", e);
-            }
+    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+    Runnable switchScene =
+        () -> {
+          try {
+            // Xóa thông tin user trong session này
+            UserSession.getInstance().cleanUserSession();
+            AuctionSession.getInstance().cleanAuctionSession();
+            RegisterController.isRegister = false;
+            SceneSwitcherUtils.NewSceneController(
+                event, "/com/auctionapp/auctionappjava/views/MainScreen.fxml", "Blue88");
+          } catch (IOException e) {
+            throw new AppException("Không thể đăng xuất", e);
+          }
         };
 
-        AlertUtils.AnnouncementController(
-                "Chắc chưa?",
-                "Bạn có chắc muốn đăng xuất không?",
-                switchScene,
-                null);
-    }
+    AlertUtils.AnnouncementController(
+        "Chắc chưa?", "Bạn có chắc muốn đăng xuất không?", switchScene, null);
+  }
 
+  @FXML
+  void handleExit(ActionEvent event) throws IOException {
+    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-    @FXML
-    void handleExit (ActionEvent event) throws IOException {
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-
-        Runnable closeStage = () -> {
-            stage.close();
+    Runnable closeStage =
+        () -> {
+          stage.close();
         };
 
-        AlertUtils.AnnouncementController(
-                "Xác nhận thoát",
-                "Bạn có chắc chắn muốn thoát ứng dụng không?",
-                closeStage,
-                null);
-    }
+    AlertUtils.AnnouncementController(
+        "Xác nhận thoát", "Bạn có chắc chắn muốn thoát ứng dụng không?", closeStage, null);
+  }
 
-    private Button currentActiveButton = null;
+  private Button currentActiveButton = null;
 
-    // Gọi nội bộ mỗi khi điều hướng trong Navigator
-    private void setActiveButton(Button btn) {
-        if (currentActiveButton != null) {
-            currentActiveButton.getStyleClass().remove("nav-menu-btn-active");
-        }
-        if (btn != null) {
-            btn.getStyleClass().add("nav-menu-btn-active");
-        }
-        currentActiveButton = btn;
+  // Gọi nội bộ mỗi khi điều hướng trong Navigator
+  private void setActiveButton(Button btn) {
+    if (currentActiveButton != null) {
+      currentActiveButton.getStyleClass().remove("nav-menu-btn-active");
     }
+    if (btn != null) {
+      btn.getStyleClass().add("nav-menu-btn-active");
+    }
+    currentActiveButton = btn;
+  }
 
-    // Expose tĩnh để Dashboard gọi được
-    public static void activateAccountButton() {
-        if (instance != null) {
-            instance.setActiveButton(instance.setting);
-        }
+  // Expose tĩnh để Dashboard gọi được
+  public static void activateAccountButton() {
+    if (instance != null) {
+      instance.setActiveButton(instance.setting);
     }
+  }
 
-    public static void activateHistory() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnHistory);
-        }
+  public static void activateHistory() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnHistory);
     }
+  }
 
-    public static void activateItemListBidder() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnItemListBidder);
-        }
+  public static void activateItemListBidder() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnItemListBidder);
     }
+  }
 
-    public static void activateItemListSeller() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnItemListSeller);
-        }
+  public static void activateItemListSeller() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnItemListSeller);
     }
+  }
 
-    public static void activateTrend() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnTrend);
-        }
+  public static void activateTrend() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnTrend);
     }
+  }
 
-    public static void activateItemListAdmin() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnItemListAdmin);
-        }
+  public static void activateItemListAdmin() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnItemListAdmin);
     }
+  }
 
-    public static void activateDashboardButton() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnDashboard);
-        }
+  public static void activateDashboardButton() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnDashboard);
     }
+  }
 
-    public static void activateUserManager() {
-        if (instance != null) {
-            instance.setActiveButton(instance.btnGotoUsersManager);
-        }
+  public static void activateUserManager() {
+    if (instance != null) {
+      instance.setActiveButton(instance.btnGotoUsersManager);
     }
+  }
 
-    private record ChatbotAnswer(String question, String answer, List<String> keywords) {
-    }
+  private record ChatbotAnswer(String question, String answer, List<String> keywords) {}
 }

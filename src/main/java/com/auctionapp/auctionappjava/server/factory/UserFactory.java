@@ -8,13 +8,13 @@ import com.auctionapp.auctionappjava.server.model.User;
 
 public final class UserFactory {
 
-    private UserFactory() {}
+  private UserFactory() {}
 
-    public static User create(Role role) {
-        return switch (role == null ? Role.BIDDER : role) {
-            case ADMIN  -> new Admin();
-            case SELLER -> new Seller();
-            case BIDDER -> new Bidder();
-        };
-    }
+  public static User create(Role role) {
+    return switch (role == null ? Role.BIDDER : role) {
+      case ADMIN -> new Admin();
+      case SELLER -> new Seller();
+      case BIDDER -> new Bidder();
+    };
+  }
 }

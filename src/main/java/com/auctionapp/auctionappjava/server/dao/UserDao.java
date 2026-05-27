@@ -4,34 +4,35 @@ import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.server.model.User;
 import com.auctionapp.auctionappjava.server.model.Wallet;
-
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
 
 public interface UserDao {
-    User save(User u);
+  User save(User u);
 
-    Optional<User> findById(UUID id);
+  Optional<User> findById(UUID id);
 
-    Optional<User> findByName(String name);
+  Optional<User> findByName(String name);
 
-    Optional<User> findSellerByAuctionId(UUID auctionId);
+  Optional<User> findSellerByAuctionId(UUID auctionId);
 
-    List<UserDetailResponse> findAllDetails(); // tải lên danh sách người dùng với đầy đủ thông tin cho admin xem
-                                               // chỉ cần trong 1 lần truy vấn
+  List<UserDetailResponse>
+      findAllDetails(); // tải lên danh sách người dùng với đầy đủ thông tin cho admin xem
 
-    void updateRole(UUID id, Role role);
+  // chỉ cần trong 1 lần truy vấn
 
-    void updateProfile(UUID id, String fullName, String email);
+  void updateRole(UUID id, Role role);
 
-    void updatePassword(UUID id, String hash, String salt);
+  void updateProfile(UUID id, String fullName, String email);
 
-    void updateActiveStatus(UUID id, boolean isActive);
+  void updatePassword(UUID id, String hash, String salt);
 
-    Wallet saveWallet(Wallet wallet);
+  void updateActiveStatus(UUID id, boolean isActive);
 
-    Optional<Wallet> findWalletByUserId(UUID userId);
+  Wallet saveWallet(Wallet wallet);
 
-    long countUsersActive();
+  Optional<Wallet> findWalletByUserId(UUID userId);
+
+  long countUsersActive();
 }

@@ -8,31 +8,31 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AuctionDao {
-    Auction save(Auction auction);
+  Auction save(Auction auction);
 
-    Optional<Auction> findById(UUID auctionId);
+  Optional<Auction> findById(UUID auctionId);
 
-    List<Auction> findByStatus(AuctionStatus status);
+  List<Auction> findByStatus(AuctionStatus status);
 
-    List<Auction> findAll();
+  List<Auction> findAll();
 
-    List<Auction> findBySellerId(UUID sellerId);
+  List<Auction> findBySellerId(UUID sellerId);
 
-    List<AuctionSummaryResponse> findAllSummaries();
+  List<AuctionSummaryResponse> findAllSummaries();
 
-    List<AuctionSummaryResponse> findRunningAuctionSummaries();
+  List<AuctionSummaryResponse> findRunningAuctionSummaries();
 
-    List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
+  List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
 
-    Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
+  Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
 
-    Optional<Auction> findMostExpiredAuction();
+  Optional<Auction> findMostExpiredAuction();
 
-    Optional<Auction> findMostBiddedAuction();
+  Optional<Auction> findMostBiddedAuction();
 
-    long countAuctionsCreatedBySellerId(UUID sellerId);
+  long countAuctionsCreatedBySellerId(UUID sellerId);
 
-    void deleteById(UUID auctionId);
+  void deleteById(UUID auctionId);
 
-    long countRunningAuctions();
+  long countRunningAuctions();
 }
