@@ -1,7 +1,11 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
+import com.auctionapp.auctionappjava.common.dto.NotificationResponse;
+import com.auctionapp.auctionappjava.common.dto.Request;
+import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
@@ -35,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -145,7 +150,7 @@ public class NavigatorController implements Initializable {
             }
         });
 
-        checkEmptyNotification();
+        loadNotificationsFromServer();
 
         try {
             show();
@@ -393,6 +398,40 @@ public class NavigatorController implements Initializable {
         }
     }
 
+    // Gọi hàm này ở trong initialize() thay cho hàm load txt cũ
+    private void loadNotificationsFromServer() {
+        if (UserSession.getInstance().getCurrentUser() == null) return;
+
+        String userId = UserSession.getInstance().getCurrentUser().id();
+        Request req = new Request("GET_NOTIFICATIONS", userId);
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return Client.getInstance().sendRequest(req);
+            } catch (Exception e) {
+                return new Response(false, "Lỗi kết nối", null);
+            }
+        }).thenAccept(response -> {
+            Platform.runLater(() -> {
+                if (response.success()) {
+                    // Ép kiểu trực tiếp sang danh sách DTO
+                    List<NotificationResponse> list = (List<NotificationResponse>) response.data();
+
+                    // Duyệt ngược để sắp xếp noti theo nhiều mới nhất
+                    for (int i = list.size() - 1; i >= 0; i--) {
+                        var noti = list.get(i);
+
+                        // Lấy dữ liệu bằng phương thức của record rất rõ ràng, không dùng index [0], [1] nữa
+                        boolean isWallet = "WALLET".equals(noti.type());
+                        buildNotificationUI(noti.message(), isWallet, false);
+                    }
+                }
+                // Cuối cùng kiểm tra xem có trống không để hiện chữ "Chưa có thông báo"
+                checkEmptyNotification();
+            });
+        });
+    }
+
     // Hàm kiểm tra nếu trống thì hiện chữ "Chưa có thông báo"
     private void checkEmptyNotification() {
         if (notificationList.getChildren().isEmpty()) {
@@ -404,39 +443,37 @@ public class NavigatorController implements Initializable {
         }
     }
 
+    // Hàm công khai cho Socket gọi (Mặc định là tin mới -> isNew = true)
     public void addNotification(String message, boolean isWalletAction) {
-        // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
-        notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
+        buildNotificationUI(message, isWalletAction, true);
+    }
 
+    // Hàm vẽ giao diện thực sự (Dùng chung cho cả load DB và Socket)
+    private void buildNotificationUI(String message, boolean isWalletAction, boolean isNew) {
         Platform.runLater(() -> {
+            // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
+            notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
+
             HBox notiItem = new HBox();
             notiItem.setSpacing(12);
-
-            // Chỉ thêm class chung để xử lý hiệu ứng di chuột (hover) đổi màu
             notiItem.getStyleClass().add("noti-item");
 
-            // Nếu người dùng đang ĐÓNG bảng thông báo -> Bật chấm đỏ lên để báo hiệu
-            if (!notificationPanel.isVisible()) {
+            if (isNew && !notificationPanel.isVisible()) {
                 notificationBadge.setVisible(true);
                 notificationBadge.setManaged(true);
             }
 
             if (isWalletAction) {
-                // Bắt sự kiện khi click vào dòng thông báo này
+                notiItem.setStyle("-fx-cursor: hand;");
                 notiItem.setOnMouseClicked(e -> {
-
-                    // 1. Đóng bảng thông báo lại cho gọn
                     notificationPanel.setVisible(false);
                     notificationPanel.setManaged(false);
-
-                    // Fire thẳng nút trên nav cho nhanh gọn
                     if (setting != null) {
                         setting.fire();
                     }
                 });
             }
 
-            // Tạo icon cái chuông đại diện cho thông báo
             Label iconLabel = new Label("🔔");
             iconLabel.setStyle("" +
                     "-fx-font-size: 14; " +
@@ -449,7 +486,6 @@ public class NavigatorController implements Initializable {
                     "-fx-pref-height: 32;"
             );
 
-            // Tạo nhãn chứa nội dung chữ
             Label txtMessage = new Label(message);
             txtMessage.setWrapText(true);
             txtMessage.setMaxWidth(260);
@@ -460,12 +496,9 @@ public class NavigatorController implements Initializable {
             );
 
             notiItem.getChildren().addAll(iconLabel, txtMessage);
-
-            // Luôn luôn đẩy thông báo mới nhất lên trên cùng (vị trí số 0)
             notificationList.getChildren().add(0, notiItem);
         });
     }
-
     @FXML
     void handleCloseNotify(ActionEvent event) {
         notificationPanel.setVisible(false);

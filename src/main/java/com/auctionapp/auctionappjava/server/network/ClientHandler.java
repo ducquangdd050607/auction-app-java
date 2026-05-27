@@ -3,21 +3,14 @@ package com.auctionapp.auctionappjava.server.network;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
-import com.auctionapp.auctionappjava.common.dto.ChangeInformationRequest;
-import com.auctionapp.auctionappjava.common.dto.ChangePasswordRequest;
-import com.auctionapp.auctionappjava.common.dto.ConfigureAutoBidRequest;
-import com.auctionapp.auctionappjava.common.dto.DepositRequest;
-import com.auctionapp.auctionappjava.common.dto.ImageRequest;
-import com.auctionapp.auctionappjava.common.dto.LoginRequest;
-import com.auctionapp.auctionappjava.common.dto.LoginResponse;
-import com.auctionapp.auctionappjava.common.dto.ManagerAndHistoryRequest;
-import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
-import com.auctionapp.auctionappjava.common.dto.RegisterRequest;
-import com.auctionapp.auctionappjava.common.dto.RemoveAuctionRequest;
-import com.auctionapp.auctionappjava.common.dto.Request;
-import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.server.dao.NotificationDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcNotificationDao;
+import com.auctionapp.auctionappjava.server.model.Notification;
 import com.auctionapp.auctionappjava.server.service.AuctionService;
 import com.auctionapp.auctionappjava.server.service.AuctionTrendService;
 import com.auctionapp.auctionappjava.server.service.UserService;
@@ -124,6 +117,26 @@ public class ClientHandler implements Runnable {
                     case "GET_IMAGE":
                         response = auctionService.handleGetImage((ImageRequest) request.payload());
                         break;
+
+                    // Thêm request lấy noti
+                    case "GET_NOTIFICATIONS":
+                        String userId = (String) request.payload();
+                        try {
+                            NotificationDao notiDao = new JdbcNotificationDao();
+                            // Lấy list từ DB ra
+                            List<Notification> notiListDb = notiDao.findByUserId(UUID.fromString(userId));
+                            List<NotificationResponse> notiResponseList = new ArrayList<>();
+                            for (Notification n : notiListDb) {
+                                notiResponseList.add(new NotificationResponse(n.getType(), n.getMessage()));
+                            }
+
+                            // Gửi danh sách DTO đi
+                            response = new Response(true, "Lấy thông báo thành công", notiResponseList);
+                        } catch (Exception e) {
+                            response = new Response(false, "Lỗi lấy thông báo", null);
+                        }
+                        break;
+
                     default:
                         response = new Response(false, "Hành động không hợp lệ: " + request.action(), null);
                         break;

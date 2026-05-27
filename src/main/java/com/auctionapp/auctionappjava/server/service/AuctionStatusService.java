@@ -2,6 +2,8 @@ package com.auctionapp.auctionappjava.server.service;
 
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.server.dao.NotificationDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcNotificationDao;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.User;
 import com.auctionapp.auctionappjava.server.model.Wallet;
@@ -27,6 +29,7 @@ public class AuctionStatusService {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(50);
     private static AuctionDao auctionDao = new JdbcAuctionDao();
     private static final UserDao userDao = new JdbcUserDao();
+    private static final NotificationDao notificationDao = new JdbcNotificationDao();
 
     // Cho phép inject dao trong test
     public static void setAuctionDao(AuctionDao dao) {
@@ -138,11 +141,13 @@ public class AuctionStatusService {
 
                         // 1. Gửi thông báo cho Seller (Người bán)
                         String sellerNotiMsg = "💰 Phiên đấu giá của bạn đã kết thúc thành công! Số tiền " + formatMoney(winningAmount) + " VNĐ đã được cộng vào ví.";
+                        notificationDao.createNotification(sellerId, auctionId, "WALLET", sellerNotiMsg);
                         SessionManager.getInstance().sendToUser(sellerId.toString(),
                                 new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", sellerNotiMsg));
 
                         // 2. Gửi thông báo cho Winner (Người thắng)
                         String winnerNotiMsg = "🎉 Chúc mừng! Bạn đã thắng phiên đấu giá. Hệ thống đã khấu trừ " + formatMoney(winningAmount) + " VNĐ từ ví của bạn.";
+                        notificationDao.createNotification(auction.getLeadingBidderId(), auctionId, "WALLET", winnerNotiMsg);
                         SessionManager.getInstance().sendToUser(auction.getLeadingBidderId().toString(),
                                 new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", winnerNotiMsg));
                     }
