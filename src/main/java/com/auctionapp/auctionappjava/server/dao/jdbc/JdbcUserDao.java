@@ -66,6 +66,11 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
   }
 
   @Override
+  public Optional<User> findByEmail(String email) {
+    return findUser("SELECT * FROM users WHERE email = ?", email);
+  }
+
+  @Override
   public Wallet saveWallet(Wallet wallet) {
     String sql =
         """

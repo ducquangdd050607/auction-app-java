@@ -20,6 +20,7 @@ import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.exception.ConflictException;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.common.exception.InsufficientBalanceException;
 import com.auctionapp.auctionappjava.common.exception.NotFoundException;
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
@@ -279,13 +280,14 @@ public class AuctionService {
   }
 
   public Response handlePlaceBid(PlaceBidRequest placeBidData) {
-    String auctionId = String.valueOf(placeBidData.auctionId());
+    try {
+      validatePlaceBidRequest(placeBidData);
+      String auctionId = String.valueOf(placeBidData.auctionId());
 
-    // Lấy ổ khóa của riêng phiên đấu giá này ra
-    Object roomLock = auctionLocks.computeIfAbsent(auctionId, k -> new Object());
+      // Lấy ổ khóa của riêng phiên đấu giá này ra
+      Object roomLock = auctionLocks.computeIfAbsent(auctionId, k -> new Object());
 
-    synchronized (roomLock) {
-      try {
+      synchronized (roomLock) {
         // 1. Kiểm tra phiên đấu giá có tồn tại không
         Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
 
@@ -303,6 +305,8 @@ public class AuctionService {
           if (auction.getStatus() != AuctionStatus.OPEN
               && auction.getStatus() != AuctionStatus.RUNNING) {
             throw new ConflictException("Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!");
+          } else if (auction.getEndTime() != null && !auction.getEndTime().isAfter(now())) {
+            throw new ConflictException("Phiên đấu giá đã kết thúc!");
           } else {
             BigDecimal minRequiredPrice =
                 auction.getCurrentPrice().add(auction.getMinimumIncrement());
@@ -491,21 +495,38 @@ public class AuctionService {
             }
           }
         }
-      } catch (ConflictException
-          | ValidationException
-          | NotFoundException
-          | InsufficientBalanceException e) {
-        return new Response(false, e.getMessage(), null);
-      } catch (Exception e) {
-        e.printStackTrace();
-        return new Response(false, "Lỗi máy chủ khi xử lý đặt giá!", null);
       }
+    } catch (ConflictException
+        | ValidationException
+        | NotFoundException
+        | InsufficientBalanceException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (DatabaseException e) {
+      return new Response(false, "Loi du lieu/ket noi khi xu ly dat gia!", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi máy chủ khi xử lý đặt giá!", null);
     }
   }
 
   // THÊM AUTO-BID ENGINE: Đọc danh sách cấu hình auto-bid của phiên đấu giá, sắp xếp theo maxBid
   // giảm dần, xác định người có maxBid cao nhất và người đứng thứ hai, sau đó tạo bid tự động nếu
   // hợp lệ.
+  private void validatePlaceBidRequest(PlaceBidRequest placeBidData) {
+    if (placeBidData == null) {
+      throw new ValidationException("Yeu cau dat gia khong hop le");
+    }
+    if (placeBidData.auctionId() == null) {
+      throw new ValidationException("Auction id khong hop le");
+    }
+    if (placeBidData.userId() == null) {
+      throw new ValidationException("User id khong hop le");
+    }
+    if (placeBidData.amount() == null || placeBidData.amount().compareTo(BigDecimal.ZERO) <= 0) {
+      throw new ValidationException("Gia dat phai lon hon 0");
+    }
+  }
+
   private void processAutoBid(UUID auctionId) {
     Optional<Auction> auctionOpt = auctionDao.findById(auctionId);
     if (auctionOpt.isEmpty()) {

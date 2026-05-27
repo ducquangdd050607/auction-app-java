@@ -23,13 +23,13 @@ class AuctionTrendServiceTest {
 
   private AuctionTrendService service;
   private TrendAuctionDao auctionDao;
-  private AuctionServiceTest.FakeBidDao bidDao;
+  private TestDaoFakes.FakeBidDao bidDao;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new AuctionTrendService();
     auctionDao = new TrendAuctionDao();
-    bidDao = new AuctionServiceTest.FakeBidDao();
+    bidDao = new TestDaoFakes.FakeBidDao();
     setPrivateField("auctionDao", auctionDao);
     setPrivateField("bidDao", bidDao);
     setPrivateField("frequencyAnalyzer", new FrequencyAnalyzer(bidDao));
@@ -159,7 +159,7 @@ class AuctionTrendServiceTest {
     field.set(service, value);
   }
 
-  private static class TrendAuctionDao extends AuctionServiceTest.FakeAuctionDao {
+  private static class TrendAuctionDao extends TestDaoFakes.FakeAuctionDao {
     private final List<AuctionSummaryResponse> summaries = new java.util.ArrayList<>();
 
     @Override

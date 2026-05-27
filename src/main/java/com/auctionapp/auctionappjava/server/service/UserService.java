@@ -5,7 +5,9 @@ import static java.time.LocalDateTime.now;
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.Role;
 import com.auctionapp.auctionappjava.common.exception.NotFoundException;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
+import com.auctionapp.auctionappjava.common.util.ValidationUtils;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
 import com.auctionapp.auctionappjava.server.dao.NotificationDao;
@@ -66,6 +68,12 @@ public class UserService {
 
   public Response handleDeposit(DepositRequest depositData) {
     try {
+      if (depositData == null
+          || depositData.userId() == null
+          || depositData.amount() == null
+          || depositData.amount().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new ValidationException(" Số tiền nạp phải lớn hơn 0!");
+      }
       Optional<Wallet> wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()));
       if (wallet.isPresent()) {
         Wallet depositWallet = wallet.get();
@@ -81,9 +89,12 @@ public class UserService {
 
   public Response handleRegister(RegisterRequest registerData) {
     try {
+      validateRegister(registerData);
       // 1. Kiểm tra xem username đã tồn tại trong DB chưa?
       if (userDao.findByName(registerData.username()).isPresent()) {
         return new Response(false, "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác!", null);
+      } else if (userDao.findByEmail(registerData.email()).isPresent()) {
+        return new Response(false, "Email đã tồn tại vui lòng chọn email khác!", null);
       } else {
         // 2. Tạo đối tượng User mới (Abstract factory ở UserFactory)
         Role roleEnum = Role.valueOf(registerData.role().toUpperCase());
@@ -133,6 +144,7 @@ public class UserService {
     String newEmail = changeInformationData.email();
 
     try {
+      ValidationUtils.requireEmail(newEmail);
       // 1. Tìm User đó
       User user =
           userDao
@@ -223,6 +235,18 @@ public class UserService {
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Lỗi máy chủ", null);
+    }
+  }
+
+  private void validateRegister(RegisterRequest data) {
+    if (data == null) {
+      throw new ValidationException("Du lieu dang ky khong hop le");
+    }
+    ValidationUtils.requireText(data.username(), "Ten dang nhap");
+    ValidationUtils.requireText(data.fullName(), "Ho ten");
+    ValidationUtils.requireEmail(data.email());
+    if (data.role() == null || data.role().isBlank()) {
+      throw new ValidationException("Vai tro khong hop le");
     }
   }
 }

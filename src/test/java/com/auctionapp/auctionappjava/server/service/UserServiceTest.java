@@ -2,6 +2,7 @@ package com.auctionapp.auctionappjava.server.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.auctionapp.auctionappjava.common.dto.ChangeInformationRequest;
 import com.auctionapp.auctionappjava.common.dto.ChangePasswordRequest;
 import com.auctionapp.auctionappjava.common.dto.DepositRequest;
 import com.auctionapp.auctionappjava.common.dto.LoginRequest;
@@ -23,14 +24,14 @@ import org.junit.jupiter.api.Test;
 class UserServiceTest {
 
   private UserService service;
-  private AuctionServiceTest.FakeUserDao userDao;
+  private TestDaoFakes.FakeUserDao userDao;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new UserService();
-    userDao = new AuctionServiceTest.FakeUserDao();
+    userDao = new TestDaoFakes.FakeUserDao();
     setPrivateField("userDao", userDao);
-    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
+    setPrivateField("notificationDao", new TestDaoFakes.FakeNotificationDao());
   }
 
   @Test
@@ -138,6 +139,41 @@ class UserServiceTest {
   }
 
   @Test
+  void register_duplicateEmail_shouldReturnFailure() {
+    // Technique: EP
+    User existing = user("existing", "Binh@123456", Role.BIDDER, true);
+    existing.setEmail("binh@example.com");
+    userDao.putUser(existing);
+
+    Response response =
+        service.handleRegister(
+            new RegisterRequest(
+                "new_bidder", "Binh@123456", "Binh Nguyen", "binh@example.com", "BIDDER"));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void register_invalidEmail_shouldReturnFailure() {
+    // Technique: EP
+    Response response =
+        service.handleRegister(
+            new RegisterRequest("new_bidder", "Binh@123456", "Binh Nguyen", "bad-email", "BIDDER"));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void register_blankUsername_shouldReturnFailure() {
+    // Technique: BVA
+    Response response =
+        service.handleRegister(
+            new RegisterRequest(" ", "Binh@123456", "Binh Nguyen", "binh@example.com", "BIDDER"));
+
+    assertFalse(response.success());
+  }
+
+  @Test
   void register_invalidRole_shouldReturnFailure() {
     // Technique: EP
     Response response =
@@ -168,6 +204,33 @@ class UserServiceTest {
     Response response =
         service.handleChangePassword(
             new ChangePasswordRequest(UUID.randomUUID().toString(), "New@123456"));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void updateProfile_validEmail_shouldReturnSuccess() {
+    // Technique: EP
+    User user = user("bidder01", "Old@123456", Role.BIDDER, true);
+    userDao.putUser(user);
+
+    Response response =
+        service.handleChangeInformation(
+            new ChangeInformationRequest(user.getId().toString(), "New Name", "new@example.com"));
+
+    assertTrue(response.success());
+    assertEquals("new@example.com", user.getEmail());
+  }
+
+  @Test
+  void updateProfile_invalidEmail_shouldReturnFailure() {
+    // Technique: EP
+    User user = user("bidder01", "Old@123456", Role.BIDDER, true);
+    userDao.putUser(user);
+
+    Response response =
+        service.handleChangeInformation(
+            new ChangeInformationRequest(user.getId().toString(), "New Name", "bad-email"));
 
     assertFalse(response.success());
   }
@@ -208,16 +271,29 @@ class UserServiceTest {
   }
 
   @Test
-  void deposit_zeroAmount_shouldFollowCurrentBehavior() {
+  void deposit_zeroAmount_shouldReturnFailure() {
     // Technique: BVA
-    // TODO: Spec says amount=0 should fail; current UserService accepts it.
     UUID userId = UUID.randomUUID();
     userDao.putWallet(wallet(userId, "10"));
 
     Response response =
         service.handleDeposit(new DepositRequest(userId.toString(), BigDecimal.ZERO));
 
-    assertTrue(response.success());
+    assertFalse(response.success());
+    assertEquals(
+        new BigDecimal("10"), userDao.findWalletByUserId(userId).orElseThrow().getBalance());
+  }
+
+  @Test
+  void deposit_negativeAmount_shouldReturnFailure() {
+    // Technique: BVA
+    UUID userId = UUID.randomUUID();
+    userDao.putWallet(wallet(userId, "10"));
+
+    Response response =
+        service.handleDeposit(new DepositRequest(userId.toString(), new BigDecimal("-1")));
+
+    assertFalse(response.success());
     assertEquals(
         new BigDecimal("10"), userDao.findWalletByUserId(userId).orElseThrow().getBalance());
   }

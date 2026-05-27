@@ -15,6 +15,8 @@ public interface UserDao {
 
   Optional<User> findByName(String name);
 
+  Optional<User> findByEmail(String email);
+
   Optional<User> findSellerByAuctionId(UUID auctionId);
 
   List<UserDetailResponse>

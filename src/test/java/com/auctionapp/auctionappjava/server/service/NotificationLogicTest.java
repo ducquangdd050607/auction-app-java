@@ -12,7 +12,7 @@ class NotificationLogicTest {
   @Test
   void createNotification_validData_shouldBeRetrievable() {
     // Technique: EP
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
     UUID userId = UUID.randomUUID();
     UUID auctionId = UUID.randomUUID();
 
@@ -26,7 +26,7 @@ class NotificationLogicTest {
   @Test
   void createNotification_nullAuctionId_shouldBeRetrievable() {
     // Technique: EP
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
     UUID userId = UUID.randomUUID();
 
     dao.createNotification(userId, null, "WELCOME", "Welcome");
@@ -38,7 +38,7 @@ class NotificationLogicTest {
   @Test
   void findByUserId_userWithThreeRecords_shouldReturnThree() {
     // Technique: EP
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
     UUID userId = UUID.randomUUID();
     dao.createNotification(userId, null, "A", "one");
     dao.createNotification(userId, null, "B", "two");
@@ -50,7 +50,7 @@ class NotificationLogicTest {
   @Test
   void findByUserId_userWithoutRecords_shouldReturnEmptyList() {
     // Technique: EP
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
 
     assertTrue(dao.findByUserId(UUID.randomUUID()).isEmpty());
   }
@@ -59,7 +59,7 @@ class NotificationLogicTest {
   void createNotification_emptyMessage_shouldFollowCurrentBehavior() {
     // Technique: BVA
     // TODO: Service-level validation is not defined; current DAO contract allows empty message.
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
     UUID userId = UUID.randomUUID();
 
     dao.createNotification(userId, null, "INFO", "");
@@ -70,7 +70,7 @@ class NotificationLogicTest {
   @Test
   void deleteByUserId_existingRecords_shouldRemoveOnlyThatUser() {
     // Technique: EP
-    AuctionServiceTest.FakeNotificationDao dao = new AuctionServiceTest.FakeNotificationDao();
+    TestDaoFakes.FakeNotificationDao dao = new TestDaoFakes.FakeNotificationDao();
     UUID userId = UUID.randomUUID();
     UUID otherUserId = UUID.randomUUID();
     dao.createNotification(userId, null, "INFO", "one");
