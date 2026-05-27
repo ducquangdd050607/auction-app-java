@@ -61,43 +61,6 @@ public class JdbcNotificationDao extends JdbcDaoSupport implements NotificationD
         }
     }
 
-    @Override
-    public List<Notification> findByAuctionId(UUID auctionId) {
-        String sql = """
-                SELECT id, user_id, auction_id, type, message, created_at
-                FROM notifications
-                WHERE auction_id = ?
-                ORDER BY created_at DESC
-                """;
-
-        try (Connection connection = connection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid(auctionId));
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Notification> notifications = new ArrayList<>();
-                while (resultSet.next()) {
-                    notifications.add(mapNotification(resultSet));
-                }
-                return notifications;
-            }
-        } catch (SQLException exception) {
-            throw new DatabaseException("Khong doc duoc danh sach thong bao cua phien dau gia", exception);
-        }
-    }
-
-    @Override
-    public void deleteById(UUID notificationId) {
-        String sql = "DELETE FROM notifications WHERE id = ?";
-
-        try (Connection connection = connection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid(notificationId));
-            statement.executeUpdate();
-        } catch (SQLException exception) {
-            throw new DatabaseException("Khong xoa duoc thong bao", exception);
-        }
-    }
 
     @Override
     public void deleteByUserId(UUID userId) {
@@ -112,22 +75,6 @@ public class JdbcNotificationDao extends JdbcDaoSupport implements NotificationD
         }
     }
 
-    @Override
-    public int countByUserId(UUID userId) {
-        String sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ?";
-
-        try (Connection connection = connection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid(userId));
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                resultSet.next();
-                return resultSet.getInt(1);
-            }
-        } catch (SQLException exception) {
-            throw new DatabaseException("Khong dem duoc thong bao cua user", exception);
-        }
-    }
 
     private Notification mapNotification(ResultSet resultSet) throws SQLException {
         return new Notification(

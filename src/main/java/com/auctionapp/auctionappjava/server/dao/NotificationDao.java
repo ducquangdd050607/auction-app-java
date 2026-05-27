@@ -11,11 +11,6 @@ public interface NotificationDao {
 
     List<Notification> findByUserId(UUID userId);
 
-    List<Notification> findByAuctionId(UUID auctionId);
-
-    void deleteById(UUID notificationId);
-
     void deleteByUserId(UUID userId);
 
-    int countByUserId(UUID userId);
 }
