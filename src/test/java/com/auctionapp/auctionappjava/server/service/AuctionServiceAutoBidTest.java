@@ -39,6 +39,7 @@ public class AuctionServiceAutoBidTest {
     setPrivateField("bidDao", fakeBidDao);
     setPrivateField("autoBidDao", fakeAutoBidDao);
     setPrivateField("userDao", fakeUserDao);
+    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
   }
 
   @Test

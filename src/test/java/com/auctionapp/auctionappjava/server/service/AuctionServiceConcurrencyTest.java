@@ -38,6 +38,7 @@ public class AuctionServiceConcurrencyTest {
     setPrivateField("bidDao", fakeBidDao);
     setPrivateField("autoBidDao", new AuctionServiceTest.FakeAutoBidDao());
     setPrivateField("userDao", fakeUserDao);
+    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
   }
 
   @Test

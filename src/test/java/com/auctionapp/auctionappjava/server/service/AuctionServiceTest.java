@@ -438,6 +438,27 @@ public class AuctionServiceTest {
     }
   }
 
+  static class FakeNotificationDao implements NotificationDao {
+    final List<Notification> notifications = new ArrayList<>();
+
+    @Override
+    public void createNotification(UUID userId, UUID auctionId, String type, String message) {
+      notifications.add(
+          new Notification(
+              UUID.randomUUID(), userId, auctionId, type, message, LocalDateTime.now()));
+    }
+
+    @Override
+    public List<Notification> findByUserId(UUID userId) {
+      return notifications.stream().filter(n -> userId.equals(n.getUserId())).toList();
+    }
+
+    @Override
+    public void deleteByUserId(UUID userId) {
+      notifications.removeIf(n -> userId.equals(n.getUserId()));
+    }
+  }
+
   private FakeAuctionDao fakeAuctionDao;
   private FakeItemDao fakeItemDao;
   private FakeBidDao fakeBidDao;
@@ -460,6 +481,7 @@ public class AuctionServiceTest {
     setPrivateField(auctionService, "bidDao", fakeBidDao);
     setPrivateField(auctionService, "autoBidDao", fakeAutoBidDao);
     setPrivateField(auctionService, "userDao", fakeUserDao);
+    setPrivateField(auctionService, "notificationDao", new FakeNotificationDao());
   }
 
   private void setPrivateField(Object target, String fieldName, Object value) throws Exception {
