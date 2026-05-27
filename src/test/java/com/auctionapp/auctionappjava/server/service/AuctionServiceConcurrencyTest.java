@@ -21,24 +21,24 @@ import org.junit.jupiter.api.Test;
 public class AuctionServiceConcurrencyTest {
 
   private AuctionService auctionService;
-  private AuctionServiceTest.FakeAuctionDao fakeAuctionDao;
-  private AuctionServiceTest.FakeBidDao fakeBidDao;
-  private AuctionServiceTest.FakeUserDao fakeUserDao;
+  private TestDaoFakes.FakeAuctionDao fakeAuctionDao;
+  private TestDaoFakes.FakeBidDao fakeBidDao;
+  private TestDaoFakes.FakeUserDao fakeUserDao;
 
   @BeforeEach
   public void setUp() throws Exception {
     auctionService = new AuctionService();
 
-    fakeAuctionDao = new AuctionServiceTest.FakeAuctionDao();
-    fakeBidDao = new AuctionServiceTest.FakeBidDao();
-    fakeUserDao = new AuctionServiceTest.FakeUserDao();
+    fakeAuctionDao = new TestDaoFakes.FakeAuctionDao();
+    fakeBidDao = new TestDaoFakes.FakeBidDao();
+    fakeUserDao = new TestDaoFakes.FakeUserDao();
 
     setPrivateField("auctionDao", fakeAuctionDao);
-    setPrivateField("itemDao", new AuctionServiceTest.FakeItemDao());
+    setPrivateField("itemDao", new TestDaoFakes.FakeItemDao());
     setPrivateField("bidDao", fakeBidDao);
-    setPrivateField("autoBidDao", new AuctionServiceTest.FakeAutoBidDao());
+    setPrivateField("autoBidDao", new TestDaoFakes.FakeAutoBidDao());
     setPrivateField("userDao", fakeUserDao);
-    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
+    setPrivateField("notificationDao", new TestDaoFakes.FakeNotificationDao());
   }
 
   @Test

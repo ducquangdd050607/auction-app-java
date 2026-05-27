@@ -18,28 +18,28 @@ import org.junit.jupiter.api.Test;
 public class AuctionServiceAutoBidTest {
 
   private AuctionService auctionService;
-  private AuctionServiceTest.FakeAuctionDao fakeAuctionDao;
-  private AuctionServiceTest.FakeItemDao fakeItemDao;
-  private AuctionServiceTest.FakeBidDao fakeBidDao;
-  private AuctionServiceTest.FakeAutoBidDao fakeAutoBidDao;
-  private AuctionServiceTest.FakeUserDao fakeUserDao;
+  private TestDaoFakes.FakeAuctionDao fakeAuctionDao;
+  private TestDaoFakes.FakeItemDao fakeItemDao;
+  private TestDaoFakes.FakeBidDao fakeBidDao;
+  private TestDaoFakes.FakeAutoBidDao fakeAutoBidDao;
+  private TestDaoFakes.FakeUserDao fakeUserDao;
 
   @BeforeEach
   public void setUp() throws Exception {
     auctionService = new AuctionService();
 
-    fakeAuctionDao = new AuctionServiceTest.FakeAuctionDao();
-    fakeItemDao = new AuctionServiceTest.FakeItemDao();
-    fakeBidDao = new AuctionServiceTest.FakeBidDao();
-    fakeAutoBidDao = new AuctionServiceTest.FakeAutoBidDao();
-    fakeUserDao = new AuctionServiceTest.FakeUserDao();
+    fakeAuctionDao = new TestDaoFakes.FakeAuctionDao();
+    fakeItemDao = new TestDaoFakes.FakeItemDao();
+    fakeBidDao = new TestDaoFakes.FakeBidDao();
+    fakeAutoBidDao = new TestDaoFakes.FakeAutoBidDao();
+    fakeUserDao = new TestDaoFakes.FakeUserDao();
 
     setPrivateField("auctionDao", fakeAuctionDao);
     setPrivateField("itemDao", fakeItemDao);
     setPrivateField("bidDao", fakeBidDao);
     setPrivateField("autoBidDao", fakeAutoBidDao);
     setPrivateField("userDao", fakeUserDao);
-    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
+    setPrivateField("notificationDao", new TestDaoFakes.FakeNotificationDao());
   }
 
   @Test
@@ -82,6 +82,132 @@ public class AuctionServiceAutoBidTest {
 
     assertFalse(response.success());
     assertTrue(fakeAutoBidDao.findByAuctionIdAndBidderId(auctionId, bidderId).isEmpty());
+  }
+
+  @Test
+  public void handleConfigureAutoBid_missingAuction_shouldReturnFailure() {
+    // Technique: EP
+    UUID auctionId = UUID.randomUUID();
+    UUID bidderId = UUID.randomUUID();
+
+    var response =
+        auctionService.handleConfigureAutoBid(
+            new ConfigureAutoBidRequest(
+                auctionId, bidderId, new BigDecimal("300"), new BigDecimal("10"), true));
+
+    assertFalse(response.success());
+    assertTrue(fakeAutoBidDao.findByAuctionIdAndBidderId(auctionId, bidderId).isEmpty());
+  }
+
+  @Test
+  public void handleConfigureAutoBid_maxBidBelowCurrentPrice_shouldReturnFailure() {
+    // Technique: BVA
+    UUID auctionId = UUID.randomUUID();
+    UUID bidderId = UUID.randomUUID();
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+
+    var response =
+        auctionService.handleConfigureAutoBid(
+            new ConfigureAutoBidRequest(
+                auctionId, bidderId, new BigDecimal("99"), new BigDecimal("10"), true));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  public void handleConfigureAutoBid_maxBidEqualsCurrentPrice_shouldSucceed() {
+    // Technique: BVA
+    UUID auctionId = UUID.randomUUID();
+    UUID bidderId = UUID.randomUUID();
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+
+    var response =
+        auctionService.handleConfigureAutoBid(
+            new ConfigureAutoBidRequest(
+                auctionId, bidderId, new BigDecimal("100"), new BigDecimal("10"), true));
+
+    assertTrue(response.success());
+  }
+
+  @Test
+  public void handleConfigureAutoBid_incrementEqualsMinimum_shouldSucceed() {
+    // Technique: BVA
+    UUID auctionId = UUID.randomUUID();
+    UUID bidderId = UUID.randomUUID();
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+
+    var response =
+        auctionService.handleConfigureAutoBid(
+            new ConfigureAutoBidRequest(
+                auctionId, bidderId, new BigDecimal("200"), new BigDecimal("10"), true));
+
+    assertTrue(response.success());
+  }
+
+  @Test
+  public void handlePlaceBid_autoBidDisabled_shouldNotTriggerAutoBid() {
+    // Technique: EP
+    UUID auctionId = UUID.randomUUID();
+    UUID manualBidderId = UUID.randomUUID();
+    UUID autoBidderId = UUID.randomUUID();
+
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(manualBidderId, "1000"));
+    fakeUserDao.putWallet(wallet(autoBidderId, "1000"));
+    AutoBidConfig disabled = autoBidConfig(auctionId, autoBidderId, "200", "10");
+    disabled.setEnabled(false);
+    fakeAutoBidDao.save(disabled);
+
+    var response =
+        auctionService.handlePlaceBid(
+            new PlaceBidRequest(auctionId, manualBidderId, new BigDecimal("120")));
+
+    assertTrue(response.success());
+    assertEquals(
+        manualBidderId, fakeAuctionDao.findById(auctionId).orElseThrow().getLeadingBidderId());
+    assertFalse(
+        fakeBidDao.hasSavedAutoBidForAuction(auctionId, autoBidderId, new BigDecimal("130")));
+  }
+
+  @Test
+  public void handlePlaceBid_noAutoBidCompetitor_shouldNotCreateAutoBid() {
+    // Technique: EP
+    UUID auctionId = UUID.randomUUID();
+    UUID manualBidderId = UUID.randomUUID();
+
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(manualBidderId, "1000"));
+
+    var response =
+        auctionService.handlePlaceBid(
+            new PlaceBidRequest(auctionId, manualBidderId, new BigDecimal("120")));
+
+    assertTrue(response.success());
+    assertEquals(1, fakeBidDao.findByAuctionId(auctionId).size());
+  }
+
+  @Test
+  public void handlePlaceBid_twoAutoBiddersDifferentMax_shouldHighestMaxLead() {
+    // Technique: EP
+    UUID auctionId = UUID.randomUUID();
+    UUID manualBidderId = UUID.randomUUID();
+    UUID lowerAutoBidder = UUID.randomUUID();
+    UUID higherAutoBidder = UUID.randomUUID();
+
+    fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(manualBidderId, "1000"));
+    fakeUserDao.putWallet(wallet(lowerAutoBidder, "1000"));
+    fakeUserDao.putWallet(wallet(higherAutoBidder, "1000"));
+    fakeAutoBidDao.save(autoBidConfig(auctionId, lowerAutoBidder, "180", "10"));
+    fakeAutoBidDao.save(autoBidConfig(auctionId, higherAutoBidder, "250", "10"));
+
+    var response =
+        auctionService.handlePlaceBid(
+            new PlaceBidRequest(auctionId, manualBidderId, new BigDecimal("120")));
+
+    assertTrue(response.success());
+    assertEquals(
+        higherAutoBidder, fakeAuctionDao.findById(auctionId).orElseThrow().getLeadingBidderId());
   }
 
   @Test

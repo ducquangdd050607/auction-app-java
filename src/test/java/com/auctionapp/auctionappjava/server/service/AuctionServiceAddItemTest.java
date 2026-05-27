@@ -14,20 +14,20 @@ import org.junit.jupiter.api.Test;
 class AuctionServiceAddItemTest {
 
   private AuctionService service;
-  private AuctionServiceTest.FakeAuctionDao auctionDao;
-  private AuctionServiceTest.FakeItemDao itemDao;
+  private TestDaoFakes.FakeAuctionDao auctionDao;
+  private TestDaoFakes.FakeItemDao itemDao;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new AuctionService();
-    auctionDao = new AuctionServiceTest.FakeAuctionDao();
-    itemDao = new AuctionServiceTest.FakeItemDao();
+    auctionDao = new TestDaoFakes.FakeAuctionDao();
+    itemDao = new TestDaoFakes.FakeItemDao();
     setPrivateField("auctionDao", auctionDao);
     setPrivateField("itemDao", itemDao);
-    setPrivateField("bidDao", new AuctionServiceTest.FakeBidDao());
-    setPrivateField("autoBidDao", new AuctionServiceTest.FakeAutoBidDao());
-    setPrivateField("userDao", new AuctionServiceTest.FakeUserDao());
-    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
+    setPrivateField("bidDao", new TestDaoFakes.FakeBidDao());
+    setPrivateField("autoBidDao", new TestDaoFakes.FakeAutoBidDao());
+    setPrivateField("userDao", new TestDaoFakes.FakeUserDao());
+    setPrivateField("notificationDao", new TestDaoFakes.FakeNotificationDao());
   }
 
   @Test

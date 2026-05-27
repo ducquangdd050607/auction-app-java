@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.auctionapp.auctionappjava.common.dto.PlaceBidRequest;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
+import com.auctionapp.auctionappjava.common.exception.DatabaseException;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.Wallet;
 import java.lang.reflect.Field;
@@ -17,24 +18,26 @@ import org.junit.jupiter.api.Test;
 class AuctionServicePlaceBidTest {
 
   private AuctionService service;
-  private AuctionServiceTest.FakeAuctionDao auctionDao;
-  private AuctionServiceTest.FakeBidDao bidDao;
-  private AuctionServiceTest.FakeUserDao userDao;
+  private TestDaoFakes.FakeAuctionDao auctionDao;
+  private TestDaoFakes.FakeBidDao bidDao;
+  private TestDaoFakes.FakeUserDao userDao;
+  private TestDaoFakes.FakeNotificationDao notificationDao;
   private UUID auctionId;
   private UUID bidderId;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new AuctionService();
-    auctionDao = new AuctionServiceTest.FakeAuctionDao();
-    bidDao = new AuctionServiceTest.FakeBidDao();
-    userDao = new AuctionServiceTest.FakeUserDao();
+    auctionDao = new TestDaoFakes.FakeAuctionDao();
+    bidDao = new TestDaoFakes.FakeBidDao();
+    userDao = new TestDaoFakes.FakeUserDao();
+    notificationDao = new TestDaoFakes.FakeNotificationDao();
     setPrivateField("auctionDao", auctionDao);
-    setPrivateField("itemDao", new AuctionServiceTest.FakeItemDao());
+    setPrivateField("itemDao", new TestDaoFakes.FakeItemDao());
     setPrivateField("bidDao", bidDao);
-    setPrivateField("autoBidDao", new AuctionServiceTest.FakeAutoBidDao());
+    setPrivateField("autoBidDao", new TestDaoFakes.FakeAutoBidDao());
     setPrivateField("userDao", userDao);
-    setPrivateField("notificationDao", new AuctionServiceTest.FakeNotificationDao());
+    setPrivateField("notificationDao", notificationDao);
     auctionId = UUID.randomUUID();
     bidderId = UUID.randomUUID();
   }
@@ -75,6 +78,20 @@ class AuctionServicePlaceBidTest {
   }
 
   @Test
+  void handlePlaceBid_runningButEndTimePassed_shouldReturnFailure() {
+    // Technique: EP
+    Auction expired = auction(AuctionStatus.RUNNING, "100", null);
+    expired.setEndTime(LocalDateTime.now().minusSeconds(1));
+    auctionDao.save(expired);
+    userDao.putWallet(wallet(bidderId, "500"));
+
+    Response response = place("120");
+
+    assertFalse(response.success());
+    assertEquals(0, bidDao.findByAuctionId(auctionId).size());
+  }
+
+  @Test
   void handlePlaceBid_openAuction_shouldSucceed() {
     // Technique: EP
     auctionDao.save(auction(AuctionStatus.OPEN, "100", null));
@@ -110,6 +127,28 @@ class AuctionServicePlaceBidTest {
         new BigDecimal("500"), userDao.findWalletByUserId(oldLeader).orElseThrow().getBalance());
     assertEquals(
         new BigDecimal("380"), userDao.findWalletByUserId(bidderId).orElseThrow().getBalance());
+  }
+
+  @Test
+  void handlePlaceBid_outbidsOldLeader_shouldCreateOutbidAndSellerNotifications() {
+    // Technique: EP
+    UUID oldLeader = UUID.randomUUID();
+    UUID sellerId = UUID.randomUUID();
+    Auction runningAuction = auction(AuctionStatus.RUNNING, "100", oldLeader);
+    runningAuction.setSellerId(sellerId);
+    auctionDao.save(runningAuction);
+    userDao.putWallet(wallet(oldLeader, "400"));
+    userDao.putWallet(wallet(bidderId, "500"));
+
+    Response response = place("120");
+
+    assertTrue(response.success());
+    assertTrue(
+        notificationDao.findByUserId(oldLeader).stream()
+            .anyMatch(notification -> "OUTBID".equals(notification.getType())));
+    assertTrue(
+        notificationDao.findByUserId(sellerId).stream()
+            .anyMatch(notification -> "SELLER_BID".equals(notification.getType())));
   }
 
   @Test
@@ -186,6 +225,67 @@ class AuctionServicePlaceBidTest {
     userDao.putWallet(wallet(bidderId, "120"));
 
     assertTrue(place("120").success());
+  }
+
+  @Test
+  void handlePlaceBid_databaseException_shouldReturnDatabaseError() throws Exception {
+    // Technique: EP
+    setPrivateField(
+        "auctionDao",
+        new TestDaoFakes.FakeAuctionDao() {
+          @Override
+          public java.util.Optional<Auction> findById(UUID id) {
+            throw new DatabaseException("connection failed");
+          }
+        });
+
+    Response response = place("120");
+
+    assertFalse(response.success());
+    assertTrue(response.message().contains("du lieu") || response.message().contains("ket noi"));
+  }
+
+  @Test
+  void handlePlaceBid_nullRequest_shouldReturnValidationFailure() {
+    // Technique: EP
+    Response response = service.handlePlaceBid(null);
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void handlePlaceBid_nullAmount_shouldReturnValidationFailure() {
+    // Technique: EP
+    Response response = service.handlePlaceBid(new PlaceBidRequest(auctionId, bidderId, null));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void handlePlaceBid_nullAuctionId_shouldReturnValidationFailure() {
+    // Technique: EP
+    Response response =
+        service.handlePlaceBid(new PlaceBidRequest(null, bidderId, new BigDecimal("120")));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void handlePlaceBid_nullUserId_shouldReturnValidationFailure() {
+    // Technique: EP
+    Response response =
+        service.handlePlaceBid(new PlaceBidRequest(auctionId, null, new BigDecimal("120")));
+
+    assertFalse(response.success());
+  }
+
+  @Test
+  void handlePlaceBid_nonPositiveAmount_shouldReturnValidationFailure() {
+    // Technique: BVA
+    Response response =
+        service.handlePlaceBid(new PlaceBidRequest(auctionId, bidderId, BigDecimal.ZERO));
+
+    assertFalse(response.success());
   }
 
   private Response place(String amount) {
