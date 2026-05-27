@@ -409,7 +409,7 @@ public class NavigatorController implements Initializable {
                         var noti = list.get(i);
 
                         // Truyền trực tiếp type vào hàm
-                        buildNotificationUI(noti.message(), noti.type(), false);
+                        buildNotificationUI(noti.message(), noti.type(), true);
                       }
                     }
                     // Cuối cùng kiểm tra xem có trống không để hiện chữ "Chưa có thông báo"
