@@ -8,6 +8,7 @@ import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.NotificationUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -407,10 +408,8 @@ public class NavigatorController implements Initializable {
                       for (int i = list.size() - 1; i >= 0; i--) {
                         var noti = list.get(i);
 
-                        // Lấy dữ liệu bằng phương thức của record rất rõ ràng, không dùng index
-                        // [0], [1] nữa
-                        boolean isWallet = "WALLET".equals(noti.type());
-                        buildNotificationUI(noti.message(), isWallet, false);
+                        // Truyền trực tiếp type vào hàm
+                        buildNotificationUI(noti.message(), noti.type(), false);
                       }
                     }
                     // Cuối cùng kiểm tra xem có trống không để hiện chữ "Chưa có thông báo"
@@ -432,57 +431,55 @@ public class NavigatorController implements Initializable {
   }
 
   // Hàm công khai cho Socket gọi (Mặc định là tin mới -> isNew = true)
-  public void addNotification(String message, boolean isWalletAction) {
-    buildNotificationUI(message, isWalletAction, true);
+  public void addNotification(String message, String notiType) {
+    buildNotificationUI(message, notiType, true);
   }
 
   // Hàm vẽ giao diện thực sự (Dùng chung cho cả load DB và Socket)
-  private void buildNotificationUI(String message, boolean isWalletAction, boolean isNew) {
+  private void buildNotificationUI(String message, String notiType, boolean isNew) {
     Platform.runLater(
         () -> {
-          // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
+          // Xóa dòng chữ "Chưa có thông báo" đi
           notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
 
-          HBox notiItem = new HBox();
-          notiItem.setSpacing(12);
-          notiItem.getStyleClass().add("noti-item");
-
+          // Bật chấm đỏ
           if (isNew && !notificationPanel.isVisible()) {
             notificationBadge.setVisible(true);
             notificationBadge.setManaged(true);
           }
 
-          if (isWalletAction) {
-            notiItem.setStyle("-fx-cursor: hand;");
-            notiItem.setOnMouseClicked(
-                e -> {
+          // Định nghĩa hành động sẽ xảy ra khi người dùng Click vào dòng thông báo này
+          Runnable onClickAction = null;
+          if (notiType != null && !notiType.equals("NORMAL")) {
+            onClickAction =
+                () -> {
+                  // 1. Đóng bảng noti
                   notificationPanel.setVisible(false);
                   notificationPanel.setManaged(false);
-                  if (setting != null) {
-                    setting.fire();
+
+                  // 2. Chuyển hướng
+                  switch (notiType) {
+                    case "WALLET":
+                      if (setting != null) setting.fire();
+                      break;
+                    case "OUTBID":
+                      if (btnItemListBidder != null) btnItemListBidder.fire();
+                      break;
+                    case "SELLER_BID":
+                      if (btnItemListSeller != null) btnItemListSeller.fire();
+                      break;
+                    case "BID_SUCCESS":
+                      if (btnHistory != null) btnHistory.fire();
+                      break;
                   }
-                });
+                };
           }
 
-          Label iconLabel = new Label("🔔");
-          iconLabel.setStyle(
-              ""
-                  + "-fx-font-size: 14; "
-                  + "-fx-background-color: #E7F3FF; "
-                  + "-fx-text-fill: #1877F2; "
-                  + "-fx-padding: 8; "
-                  + "-fx-background-radius: 50; "
-                  + "-fx-alignment: center; "
-                  + "-fx-pref-width: 32; "
-                  + "-fx-pref-height: 32;");
+          // Gọi Util để "sản xuất" ra giao diện HBox (Truyền UI, Data và Hành động vào)
+          HBox notiItem =
+              NotificationUtils.createNotificationItem(message, notiType, onClickAction);
 
-          Label txtMessage = new Label(message);
-          txtMessage.setWrapText(true);
-          txtMessage.setMaxWidth(260);
-          txtMessage.setStyle(
-              "" + "-fx-font-size: 13; " + "-fx-text-fill: #050505; " + "-fx-line-spacing: 1.15;");
-
-          notiItem.getChildren().addAll(iconLabel, txtMessage);
+          // Nhét vào danh sách
           notificationList.getChildren().add(0, notiItem);
         });
   }

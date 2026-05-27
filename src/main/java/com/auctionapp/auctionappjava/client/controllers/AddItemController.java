@@ -299,8 +299,8 @@ public class AddItemController implements Initializable {
             case "Phương tiện":
               lblExtraInfo1.setText("Nhà sản xuất:");
               txtExtraInfo1.setPromptText("Ví dụ: Nissan,...");
-              lblExtraInfo2.setText("Registration Hint:"); // TODO: chỉnh lại tên
-              txtExtraInfo2.setPromptText("Ví dụ: ...");
+              lblExtraInfo2.setText("Ngày đăng kí:");
+              txtExtraInfo2.setPromptText("Ngày đăng kí xe");
               break;
 
             default:

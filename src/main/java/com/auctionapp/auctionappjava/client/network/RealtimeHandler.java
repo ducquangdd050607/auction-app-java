@@ -123,7 +123,7 @@ public class RealtimeHandler {
       case "SERVER_PUSH_NOTIFICATION":
         String normalMsg = (String) response.data();
         if (NavigatorController.instance != null) {
-          NavigatorController.instance.addNotification(normalMsg, false);
+          NavigatorController.instance.addNotification(normalMsg, "NORMAL");
         }
         break;
 
@@ -131,7 +131,31 @@ public class RealtimeHandler {
       case "SERVER_PUSH_WALLET_NOTIFICATION":
         String walletMsg = (String) response.data();
         if (NavigatorController.instance != null) {
-          NavigatorController.instance.addNotification(walletMsg, true);
+          NavigatorController.instance.addNotification(walletMsg, "WALLET");
+        }
+        break;
+
+      // Gói tin thông báo bidder bị vượt mặt (Click để chuyển trang)
+      case "SERVER_PUSH_OUTBID_NOTIFICATION":
+        String outbidMsg = (String) response.data();
+        if (NavigatorController.instance != null) {
+          NavigatorController.instance.addNotification(outbidMsg, "OUTBID");
+        }
+        break;
+
+      // Gói tin thông báo seller có giá mới (Click để chuyển trang)
+      case "SERVER_PUSH_SELLER_BID_NOTIFICATION":
+        String sellerBidMsg = (String) response.data();
+        if (NavigatorController.instance != null) {
+          NavigatorController.instance.addNotification(sellerBidMsg, "SELLER_BID");
+        }
+        break;
+
+      // Gói tin thông báo đặt giá thành công
+      case "SERVER_PUSH_BID_SUCCESS_NOTIFICATION":
+        String bidSuccessMsg = (String) response.data();
+        if (NavigatorController.instance != null) {
+          NavigatorController.instance.addNotification(bidSuccessMsg, "BID_SUCCESS");
         }
         break;
     }

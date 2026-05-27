@@ -8,9 +8,11 @@ import com.auctionapp.auctionappjava.common.exception.NotFoundException;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
+import com.auctionapp.auctionappjava.server.dao.NotificationDao;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcNotificationDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
 import com.auctionapp.auctionappjava.server.factory.UserFactory;
 import com.auctionapp.auctionappjava.server.model.User;
@@ -25,6 +27,7 @@ public class UserService {
   private final UserDao userDao = new JdbcUserDao();
   private final BidDao bidDao = new JdbcBidDao();
   private final AuctionDao auctionDao = new JdbcAuctionDao();
+  private final NotificationDao notificationDao = new JdbcNotificationDao();
 
   public Response handleLogin(LoginRequest loginData) {
     try {
@@ -106,7 +109,12 @@ public class UserService {
             new Wallet(UUID.randomUUID(), now(), now(), newUser.getId(), BigDecimal.ZERO);
         userDao.saveWallet(newWallet);
 
-        // 6. Báo thành công
+        // 6. Thêm 1 noti welcome khi ms register xong
+        String welcomeMsg =
+            "🎉 Chào mừng " + newUser.getFullName() + " đã gia nhập hệ thống đấu giá Blue88!";
+        notificationDao.createNotification(newUser.getId(), null, "WELCOME", welcomeMsg);
+
+        // 7. Báo thành công
         return new Response(true, "Đăng ký tài khoản thành công!", null);
       }
     } catch (Exception e) {

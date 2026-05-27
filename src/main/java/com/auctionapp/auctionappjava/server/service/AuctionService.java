@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.service;
 
+import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 import static java.time.LocalDateTime.now;
 
 import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
@@ -18,16 +19,8 @@ import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.server.dao.AuctionDao;
-import com.auctionapp.auctionappjava.server.dao.AuctionItemDao;
-import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
-import com.auctionapp.auctionappjava.server.dao.BidDao;
-import com.auctionapp.auctionappjava.server.dao.UserDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionItemDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAutoBidDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
+import com.auctionapp.auctionappjava.server.dao.*;
+import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.AutoBidConfig;
@@ -59,7 +52,7 @@ public class AuctionService {
   private final AntiSnipingExtensionStrategy antiSnipingStrategy =
       new AntiSnipingExtensionStrategy(30, 60);
   private final UserDao userDao = new JdbcUserDao(); // Cần UserDao để trừ tiền ví
-
+  private final NotificationDao notificationDao = new JdbcNotificationDao();
   // Thêm khóa luồng cho việc đặt bid
   private static final ConcurrentHashMap<String, Object> auctionLocks = new ConcurrentHashMap<>();
   private final AuctionTrendService auctionTrendService = new AuctionTrendService();
@@ -406,6 +399,60 @@ public class AuctionService {
                   Response bidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
                   SessionManager.getInstance().broadcast(bidResponse);
 
+                  // Lấy tên sản phẩm từ Database thông qua itemId
+                  String itemName = "một sản phẩm"; // Giá trị mặc định nếu lỗi
+                  Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+                  if (itemOpt.isPresent()) {
+                    itemName = itemOpt.get().getTitle();
+                  }
+
+                  // Thông báo cho chính người đặt giá
+                  String bidSuccessMsg =
+                      "✅ Đặt giá thành công "
+                          + formatMoney(placeBidData.amount())
+                          + " VNĐ cho sản phẩm '"
+                          + itemName
+                          + "'.";
+                  notificationDao.createNotification(
+                      currentBidderId, auction.getId(), "BID_SUCCESS", bidSuccessMsg);
+                  SessionManager.getInstance()
+                      .sendToUser(
+                          currentBidderId.toString(),
+                          new Response(
+                              true, "SERVER_PUSH_BID_SUCCESS_NOTIFICATION", bidSuccessMsg));
+
+                  // Thông báo bidder bị đè giá
+                  if (oldLeaderId != null && !oldLeaderId.equals(currentBidderId)) {
+                    String outbidMessage =
+                        "⚠️ Bạn đã bị đè giá ở phiên đấu giá '"
+                            + itemName
+                            + "'. Hãy vào đặt giá lại ngay để giữ top 1!";
+                    notificationDao.createNotification(
+                        oldLeaderId, auction.getId(), "OUTBID", outbidMessage);
+                    SessionManager.getInstance()
+                        .sendToUser(
+                            oldLeaderId.toString(),
+                            new Response(true, "SERVER_PUSH_OUTBID_NOTIFICATION", outbidMessage));
+                  }
+
+                  // Thông báo seller có giá mới
+                  UUID sellerId = auction.getSellerId();
+                  if (!sellerId.equals(currentBidderId)) {
+                    String sellerBidMessage =
+                        "🔥 Sản phẩm '"
+                            + itemName
+                            + "' của bạn vừa có người đặt mức giá mới: "
+                            + formatMoney(placeBidData.amount())
+                            + " VNĐ.";
+                    notificationDao.createNotification(
+                        sellerId, auction.getId(), "SELLER_BID", sellerBidMessage);
+                    SessionManager.getInstance()
+                        .sendToUser(
+                            sellerId.toString(),
+                            new Response(
+                                true, "SERVER_PUSH_SELLER_BID_NOTIFICATION", sellerBidMessage));
+                  }
+
                   // THÊM AUTO-BID ENGINE: sau bid tay, kiểm tra các cấu hình auto-bid và đặt giá tự
                   // động nếu cần..
                   processAutoBid(auction.getId());
@@ -542,6 +589,55 @@ public class AuctionService {
         };
     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
     SessionManager.getInstance().broadcast(newBidResponse);
+
+    // Lấy tên sản phẩm từ Database thông qua itemId
+    String itemName = "một sản phẩm"; // Giá trị mặc định nếu lỗi
+    Optional<Item> itemOpt = itemDao.findById(auction.getItemId());
+    if (itemOpt.isPresent()) {
+      itemName = itemOpt.get().getTitle();
+    }
+
+    // Thông báo vừa autobid thành công
+    String autoBidSuccessMsg =
+        "🤖 Hệ thống vừa tự động nâng giá lên "
+            + formatMoney(amount)
+            + " VNĐ cho sản phẩm '"
+            + itemName
+            + "' thay bạn.";
+    notificationDao.createNotification(bidderId, auction.getId(), "BID_SUCCESS", autoBidSuccessMsg);
+    SessionManager.getInstance()
+        .sendToUser(
+            bidderId.toString(),
+            new Response(true, "SERVER_PUSH_BID_SUCCESS_NOTIFICATION", autoBidSuccessMsg));
+
+    // Thông báo bidder bị đè giá
+    if (oldLeaderId != null && !oldLeaderId.equals(bidderId)) {
+      String outbidMessage =
+          "⚠️ Bạn đã bị đè giá ở phiên đấu giá '"
+              + itemName
+              + "'. Hãy vào đặt giá lại ngay để giữ top 1!";
+      notificationDao.createNotification(oldLeaderId, auction.getId(), "OUTBID", outbidMessage);
+      SessionManager.getInstance()
+          .sendToUser(
+              oldLeaderId.toString(),
+              new Response(true, "SERVER_PUSH_OUTBID_NOTIFICATION", outbidMessage));
+    }
+
+    // Thông báo seller có giá mới
+    UUID sellerId = auction.getSellerId();
+    if (!sellerId.equals(bidderId)) {
+      String sellerBidMessage =
+          "🔥 Sản phẩm '"
+              + itemName
+              + "' của bạn vừa có người đặt mức giá mới: "
+              + formatMoney(amount)
+              + " VNĐ.";
+      notificationDao.createNotification(sellerId, auction.getId(), "SELLER_BID", sellerBidMessage);
+      SessionManager.getInstance()
+          .sendToUser(
+              sellerId.toString(),
+              new Response(true, "SERVER_PUSH_SELLER_BID_NOTIFICATION", sellerBidMessage));
+    }
   }
 
   // THÊM ANTI-SNIPING.
