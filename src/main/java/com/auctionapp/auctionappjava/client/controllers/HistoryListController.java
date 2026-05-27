@@ -5,7 +5,6 @@ import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatPriceCo
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
@@ -24,6 +23,8 @@ import javafx.scene.control.*;
 
 public class HistoryListController implements Initializable {
   private ObservableList<BidHistoryResponse> historyDataList = FXCollections.observableArrayList();
+
+  public static HistoryListController instance;
 
   // Everything that happened in this shit is due to THIS mtfking Response.
   // Bản chất là HLC này == ULC, nhưng khác chí mạng ở việc khác Response.
@@ -44,9 +45,6 @@ public class HistoryListController implements Initializable {
 
   // Thêm FilteredList để làm bộ lọc
   private FilteredList<BidHistoryResponse> filteredData;
-
-  @FXML
-  void handleReload(ActionEvent event) throws IOException {}
 
   @FXML
   void handleSearch(ActionEvent event) {
@@ -108,6 +106,8 @@ public class HistoryListController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    instance = this;
+
     // 1. Kiểm tra vai trò để ẩn/hiện cột Tên Bidder
     clmBidderName.setVisible(LoginController.adminRoute);
 
@@ -130,20 +130,24 @@ public class HistoryListController implements Initializable {
     historyTable.setItems(filteredData); // Gắn filteredData vào bảng
 
     // Tự động kéo dữ liệu từ mạng khi mở màn hình
-    loadAuctionsFromServer();
+    loadAuctionsFromServer(true);
   }
 
-  private void loadAuctionsFromServer() {
+  private void loadAuctionsFromServer(boolean isInitialLoad) {
     // Khóa giao diện search
-    txtSearch.setDisable(true);
-    cbFilterStatus.setDisable(true);
-    cbType.setDisable(true);
-    btnSearch.setDisable(true);
+    if (isInitialLoad) {
+      txtSearch.setDisable(true);
+      cbFilterStatus.setDisable(true);
+      cbType.setDisable(true);
+      btnSearch.setDisable(true);
 
-    ProgressIndicator loadingSpinner = new ProgressIndicator();
-    loadingSpinner.setMaxSize(50, 50);
-    historyTable.setPlaceholder(loadingSpinner);
-    historyDataList.clear(); // Xóa sạch dữ liệu cũ trong lúc chờ tải mới
+      ProgressIndicator loadingSpinner = new ProgressIndicator();
+      loadingSpinner.setMaxSize(50, 50);
+      historyTable.setPlaceholder(loadingSpinner);
+
+      // Xóa sạch list cũ để màn hình trống trong lúc hiện vòng xoay
+      historyDataList.clear();
+    }
 
     // Triển khai 2 Requests riêng biệt (giống AuctionListController)
 
@@ -172,11 +176,13 @@ public class HistoryListController implements Initializable {
             response -> {
               Platform.runLater(
                   () -> {
-                    // Mở khóa giao diện
-                    txtSearch.setDisable(false);
-                    cbFilterStatus.setDisable(false);
-                    cbType.setDisable(false);
-                    btnSearch.setDisable(false);
+                    // Mở lại nút nếu đã khóa ở trên
+                    if (isInitialLoad) {
+                      txtSearch.setDisable(false);
+                      cbFilterStatus.setDisable(false);
+                      cbType.setDisable(false);
+                      btnSearch.setDisable(false);
+                    }
 
                     if (response.success()) {
                       // Ép kiểu lấy danh sách từ Response
@@ -234,5 +240,10 @@ public class HistoryListController implements Initializable {
       txtHistory.setVisible(true);
       txtHistory.setText("Danh sách đặt cược");
     }
+  }
+
+  // Hàm này sẽ được RealtimeHandler gọi
+  public void refreshHistoryRealtime() {
+    Platform.runLater(() -> loadAuctionsFromServer(false));
   }
 }

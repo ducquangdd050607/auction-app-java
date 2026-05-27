@@ -17,6 +17,7 @@ import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
 import com.auctionapp.auctionappjava.server.factory.UserFactory;
 import com.auctionapp.auctionappjava.server.model.User;
 import com.auctionapp.auctionappjava.server.model.Wallet;
+import com.auctionapp.auctionappjava.server.network.SessionManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -114,7 +115,10 @@ public class UserService {
             "🎉 Chào mừng " + newUser.getFullName() + " đã gia nhập hệ thống đấu giá Blue88!";
         notificationDao.createNotification(newUser.getId(), null, "WELCOME", welcomeMsg);
 
-        // 7. Báo thành công
+        // 7. Báo cho admin biết có user mới
+        SessionManager.getInstance().broadcast(new Response(true, "SERVER_PUSH_NEW_USER", null));
+
+        // 8. Báo thành công
         return new Response(true, "Đăng ký tài khoản thành công!", null);
       }
     } catch (Exception e) {

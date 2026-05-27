@@ -55,7 +55,6 @@ public class AuctionListController implements Initializable {
   @FXML private Button btnCancel;
   @FXML private Button btnRemove;
   @FXML private Button btnSearch;
-  @FXML private Button btnReload;
   @FXML private ComboBox<String> cbFilterStatus;
   @FXML private ComboBox<String> cbType;
   @FXML private TableView<AuctionSummaryResponse> listAuctions;
@@ -160,11 +159,6 @@ public class AuctionListController implements Initializable {
   }
 
   @FXML
-  void handleReload(ActionEvent event) throws IOException {
-    loadAuctionsFromServer(true);
-  }
-
-  @FXML
   void handleAdd(ActionEvent event) throws IOException {
     FXMLLoader loader =
         new FXMLLoader(
@@ -245,7 +239,6 @@ public class AuctionListController implements Initializable {
       cbFilterStatus.setDisable(true);
       cbType.setDisable(true);
       btnSearch.setDisable(true);
-      btnReload.setDisable(true);
 
       ProgressIndicator loadingSpinner = new ProgressIndicator();
       loadingSpinner.setMaxSize(50, 50);
@@ -284,7 +277,6 @@ public class AuctionListController implements Initializable {
                       cbFilterStatus.setDisable(false);
                       cbType.setDisable(false);
                       btnSearch.setDisable(false);
-                      btnReload.setDisable(false);
                     }
 
                     if (response.success()) {

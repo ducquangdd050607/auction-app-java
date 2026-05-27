@@ -613,9 +613,9 @@ public class AuctionService {
     // Thông báo bidder bị đè giá
     if (oldLeaderId != null && !oldLeaderId.equals(bidderId)) {
       String outbidMessage =
-          "⚠️ Bạn đã bị đè giá ở phiên đấu giá '"
+          "⚠ Bạn đã bị đè giá ở phiên đấu giá '"
               + itemName
-              + "'. Hãy vào đặt giá lại ngay để giữ top 1!";
+              + "'. Hãy vào đặt giá lại nếu bạn muốn giữ top 1!";
       notificationDao.createNotification(oldLeaderId, auction.getId(), "OUTBID", outbidMessage);
       SessionManager.getInstance()
           .sendToUser(

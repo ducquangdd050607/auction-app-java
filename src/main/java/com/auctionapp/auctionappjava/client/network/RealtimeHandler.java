@@ -81,6 +81,17 @@ public class RealtimeHandler {
             ConfirmBiddingController.instance.showOutbidWarning();
           }
         }
+
+        if (HistoryListController.instance != null) {
+          HistoryListController.instance.refreshHistoryRealtime();
+        }
+        break;
+
+      // Gói tin thông báo có tài khoản mới đăng ký
+      case "SERVER_PUSH_NEW_USER":
+        if (UsersManagerController.instance != null) {
+          UsersManagerController.instance.refreshUsersRealtime();
+        }
         break;
 
       // Sửa lại case FINISHED:

@@ -22,11 +22,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
-// Giải thích:
-// HOẠT ĐỘNG(ACTIVE): acc còn khỏe, còn chơi được
-// CHẶN(BAN): acc cấm đăng nhập
-
 public class UsersManagerController implements Initializable {
+  public static UsersManagerController instance;
 
   // để confirm thực hiện đúng mục đích
   private boolean ban = false;
@@ -51,7 +48,6 @@ public class UsersManagerController implements Initializable {
   @FXML private TableColumn<UserDetailResponse, String> clmRoute;
   @FXML private TextField txtSearch;
   @FXML private Button btnSearch;
-  @FXML private Button btnReload;
 
   @FXML
   void handleBan(ActionEvent event) {
@@ -126,11 +122,10 @@ public class UsersManagerController implements Initializable {
         });
   }
 
-  @FXML
-  void handleReload(ActionEvent event) throws IOException {}
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    instance = this;
+
     String[] status = {"Tất cả trạng thái", "HOẠT DỘNG", "CHẶN"}; // trạng thái tài khoản
     cbFilterAccountStatus.getItems().addAll(status);
     cbFilterAccountStatus.setValue("Tất cả trạng thái");
@@ -149,7 +144,7 @@ public class UsersManagerController implements Initializable {
     // Nhét sortedData vào bảng
     listUsers.setItems(sortedData);
 
-    loadUserFromServer();
+    loadUserFromServer(true);
 
     try {
       show();
@@ -174,18 +169,21 @@ public class UsersManagerController implements Initializable {
     orConfirm(false);
   }
 
-  private void loadUserFromServer() {
-    // Khóa search trong lúc load data
-    txtSearch.setDisable(true);
-    cbFilterRoute.setDisable(true);
-    cbFilterAccountStatus.setDisable(true);
-    btnSearch.setDisable(true);
-    btnReload.setDisable(true);
+  private void loadUserFromServer(boolean isInitialLoad) {
+    // Chỉ khóa nút và hiện vòng xoay khi lần đầu load list
+    if (isInitialLoad) {
+      txtSearch.setDisable(true);
+      cbFilterRoute.setDisable(true);
+      cbFilterAccountStatus.setDisable(true);
+      btnSearch.setDisable(true);
 
-    ProgressIndicator loadingSpinner = new ProgressIndicator();
-    loadingSpinner.setMaxSize(50, 50);
-    listUsers.setPlaceholder(loadingSpinner);
-    usersData.clear();
+      ProgressIndicator loadingSpinner = new ProgressIndicator();
+      loadingSpinner.setMaxSize(50, 50);
+      listUsers.setPlaceholder(loadingSpinner);
+
+      // Xóa sạch list cũ để màn hình trống trong lúc hiện vòng xoay
+      usersData.clear();
+    }
 
     Request req = new Request("GET_USERS", null);
 
@@ -202,12 +200,13 @@ public class UsersManagerController implements Initializable {
             response -> {
               Platform.runLater(
                   () -> {
-                    // Mở lại search
-                    txtSearch.setDisable(false);
-                    cbFilterRoute.setDisable(false);
-                    cbFilterAccountStatus.setDisable(false);
-                    btnSearch.setDisable(false);
-                    btnReload.setDisable(false);
+                    // Mở lại nút nếu đã khóa ở trên
+                    if (isInitialLoad) {
+                      txtSearch.setDisable(false);
+                      cbFilterRoute.setDisable(false);
+                      cbFilterAccountStatus.setDisable(false);
+                      btnSearch.setDisable(false);
+                    }
 
                     if (response.success()) {
                       List<UserDetailResponse> listFromServer =
@@ -339,5 +338,9 @@ public class UsersManagerController implements Initializable {
     clmBids.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().bids()));
     clmBalance.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().balance()));
     clmRecentBid.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().latestBid()));
+  }
+
+  public void refreshUsersRealtime() {
+    Platform.runLater(() -> loadUserFromServer(false));
   }
 }

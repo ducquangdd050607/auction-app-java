@@ -16,10 +16,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
@@ -29,7 +27,8 @@ public class AuctionTrendController implements Initializable {
   private final ObservableList<AuctionTrendResponse> trendData =
       FXCollections.observableArrayList();
 
-  @FXML private Button btnReload;
+  public static AuctionTrendController instance;
+
   @FXML private Label lblSummary;
   @FXML private TableView<AuctionTrendResponse> tblTrends;
   @FXML private TableColumn<AuctionTrendResponse, String> clmItemName;
@@ -40,14 +39,11 @@ public class AuctionTrendController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    instance = this;
+
     setupColumns();
     tblTrends.setItems(trendData);
-    loadTrends();
-  }
-
-  @FXML
-  void handleReload(ActionEvent event) {
-    loadTrends();
+    loadTrends(true);
   }
 
   private void setupColumns() {
@@ -60,11 +56,17 @@ public class AuctionTrendController implements Initializable {
     formatPriceColumn(clmCurrentPrice);
   }
 
-  private void loadTrends() {
-    btnReload.setDisable(true);
-    lblSummary.setText("Đang tải xu hướng...");
-    tblTrends.setPlaceholder(new ProgressIndicator());
-    trendData.clear();
+  private void loadTrends(boolean isInitialLoad) {
+    // Chỉ khóa nút và hiện vòng xoay khi lần đầu load list
+    if (isInitialLoad) {
+      ProgressIndicator loadingSpinner = new ProgressIndicator();
+      loadingSpinner.setMaxSize(50, 50);
+      lblSummary.setText("Đang tải xu hướng...");
+      tblTrends.setPlaceholder(loadingSpinner);
+
+      // Xóa sạch list cũ để màn hình trống trong lúc hiện vòng xoay
+      trendData.clear();
+    }
 
     Request request = new Request("GET_AUCTION_TRENDS", null);
     CompletableFuture.supplyAsync(
@@ -76,21 +78,22 @@ public class AuctionTrendController implements Initializable {
                 return new Response(false, "Lỗi kết nối Server", null);
               }
             })
-        .thenAccept(response -> Platform.runLater(() -> applyResponse(response)));
-  }
+        .thenAccept(
+            response ->
+                Platform.runLater(
+                    () -> {
+                      if (response.success()) {
+                        List<AuctionTrendResponse> trends =
+                            (List<AuctionTrendResponse>) response.data();
+                        trendData.setAll(trends);
+                        lblSummary.setText("Tổng " + trendData.size() + " phiên | ");
+                      } else {
+                        lblSummary.setText(response.message());
+                      }
 
-  private void applyResponse(Response response) {
-    btnReload.setDisable(false);
-    if (response.success()) {
-      List<AuctionTrendResponse> trends = (List<AuctionTrendResponse>) response.data();
-      trendData.setAll(trends);
-      lblSummary.setText("Tổng " + trendData.size() + " phiên | ");
-    } else {
-      lblSummary.setText(response.message());
-    }
-
-    Label noDataLabel = new Label("Chưa có dữ liệu xu hướng.");
-    noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
-    tblTrends.setPlaceholder(noDataLabel);
+                      Label noDataLabel = new Label("Chưa có dữ liệu xu hướng.");
+                      noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                      tblTrends.setPlaceholder(noDataLabel);
+                    }));
   }
 }

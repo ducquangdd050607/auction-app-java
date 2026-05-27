@@ -26,7 +26,7 @@ public class NotificationUtils {
           // xanh lá
           break;
         case "OUTBID":
-          icon = "⚠️";
+          icon = "⚠";
           iconStyle +=
               "-fx-background-color: #FFEBEE; -fx-text-fill: #F44336;"; // Nền đỏ nhạt, chữ đỏ
           break;
