@@ -20,6 +20,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -43,7 +44,7 @@ public class NavigatorController implements Initializable {
             "Xin chào, tôi là trợ lý FAQ. Tôi chỉ trả lời các câu hỏi liên quan tới app đấu giá này và không trả lời các vấn đề khác.";
 
     private Stage stage;
-    private static NavigatorController instance;
+    public static NavigatorController instance;
     public static String modeName;
 
     @FXML
@@ -85,6 +86,14 @@ public class NavigatorController implements Initializable {
     @FXML
     private BorderPane mainBorderPane;
     @FXML
+    private VBox notificationPanel;
+    @FXML
+    private ScrollPane notiScrollPane;
+    @FXML
+    private VBox notificationList;
+    @FXML
+    private Circle notificationBadge;
+    @FXML
     private Button setting;
     @FXML
     private VBox chatbotPanel;
@@ -104,8 +113,40 @@ public class NavigatorController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         instance = this;
+
+        notificationPanel.setVisible(false);
+        notificationPanel.setManaged(false);
+        notificationBadge.setVisible(false);
+        notificationBadge.setManaged(false);
+
         loadChatbotAnswers();
         setupChatbot();
+
+        // Lắng nghe sự thay đổi chiều cao của cái danh sách bên trong (notificationList)
+        notificationList.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double contentHeight = newValue.doubleValue();
+
+            // Phần Header chữ "Thông báo" và khoảng trắng chiếm khoảng 75px
+            double headerHeight = 75;
+
+            // Nếu danh sách ngắn (ít thông báo)
+            if (contentHeight < 400) {
+                notiScrollPane.setPrefHeight(contentHeight + 5); // Thu nhỏ vùng cuộn
+
+                // Ép cả cái khung ngoài cùng phải nhỏ lại
+                notificationPanel.setMaxHeight(contentHeight + 5 + headerHeight);
+            }
+            // Nếu danh sách dài (đạt ngưỡng 400px)
+            else {
+                notiScrollPane.setPrefHeight(400); // Khóa vùng cuộn
+
+                // Khóa khung ngoài ở độ cao cố định
+                notificationPanel.setMaxHeight(400 + headerHeight);
+            }
+        });
+
+        checkEmptyNotification();
+
         try {
             show();
         } catch (IOException e) {
@@ -333,8 +374,102 @@ public class NavigatorController implements Initializable {
     }
 
     @FXML
-    void handleNotify() {
+    void handleNotify(ActionEvent event) {
+        // Đảo ngược trạng thái hiện tại (Đang bật thì tắt, đang tắt thì bật)
+        boolean isOpen = !notificationPanel.isVisible();
 
+        notificationPanel.setVisible(isOpen);
+        notificationPanel.setManaged(isOpen);
+
+        // Nếu mở lên thì tắt chatbot đi (để 2 cái không đè lên nhau)
+        if (isOpen) {
+            chatbotPanel.setVisible(false);
+            chatbotPanel.setManaged(false);
+            chatbotToggleButton.setText("☁");
+
+            // Khi người dùng đã click mở bảng ra xem, ẩn chấm đỏ đi
+            notificationBadge.setVisible(false);
+            notificationBadge.setManaged(false);
+        }
+    }
+
+    // Hàm kiểm tra nếu trống thì hiện chữ "Chưa có thông báo"
+    private void checkEmptyNotification() {
+        if (notificationList.getChildren().isEmpty()) {
+            Label emptyLabel = new Label("Hiện chưa có thông báo nào.");
+            emptyLabel.setStyle("-fx-text-fill: gray; -fx-padding: 20; -fx-alignment: center; -fx-font-size: 13;");
+            emptyLabel.setId("emptyNotiLabel"); // Đánh dấu ID để lát dễ tìm mà xóa
+
+            notificationList.getChildren().add(emptyLabel);
+        }
+    }
+
+    public void addNotification(String message, boolean isWalletAction) {
+        // Xóa dòng chữ "Chưa có thông báo" đi (nếu đang có)
+        notificationList.getChildren().removeIf(node -> "emptyNotiLabel".equals(node.getId()));
+
+        Platform.runLater(() -> {
+            HBox notiItem = new HBox();
+            notiItem.setSpacing(12);
+
+            // Chỉ thêm class chung để xử lý hiệu ứng di chuột (hover) đổi màu
+            notiItem.getStyleClass().add("noti-item");
+
+            // Nếu người dùng đang ĐÓNG bảng thông báo -> Bật chấm đỏ lên để báo hiệu
+            if (!notificationPanel.isVisible()) {
+                notificationBadge.setVisible(true);
+                notificationBadge.setManaged(true);
+            }
+
+            if (isWalletAction) {
+                // Bắt sự kiện khi click vào dòng thông báo này
+                notiItem.setOnMouseClicked(e -> {
+
+                    // 1. Đóng bảng thông báo lại cho gọn
+                    notificationPanel.setVisible(false);
+                    notificationPanel.setManaged(false);
+
+                    // Fire thẳng nút trên nav cho nhanh gọn
+                    if (setting != null) {
+                        setting.fire();
+                    }
+                });
+            }
+
+            // Tạo icon cái chuông đại diện cho thông báo
+            Label iconLabel = new Label("🔔");
+            iconLabel.setStyle("" +
+                    "-fx-font-size: 14; " +
+                    "-fx-background-color: #E7F3FF; " +
+                    "-fx-text-fill: #1877F2; " +
+                    "-fx-padding: 8; " +
+                    "-fx-background-radius: 50; " +
+                    "-fx-alignment: center; " +
+                    "-fx-pref-width: 32; " +
+                    "-fx-pref-height: 32;"
+            );
+
+            // Tạo nhãn chứa nội dung chữ
+            Label txtMessage = new Label(message);
+            txtMessage.setWrapText(true);
+            txtMessage.setMaxWidth(260);
+            txtMessage.setStyle("" +
+                    "-fx-font-size: 13; " +
+                    "-fx-text-fill: #050505; " +
+                    "-fx-line-spacing: 1.15;"
+            );
+
+            notiItem.getChildren().addAll(iconLabel, txtMessage);
+
+            // Luôn luôn đẩy thông báo mới nhất lên trên cùng (vị trí số 0)
+            notificationList.getChildren().add(0, notiItem);
+        });
+    }
+
+    @FXML
+    void handleCloseNotify(ActionEvent event) {
+        notificationPanel.setVisible(false);
+        notificationPanel.setManaged(false);
     }
 
     @FXML
@@ -401,7 +536,6 @@ public class NavigatorController implements Initializable {
 
     @FXML
     void handleExit (ActionEvent event) throws IOException {
-
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 
         Runnable closeStage = () -> {

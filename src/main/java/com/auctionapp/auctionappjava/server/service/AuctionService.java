@@ -391,6 +391,9 @@ public class AuctionService {
                                             newEndTime
                                     };
 
+                                    Response bidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
+                                    SessionManager.getInstance().broadcast(bidResponse);
+
                                     // THÊM AUTO-BID ENGINE: sau bid tay, kiểm tra các cấu hình auto-bid và đặt giá tự động nếu cần..
                                     processAutoBid(auction.getId());
 
