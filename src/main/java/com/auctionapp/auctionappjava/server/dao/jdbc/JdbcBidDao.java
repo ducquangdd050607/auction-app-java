@@ -337,7 +337,7 @@ public class JdbcBidDao extends JdbcDaoSupport implements BidDao {
       }
 
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw new DatabaseException("Không thể đếm số lượng lượt đặt giá");
     }
 
     return result; // Trả về List gồm 2 phần tử [recentCount, previousCount]

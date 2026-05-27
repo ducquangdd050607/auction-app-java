@@ -19,6 +19,10 @@ import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.exception.ConflictException;
+import com.auctionapp.auctionappjava.common.exception.InsufficientBalanceException;
+import com.auctionapp.auctionappjava.common.exception.NotFoundException;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
@@ -193,7 +197,8 @@ public class AuctionService {
         if (auction3Opt.isPresent()) {
           Auction mostTrendingAuction = auction3Opt.get();
 
-          Optional<Item> item2Opt = itemDao.findByAuctionId(mostTrendingAuction.getId());
+          Optional<Item> item2Opt =
+              itemDao.findByAuctionIdWithoutImage(mostTrendingAuction.getId());
           if (item2Opt.isPresent()) {
             Item item = item2Opt.get();
 
@@ -239,17 +244,17 @@ public class AuctionService {
     try {
       Optional<Auction> auctionOpt = auctionDao.findById(data.auctionId());
       if (auctionOpt.isEmpty()) {
-        return new Response(false, "Phiên đấu giá không tồn tại!", null);
+        throw new NotFoundException("Phiên đấu giá không tồn tại!");
       }
 
       Auction auction = auctionOpt.get();
       if (data.maxBid().compareTo(auction.getCurrentPrice()) < 0) {
-        return new Response(false, "\"Max auto-bid phải lớn hơn hoặc bằng giá hiện tại!\"!", null);
+        throw new ConflictException("Max auto-bid phải lớn hơn hoặc bằng giá hiện tại!");
       }
 
       if (data.incrementAmount().compareTo(auction.getMinimumIncrement()) < 0) {
-        return new Response(
-            false, "Bước auto-bid phải từ  " + auction.getMinimumIncrement() + " trở lên!", null);
+        throw new ValidationException(
+            "Bước auto-bid phải từ " + auction.getMinimumIncrement() + " trở lên!");
       }
 
       AutoBidConfig config =
@@ -265,9 +270,11 @@ public class AuctionService {
       autoBidDao.save(config);
 
       return new Response(true, "Đã cấu hình auto-bid.", null);
+    } catch (NotFoundException | ConflictException | ValidationException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi cấu hình auto-bid: " + e.getMessage(), null);
+      return new Response(false, "Lỗi máy chủ khi cấu hình auto-bid!", null);
     }
   }
 
@@ -283,34 +290,32 @@ public class AuctionService {
         Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
 
         if (auctionOpt.isEmpty()) {
-          return new Response(false, "Phiên đấu giá không tồn tại!", null);
+          throw new NotFoundException("Phiên đấu giá không tồn tại!");
         } else {
           Auction auction = auctionOpt.get();
 
           // Chặn người đến sau nếu giá đã bị người đến trước đẩy lên
           if (placeBidData.amount().compareTo(auction.getCurrentPrice()) <= 0) {
-            return new Response(
-                false,
-                "Đã có người nhanh tay hơn đặt giá cao hơn hoặc bằng bạn! Vui lòng làm mới.",
-                null);
+            throw new ConflictException(
+                "Đã có người nhanh tay hơn đặt giá cao hơn hoặc bằng bạn! Vui lòng làm mới.");
           }
 
           if (auction.getStatus() != AuctionStatus.OPEN
               && auction.getStatus() != AuctionStatus.RUNNING) {
-            return new Response(false, "Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!", null);
+            throw new ConflictException("Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!");
           } else {
             BigDecimal minRequiredPrice =
                 auction.getCurrentPrice().add(auction.getMinimumIncrement());
 
             if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
-              return new Response(false, "Giá đặt phải từ " + minRequiredPrice + " trở lên!", null);
+              throw new ValidationException("Giá đặt phải từ " + minRequiredPrice + " trở lên!");
             } else {
               // Kiểm tra ví tiền người đặt mới
               UUID currentBidderId = placeBidData.userId();
               Optional<Wallet> currentBidderWalletOpt = userDao.findWalletByUserId(currentBidderId);
 
               if (currentBidderWalletOpt.isEmpty()) {
-                return new Response(false, "Lỗi: Không tìm thấy ví tiền của người dùng!", null);
+                throw new NotFoundException("Lỗi: Không tìm thấy ví tiền của người dùng!");
               } else {
                 Wallet currentBidderWallet = currentBidderWalletOpt.get();
 
@@ -324,7 +329,8 @@ public class AuctionService {
 
                 // Dùng availableBalance để kiểm tra thay vì getBalance() gốc
                 if (availableBalance.compareTo(placeBidData.amount()) < 0) {
-                  return new Response(false, "Số dư trong ví không đủ để đặt giá!", null);
+                  throw new InsufficientBalanceException("Số dư trong ví không đủ để đặt giá!");
+
                 } else {
                   // Hoàn tiền người dẫn đầu cũ (nếu có)
                   if (oldLeaderId != null) {
@@ -485,9 +491,14 @@ public class AuctionService {
             }
           }
         }
+      } catch (ConflictException
+          | ValidationException
+          | NotFoundException
+          | InsufficientBalanceException e) {
+        return new Response(false, e.getMessage(), null);
       } catch (Exception e) {
         e.printStackTrace();
-        return new Response(false, "Lỗi máy chủ khi xử lý đặt giá: " + e.getMessage(), null);
+        return new Response(false, "Lỗi máy chủ khi xử lý đặt giá!", null);
       }
     }
   }
@@ -649,6 +660,17 @@ public class AuctionService {
 
   public Response handleAddItem(AddItemRequest data) {
     try {
+      if (data.startPrice() == null || data.startPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new ValidationException("Gia khoi diem phai lon hon 0");
+      }
+      if (data.minIncrement() == null || data.minIncrement().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new ValidationException("Buoc gia phai lon hon 0");
+      }
+      if (data.endTime() == null
+          || data.openTime() == null
+          || !data.endTime().isAfter(data.openTime())) {
+        throw new ValidationException("Thoi gian ket thuc phai sau thoi gian bat dau");
+      }
       // 1. Tạo ID ngẫu nhiên cho vật phẩm mới
       UUID newItemId = UUID.randomUUID();
       UUID sellerId = UUID.fromString(data.sellerId());
@@ -698,6 +720,8 @@ public class AuctionService {
       // 4. Báo cáo thành công
       return new Response(true, "Đăng bán sản phẩm thành công! Phiên đấu giá đã được mở.", null);
 
+    } catch (ValidationException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
       return new Response(false, "Sai định dạng loại sản phẩm!", null);
     } catch (Exception e) {
