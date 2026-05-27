@@ -1,11 +1,14 @@
 package com.auctionapp.auctionappjava.client.controllers;
 
+import static com.auctionapp.auctionappjava.common.util.ValidationUtils.*;
+
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.LoginRequest;
 import com.auctionapp.auctionappjava.common.dto.LoginResponse;
 import com.auctionapp.auctionappjava.common.dto.Request;
 import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import java.io.IOException;
 import java.net.URL;
@@ -32,97 +35,101 @@ public class LoginController implements Initializable {
 
   @FXML
   void handleConfirm(ActionEvent event) {
-    if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty()) {
-      lblError.setText("Hãy điền đủ thông tin");
+    try {
+      requireText(txtUsername.getText(), "Tên người dùng");
+      requireText(txtPassword.getText(), "Mật khẩu");
+    } catch (ValidationException ex) {
+      lblError.setText(ex.getMessage());
       lblError.setVisible(true);
       lblError.setTextFill(Color.web("#FF8A80"));
-    } else {
-      btnLogin.setDisable(true); // Khóa nút bấm, chống trường hợp nhồi c*t vào server
-      txtUsername.setDisable(true);
-      txtPassword.setDisable(true);
-      hplRegister.setDisable(true);
-
-      String user = txtUsername.getText();
-      String pass = txtPassword.getText();
-
-      // 1. Gói dữ liệu và tạo Request
-      LoginRequest payload = new LoginRequest(user, pass);
-      Request loginReq = new Request("LOGIN", payload);
-
-      // 2. Gửi qua mạng ngầm
-      CompletableFuture.supplyAsync(
-              () -> {
-                try {
-                  // Gọi Singleton Client của bạn
-                  return Client.getInstance().sendRequest(loginReq);
-                } catch (Exception e) {
-                  return new Response(false, "Lỗi kết nối máy chủ!", null);
-                }
-              })
-          .thenAccept(
-              response -> {
-                // 3. Trở lại luồng UI để vẽ giao diện
-                Platform.runLater(
-                    () -> {
-                      if (response.success()) {
-                        // Móc DTO ra xem Role là gì
-                        LoginResponse authUser = (LoginResponse) response.data();
-                        // Thêm thông tin user cho session đó
-                        UserSession.getInstance().setCurrentUser(authUser);
-
-                        if ("ADMIN".equals(authUser.role())) {
-                          try {
-                            adminRoute = true;
-                            sellerRoute = false;
-                            bidderRoute = false;
-                            SceneSwitcherUtils.NewSceneController(
-                                event,
-                                "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
-                                "Blue88");
-                          } catch (IOException e) {
-                            e.printStackTrace();
-                          }
-
-                        } else if ("SELLER".equals(authUser.role())) {
-                          try {
-                            adminRoute = false;
-                            sellerRoute = true;
-                            bidderRoute = false;
-                            SceneSwitcherUtils.NewSceneController(
-                                event,
-                                "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
-                                "Blue88");
-                          } catch (IOException e) {
-                            e.printStackTrace();
-                          }
-
-                        } else if ("BIDDER".equals(authUser.role())) {
-                          try {
-                            adminRoute = false;
-                            sellerRoute = false;
-                            bidderRoute = true;
-                            SceneSwitcherUtils.NewSceneController(
-                                event,
-                                "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
-                                "Blue88");
-                          } catch (IOException e) {
-                            e.printStackTrace();
-                          }
-                        }
-                      } else {
-                        btnLogin.setDisable(false);
-                        txtUsername.setDisable(false);
-                        txtPassword.setDisable(false);
-                        hplRegister.setDisable(false);
-
-                        // Báo lỗi
-                        lblError.setText(response.message());
-                        lblError.setVisible(true);
-                        lblError.setTextFill(Color.web("#FF8A80"));
-                      }
-                    });
-              });
+      return;
     }
+
+    btnLogin.setDisable(true); // Khóa nút bấm, chống trường hợp nhồi c*t vào server(DDoS)
+    txtUsername.setDisable(true);
+    txtPassword.setDisable(true);
+    hplRegister.setDisable(true);
+
+    String user = txtUsername.getText();
+    String pass = txtPassword.getText();
+
+    // 1. Gói dữ liệu và tạo Request
+    LoginRequest payload = new LoginRequest(user, pass);
+    Request loginReq = new Request("LOGIN", payload);
+
+    // 2. Gửi qua mạng ngầm
+    CompletableFuture.supplyAsync(
+            () -> {
+              try {
+                // Gọi Singleton Client của bạn
+                return Client.getInstance().sendRequest(loginReq);
+              } catch (Exception e) {
+                return new Response(false, "Lỗi kết nối máy chủ!", null);
+              }
+            })
+        .thenAccept(
+            response -> {
+              // 3. Trở lại luồng UI để vẽ giao diện
+              Platform.runLater(
+                  () -> {
+                    if (response.success()) {
+                      // Móc DTO ra xem Role là gì
+                      LoginResponse authUser = (LoginResponse) response.data();
+                      // Thêm thông tin user cho session đó
+                      UserSession.getInstance().setCurrentUser(authUser);
+
+                      if ("ADMIN".equals(authUser.role())) {
+                        try {
+                          adminRoute = true;
+                          sellerRoute = false;
+                          bidderRoute = false;
+                          SceneSwitcherUtils.NewSceneController(
+                              event,
+                              "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
+                              "Blue88");
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+
+                      } else if ("SELLER".equals(authUser.role())) {
+                        try {
+                          adminRoute = false;
+                          sellerRoute = true;
+                          bidderRoute = false;
+                          SceneSwitcherUtils.NewSceneController(
+                              event,
+                              "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
+                              "Blue88");
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+
+                      } else if ("BIDDER".equals(authUser.role())) {
+                        try {
+                          adminRoute = false;
+                          sellerRoute = false;
+                          bidderRoute = true;
+                          SceneSwitcherUtils.NewSceneController(
+                              event,
+                              "/com/auctionapp/auctionappjava/views/NavigatorButtons.fxml",
+                              "Blue88");
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+                      }
+                    } else {
+                      btnLogin.setDisable(false);
+                      txtUsername.setDisable(false);
+                      txtPassword.setDisable(false);
+                      hplRegister.setDisable(false);
+
+                      // Báo lỗi
+                      lblError.setText(response.message());
+                      lblError.setVisible(true);
+                      lblError.setTextFill(Color.web("#FF8A80"));
+                    }
+                  });
+            });
   }
 
   @FXML

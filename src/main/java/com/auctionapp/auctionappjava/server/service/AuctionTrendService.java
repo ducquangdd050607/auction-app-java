@@ -4,10 +4,8 @@ import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.AuctionTrendResponse;
 import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
-import com.auctionapp.auctionappjava.server.dao.AutoBidDao;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAutoBidDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.BidTransaction;
@@ -27,7 +25,6 @@ public class AuctionTrendService {
 
   private final AuctionDao auctionDao;
   private final BidDao bidDao;
-  private final AutoBidDao botsDao;
 
   private final FrequencyAnalyzer frequencyAnalyzer;
   private final AutoBiddersAnalyzer autoBiddersAnalyzer;
@@ -37,7 +34,6 @@ public class AuctionTrendService {
   public AuctionTrendService() {
     this.auctionDao = new JdbcAuctionDao();
     this.bidDao = new JdbcBidDao();
-    this.botsDao = new JdbcAutoBidDao();
 
     this.frequencyAnalyzer = new FrequencyAnalyzer(this.bidDao);
     this.priceGrowthAnalyzer = new PriceGrowthAnalyzer();

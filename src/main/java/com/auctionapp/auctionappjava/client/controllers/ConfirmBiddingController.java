@@ -3,11 +3,13 @@ package com.auctionapp.auctionappjava.client.controllers;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.purifyingText;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.settingMoneyFormat;
+import static com.auctionapp.auctionappjava.common.util.ValidationUtils.*;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import com.auctionapp.auctionappjava.client.session.AuctionSession;
 import com.auctionapp.auctionappjava.client.session.UserSession;
 import com.auctionapp.auctionappjava.common.dto.*;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import com.auctionapp.auctionappjava.server.dao.BidDao;
@@ -117,193 +119,200 @@ public class ConfirmBiddingController {
 
   @FXML
   void handleTrueConfirm(ActionEvent event) {
-    if (txtSetPrice.getText().isEmpty()) {
-      lblError.setText("Hãy nhập giá tiền cược.");
-      lblError.setTextFill(Color.web("#FF8A80"));
+    try {
+      // 1. Kiểm tra các trường văn bản trống trước
+      requireText(txtSetPrice.getText(), "Giá tiền cược");
 
-    } else if (isAutoBidding
-        && ((txtSetAuto.getText().isEmpty()) || (txtSetMaxAuto.getText().isEmpty()))) {
-      lblError.setText("Hãy nhập giá tiền tự đặt cược.");
-      lblError.setTextFill(Color.web("#FF8A80"));
+      if (isAutoBidding) {
+        requireText(txtSetAuto.getText(), "Giá tiền tự đặt cược");
+        requireText(txtSetMaxAuto.getText(), "Giá tiền tự đặt cược");
+      }
 
-    } else if (isAutoBidding
-        && (((purifyingText(txtSetAuto.getText()).subtract(minIncrement))
-                .compareTo(new BigDecimal(0)))
-            < 0)) {
-      lblError.setText("Bước tiền tự đặt cược đang nhỏ hơn bước đặt");
-      lblError.setTextFill(Color.web("#FF8A80"));
+      // 2. Chuyển đổi dữ liệu chuỗi sang BigDecimal sau khi đã chắc chắn không trống
+      BigDecimal bidPrice = purifyingText(txtSetPrice.getText());
 
-    } else if (isAutoBidding
-        && (((purifyingText(txtSetMaxAuto.getText()).subtract(purifyingText(txtSetPrice.getText())))
-                .compareTo(new BigDecimal(0)))
-            < 0)) {
-      lblError.setText("Tiền tự đặt cược tối đa đang nhỏ hơn giá hiện tại");
-      lblError.setTextFill(Color.web("#FF8A80"));
+      // 3. Thực hiện các logic kiểm tra Auto Bidding chuyên sâu bằng Utils mới
+      if (isAutoBidding) {
+        BigDecimal autoStep = purifyingText(txtSetAuto.getText());
+        BigDecimal maxAuto = purifyingText(txtSetMaxAuto.getText());
 
-    } else if ((best.subtract(purifyingText(txtSetPrice.getText()))).compareTo(new BigDecimal(0))
-        > 0) {
-      lblError.setText("Tiền cược đang nhỏ hơn hiện tại!");
-      lblError.setTextFill(Color.web("#FF8A80"));
+        // Kiểm tra bước tiền tự đặt cược >= bước giá
+        requireValidAutoStep(autoStep, minIncrement);
 
-    } else if ((((purifyingText(txtSetPrice.getText())).subtract(best)).compareTo(minIncrement))
-        < 0) {
-      lblError.setText("Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".");
+        // Kiểm tra tiền tự đặt tối đa >= giá hiện tại nhập vào
+        requireValidAutoMax(maxAuto, bidPrice);
+      }
+
+      // 4. Kiểm tra logic đặt cược thông thường
+      requireGreaterThanBest(bidPrice, best);
+
+      // Kiểm tra số tiền lệch ra phải đạt tối thiểu bước giá (minIncrement)
+      requireValidIncrement(bidPrice, best, minIncrement);
+
+    } catch (ValidationException e) {
+      String errorMessage = e.getMessage();
+      // Custom
+      if ("Vui lòng nhiều hơn mức quy định.".equals(errorMessage)) {
+        errorMessage = "Vui lòng nhiều hơn mức " + lblMinIncrement.getText() + ".";
+      }
+
+      lblError.setText(errorMessage);
       lblError.setVisible(true);
       lblError.setTextFill(Color.web("#FF8A80"));
-    } else {
-      // Khóa nút đặt giá
-      btnConfirm.setDisable(true);
-
-      // Lấy số tiền người dùng chốt đặt
-      BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
-      // THÊM AUTO-BID UI: chụp lại trạng thái checkbox để request async không bị lệch nếu UI thay
-      // đổi.
-      boolean autoBidEnabled = isAutoBidding;
-
-      // Gói hàng gửi đi
-      PlaceBidRequest payload =
-          new PlaceBidRequest(
-              UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
-              UUID.fromString(userId), // ID người dùng hiện tại
-              finalBidAmount // Số tiền cược
-              );
-      Request bidReq = new Request("PLACE_BID", payload);
-
-      // THÊM AUTO-BID UI: nếu user bật checkbox thì gửi cấu hình auto-bid trước khi đặt giá.
-      Request autoBidReq = null;
-      if (autoBidEnabled) {
-        ConfigureAutoBidRequest autoBidPayload =
-            new ConfigureAutoBidRequest(
-                UUID.fromString(currentAuctionId),
-                UUID.fromString(userId),
-                purifyingText(txtSetMaxAuto.getText()),
-                purifyingText(txtSetAuto.getText()),
-                true);
-        autoBidReq = new Request("CONFIGURE_AUTO_BID", autoBidPayload);
-      }
-      Request finalAutoBidReq = autoBidReq;
-
-      // Chuẩn bị hình ảnh cho Alert
-      Image image =
-          new Image(
-              Objects.requireNonNull(
-                  getClass()
-                      .getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg")));
-      ImageView imageView = new ImageView(image);
-      imageView.setPreserveRatio(true);
-      imageView.setFitWidth(500);
-
-      CompletableFuture.supplyAsync(
-              () -> {
-                try {
-                  // THÊM AUTO-BID UI: lưu cấu hình auto-bid trước, nếu fail thì dừng và báo lỗi.
-                  if (finalAutoBidReq != null) {
-                    Response autoBidResponse = Client.getInstance().sendRequest(finalAutoBidReq);
-                    if (!autoBidResponse.success()) {
-                      return autoBidResponse;
-                    }
-                  }
-                  return Client.getInstance().sendRequest(bidReq);
-                } catch (Exception e) {
-                  return new Response(false, "Lỗi kết nối máy chủ!", null);
-                }
-              })
-          .thenAccept(
-              response -> {
-                Platform.runLater(
-                    () -> {
-                      if (response.success()) {
-                        // Cập nhật lại UserSession
-                        LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
-                        BigDecimal latestBalance = oldUser.walletBalance().subtract(finalBidAmount);
-                        BigDecimal latestAuctionPrice = finalBidAmount;
-
-                        // Khởi tạo biến lấy số lượng Bidder (mặc định lấy số cũ nếu lỗi)
-                        AuctionSummaryResponse oldData =
-                            AuctionSession.getInstance().getCurrentAuction();
-                        int latestBidderCount = oldData.bidderCount();
-
-                        if (response.data() instanceof Object[] resultData) {
-                          if (resultData.length > 0 && resultData[0] instanceof BigDecimal) {
-                            latestBalance = (BigDecimal) resultData[0];
-                          }
-                          if (resultData.length > 1 && resultData[1] instanceof BigDecimal) {
-                            latestAuctionPrice = (BigDecimal) resultData[1];
-                          }
-                          if (resultData.length > 2 && resultData[2] instanceof Integer) {
-                            latestBidderCount = (Integer) resultData[2];
-                          }
-                        } else if (response.data() instanceof BigDecimal) {
-                          latestBalance = (BigDecimal) response.data();
-                        }
-                        LoginResponse updatedUser =
-                            new LoginResponse(
-                                oldUser.id(),
-                                oldUser.username(),
-                                oldUser.fullName(),
-                                oldUser.role(),
-                                oldUser.email(),
-                                latestBalance,
-                                oldUser.accStatus());
-                        UserSession.getInstance().setCurrentUser(updatedUser);
-
-                        // Cập nhật lại AuctionSession
-                        AuctionSummaryResponse updatedData =
-                            new AuctionSummaryResponse(
-                                oldData.auctionId(),
-                                oldData.category(),
-                                oldData.itemName(),
-                                oldData.sellerName(),
-                                oldData.description(),
-                                oldData.startPrice(),
-                                latestAuctionPrice, // THÊM AUTO-BID RESULT: dùng giá cuối cùng sau
-                                // auto-bid.
-                                oldData.minimumIncrement(),
-                                oldData.startDateTime(),
-                                oldData.endDateTime(),
-                                oldData.timeLeft(),
-                                oldData.status(),
-                                latestBidderCount,
-                                null,
-                                oldData.bots());
-                        AuctionSession.getInstance().setCurrentAuction(updatedData);
-
-                        // Định nghĩa hành động sẽ xảy ra khi người dùng bấm nút OK trên Alert
-                        Runnable goBackToDetail =
-                            () -> {
-                              try {
-                                SceneSwitcherUtils.NewSceneController(
-                                    event,
-                                    "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml",
-                                    "Thông tin sản phẩm");
-                              } catch (IOException e) {
-                                e.printStackTrace();
-                              }
-                            };
-
-                        // Hiển thị Alert, truyền Runnable vào để khi tắt Alert nó tự nhảy trang
-                        AlertUtils.AnnouncementController(
-                            "Thông báo",
-                            "Đã đặt giá thành công!",
-                            goBackToDetail, // Gọi hàm chuyển trang
-                            imageView);
-                      } else {
-                        lblError.setText(response.message());
-                        lblError.setVisible(true);
-                        lblError.setTextFill(Color.web("#FF8A80"));
-
-                        // Nếu Server báo lỗi do thiếu tiền thì hiện nút nạp thêm
-                        if (response.message().toLowerCase().contains("số dư")) {
-                          btnMore.setManaged(true);
-                          btnMore.setVisible(true);
-                        }
-
-                        // Hiện lại nút bấm để người dùng có thể thao tác lại
-                        btnConfirm.setDisable(false);
-                      }
-                    });
-              });
+      return;
     }
+
+    // Khóa nút đặt giá
+    btnConfirm.setDisable(true);
+
+    // Lấy số tiền người dùng chốt đặt
+    BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
+    // THÊM AUTO-BID UI: chụp lại trạng thái checkbox để request async không bị lệch nếu UI thay
+    // đổi.
+    boolean autoBidEnabled = isAutoBidding;
+
+    // Gói hàng gửi đi
+    PlaceBidRequest payload =
+        new PlaceBidRequest(
+            UUID.fromString(currentAuctionId), // ID phiên đấu giá lấy từ biến ở trên
+            UUID.fromString(userId), // ID người dùng hiện tại
+            finalBidAmount // Số tiền cược
+            );
+    Request bidReq = new Request("PLACE_BID", payload);
+
+    // THÊM AUTO-BID UI: nếu user bật checkbox thì gửi cấu hình auto-bid trước khi đặt giá.
+    Request autoBidReq = null;
+    if (autoBidEnabled) {
+      ConfigureAutoBidRequest autoBidPayload =
+          new ConfigureAutoBidRequest(
+              UUID.fromString(currentAuctionId),
+              UUID.fromString(userId),
+              purifyingText(txtSetMaxAuto.getText()),
+              purifyingText(txtSetAuto.getText()),
+              true);
+      autoBidReq = new Request("CONFIGURE_AUTO_BID", autoBidPayload);
+    }
+    Request finalAutoBidReq = autoBidReq;
+
+    // Chuẩn bị hình ảnh cho Alert
+    Image image =
+        new Image(
+            Objects.requireNonNull(
+                getClass().getResourceAsStream("/com/auctionapp/auctionappjava/images/Mari.jpg")));
+    ImageView imageView = new ImageView(image);
+    imageView.setPreserveRatio(true);
+    imageView.setFitWidth(500);
+
+    CompletableFuture.supplyAsync(
+            () -> {
+              try {
+                // THÊM AUTO-BID UI: lưu cấu hình auto-bid trước, nếu fail thì dừng và báo lỗi.
+                if (finalAutoBidReq != null) {
+                  Response autoBidResponse = Client.getInstance().sendRequest(finalAutoBidReq);
+                  if (!autoBidResponse.success()) {
+                    return autoBidResponse;
+                  }
+                }
+                return Client.getInstance().sendRequest(bidReq);
+              } catch (Exception e) {
+                return new Response(false, "Lỗi kết nối máy chủ!", null);
+              }
+            })
+        .thenAccept(
+            response -> {
+              Platform.runLater(
+                  () -> {
+                    if (response.success()) {
+                      // Cập nhật lại UserSession
+                      LoginResponse oldUser = UserSession.getInstance().getCurrentUser();
+                      BigDecimal latestBalance = oldUser.walletBalance().subtract(finalBidAmount);
+                      BigDecimal latestAuctionPrice = finalBidAmount;
+
+                      // Khởi tạo biến lấy số lượng Bidder (mặc định lấy số cũ nếu lỗi)
+                      AuctionSummaryResponse oldData =
+                          AuctionSession.getInstance().getCurrentAuction();
+                      int latestBidderCount = oldData.bidderCount();
+
+                      if (response.data() instanceof Object[] resultData) {
+                        if (resultData.length > 0 && resultData[0] instanceof BigDecimal) {
+                          latestBalance = (BigDecimal) resultData[0];
+                        }
+                        if (resultData.length > 1 && resultData[1] instanceof BigDecimal) {
+                          latestAuctionPrice = (BigDecimal) resultData[1];
+                        }
+                        if (resultData.length > 2 && resultData[2] instanceof Integer) {
+                          latestBidderCount = (Integer) resultData[2];
+                        }
+                      } else if (response.data() instanceof BigDecimal) {
+                        latestBalance = (BigDecimal) response.data();
+                      }
+                      LoginResponse updatedUser =
+                          new LoginResponse(
+                              oldUser.id(),
+                              oldUser.username(),
+                              oldUser.fullName(),
+                              oldUser.role(),
+                              oldUser.email(),
+                              latestBalance,
+                              oldUser.accStatus());
+                      UserSession.getInstance().setCurrentUser(updatedUser);
+
+                      // Cập nhật lại AuctionSession
+                      AuctionSummaryResponse updatedData =
+                          new AuctionSummaryResponse(
+                              oldData.auctionId(),
+                              oldData.category(),
+                              oldData.itemName(),
+                              oldData.sellerName(),
+                              oldData.description(),
+                              oldData.startPrice(),
+                              latestAuctionPrice, // THÊM AUTO-BID RESULT: dùng giá cuối cùng sau
+                              // auto-bid.
+                              oldData.minimumIncrement(),
+                              oldData.startDateTime(),
+                              oldData.endDateTime(),
+                              oldData.timeLeft(),
+                              oldData.status(),
+                              latestBidderCount,
+                              null,
+                              oldData.bots());
+                      AuctionSession.getInstance().setCurrentAuction(updatedData);
+
+                      // Định nghĩa hành động sẽ xảy ra khi người dùng bấm nút OK trên Alert
+                      Runnable goBackToDetail =
+                          () -> {
+                            try {
+                              SceneSwitcherUtils.NewSceneController(
+                                  event,
+                                  "/com/auctionapp/auctionappjava/views/AuctionDetailScreen.fxml",
+                                  "Thông tin sản phẩm");
+                            } catch (IOException e) {
+                              e.printStackTrace();
+                            }
+                          };
+
+                      // Hiển thị Alert, truyền Runnable vào để khi tắt Alert nó tự nhảy trang
+                      AlertUtils.AnnouncementController(
+                          "Thông báo",
+                          "Đã đặt giá thành công!",
+                          goBackToDetail, // Gọi hàm chuyển trang
+                          imageView);
+                    } else {
+                      lblError.setText(response.message());
+                      lblError.setVisible(true);
+                      lblError.setTextFill(Color.web("#FF8A80"));
+
+                      // Nếu Server báo lỗi do thiếu tiền thì hiện nút nạp thêm
+                      if (response.message().toLowerCase().contains("số dư")) {
+                        btnMore.setManaged(true);
+                        btnMore.setVisible(true);
+                      }
+
+                      // Hiện lại nút bấm để người dùng có thể thao tác lại
+                      btnConfirm.setDisable(false);
+                    }
+                  });
+            });
   }
 
   @FXML
