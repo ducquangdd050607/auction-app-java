@@ -3,11 +3,14 @@ package com.auctionapp.auctionappjava.server.service;
 import static com.auctionapp.auctionappjava.common.util.MoneyUtils.formatMoney;
 
 import com.auctionapp.auctionappjava.common.dto.Response;
+import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.server.dao.AuctionDao;
+import com.auctionapp.auctionappjava.server.dao.AuctionItemDao;
 import com.auctionapp.auctionappjava.server.dao.NotificationDao;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionItemDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcNotificationDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
 import com.auctionapp.auctionappjava.server.model.Auction;
@@ -177,6 +180,41 @@ public class AuctionStatusService {
                   sellerId.toString(),
                   new Response(true, "SERVER_PUSH_WALLET_NOTIFICATION", sellerNotiMsg));
         }
+
+        // Thông báo cho admin
+        // Tạm mượn ItemDao để lấy tên sản phẩm
+        String itemName = "Không rõ";
+        try {
+          AuctionItemDao itemDao = new JdbcAuctionItemDao();
+          itemName = itemDao.findById(auction.getItemId()).get().getTitle();
+        } catch (Exception ignored) {
+        }
+
+        // ...rồi tìm tên người bán
+        String sellerName = "một người bán";
+        Optional<User> sellerOpt = userDao.findById(auction.getSellerId());
+        if (sellerOpt.isPresent()) {
+          sellerName = sellerOpt.get().getFullName();
+        }
+
+        // ... rồi lấy tên sản phẩm và người bán gửi thông báo cho admin
+        List<UserDetailResponse> admins =
+            userDao.findAllDetails().stream().filter(u -> "ADMIN".equals(u.role())).toList();
+        for (UserDetailResponse admin : admins) {
+          String adminMsg =
+              "🎉 Phiên đấu giá sản phẩm '"
+                  + itemName
+                  + "' của "
+                  + sellerName
+                  + " vừa chính thức khép lại.";
+          notificationDao.createNotification(
+              UUID.fromString(admin.userId()), auction.getId(), "ADMIN_SYS", adminMsg);
+          SessionManager.getInstance()
+              .sendToUser(
+                  admin.userId(), new Response(true, "SERVER_PUSH_ADMIN_NOTIFICATION", adminMsg));
+        }
+
+        auctionDao.save(auction);
 
         auctionDao.save(auction);
 

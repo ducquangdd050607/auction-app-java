@@ -43,6 +43,10 @@ public class NotificationUtils {
           icon = "🎉";
           iconStyle += "-fx-background-color: #F3E5F5; -fx-text-fill: #9C27B0;"; // Tím nhạt mộng mơ
           break;
+        case "ADMIN_SYS":
+          icon = "🛡";
+          iconStyle += "-fx-background-color: #ECEFF1; -fx-text-fill: #607D8B;"; // Xám xanh
+          break;
         default:
           iconStyle +=
               "-fx-background-color: #E7F3FF; -fx-text-fill: #1877F2;"; // Xanh dương mặc định

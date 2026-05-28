@@ -169,6 +169,14 @@ public class RealtimeHandler {
           NavigatorController.instance.addNotification(bidSuccessMsg, "BID_SUCCESS");
         }
         break;
+
+      // Gói tin thông báo dành cho Admin
+      case "SERVER_PUSH_ADMIN_NOTIFICATION":
+        String adminMsg = (String) response.data();
+        if (NavigatorController.instance != null) {
+          NavigatorController.instance.addNotification(adminMsg, "ADMIN_SYS");
+        }
+        break;
     }
   }
 }

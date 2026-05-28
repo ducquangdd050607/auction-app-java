@@ -471,6 +471,9 @@ public class NavigatorController implements Initializable {
                     case "BID_SUCCESS":
                       if (btnHistory != null) btnHistory.fire();
                       break;
+                    case "ADMIN_SYS":
+                      if (btnTransactionList != null) btnTransactionList.fire();
+                      break;
                   }
                 };
           }

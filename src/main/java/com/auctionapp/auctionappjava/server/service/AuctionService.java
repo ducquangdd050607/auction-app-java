@@ -463,6 +463,35 @@ public class AuctionService {
                                 true, "SERVER_PUSH_SELLER_BID_NOTIFICATION", sellerBidMessage));
                   }
 
+                  // Thông báo cho admin
+                  // Lấy tên người dùng trước
+                  String bidderName = "Một người dùng";
+                  Optional<User> bidderOpt = userDao.findById(currentBidderId);
+                  if (bidderOpt.isPresent()) {
+                    bidderName = bidderOpt.get().getFullName();
+                  }
+                  // ...sau đó gửi noti cho admin
+                  List<UserDetailResponse> admins =
+                      userDao.findAllDetails().stream()
+                          .filter(u -> "ADMIN".equals(u.role()))
+                          .toList();
+                  for (UserDetailResponse admin : admins) {
+                    String adminMsg =
+                        "🎉 Người dùng "
+                            + bidderName
+                            + " vừa đặt giá "
+                            + formatMoney(placeBidData.amount())
+                            + " VNĐ cho sản phẩm '"
+                            + itemName
+                            + "'.";
+                    notificationDao.createNotification(
+                        UUID.fromString(admin.userId()), auction.getId(), "ADMIN_SYS", adminMsg);
+                    SessionManager.getInstance()
+                        .sendToUser(
+                            admin.userId(),
+                            new Response(true, "SERVER_PUSH_ADMIN_NOTIFICATION", adminMsg));
+                  }
+
                   // THÊM AUTO-BID ENGINE: sau bid tay, kiểm tra các cấu hình auto-bid và đặt giá tự
                   // động nếu cần..
                   processAutoBid(auction.getId());
@@ -669,6 +698,32 @@ public class AuctionService {
           .sendToUser(
               sellerId.toString(),
               new Response(true, "SERVER_PUSH_SELLER_BID_NOTIFICATION", sellerBidMessage));
+    }
+
+    // Thông báo cho admin
+    // Lấy tên người dùng trước
+    String bidderName = "Một người dùng";
+    Optional<User> bidderOpt = userDao.findById(bidderId);
+    if (bidderOpt.isPresent()) {
+      bidderName = bidderOpt.get().getFullName();
+    }
+    // ...sau đó gửi noti cho admin
+    List<UserDetailResponse> admins =
+        userDao.findAllDetails().stream().filter(u -> "ADMIN".equals(u.role())).toList();
+    for (UserDetailResponse admin : admins) {
+      String adminMsg =
+          "🎉 Người dùng "
+              + bidderName
+              + " vừa đặt giá bằng autobid "
+              + formatMoney(amount)
+              + " VNĐ cho sản phẩm '"
+              + itemName
+              + "'.";
+      notificationDao.createNotification(
+          UUID.fromString(admin.userId()), auction.getId(), "ADMIN_SYS", adminMsg);
+      SessionManager.getInstance()
+          .sendToUser(
+              admin.userId(), new Response(true, "SERVER_PUSH_ADMIN_NOTIFICATION", adminMsg));
     }
   }
 
