@@ -82,7 +82,6 @@ public class DashboardController implements Initializable {
   @FXML private ImageView imgProduct2;
   @FXML private ImageView imgProduct3;
 
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
@@ -94,7 +93,7 @@ public class DashboardController implements Initializable {
       greetingSub = "Have a nice day :D";
     } else if (randomInt == 1) {
       greetingSub = "Good day ni99a >:C";
-    }  else {
+    } else {
       greetingSub = "Oi, gitgud son :D";
     }
 
@@ -251,19 +250,19 @@ public class DashboardController implements Initializable {
                       lblItemName3.setText(mostExpiredAuction.itemName());
                       endTime3.setText(mostExpiredAuction.endDateTime());
                       lblItemPrice3.setText(
-                              MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
+                          MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
                       lblItemDesc3.setText(isDescriptionEmpty(mostExpiredAuction.description()));
                       loadImageForCard(mostExpiredAuction.auctionId(), imgProduct3);
 
                       btnGo3.setOnAction(
-                              event -> {
-                                try {
-                                  AuctionSession.getInstance().setCurrentAuction(mostExpiredAuction);
-                                  handleDetail(mostExpiredAuction);
-                                } catch (IOException e) {
-                                  e.printStackTrace();
-                                }
-                              });
+                          event -> {
+                            try {
+                              AuctionSession.getInstance().setCurrentAuction(mostExpiredAuction);
+                              handleDetail(mostExpiredAuction);
+                            } catch (IOException e) {
+                              e.printStackTrace();
+                            }
+                          });
 
                       if (auctionsFromServer.size() < 3) {
                         // Ẩn đi itemCard 1 (Đông nhất) và itemCard 2 (Xu hướng)
@@ -280,37 +279,36 @@ public class DashboardController implements Initializable {
                         lblItemName1.setText(mostBiddedAuction.itemName());
                         endTime1.setText(mostBiddedAuction.endDateTime());
                         lblItemPrice1.setText(
-                                MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
+                            MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
                         lblItemDesc1.setText(isDescriptionEmpty(mostBiddedAuction.description()));
                         loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
 
                         lblItemName2.setText(mostTreadingAuction.itemName());
                         endTime2.setText(mostTreadingAuction.endDateTime());
                         lblItemPrice2.setText(
-                                MoneyUtils.formatMoney(mostTreadingAuction.currentPrice()));
+                            MoneyUtils.formatMoney(mostTreadingAuction.currentPrice()));
                         lblItemDesc2.setText(isDescriptionEmpty(mostTreadingAuction.description()));
                         loadImageForCard(mostTreadingAuction.auctionId(), imgProduct2);
 
                         btnGo1.setOnAction(
-                                event -> {
-                                  try {
-                                    AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
-                                    handleDetail(mostBiddedAuction);
-                                  } catch (IOException e) {
-                                    e.printStackTrace();
-                                  }
-                                });
+                            event -> {
+                              try {
+                                AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
+                                handleDetail(mostBiddedAuction);
+                              } catch (IOException e) {
+                                e.printStackTrace();
+                              }
+                            });
 
                         btnGo2.setOnAction(
-                                event -> {
-                                  try {
-                                    AuctionSession.getInstance().setCurrentAuction(mostTreadingAuction);
-                                    handleDetail(mostTreadingAuction);
-                                  } catch (IOException e) {
-                                    e.printStackTrace();
-                                  }
-                                });
-
+                            event -> {
+                              try {
+                                AuctionSession.getInstance().setCurrentAuction(mostTreadingAuction);
+                                handleDetail(mostTreadingAuction);
+                              } catch (IOException e) {
+                                e.printStackTrace();
+                              }
+                            });
                       }
                       updateTimersUI();
                     } else {
