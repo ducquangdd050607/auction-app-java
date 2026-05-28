@@ -19,11 +19,7 @@ import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.enums.ItemType;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.exception.ConflictException;
-import com.auctionapp.auctionappjava.common.exception.DatabaseException;
-import com.auctionapp.auctionappjava.common.exception.InsufficientBalanceException;
-import com.auctionapp.auctionappjava.common.exception.NotFoundException;
-import com.auctionapp.auctionappjava.common.exception.ValidationException;
+import com.auctionapp.auctionappjava.common.exception.*;
 import com.auctionapp.auctionappjava.server.dao.*;
 import com.auctionapp.auctionappjava.server.dao.jdbc.*;
 import com.auctionapp.auctionappjava.server.factory.AuctionItemFactory;
@@ -818,6 +814,8 @@ public class AuctionService {
 
   public Response handleRemoveAuction(RemoveAuctionRequest data) {
     try {
+      validateRemoveAuctionRequest(data);
+
       UUID userId = UUID.fromString(data.userId());
       UUID auctionId = UUID.fromString(data.auctionId());
 
@@ -831,7 +829,7 @@ public class AuctionService {
         Optional<User> sellerOpt = userDao.findSellerByAuctionId(auctionId);
 
         if (sellerOpt.isEmpty() || !sellerOpt.get().getId().equals(currentUser.getId())) {
-          return new Response(false, "SELLER không thể xóa các phiên của SELLER khác", null);
+          throw new AuthorizationException("SELLER không thể xóa các phiên của SELLER khác.");
         }
       }
 
@@ -855,8 +853,12 @@ public class AuctionService {
         return new Response(false, "Không tìm thấy vật phẩm của phiên đấu giá này", null);
       }
 
+    } catch (InvalidRequestException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
       return new Response(false, "Định dạng UUID không hợp lệ!", null);
+    } catch (AuthorizationException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Lỗi máy chủ khi thực hiện xóa!", null);
@@ -904,6 +906,20 @@ public class AuctionService {
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Lỗi máy chủ khi tải ảnh", null);
+    }
+  }
+
+  private void validateRemoveAuctionRequest(RemoveAuctionRequest data) {
+    if (data == null) {
+      throw new InvalidRequestException("Yêu cầu xóa phiên đấu giá không hợp lệ.");
+    }
+
+    if (data.userId() == null || data.userId().isBlank()) {
+      throw new InvalidRequestException("Thiếu userId.");
+    }
+
+    if (data.auctionId() == null || data.auctionId().isBlank()) {
+      throw new InvalidRequestException("Thiếu auctionId.");
     }
   }
 }

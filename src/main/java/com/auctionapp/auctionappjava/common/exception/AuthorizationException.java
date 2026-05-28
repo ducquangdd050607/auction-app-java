@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.common.exception;
 
+// lỗi phân quyền
 public class AuthorizationException extends AppException {
   public AuthorizationException(String message) {
     super(message);

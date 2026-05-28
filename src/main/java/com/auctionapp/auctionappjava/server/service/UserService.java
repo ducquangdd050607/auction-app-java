@@ -4,6 +4,7 @@ import static java.time.LocalDateTime.now;
 
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.exception.AuthException;
 import com.auctionapp.auctionappjava.common.exception.NotFoundException;
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
@@ -51,15 +52,17 @@ public class UserService {
                   user.isActive());
 
           if (!user.isActive()) {
-            return new Response(false, "Tài khoản đã bị chặn", null);
+            throw new AuthException("Tài khoản đã bị chặn");
           }
 
           return new Response(true, "Đăng nhập thành công!", loginRes);
         } else {
-          return new Response(false, "Sai mật khẩu!", null);
+          throw new AuthException("Sai mật khẩu!");
         }
       }
-      return new Response(false, "Tài khoản không tồn tại!", null);
+      throw new AuthException("Tài khoản không tồn tại!");
+    } catch (AuthException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Lỗi máy chủ cơ sở dữ liệu!", null);
