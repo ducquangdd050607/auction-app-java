@@ -12,8 +12,6 @@ import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
-import com.auctionapp.auctionappjava.server.dao.BidDao;
-import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Objects;

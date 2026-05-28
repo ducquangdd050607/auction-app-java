@@ -10,6 +10,7 @@ import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.common.exception.AppException;
 import com.auctionapp.auctionappjava.common.util.AlertUtils;
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -20,8 +21,6 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

@@ -1,9 +1,8 @@
 package com.auctionapp.auctionappjava.client;
 
 import com.auctionapp.auctionappjava.client.network.Client;
-import java.io.IOException;
-
 import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -13,7 +13,10 @@ import javafx.stage.Stage;
 
 public class SceneSwitcherUtils {
 
-  public static Image icon = new Image(SceneSwitcherUtils.class.getResourceAsStream("/com/auctionapp/auctionappjava/images/IconApp.png"));
+  public static Image icon =
+      new Image(
+          SceneSwitcherUtils.class.getResourceAsStream(
+              "/com/auctionapp/auctionappjava/images/IconApp.png"));
 
   public static void PopupController(ActionEvent event, String address, String title)
       throws IOException {
