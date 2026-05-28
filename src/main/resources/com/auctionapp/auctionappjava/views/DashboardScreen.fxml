@@ -106,7 +106,7 @@
                     </children>
                 </HBox>
 
-                <Label style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #333;" text="Các phiên đấu giá nổi bật:" />
+                <Label fx:id="lblTitle" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #333;" text="Phiên đấu giá nổi bật:" />
                 <StackPane minHeight="317.0">
                     <ListView fx:id="boxLoading" prefHeight="370.0" prefWidth="952.0" style="-fx-background-color: transparent; -fx-border-color: transparent;">
                         <cursor>
@@ -116,7 +116,7 @@
 
                     <HBox fx:id="boxItems" alignment="CENTER" prefWidth="952.0" spacing="14.0">
                         <children>
-                            <VBox fx:id="itemCard1" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard1" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="NEVER">
                                 <children>
                                     <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>
@@ -179,14 +179,14 @@
                                 </children>
                             </VBox>
 
-                            <VBox fx:id="itemCard2" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard2" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="NEVER">
                                 <children>
                                     <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>
                                             <Insets bottom="10" left="14" right="14" top="10" />
                                         </padding>
                                         <children>
-                                            <Label fx:id="lb" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="Phiên đấu giá đang xu hướng nhất:" />
+                                            <Label fx:id="lblTrendingAuction" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="Phiên đấu giá đang xu hướng nhất:" />
                                         </children>
                                     </HBox>
                                     <VBox prefWidth="310.0" spacing="8" VBox.vgrow="ALWAYS">
@@ -242,14 +242,14 @@
                                 </children>
                             </VBox>
 
-                            <VBox fx:id="itemCard3" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="ALWAYS">
+                            <VBox fx:id="itemCard3" maxHeight="290.0" prefHeight="290.0" prefWidth="310.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),8,0,0,3);" HBox.hgrow="NEVER">
                                 <children>
                                     <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #2E7D9B; -fx-background-radius: 12 12 0 0;">
                                         <padding>
                                             <Insets bottom="10" left="14" right="14" top="10" />
                                         </padding>
                                         <children>
-                                 <Label fx:id="lblTimer31" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="Phiên đấu giá sắp kết thúc:" />
+                                 <Label fx:id="lblLatestOrMostExpiredAuction" style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 4; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold; -fx-padding: 3 8 3 8;" text="Phiên đấu giá sắp kết thúc:" />
                                         </children>
                                     </HBox>
                                     <VBox prefWidth="310.0" spacing="8" VBox.vgrow="ALWAYS">

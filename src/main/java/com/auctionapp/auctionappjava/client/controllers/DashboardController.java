@@ -14,6 +14,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.animation.Animation;
@@ -54,7 +55,6 @@ public class DashboardController implements Initializable {
   @FXML private Label endTime3;
   @FXML private VBox itemCard1;
   @FXML private VBox itemCard2;
-  @FXML private VBox itemCard3;
   @FXML private Label lblBalance;
   @FXML private Label lblBidders;
   @FXML private Label lblCompleted;
@@ -71,21 +71,39 @@ public class DashboardController implements Initializable {
   @FXML private Label lblItemPrice2;
   @FXML private Label lblItemPrice3;
   @FXML private Label lblRUNNINGs;
-  @FXML private Label lblCrowdedAuction;
   @FXML private Label lblTimer1;
   @FXML private Label lblTimer2;
   @FXML private Label lblTimer3;
+  @FXML private Label lblLatestOrMostExpiredAuction;
+  @FXML private Label lblTitle;
   @FXML private HBox boxItems;
   @FXML private ListView<?> boxLoading;
   @FXML private ImageView imgProduct1;
   @FXML private ImageView imgProduct2;
   @FXML private ImageView imgProduct3;
 
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+
+    Random rand = new Random();
+    String greetingSub;
+    int randomInt = rand.nextInt(3);
+
+    if (randomInt == 0) {
+      greetingSub = "Have a nice day :D";
+    } else if (randomInt == 1) {
+      greetingSub = "Good day ni99a >:C";
+    }  else {
+      greetingSub = "Oi, gitgud son :D";
+    }
+
     try {
       lblGreeting.setText(
           "Xin chào, " + UserSession.getInstance().getCurrentUser().fullName() + "!");
+
+      lblGreetingSub.setText(greetingSub);
+
       lblBalance.setText(
           MoneyUtils.formatMoney(UserSession.getInstance().getCurrentUser().walletBalance())
               + " VND");
@@ -229,59 +247,71 @@ public class DashboardController implements Initializable {
                       // Điền dữ liệu mới vào bảng
                       mostBiddedAuction = auctionsFromServer.get(0);
                       mostExpiredAuction = auctionsFromServer.get(1);
-                      mostTreadingAuction = auctionsFromServer.get(2);
-
-                      lblItemName1.setText(mostBiddedAuction.itemName());
-                      endTime1.setText(mostBiddedAuction.endDateTime());
-                      lblItemPrice1.setText(
-                          MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
-                      lblItemDesc1.setText(isDescriptionEmpty(mostBiddedAuction.description()));
-                      loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
-
-                      lblItemName2.setText(mostTreadingAuction.itemName());
-                      endTime2.setText(mostTreadingAuction.endDateTime());
-                      lblItemPrice2.setText(
-                          MoneyUtils.formatMoney(mostTreadingAuction.currentPrice()));
-                      lblItemDesc2.setText(isDescriptionEmpty(mostTreadingAuction.description()));
-                      loadImageForCard(mostTreadingAuction.auctionId(), imgProduct2);
 
                       lblItemName3.setText(mostExpiredAuction.itemName());
                       endTime3.setText(mostExpiredAuction.endDateTime());
                       lblItemPrice3.setText(
-                          MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
+                              MoneyUtils.formatMoney(mostExpiredAuction.currentPrice()));
                       lblItemDesc3.setText(isDescriptionEmpty(mostExpiredAuction.description()));
                       loadImageForCard(mostExpiredAuction.auctionId(), imgProduct3);
 
-                      btnGo1.setOnAction(
-                          event -> {
-                            try {
-                              AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
-                              handleDetail(mostBiddedAuction);
-                            } catch (IOException e) {
-                              e.printStackTrace();
-                            }
-                          });
-
-                      btnGo2.setOnAction(
-                          event -> {
-                            try {
-                              AuctionSession.getInstance().setCurrentAuction(mostTreadingAuction);
-                              handleDetail(mostTreadingAuction);
-                            } catch (IOException e) {
-                              e.printStackTrace();
-                            }
-                          });
-
                       btnGo3.setOnAction(
-                          event -> {
-                            try {
-                              AuctionSession.getInstance().setCurrentAuction(mostExpiredAuction);
-                              handleDetail(mostExpiredAuction);
-                            } catch (IOException e) {
-                              e.printStackTrace();
-                            }
-                          });
+                              event -> {
+                                try {
+                                  AuctionSession.getInstance().setCurrentAuction(mostExpiredAuction);
+                                  handleDetail(mostExpiredAuction);
+                                } catch (IOException e) {
+                                  e.printStackTrace();
+                                }
+                              });
 
+                      if (auctionsFromServer.size() < 3) {
+                        // Ẩn đi itemCard 1 (Đông nhất) và itemCard 2 (Xu hướng)
+                        itemCard1.setVisible(false);
+                        itemCard2.setVisible(false);
+                        itemCard1.setManaged(false);
+                        itemCard2.setManaged(false);
+
+                        lblLatestOrMostExpiredAuction.setText("Phiên đấu giá mới:");
+
+                      } else {
+                        mostTreadingAuction = auctionsFromServer.get(2);
+
+                        lblItemName1.setText(mostBiddedAuction.itemName());
+                        endTime1.setText(mostBiddedAuction.endDateTime());
+                        lblItemPrice1.setText(
+                                MoneyUtils.formatMoney(mostBiddedAuction.currentPrice()));
+                        lblItemDesc1.setText(isDescriptionEmpty(mostBiddedAuction.description()));
+                        loadImageForCard(mostBiddedAuction.auctionId(), imgProduct1);
+
+                        lblItemName2.setText(mostTreadingAuction.itemName());
+                        endTime2.setText(mostTreadingAuction.endDateTime());
+                        lblItemPrice2.setText(
+                                MoneyUtils.formatMoney(mostTreadingAuction.currentPrice()));
+                        lblItemDesc2.setText(isDescriptionEmpty(mostTreadingAuction.description()));
+                        loadImageForCard(mostTreadingAuction.auctionId(), imgProduct2);
+
+                        btnGo1.setOnAction(
+                                event -> {
+                                  try {
+                                    AuctionSession.getInstance().setCurrentAuction(mostBiddedAuction);
+                                    handleDetail(mostBiddedAuction);
+                                  } catch (IOException e) {
+                                    e.printStackTrace();
+                                  }
+                                });
+
+                        btnGo2.setOnAction(
+                                event -> {
+                                  try {
+                                    AuctionSession.getInstance().setCurrentAuction(mostTreadingAuction);
+                                    handleDetail(mostTreadingAuction);
+                                  } catch (IOException e) {
+                                    e.printStackTrace();
+                                  }
+                                });
+
+                      }
                       updateTimersUI();
                     } else {
                       Label noDataLabel = new Label("Không tìm thấy phiên đấu giá nào hoạt động.");
