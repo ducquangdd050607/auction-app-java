@@ -129,7 +129,7 @@ public class AuctionTrendService {
             .setScale(4, RoundingMode.HALF_UP);
     // Debug
     System.out.printf(
-        "[Trend] %s | G=%.4f F=%.4f A=%.4f TP=%.4f → Score=%.4f%n",
+        "[Trend] %s | G=%.4f F=%.4f A=%.4f TP=%.4f -> Score=%.4f%n",
         summary.auctionId(),
         growthVal.doubleValue(),
         freqVal.doubleValue(),

@@ -10,32 +10,32 @@ import com.auctionapp.auctionappjava.server.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("UserFactory — tạo đúng loại User theo Role")
+@DisplayName("UserFactory - tao dung loai User theo Role")
 class UserFactoryTest {
 
   @Test
-  @DisplayName("create(ADMIN) phải trả về instance Admin")
+  @DisplayName("create(ADMIN) phai tra ve instance Admin")
   void create_admin_returnsAdminInstance() {
     User user = UserFactory.create(Role.ADMIN);
     assertInstanceOf(Admin.class, user);
   }
 
   @Test
-  @DisplayName("create(SELLER) phải trả về instance Seller")
+  @DisplayName("create(SELLER) phai tra ve instance Seller")
   void create_seller_returnsSellerInstance() {
     User user = UserFactory.create(Role.SELLER);
     assertInstanceOf(Seller.class, user);
   }
 
   @Test
-  @DisplayName("create(BIDDER) phải trả về instance Bidder")
+  @DisplayName("create(BIDDER) phai tra ve instance Bidder")
   void create_bidder_returnsBidderInstance() {
     User user = UserFactory.create(Role.BIDDER);
     assertInstanceOf(Bidder.class, user);
   }
 
   @Test
-  @DisplayName("create(null) phải mặc định về Bidder (không crash)")
+  @DisplayName("create(null) phai mac dinh ve Bidder (khong crash)")
   void create_null_defaultsToBidder() {
     // Code gốc: role == null ? Role.BIDDER : role — phải trả về Bidder
     User user = UserFactory.create(null);
@@ -45,7 +45,7 @@ class UserFactoryTest {
   }
 
   @Test
-  @DisplayName("User được tạo phải có đúng Role tương ứng")
+  @DisplayName("User duoc tao phai co dung Role tuong ung")
   void create_userShouldHaveCorrectRole() {
     assertEquals(Role.ADMIN, UserFactory.create(Role.ADMIN).getRole());
     assertEquals(Role.SELLER, UserFactory.create(Role.SELLER).getRole());
@@ -53,7 +53,7 @@ class UserFactoryTest {
   }
 
   @Test
-  @DisplayName("Mỗi lần gọi phải tạo ra đối tượng mới (không dùng singleton)")
+  @DisplayName("Moi lan goi phai tao ra doi tuong moi (khong dung singleton)")
   void create_shouldReturnNewInstanceEachCall() {
     User user1 = UserFactory.create(Role.BIDDER);
     User user2 = UserFactory.create(Role.BIDDER);

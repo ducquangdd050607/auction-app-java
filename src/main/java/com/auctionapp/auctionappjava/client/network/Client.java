@@ -38,7 +38,7 @@ public class Client {
     out = new ObjectOutputStream(socket.getOutputStream());
     out.flush();
     in = new ObjectInputStream(socket.getInputStream());
-    System.out.println("Đã kết nối thành công tới Server!");
+    System.out.println("Da ket noi thanh cong toi Server!");
 
     // Kích hoạt luồng ngầm lắng nghe bằng runAsync
     CompletableFuture.runAsync(() -> listenToServer());

@@ -139,6 +139,8 @@ public class UserService {
       }
     } catch (ValidationException e) {
       return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "Vai tro khong hop le!!", null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Loi may chu khi luu du lieu!", null);
@@ -165,6 +167,10 @@ public class UserService {
 
       return new Response(true, "Thay đổi thành công", null);
 
+    } catch (ValidationException | NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId khong hop le", null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Loi may chu khi thay doi thong tin", null);
@@ -188,6 +194,10 @@ public class UserService {
 
       return new Response(true, "Đổi mật khẩu thành công", null);
 
+    } catch (NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId khong hop le", null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Loi may chu khi thay doi mat khau", null);

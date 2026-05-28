@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("AntiSnipingExtensionStrategy — chống đặt giá cuối giờ")
+@DisplayName("AntiSnipingExtensionStrategy - chong dat gia cuoi gio")
 class AntiSnipingExtensionStrategyTest {
 
   // Cấu hình: nếu còn <= 30 giây thì gia hạn thêm 60 giây
@@ -42,7 +42,7 @@ class AntiSnipingExtensionStrategyTest {
 
   // shouldExtend
   @Test
-  @DisplayName("shouldExtend — đặt giá khi còn 10 giây → phải gia hạn")
+  @DisplayName("shouldExtend - dat gia khi con 10 giay -> phai gia han")
   void shouldExtend_whenBidWithin10Seconds_returnsTrue() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(10); // còn 10s < 30s ngưỡng
@@ -53,7 +53,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("shouldExtend — đặt giá đúng ngưỡng 30 giây → phải gia hạn")
+  @DisplayName("shouldExtend - dat gia dung nguong 30 giay -> phai gia han")
   void shouldExtend_atExactThreshold_returnsTrue() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(30); // đúng bằng ngưỡng
@@ -62,7 +62,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("shouldExtend — đặt giá khi còn 60 giây → KHÔNG gia hạn")
+  @DisplayName("shouldExtend - dat gia khi con 60 giay -> KHONG gia han")
   void shouldExtend_whenBidFarFromEnd_returnsFalse() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(60); // còn 60s > 30s ngưỡng
@@ -73,7 +73,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("shouldExtend — đặt giá khi đã hết giờ (âm) → KHÔNG gia hạn")
+  @DisplayName("shouldExtend - dat gia khi da het gio (am) -> KHONG gia han")
   void shouldExtend_whenAuctionAlreadyEnded_returnsFalse() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.minusSeconds(5); // đã kết thúc 5 giây trước
@@ -83,7 +83,7 @@ class AntiSnipingExtensionStrategyTest {
 
   // ================================================================ extendTo
   @Test
-  @DisplayName("extendTo — khi cần gia hạn, endTime phải tăng thêm đúng extensionSeconds")
+  @DisplayName("extendTo - khi can gia han, endTime phai tang them dung extensionSeconds")
   void extendTo_shouldAddExtensionSecondsToEndTime() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(10); // còn 10s → gia hạn
@@ -95,7 +95,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("extendTo — khi KHÔNG cần gia hạn, phải trả về endTime gốc")
+  @DisplayName("extendTo - khi KHONG can gia han, phai tra ve endTime goc")
   void extendTo_whenShouldNotExtend_returnsOriginalEndTime() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(120); // còn 120s → không gia hạn
@@ -107,7 +107,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("extendTo — kiểm tra gia hạn với ngưỡng tùy chỉnh (60s/120s)")
+  @DisplayName("extendTo - kiem tra gia han voi nguong tuy chinh (60s/120s)")
   void extendTo_withCustomConfig_shouldRespectCustomExtension() {
     // Tạo strategy với config khác: ngưỡng 60s, gia hạn 120s
     AntiSnipingExtensionStrategy customStrategy = new AntiSnipingExtensionStrategy(60, 120);
@@ -122,7 +122,7 @@ class AntiSnipingExtensionStrategyTest {
   }
 
   @Test
-  @DisplayName("shouldExtend và extendTo phải nhất quán với nhau")
+  @DisplayName("shouldExtend va extendTo phai nhat quan voi nhau")
   void shouldExtend_andExtendTo_mustBeConsistent() {
     LocalDateTime bidTime = LocalDateTime.now();
     LocalDateTime endTime = bidTime.plusSeconds(5);

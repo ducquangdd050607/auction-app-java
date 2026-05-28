@@ -29,7 +29,7 @@ public class ClientHandler implements Runnable {
   @Override
   public void run() {
     String threadName = Thread.currentThread().getName();
-    System.out.println("[" + threadName + "] Bắt đầu phục vụ Client: " + socket.getInetAddress());
+    System.out.println("[" + threadName + "] Bat dau phuc vu Client: " + socket.getInetAddress());
     ObjectOutputStream out = null;
     ObjectInputStream in = null;
     String currentUserId = null;
