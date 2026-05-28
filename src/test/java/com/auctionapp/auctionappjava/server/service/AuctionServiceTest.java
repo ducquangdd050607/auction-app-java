@@ -15,7 +15,7 @@ class AuctionServiceTest {
     Response response = auctionService.handleRemoveAuction(null);
 
     assertFalse(response.success());
-    assertEquals("Yeu cau xoa phien dau gia khong hop le.", response.message());
+    assertEquals("Yêu cầu xóa phiên đấu giá không hợp lệ.", response.message());
     assertNull(response.data());
   }
 
@@ -29,7 +29,7 @@ class AuctionServiceTest {
     Response response = auctionService.handleRemoveAuction(request);
 
     assertFalse(response.success());
-    assertEquals("Thieu userId.", response.message());
+    assertEquals("Thiếu userId.", response.message());
   }
 
   @Test
@@ -42,6 +42,6 @@ class AuctionServiceTest {
     Response response = auctionService.handleRemoveAuction(request);
 
     assertFalse(response.success());
-    assertEquals("Thieu auctionId.", response.message());
+    assertEquals("Thiếu auctionId.", response.message());
   }
 }

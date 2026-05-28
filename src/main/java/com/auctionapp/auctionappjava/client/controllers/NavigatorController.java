@@ -400,6 +400,9 @@ public class NavigatorController implements Initializable {
               Platform.runLater(
                   () -> {
                     if (response.success()) {
+                      // Xóa hết noti người đăng nhập trước
+                      notificationList.getChildren().clear();
+
                       // Ép kiểu trực tiếp sang danh sách DTO
                       List<NotificationResponse> list =
                           (List<NotificationResponse>) response.data();
@@ -544,6 +547,20 @@ public class NavigatorController implements Initializable {
     Runnable switchScene =
         () -> {
           try {
+            // Báo server biết đã logout để clear noti
+            if (UserSession.getInstance().getCurrentUser() != null) {
+              String oldUserId = UserSession.getInstance().getCurrentUser().id();
+              Request logoutReq = new Request("LOGOUT", oldUserId);
+
+              CompletableFuture.runAsync(
+                  () -> {
+                    try {
+                      Client.getInstance().sendRequest(logoutReq);
+                    } catch (Exception ignored) {
+                    }
+                  });
+            }
+
             // Xóa thông tin user trong session này
             UserSession.getInstance().cleanUserSession();
             AuctionSession.getInstance().cleanAuctionSession();

@@ -258,6 +258,8 @@ public class AddItemController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    datePickerStart.setEditable(false);
+    datePickerEnd.setEditable(false);
 
     cbHoursStart.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
     cbHoursEnd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));

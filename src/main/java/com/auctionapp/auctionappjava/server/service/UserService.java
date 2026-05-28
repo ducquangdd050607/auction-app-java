@@ -140,10 +140,10 @@ public class UserService {
     } catch (ValidationException e) {
       return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
-      return new Response(false, "Vai tro khong hop le!!", null);
+      return new Response(false, "Vai trò không hợp lệ!", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Loi may chu khi luu du lieu!", null);
+      return new Response(false, "Lỗi máy chủ khi lưu dữ liệu!", null);
     }
   }
 
@@ -170,10 +170,10 @@ public class UserService {
     } catch (ValidationException | NotFoundException e) {
       return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
-      return new Response(false, "UserId khong hop le", null);
+      return new Response(false, "UserId không hợp lệ", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Loi may chu khi thay doi thong tin", null);
+      return new Response(false, "Lỗi máy chủ khi thay đổi thông tin", null);
     }
   }
 
@@ -197,10 +197,10 @@ public class UserService {
     } catch (NotFoundException e) {
       return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
-      return new Response(false, "UserId khong hop le", null);
+      return new Response(false, "UserId không hợp lệ", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Loi may chu khi thay doi mat khau", null);
+      return new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
     }
   }
 
@@ -214,7 +214,7 @@ public class UserService {
       return new Response(false, "Không tìm thấy ví", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Loi khi lay so du", null);
+      return new Response(false, "Lỗi khi lấy số dư", null);
     }
   }
 
@@ -251,19 +251,19 @@ public class UserService {
       return new Response(false, "Người dùng không tồn tại", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Loi may chu", null);
+      return new Response(false, "Lỗi máy chủ khi lấy dữ liệu", null);
     }
   }
 
   private void validateRegister(RegisterRequest data) {
     if (data == null) {
-      throw new ValidationException("Du lieu dang ky khong hop le");
+      throw new ValidationException("Dữ liệu đăng kí không hợp lệ");
     }
     ValidationUtils.requireText(data.username(), "Tên đăng nhập");
     ValidationUtils.requireText(data.fullName(), "Họ tên");
     ValidationUtils.requireEmail(data.email());
     if (data.role() == null || data.role().isBlank()) {
-      throw new ValidationException("Vai tro khong hop le!!");
+      throw new ValidationException("Vai trò không hợp lệ!");
     }
   }
 }

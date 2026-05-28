@@ -81,6 +81,12 @@ public class RankingListController {
     instance = this;
     AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();
 
+    if (!LoginController.adminRoute) {
+      btnRemove.setDisable(true);
+      btnRemove.setVisible(false);
+      btnRemove.setManaged(false);
+    }
+
     lblStartingPrice.setText(formatMoney(currentAuction.startPrice()) + " VND");
     lblTopBid.setText(formatMoney(currentAuction.currentPrice()) + " VND");
     lblMinIncrement.setText(formatMoney(currentAuction.minimumIncrement()) + " VND");
@@ -292,11 +298,6 @@ public class RankingListController {
       Stage stage = (Stage) btnBack.getScene().getWindow();
       stage.close();
     }
-  }
-
-  @FXML
-  void handleBidders(ActionEvent event) {
-    loadBiddersFromServer(true);
   }
 
   @FXML

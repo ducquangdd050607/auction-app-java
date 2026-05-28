@@ -322,6 +322,10 @@ public class ConfirmBiddingController {
   public void showOutbidWarning() {
     Platform.runLater(
         () -> {
+          // Nếu nút đã bị khóa (Do người dùng vừa tự bấm đặt giá xong, hoặc đã hiện cảnh báo rồi)
+          // thì KHÔNG CHO PHÉP hiện thêm cảnh báo nào nữa để tránh đè Alert
+          if (btnConfirm.isDisabled()) return;
+
           // Khóa cứng nút bấm ngay lập tức
           btnConfirm.setDisable(true);
 

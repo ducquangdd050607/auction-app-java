@@ -68,7 +68,7 @@ public class Client {
   // Hàm dùng chung cho mọi Controller để gửi Request và lấy Response
   public synchronized Response sendRequest(Request request) throws Exception {
     if (socket == null || socket.isClosed()) {
-      throw new NetworkException("Chua ket noi den may chu!");
+      throw new NetworkException("Chưa kết nối đến máy chủ!");
     }
 
     // Ném gói tin lên Server

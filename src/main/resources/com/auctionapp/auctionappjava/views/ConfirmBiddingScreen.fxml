@@ -81,7 +81,7 @@
             <children>
                <HBox alignment="CENTER" spacing="8">
                   <children>
-                     <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Bạn muốn tự động đặt: " />
+                     <Label prefHeight="25.0" prefWidth="193.0" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="Bước đặt giá tự động:" />
                      <TextField fx:id="txtSetAuto" focusTraversable="false" prefHeight="26.0" prefWidth="195.0" promptText="Nhập lượng tiền..." />
                   </children>
                </HBox>

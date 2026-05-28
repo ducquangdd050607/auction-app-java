@@ -142,10 +142,17 @@ public class ClientHandler implements Runnable {
               // Gửi danh sách DTO đi
               response = new Response(true, "Lấy thông báo thành công", notiResponseList);
             } catch (Exception e) {
-              response = new Response(false, "Loi lay thong bao", null);
+              response = new Response(false, "Lỗi lấy thông báo", null);
             }
             break;
 
+          // Thêm request đăng xuất để clear noti cũ
+          case "LOGOUT":
+            String logoutUserId = (String) request.payload();
+            SessionManager.getInstance().removeSession(logoutUserId);
+
+            response = new Response(true, "Đã đăng xuất khỏi Server", null);
+            break;
           default:
             response = new Response(false, "Hành động không hợp lệ: " + request.action(), null);
             break;
