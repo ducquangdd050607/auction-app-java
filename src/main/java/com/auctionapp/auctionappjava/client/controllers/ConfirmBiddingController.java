@@ -39,7 +39,6 @@ public class ConfirmBiddingController {
   private final String userId = UserSession.getInstance().getCurrentUser().id();
   private final String currentAuctionId =
       AuctionSession.getInstance().getCurrentAuction().auctionId();
-  private final BidDao bidDao = new JdbcBidDao();
 
   @FXML private Button btnMore;
 
@@ -164,7 +163,8 @@ public class ConfirmBiddingController {
 
     // Khóa nút đặt giá
     btnConfirm.setDisable(true);
-
+    lblError.setVisible(false);
+    lblError.setManaged(false);
     // Lấy số tiền người dùng chốt đặt
     BigDecimal finalBidAmount = purifyingText(txtSetPrice.getText());
     // THÊM AUTO-BID UI: chụp lại trạng thái checkbox để request async không bị lệch nếu UI thay
