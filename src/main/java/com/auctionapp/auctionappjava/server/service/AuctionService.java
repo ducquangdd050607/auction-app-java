@@ -64,7 +64,7 @@ public class AuctionService {
       return new Response(true, "Tải dữ liệu thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -75,7 +75,7 @@ public class AuctionService {
       return new Response(true, "Tải dữ liệu thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -87,7 +87,7 @@ public class AuctionService {
       return new Response(true, "Tải dữ liệu thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -98,7 +98,7 @@ public class AuctionService {
       return new Response(true, "Tải dữ liệu thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -110,7 +110,7 @@ public class AuctionService {
       return new Response(true, "Tải bảng xếp hạng thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất xếp hạng!", null);
+      return new Response(false, "Loi may chu khi truy xuat xep hang!", null);
     }
   }
 
@@ -241,12 +241,12 @@ public class AuctionService {
     try {
       Optional<Auction> auctionOpt = auctionDao.findById(data.auctionId());
       if (auctionOpt.isEmpty()) {
-        throw new NotFoundException("Phiên đấu giá không tồn tại!");
+        throw new NotFoundException("Phien dau gia khong ton tai!");
       }
 
       Auction auction = auctionOpt.get();
       if (data.maxBid().compareTo(auction.getCurrentPrice()) < 0) {
-        throw new ConflictException("Max auto-bid phải lớn hơn hoặc bằng giá hiện tại!");
+        throw new ConflictException("Max auto-bid phai lon hon hoac bang gia hien tai!");
       }
 
       if (data.incrementAmount().compareTo(auction.getMinimumIncrement()) < 0) {
@@ -271,7 +271,7 @@ public class AuctionService {
       return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi cấu hình auto-bid!", null);
+      return new Response(false, "Loi may chu khi cau hinh auto-bid!", null);
     }
   }
 
@@ -288,7 +288,7 @@ public class AuctionService {
         Optional<Auction> auctionOpt = auctionDao.findById(placeBidData.auctionId());
 
         if (auctionOpt.isEmpty()) {
-          throw new NotFoundException("Phiên đấu giá không tồn tại!");
+          throw new NotFoundException("Phien dau gia khong ton tai!");
         } else {
           Auction auction = auctionOpt.get();
 
@@ -300,22 +300,22 @@ public class AuctionService {
 
           if (auction.getStatus() != AuctionStatus.OPEN
               && auction.getStatus() != AuctionStatus.RUNNING) {
-            throw new ConflictException("Phiên đấu giá đã kết thúc hoặc chưa bắt đầu!");
+            throw new ConflictException("Phien dau gia da ket thuc hoac chua bat dau!");
           } else if (auction.getEndTime() != null && !auction.getEndTime().isAfter(now())) {
-            throw new ConflictException("Phiên đấu giá đã kết thúc!");
+            throw new ConflictException("Phien dau gia da ket thuc!");
           } else {
             BigDecimal minRequiredPrice =
                 auction.getCurrentPrice().add(auction.getMinimumIncrement());
 
             if (placeBidData.amount().compareTo(minRequiredPrice) < 0) {
-              throw new ValidationException("Giá đặt phải từ " + minRequiredPrice + " trở lên!");
+              throw new ValidationException("Gia dat phai tu " + minRequiredPrice + " tro len!");
             } else {
               // Kiểm tra ví tiền người đặt mới
               UUID currentBidderId = placeBidData.userId();
               Optional<Wallet> currentBidderWalletOpt = userDao.findWalletByUserId(currentBidderId);
 
               if (currentBidderWalletOpt.isEmpty()) {
-                throw new NotFoundException("Lỗi: Không tìm thấy ví tiền của người dùng!");
+                throw new NotFoundException("Loi: Khong tim thay vi tien cua nguoi dung!");
               } else {
                 Wallet currentBidderWallet = currentBidderWalletOpt.get();
 
@@ -329,7 +329,7 @@ public class AuctionService {
 
                 // Dùng availableBalance để kiểm tra thay vì getBalance() gốc
                 if (availableBalance.compareTo(placeBidData.amount()) < 0) {
-                  throw new InsufficientBalanceException("Số dư trong ví không đủ để đặt giá!");
+                  throw new InsufficientBalanceException("So du trong vi khong du de dat gia!");
 
                 } else {
                   // Hoàn tiền người dẫn đầu cũ (nếu có)
@@ -530,7 +530,7 @@ public class AuctionService {
       return new Response(false, "Loi du lieu/ket noi khi xu ly dat gia!", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi xử lý đặt giá!", null);
+      return new Response(false, "Loi may chu khi xu ly dat gia!", null);
     }
   }
 
@@ -795,10 +795,10 @@ public class AuctionService {
     } catch (ValidationException e) {
       return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
-      return new Response(false, "Sai định dạng loại sản phẩm!", null);
+      return new Response(false, "Sai dinh dang loai san pham!", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi lưu sản phẩm: " + e.getMessage(), null);
+      return new Response(false, "Loi may chu khi luu san pham: " + e.getMessage(), null);
     }
   }
 
@@ -808,7 +808,7 @@ public class AuctionService {
       return new Response(true, "Tải danh sách user thành công!", responseList);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -829,7 +829,7 @@ public class AuctionService {
         Optional<User> sellerOpt = userDao.findSellerByAuctionId(auctionId);
 
         if (sellerOpt.isEmpty() || !sellerOpt.get().getId().equals(currentUser.getId())) {
-          throw new AuthorizationException("SELLER không thể xóa các phiên của SELLER khác.");
+          throw new AuthorizationException("SELLER khong the xoa cac phien cua SELLER khac.");
         }
       }
 
@@ -856,12 +856,12 @@ public class AuctionService {
     } catch (InvalidRequestException e) {
       return new Response(false, e.getMessage(), null);
     } catch (IllegalArgumentException e) {
-      return new Response(false, "Định dạng UUID không hợp lệ!", null);
+      return new Response(false, "Dinh dang UUID khong hop le!", null);
     } catch (AuthorizationException e) {
       return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi thực hiện xóa!", null);
+      return new Response(false, "Loi may chu khi thuc hien xoa!", null);
     }
   }
 
@@ -889,7 +889,7 @@ public class AuctionService {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi truy xuất danh sách!", null);
+      return new Response(false, "Loi may chu khi truy xuat danh sach!", null);
     }
   }
 
@@ -905,21 +905,21 @@ public class AuctionService {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi tải ảnh", null);
+      return new Response(false, "Loi may chu khi tai anh", null);
     }
   }
 
   private void validateRemoveAuctionRequest(RemoveAuctionRequest data) {
     if (data == null) {
-      throw new InvalidRequestException("Yêu cầu xóa phiên đấu giá không hợp lệ.");
+      throw new InvalidRequestException("Yeu cau xoa phien dau gia khong hop le.");
     }
 
     if (data.userId() == null || data.userId().isBlank()) {
-      throw new InvalidRequestException("Thiếu userId.");
+      throw new InvalidRequestException("Thieu userId.");
     }
 
     if (data.auctionId() == null || data.auctionId().isBlank()) {
-      throw new InvalidRequestException("Thiếu auctionId.");
+      throw new InvalidRequestException("Thieu auctionId.");
     }
   }
 }
