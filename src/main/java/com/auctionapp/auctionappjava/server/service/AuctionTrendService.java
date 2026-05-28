@@ -65,7 +65,7 @@ public class AuctionTrendService {
       return new Response(true, "Tải xu hướng đấu giá thành công", trends);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi phân tích xu hướng: " + e.getMessage(), null);
+      return new Response(false, "Loi may chu khi phan tich xu huong: " + e.getMessage(), null);
     }
   }
 
@@ -129,7 +129,7 @@ public class AuctionTrendService {
             .setScale(4, RoundingMode.HALF_UP);
     // Debug
     System.out.printf(
-        "[Trend] %s | G=%.4f F=%.4f A=%.4f TP=%.4f → Score=%.4f%n",
+        "[Trend] %s | G=%.4f F=%.4f A=%.4f TP=%.4f -> Score=%.4f%n",
         summary.auctionId(),
         growthVal.doubleValue(),
         freqVal.doubleValue(),
@@ -182,7 +182,7 @@ public class AuctionTrendService {
 
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi khi xác định phiên xu hướng: " + e.getMessage(), null);
+      return new Response(false, "Loi khi xac dinh phien xu huong: " + e.getMessage(), null);
     }
   }
 }

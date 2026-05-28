@@ -4,6 +4,7 @@ import static java.time.LocalDateTime.now;
 
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.Role;
+import com.auctionapp.auctionappjava.common.exception.AuthException;
 import com.auctionapp.auctionappjava.common.exception.NotFoundException;
 import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
@@ -51,18 +52,20 @@ public class UserService {
                   user.isActive());
 
           if (!user.isActive()) {
-            return new Response(false, "Tài khoản đã bị chặn", null);
+            throw new AuthException("Tai khoan da bi chan");
           }
 
           return new Response(true, "Đăng nhập thành công!", loginRes);
         } else {
-          return new Response(false, "Sai mật khẩu!", null);
+          throw new AuthException("Sai mat khau!");
         }
       }
-      return new Response(false, "Tài khoản không tồn tại!", null);
+      throw new AuthException("Tai khoan khong ton tai!");
+    } catch (AuthException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ cơ sở dữ liệu!", null);
+      return new Response(false, "Loi may chu co so du lieu!", null);
     }
   }
 
@@ -72,7 +75,7 @@ public class UserService {
           || depositData.userId() == null
           || depositData.amount() == null
           || depositData.amount().compareTo(BigDecimal.ZERO) <= 0) {
-        throw new ValidationException(" Số tiền nạp phải lớn hơn 0!");
+        throw new ValidationException(" So tien nap phai lon hon 0!");
       }
       Optional<Wallet> wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()));
       if (wallet.isPresent()) {
@@ -81,9 +84,11 @@ public class UserService {
         userDao.saveWallet(depositWallet);
         return new Response(true, "Nạp tiền thành công", null);
       } else return new Response(false, "Có lỗi khi nạp tiền", null);
+    } catch (ValidationException | IllegalArgumentException e) {
+      return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Nạp thất bại", null);
+      return new Response(false, "Nap that bai", null);
     }
   }
 
@@ -132,9 +137,13 @@ public class UserService {
         // 8. Báo thành công
         return new Response(true, "Đăng ký tài khoản thành công!", null);
       }
+    } catch (ValidationException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "Vai tro khong hop le!!", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi lưu dữ liệu!", null);
+      return new Response(false, "Loi may chu khi luu du lieu!", null);
     }
   }
 
@@ -158,9 +167,13 @@ public class UserService {
 
       return new Response(true, "Thay đổi thành công", null);
 
+    } catch (ValidationException | NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId khong hop le", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi thay đổi thông tin", null);
+      return new Response(false, "Loi may chu khi thay doi thong tin", null);
     }
   }
 
@@ -181,9 +194,13 @@ public class UserService {
 
       return new Response(true, "Đổi mật khẩu thành công", null);
 
+    } catch (NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId khong hop le", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
+      return new Response(false, "Loi may chu khi thay doi mat khau", null);
     }
   }
 
@@ -197,7 +214,7 @@ public class UserService {
       return new Response(false, "Không tìm thấy ví", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi khi lấy số dư", null);
+      return new Response(false, "Loi khi lay so du", null);
     }
   }
 
@@ -234,19 +251,19 @@ public class UserService {
       return new Response(false, "Người dùng không tồn tại", null);
     } catch (Exception e) {
       e.printStackTrace();
-      return new Response(false, "Lỗi máy chủ", null);
+      return new Response(false, "Loi may chu", null);
     }
   }
 
   private void validateRegister(RegisterRequest data) {
     if (data == null) {
-      throw new ValidationException("Dữ liệu đăng ký không hợp lệ");
+      throw new ValidationException("Du lieu dang ky khong hop le");
     }
     ValidationUtils.requireText(data.username(), "Tên đăng nhập");
     ValidationUtils.requireText(data.fullName(), "Họ tên");
     ValidationUtils.requireEmail(data.email());
     if (data.role() == null || data.role().isBlank()) {
-      throw new ValidationException("Vai trò không hợp lệ!!");
+      throw new ValidationException("Vai tro khong hop le!!");
     }
   }
 }

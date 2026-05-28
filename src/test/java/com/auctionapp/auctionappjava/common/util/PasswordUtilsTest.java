@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("PasswordUtils — bảo mật mật khẩu")
+@DisplayName("PasswordUtils - bao mat mat khau")
 class PasswordUtilsTest {
 
   // ================================================================ generateSalt
   @Test
-  @DisplayName("generateSalt phải trả về chuỗi hex 32 ký tự (16 bytes)")
+  @DisplayName("generateSalt phai tra ve chuoi hex 32 ky tu (16 bytes)")
   void generateSalt_shouldReturn32CharHexString() {
     String salt = PasswordUtils.generateSalt();
 
@@ -20,7 +20,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("generateSalt phải cho kết quả ngẫu nhiên mỗi lần gọi")
+  @DisplayName("generateSalt phai cho ket qua ngau nhien moi lan goi")
   void generateSalt_shouldBeRandom() {
     String salt1 = PasswordUtils.generateSalt();
     String salt2 = PasswordUtils.generateSalt();
@@ -31,7 +31,7 @@ class PasswordUtilsTest {
 
   // ================================================================ hashPassword
   @Test
-  @DisplayName("hashPassword cùng input phải cho cùng output (deterministic)")
+  @DisplayName("hashPassword cung input phai cho cung output (deterministic)")
   void hashPassword_shouldBeDeterministic() {
     String salt = "fixed-salt-for-test";
     String hash1 = PasswordUtils.hashPassword("myPassword", salt);
@@ -41,7 +41,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("hashPassword với salt khác nhau phải cho kết quả khác (chống rainbow table)")
+  @DisplayName("hashPassword voi salt khac nhau phai cho ket qua khac (chong rainbow table)")
   void hashPassword_differentSalts_shouldProduceDifferentHashes() {
     String hash1 = PasswordUtils.hashPassword("samePassword", "salt-A");
     String hash2 = PasswordUtils.hashPassword("samePassword", "salt-B");
@@ -50,7 +50,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("hashPassword với password khác nhau phải cho kết quả khác")
+  @DisplayName("hashPassword voi password khac nhau phai cho ket qua khac")
   void hashPassword_differentPasswords_shouldProduceDifferentHashes() {
     String salt = PasswordUtils.generateSalt();
     String hash1 = PasswordUtils.hashPassword("password-one", salt);
@@ -60,7 +60,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("hashPassword phải trả về chuỗi hex SHA-256 (64 ký tự)")
+  @DisplayName("hashPassword phai tra ve chuoi hex SHA-256 (64 ky tu)")
   void hashPassword_shouldReturn64CharSha256Hex() {
     String hash = PasswordUtils.hashPassword("anyPassword", "anySalt");
 
@@ -71,7 +71,7 @@ class PasswordUtilsTest {
 
   // ================================================================ verifyPassword
   @Test
-  @DisplayName("verifyPassword — happy path: đúng mật khẩu phải trả về true")
+  @DisplayName("verifyPassword - happy path: dung mat khau phai tra ve true")
   void verifyPassword_withCorrectCredentials_shouldReturnTrue() {
     String rawPassword = "SuperSecret@123";
     String salt = PasswordUtils.generateSalt();
@@ -83,7 +83,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("verifyPassword — sai mật khẩu phải trả về false")
+  @DisplayName("verifyPassword - sai mat khau phai tra ve false")
   void verifyPassword_withWrongPassword_shouldReturnFalse() {
     String salt = PasswordUtils.generateSalt();
     String hash = PasswordUtils.hashPassword("correctPassword", salt);
@@ -93,7 +93,7 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("verifyPassword — sai salt phải trả về false")
+  @DisplayName("verifyPassword - sai salt phai tra ve false")
   void verifyPassword_withWrongSalt_shouldReturnFalse() {
     String correctSalt = PasswordUtils.generateSalt();
     String hash = PasswordUtils.hashPassword("password", correctSalt);
@@ -104,25 +104,25 @@ class PasswordUtilsTest {
   }
 
   @Test
-  @DisplayName("verifyPassword — password null phải trả về false (không crash)")
+  @DisplayName("verifyPassword - password null phai tra ve false (khong crash)")
   void verifyPassword_withNullPassword_shouldReturnFalse() {
     assertFalse(PasswordUtils.verifyPassword(null, "salt", "hash"));
   }
 
   @Test
-  @DisplayName("verifyPassword — salt null phải trả về false (không crash)")
+  @DisplayName("verifyPassword - salt null phai tra ve false (khong crash)")
   void verifyPassword_withNullSalt_shouldReturnFalse() {
     assertFalse(PasswordUtils.verifyPassword("password", null, "hash"));
   }
 
   @Test
-  @DisplayName("verifyPassword — hash null phải trả về false (không crash)")
+  @DisplayName("verifyPassword - hash null phai tra ve false (khong crash)")
   void verifyPassword_withNullHash_shouldReturnFalse() {
     assertFalse(PasswordUtils.verifyPassword("password", "salt", null));
   }
 
   @Test
-  @DisplayName("verifyPassword — toàn bộ input null phải trả về false")
+  @DisplayName("verifyPassword - toan bo input null phai tra ve false")
   void verifyPassword_withAllNull_shouldReturnFalse() {
     assertFalse(PasswordUtils.verifyPassword(null, null, null));
   }

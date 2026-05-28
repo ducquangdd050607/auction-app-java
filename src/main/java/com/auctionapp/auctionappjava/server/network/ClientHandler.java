@@ -29,7 +29,7 @@ public class ClientHandler implements Runnable {
   @Override
   public void run() {
     String threadName = Thread.currentThread().getName();
-    System.out.println("[" + threadName + "] Bắt đầu phục vụ Client: " + socket.getInetAddress());
+    System.out.println("[" + threadName + "] Bat dau phuc vu Client: " + socket.getInetAddress());
     ObjectOutputStream out = null;
     ObjectInputStream in = null;
     String currentUserId = null;
@@ -142,7 +142,7 @@ public class ClientHandler implements Runnable {
               // Gửi danh sách DTO đi
               response = new Response(true, "Lấy thông báo thành công", notiResponseList);
             } catch (Exception e) {
-              response = new Response(false, "Lỗi lấy thông báo", null);
+              response = new Response(false, "Loi lay thong bao", null);
             }
             break;
 
@@ -159,7 +159,7 @@ public class ClientHandler implements Runnable {
       }
 
     } catch (Exception e) {
-      System.out.println("[" + threadName + "] Client đã ngắt kết nối. Lỗi: " + e.getMessage());
+      System.out.println("[" + threadName + "] Client da ngat ket noi. Loi: " + e.getMessage());
     } finally {
       if (currentUserId != null) {
         SessionManager.getInstance().removeSession(currentUserId);

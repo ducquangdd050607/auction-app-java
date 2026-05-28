@@ -38,7 +38,7 @@ public class Client {
     out = new ObjectOutputStream(socket.getOutputStream());
     out.flush();
     in = new ObjectInputStream(socket.getInputStream());
-    System.out.println("Đã kết nối thành công tới Server!");
+    System.out.println("Da ket noi thanh cong toi Server!");
 
     // Kích hoạt luồng ngầm lắng nghe bằng runAsync
     CompletableFuture.runAsync(() -> listenToServer());
@@ -68,7 +68,7 @@ public class Client {
   // Hàm dùng chung cho mọi Controller để gửi Request và lấy Response
   public synchronized Response sendRequest(Request request) throws Exception {
     if (socket == null || socket.isClosed()) {
-      throw new NetworkException("Chưa kết nối đến máy chủ!");
+      throw new NetworkException("Chua ket noi den may chu!");
     }
 
     // Ném gói tin lên Server
