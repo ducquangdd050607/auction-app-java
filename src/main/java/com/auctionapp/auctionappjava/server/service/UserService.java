@@ -1,151 +1,269 @@
 package com.auctionapp.auctionappjava.server.service;
 
+import static java.time.LocalDateTime.now;
+
 import com.auctionapp.auctionappjava.common.dto.*;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.factory.UserFactory;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
+import com.auctionapp.auctionappjava.common.exception.AuthException;
+import com.auctionapp.auctionappjava.common.exception.NotFoundException;
+import com.auctionapp.auctionappjava.common.exception.ValidationException;
 import com.auctionapp.auctionappjava.common.util.PasswordUtils;
+import com.auctionapp.auctionappjava.common.util.ValidationUtils;
+import com.auctionapp.auctionappjava.server.dao.AuctionDao;
+import com.auctionapp.auctionappjava.server.dao.BidDao;
+import com.auctionapp.auctionappjava.server.dao.NotificationDao;
 import com.auctionapp.auctionappjava.server.dao.UserDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcAuctionDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
+import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcNotificationDao;
 import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcUserDao;
-
+import com.auctionapp.auctionappjava.server.factory.UserFactory;
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
+import com.auctionapp.auctionappjava.server.network.SessionManager;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.time.LocalDateTime.now;
-
 public class UserService {
-    // Service sẽ ôm các DAO tương ứng
-    private final UserDao userDao = new JdbcUserDao();
+  // Service sẽ ôm các DAO tương ứng
+  private final UserDao userDao = new JdbcUserDao();
+  private final BidDao bidDao = new JdbcBidDao();
+  private final AuctionDao auctionDao = new JdbcAuctionDao();
+  private final NotificationDao notificationDao = new JdbcNotificationDao();
 
-    public Response handleLogin(LoginRequest loginData) {
-        try {
-            Optional<User> userOptional = userDao.findByName(loginData.username());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                if (PasswordUtils.verifyPassword(loginData.password(), user.getPasswordSalt(), user.getPasswordHash())) {
-                    BigDecimal balance = userDao.findWalletByUserId(user.getId()).get().getBalance();
-                    LoginResponse loginRes = new LoginResponse(
-                            user.getId().toString(), user.getUsername(), user.getFullName(),
-                            user.getRole().name(), user.getEmail(), balance, user.isActive()
-                    );
+  public Response handleLogin(LoginRequest loginData) {
+    try {
+      Optional<User> userOptional = userDao.findByName(loginData.username());
+      if (userOptional.isPresent()) {
+        User user = userOptional.get();
+        if (PasswordUtils.verifyPassword(
+            loginData.password(), user.getPasswordSalt(), user.getPasswordHash())) {
+          BigDecimal balance = userDao.findWalletByUserId(user.getId()).get().getBalance();
+          LoginResponse loginRes =
+              new LoginResponse(
+                  user.getId().toString(),
+                  user.getUsername(),
+                  user.getFullName(),
+                  user.getRole().name(),
+                  user.getEmail(),
+                  balance,
+                  user.isActive());
 
-                    if (!user.isActive()) {
-                        return new Response(false, "Tài khoản đã bị chặn", null);
-                    }
+          if (!user.isActive()) {
+            throw new AuthException("Tai khoan da bi chan");
+          }
 
-                    return new Response(true, "Đăng nhập thành công!", loginRes);
-                } else {
-                    return new Response(false, "Sai mật khẩu!", null);
-                }
-            }
-            return new Response(false, "Tài khoản không tồn tại!", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ cơ sở dữ liệu!", null);
+          return new Response(true, "Đăng nhập thành công!", loginRes);
+        } else {
+          throw new AuthException("Sai mat khau!");
         }
+      }
+      throw new AuthException("Tai khoan khong ton tai!");
+    } catch (AuthException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Loi may chu co so du lieu!", null);
     }
+  }
 
-    public Response handleDeposit(DepositRequest depositData) {
-        try {
-            Wallet wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy ví"));
+  public Response handleDeposit(DepositRequest depositData) {
+    try {
+      if (depositData == null
+          || depositData.userId() == null
+          || depositData.amount() == null
+          || depositData.amount().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new ValidationException(" So tien nap phai lon hon 0!");
+      }
+      Optional<Wallet> wallet = userDao.findWalletByUserId(UUID.fromString(depositData.userId()));
+      if (wallet.isPresent()) {
+        Wallet depositWallet = wallet.get();
+        depositWallet.setBalance(depositWallet.getBalance().add(depositData.amount()));
+        userDao.saveWallet(depositWallet);
+        return new Response(true, "Nạp tiền thành công", null);
+      } else return new Response(false, "Có lỗi khi nạp tiền", null);
+    } catch (ValidationException | IllegalArgumentException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Nap that bai", null);
+    }
+  }
 
-            wallet.setBalance(wallet.getBalance().add(depositData.amount()));
-            userDao.saveWallet(wallet);
-            return new Response(true, "Nạp tiền thành công", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Nạp thất bại", null);
+  public Response handleRegister(RegisterRequest registerData) {
+    try {
+      validateRegister(registerData);
+      // 1. Kiểm tra xem username đã tồn tại trong DB chưa?
+      if (userDao.findByName(registerData.username()).isPresent()) {
+        return new Response(false, "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác!", null);
+      } else if (userDao.findByEmail(registerData.email()).isPresent()) {
+        return new Response(false, "Email đã tồn tại vui lòng chọn email khác!", null);
+      } else {
+        // 2. Tạo đối tượng User mới (Abstract factory ở UserFactory)
+        Role roleEnum = Role.valueOf(registerData.role().toUpperCase());
+        User newUser = UserFactory.create(roleEnum);
+
+        // 3. Gắn dữ liệu
+        newUser.setId(UUID.randomUUID());
+        newUser.setUsername(registerData.username());
+        newUser.setPasswordSalt(PasswordUtils.generateSalt());
+        newUser.setPasswordHash(
+            PasswordUtils.hashPassword(registerData.password(), newUser.getPasswordSalt()));
+        newUser.setFullName(registerData.fullName());
+        newUser.setEmail(registerData.email());
+        newUser.setRole(roleEnum);
+        newUser.setActive(true);
+        newUser.setCreatedAt(now());
+        newUser.setUpdatedAt(now());
+
+        // 4. Gọi DAO để INSERT xuống database
+        userDao.save(newUser);
+
+        // 5. Tạo luôn một cái Ví (Wallet) 0 đồng cho tài khoản mới này
+        Wallet newWallet =
+            new Wallet(UUID.randomUUID(), now(), now(), newUser.getId(), BigDecimal.ZERO);
+        userDao.saveWallet(newWallet);
+
+        // 6. Thêm 1 noti welcome khi ms register xong
+        String welcomeMsg =
+            "🎉 Chào mừng " + newUser.getFullName() + " đã gia nhập hệ thống đấu giá Blue88!";
+        notificationDao.createNotification(newUser.getId(), null, "WELCOME", welcomeMsg);
+
+        // 7. Báo cho admin biết có user mới
+        SessionManager.getInstance().broadcast(new Response(true, "SERVER_PUSH_NEW_USER", null));
+
+        // 8. Báo thành công
+        return new Response(true, "Đăng ký tài khoản thành công!", null);
+      }
+    } catch (ValidationException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "Vai trò không hợp lệ!", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi máy chủ khi lưu dữ liệu!", null);
+    }
+  }
+
+  public Response handleChangeInformation(ChangeInformationRequest changeInformationData) {
+    String userId = changeInformationData.userId();
+    String newFullName = changeInformationData.fullName();
+    String newEmail = changeInformationData.email();
+
+    try {
+      ValidationUtils.requireEmail(newEmail);
+      // 1. Tìm User đó
+      User user =
+          userDao
+              .findById(UUID.fromString(userId))
+              .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng này"));
+      // 2. Thay đổi dữ liệu
+
+      user.setFullName(newFullName);
+      user.setEmail(newEmail);
+      userDao.save(user);
+
+      return new Response(true, "Thay đổi thành công", null);
+
+    } catch (ValidationException | NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId không hợp lệ", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi máy chủ khi thay đổi thông tin", null);
+    }
+  }
+
+  public Response handleChangePassword(ChangePasswordRequest changePasswordData) {
+    String userId = changePasswordData.userId();
+    String newPassword = changePasswordData.newPassword();
+
+    try {
+      User user =
+          userDao
+              .findById(UUID.fromString(userId))
+              .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng này"));
+
+      user.setPasswordSalt(PasswordUtils.generateSalt());
+      user.setPasswordHash(PasswordUtils.hashPassword(newPassword, user.getPasswordSalt()));
+
+      userDao.save(user);
+
+      return new Response(true, "Đổi mật khẩu thành công", null);
+
+    } catch (NotFoundException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (IllegalArgumentException e) {
+      return new Response(false, "UserId không hợp lệ", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
+    }
+  }
+
+  public Response handleGetBalance(String userId) {
+    try {
+      Optional<Wallet> walletOpt = userDao.findWalletByUserId(UUID.fromString(userId));
+      if (walletOpt.isPresent()) {
+        // Trả về số dư mới nhất
+        return new Response(true, "Lấy số dư thành công", walletOpt.get().getBalance());
+      }
+      return new Response(false, "Không tìm thấy ví", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi khi lấy số dư", null);
+    }
+  }
+
+  public Response handleGetStats(String userId) {
+    try {
+      Optional<User> userOpt = userDao.findById(UUID.fromString(userId));
+
+      long countersByRole = 0;
+
+      long runningAuctions = auctionDao.countRunningAuctions();
+
+      if (userOpt.isPresent()) {
+
+        User user = userOpt.get();
+        if (user.getRole() == Role.BIDDER) {
+
+          countersByRole = bidDao.countBidsByBidderId(user.getId());
+
+        } else if (user.getRole() == Role.SELLER) {
+
+          countersByRole = auctionDao.countAuctionsCreatedBySellerId(user.getId());
+
+        } else if (user.getRole() == Role.ADMIN) {
+
+          countersByRole = userDao.countUsersActive();
         }
+        ArrayList<Object> pushData = new ArrayList<>();
+
+        pushData.add(countersByRole);
+        pushData.add(runningAuctions);
+
+        return new Response(true, "Xác định các chỉ số xong", pushData);
+      }
+      return new Response(false, "Người dùng không tồn tại", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Lỗi máy chủ khi lấy dữ liệu", null);
     }
+  }
 
-    public Response handleRegister(RegisterRequest registerData) {
-        try {
-            // 1. Kiểm tra xem username đã tồn tại trong DB chưa?
-            if (userDao.findByName(registerData.username()).isPresent()) {
-                return new Response(false, "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác!", null);
-            } else {
-                // 2. Tạo đối tượng User mới (Abstract factory ở UserFactory)
-                Role roleEnum = Role.valueOf(registerData.role().toUpperCase());
-                User newUser = UserFactory.create(roleEnum);
-
-                // 3. Gắn dữ liệu
-                newUser.setId(UUID.randomUUID());
-                newUser.setUsername(registerData.username());
-                newUser.setPasswordSalt(PasswordUtils.generateSalt());
-                newUser.setPasswordHash(PasswordUtils.hashPassword(registerData.password(), newUser.getPasswordSalt()));
-                newUser.setFullName(registerData.fullName());
-                newUser.setEmail(registerData.email());
-                newUser.setRole(roleEnum);
-                newUser.setActive(true);
-                newUser.setCreatedAt(now());
-                newUser.setUpdatedAt(now());
-
-                // 4. Gọi DAO để INSERT xuống database
-                userDao.save(newUser);
-
-                // 5. Tạo luôn một cái Ví (Wallet) 0 đồng cho tài khoản mới này
-                Wallet newWallet = new Wallet(
-                        UUID.randomUUID(),
-                        now(),
-                        now(),
-                        newUser.getId(),
-                        BigDecimal.ZERO
-                );
-                userDao.saveWallet(newWallet);
-
-                // 6. Báo thành công
-                return new Response(true, "Đăng ký tài khoản thành công!", null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ khi lưu dữ liệu!", null);
-        }
+  private void validateRegister(RegisterRequest data) {
+    if (data == null) {
+      throw new ValidationException("Dữ liệu đăng kí không hợp lệ");
     }
-
-    public Response handleChangeInformation(ChangeInformationRequest changeInformationData) {
-        String userId = changeInformationData.userId();
-        String newFullName = changeInformationData.fullName();
-        String newEmail = changeInformationData.email();
-
-        try {
-            // 1. Tìm User đó
-            User user = userDao.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
-            // 2. Thay đổi dữ liệu
-
-            user.setFullName(newFullName);
-            user.setEmail(newEmail);
-            userDao.save(user);
-
-            return new Response(true, "Thay đổi thành công", null);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ khi thay đổi thông tin", null);
-        }
+    ValidationUtils.requireText(data.username(), "Tên đăng nhập");
+    ValidationUtils.requireText(data.fullName(), "Họ tên");
+    ValidationUtils.requireEmail(data.email());
+    if (data.role() == null || data.role().isBlank()) {
+      throw new ValidationException("Vai trò không hợp lệ!");
     }
-
-    public Response handleChangePassword(ChangePasswordRequest changePasswordData) {
-        String userId = changePasswordData.userId();
-        String newPassword = changePasswordData.newPassword();
-
-        try {
-            User user = userDao.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
-
-            user.setPasswordSalt(PasswordUtils.generateSalt());
-            user.setPasswordHash(PasswordUtils.hashPassword(newPassword, user.getPasswordSalt()));
-
-            userDao.save(user);
-
-            return new Response(true, "Đổi mật khẩu thành công", null);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(false, "Lỗi máy chủ khi thay đổi mật khẩu", null);
-        }
-    }
+  }
 }

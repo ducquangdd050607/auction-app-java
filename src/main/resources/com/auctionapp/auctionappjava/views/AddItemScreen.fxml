@@ -3,8 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -21,7 +23,7 @@
 
     <top>
         <VBox spacing="6">
-            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Bét88 Items Manager – Thêm sản phẩm" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Blue88 Quản lý sản phẩm – Thêm sản phẩm" />
             <Separator style="-fx-background-color: rgba(255,255,255,0.4);" />
             <BorderPane.margin><Insets bottom="10" /></BorderPane.margin>
         </VBox>
@@ -34,35 +36,49 @@
 
                 <!-- Tên sản phẩm -->
                 <Label prefWidth="160" style="-fx-text-fill: white; -fx-font-size: 14;" text="Tên sản phẩm:" />
-                <TextField fx:id="txtItemName" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
+                <TextField fx:id="txtItemName" onAction="#handleAddItem" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
 
                 <!-- Danh mục -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Danh mục:" GridPane.rowIndex="1" />
                 <ComboBox fx:id="cbCategory" prefHeight="34" prefWidth="300" style="-fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label fx:id="lblExtraInfo1" style="-fx-text-fill: white; -fx-font-size: 14;" text="Thông tin bổ sung 1:" GridPane.rowIndex="2" />
-                <TextField fx:id="txtExtraInfo1" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="txtExtraInfo1" onAction="#handleAddItem" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                 <!-- Thông tin bổ sung (Artist / Warranty) -->
                 <Label fx:id="lblExtraInfo2" style="-fx-text-fill: white; -fx-font-size: 14;" text="Thông tin bổ sung 2:" GridPane.rowIndex="3" />
-            <TextField fx:id="txtExtraInfo2" prefHeight="66.0" prefWidth="300.0" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="txtExtraInfo2" onAction="#handleAddItem" prefHeight="66.0" prefWidth="300.0" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                 <!-- Giá khởi điểm -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Giá khởi điểm (đ):" GridPane.rowIndex="4" />
-                <TextField fx:id="txtStartingPrice" prefHeight="34" prefWidth="300" promptText="VD: 500000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="txtStartingPrice" onAction="#handleAddItem" prefHeight="34" prefWidth="300" promptText="VD: 500000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Bước giá (đ):" GridPane.rowIndex="5" />
-            <TextField fx:id="txtMinIncrement" prefHeight="34" prefWidth="300" promptText="VD: 10000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="txtMinIncrement" onAction="#handleAddItem" prefHeight="34" prefWidth="300" promptText="VD: 10000" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
                 <!-- Thời gian mở sàn -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian mở sàn:" GridPane.rowIndex="6" />
-                <TextField fx:id="txtOpenDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <!-- Thời gian kết thúc -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Thời gian kết thúc:" GridPane.rowIndex="7" />
-                <TextField fx:id="txtEndDate" prefHeight="34" prefWidth="300" promptText="dd/MM/yyyy HH:mm" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
                 <!-- Mô tả -->
                 <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mô tả:" GridPane.rowIndex="8" />
-            <TextField fx:id="txtDescription" prefHeight="60.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="txtDescription" onAction="#handleAddItem" prefHeight="60.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+               <children>
+                  <DatePicker fx:id="datePickerStart" prefHeight="26.0" prefWidth="240.0" />
+                  <Spinner fx:id="cbHoursStart" prefHeight="26.0" />
+                  <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text=":" />
+                  <Spinner fx:id="cbMinutesStart" layoutX="162.0" layoutY="10.0" prefHeight="26.0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+               <children>
+                  <DatePicker fx:id="datePickerEnd" prefHeight="26.0" prefWidth="240.0" />
+                  <Spinner fx:id="cbHoursEnd" prefHeight="26.0" />
+                  <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text=":" />
+                  <Spinner fx:id="cbMinutesEnd" layoutX="162.0" layoutY="10.0" prefHeight="26.0" />
+               </children>
+            </HBox>
             <columnConstraints>
                <ColumnConstraints />
                <ColumnConstraints />

@@ -78,3 +78,178 @@
     -fx-background-color: rgb(180, 180, 180);
     -fx-translate-y: 1px;
 }
+
+.chatbot-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #d7e5ec;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.22), 16, 0, 0, 5);
+    -fx-padding: 0;
+}
+
+.chatbot-header {
+    -fx-background-color: #2E7D9B;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 10 12;
+}
+
+.chatbot-title {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+}
+
+.chatbot-close-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+}
+
+.chatbot-close-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.18);
+}
+
+.chatbot-scroll {
+    -fx-background-color: #f6f9fb;
+    -fx-background: #f6f9fb;
+    -fx-padding: 0;
+}
+
+.chatbot-messages {
+    -fx-background-color: #f6f9fb;
+    -fx-padding: 12;
+}
+
+.chatbot-bot-message {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2edf2;
+    -fx-border-radius: 8;
+    -fx-padding: 8 10;
+    -fx-text-fill: #1d2d35;
+}
+
+.chatbot-user-message {
+    -fx-background-color: #2E7D9B;
+    -fx-background-radius: 8;
+    -fx-padding: 8 10;
+    -fx-text-fill: white;
+}
+
+.chatbot-quick-box {
+    -fx-background-color: #f6f9fb;
+    -fx-padding: 8 12 4 12;
+}
+
+.chatbot-quick-btn {
+    -fx-background-color: #e8f2f6;
+    -fx-background-radius: 8;
+    -fx-text-fill: #1F5A73;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-padding: 7 10;
+}
+
+.chatbot-quick-btn:hover {
+    -fx-background-color: #d8ebf1;
+}
+
+.chatbot-input-row {
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 8 8;
+    -fx-padding: 10 12 12 12;
+}
+
+.chatbot-send-btn {
+    -fx-background-color: #2E7D9B;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.chatbot-send-btn:hover {
+    -fx-background-color: #246d86;
+}
+
+.chatbot-toggle-btn {
+    -fx-background-color: white;
+    -fx-background-radius: 30;
+    -fx-border-color: #111111;
+    -fx-border-radius: 30;
+    -fx-border-width: 1;
+    -fx-min-width: 74;
+    -fx-min-height: 58;
+    -fx-max-width: 74;
+    -fx-max-height: 58;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 10, 0, 0, 3);
+    -fx-translate-x: -24;
+    -fx-translate-y: -24;
+}
+
+.chatbot-toggle-btn:hover {
+    -fx-background-color: #f7f7f7;
+}
+
+.chatbot-bubble-icon {
+    -fx-fill: transparent;
+    -fx-stroke: #111111;
+    -fx-stroke-width: 2;
+}
+
+.chatbot-dot-icon {
+    -fx-fill: #111111;
+    -fx-stroke: transparent;
+}
+
+.close-noti-btn {
+    -fx-background-color: #E4E6EB;
+    -fx-text-fill: #050505;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 50;
+    -fx-cursor: hand;
+    -fx-padding: 6 12 6 12;
+}
+
+.close-noti-btn:hover {
+    -fx-background-color: #D8DADF;
+}
+
+.close-noti-btn:pressed {
+    -fx-background-color: rgb(166, 168, 172);
+    -fx-translate-y: 1px;
+}
+
+.noti-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Ép vùng hiển thị nội dung (viewport) phải bo góc ở 2 góc dưới */
+.noti-scroll .viewport {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 0 10 10;
+}
+
+.noti-item {
+    -fx-padding: 12;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.noti-item:hover {
+    -fx-background-color: #F2F3F5;
+}

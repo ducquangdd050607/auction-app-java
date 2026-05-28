@@ -1,31 +1,40 @@
 package com.auctionapp.auctionappjava.server.dao;
 
+import com.auctionapp.auctionappjava.common.dto.UserDetailResponse;
 import com.auctionapp.auctionappjava.common.enums.Role;
-import com.auctionapp.auctionappjava.common.model.User;
-import com.auctionapp.auctionappjava.common.model.Wallet;
-
+import com.auctionapp.auctionappjava.server.model.User;
+import com.auctionapp.auctionappjava.server.model.Wallet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
 
 public interface UserDao {
-    User save(User u);
+  User save(User u);
 
-    Optional<User> findById(UUID id);
+  Optional<User> findById(UUID id);
 
-    Optional<User> findByName(String name);
+  Optional<User> findByName(String name);
 
-    List<User> findAll();
+  Optional<User> findByEmail(String email);
 
-    void updateRole(UUID id, Role role);
+  Optional<User> findSellerByAuctionId(UUID auctionId);
 
-    void updateProfile(UUID id, String fullName, String email);
+  List<UserDetailResponse>
+      findAllDetails(); // tải lên danh sách người dùng với đầy đủ thông tin cho admin xem
 
-    void updatePassword(UUID id, String hash, String salt);
+  // chỉ cần trong 1 lần truy vấn
 
-    void updateActiveStatus(UUID id, boolean isActive);
+  void updateRole(UUID id, Role role);
 
-    Wallet saveWallet(Wallet wallet);
+  void updateProfile(UUID id, String fullName, String email);
 
-    Optional<Wallet> findWalletByUserId(UUID userId);
+  void updatePassword(UUID id, String hash, String salt);
+
+  void updateActiveStatus(UUID id, boolean isActive);
+
+  Wallet saveWallet(Wallet wallet);
+
+  Optional<Wallet> findWalletByUserId(UUID userId);
+
+  long countUsersActive();
 }

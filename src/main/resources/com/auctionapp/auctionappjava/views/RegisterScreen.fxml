@@ -6,6 +6,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,41 +15,35 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Slide 5/6: Register Screen (Guest tab & Seller tab) -->
-
 <StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.RegisterController">
 
     <VBox alignment="CENTER" maxWidth="480" spacing="16" style="-fx-background-color: #2E7D9B;">
         <padding><Insets bottom="36" left="60" right="60" top="36" /></padding>
+      <ImageView fitHeight="55.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/IconApp.png" />
+         </image>
+      </ImageView>
 
-        <!-- Logo -->
-        <Label style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" text="Logo" />
+        <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Đăng kí" />
 
-        <!-- Title -->
-        <Label style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;" text="Register" />
-
-        <!-- Form fields -->
         <GridPane hgap="12" vgap="12">
-            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField fx:id="txtFullname" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Enter your fulllname" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
-         <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Fullname:" />
-         <TextField fx:id="txtUsername" onAction="#handleConfirm" prefHeight="39.0" prefWidth="229.0" promptText="Enter your username" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Tên đăng nhập:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="txtFullname" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Nhập họ và tên của bạn" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
+         <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Họ và tên:" />
+         <TextField fx:id="txtUsername" onAction="#handleConfirm" prefHeight="39.0" prefWidth="229.0" promptText="Nhập tên đăng nhập" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <PasswordField fx:id="txtPassword" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Enter your password" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Mật khẩu:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <PasswordField fx:id="txtPassword" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Nhập mật khẩu" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Confirm password:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <PasswordField fx:id="txtConfirmPassword" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Enter your password again" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Xác nhận mật khẩu:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <PasswordField fx:id="txtConfirmPassword" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Nhập lại mật khẩu ở trên" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
             <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <TextField fx:id="txtEmail" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Enter your email" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-            <!-- Seller only: Private Key field -->
-            <Label fx:id="lblPrivateKey" managed="false" style="-fx-text-fill: white; -fx-font-size: 14;" text="Private Key" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <TextField fx:id="txtPrivateKey" managed="false" prefHeight="32" prefWidth="240" style="-fx-background-radius: 4; -fx-font-size: 14;" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="txtEmail" onAction="#handleConfirm" prefHeight="32" prefWidth="240" promptText="Nhập email của bạn" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          <columnConstraints>
-            <ColumnConstraints maxWidth="119.5999755859375" minWidth="114.79998779296875" prefWidth="119.5999755859375" />
-            <ColumnConstraints maxWidth="233.20001220703125" minWidth="228.4000244140625" prefWidth="228.4000244140625" />
+            <ColumnConstraints maxWidth="133.60003662109375" minWidth="114.79998779296875" prefWidth="123.20001220703125" />
+            <ColumnConstraints maxWidth="233.20001220703125" minWidth="215.19996337890626" prefWidth="225.59998779296876" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="32.0" />
@@ -66,13 +62,11 @@
       </HBox>
       <Label fx:id="confirmRoute" alignment="CENTER" prefHeight="27.0" prefWidth="282.0" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;                           -fx-cursor: hand;" />
 
-        <!-- Confirm button -->
-        <Button fx:id="btnConfirm" onAction="#handleConfirm" prefHeight="34" prefWidth="110" styleClass="confirm-btn" text="Confirm" />
+        <Button fx:id="btnConfirm" onAction="#handleConfirm" prefHeight="34" prefWidth="110" styleClass="confirm-btn" text="Xác nhận" />
 
-        <!-- Sign-in link -->
         <HBox alignment="CENTER" spacing="4">
-            <Label style="-fx-text-fill: white; -fx-font-size: 13;" text="Have an account?" />
-            <Hyperlink fx:id="hplLogin" onAction="#handleLogIn" styleClass="underline-link" text="Log in" underline="true" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 13;" text="Đã có tài khoản?" />
+            <Hyperlink fx:id="hplLogin" onAction="#handleLogIn" styleClass="underline-link" text="Đăng nhập ngay" underline="true" />
         </HBox>
 
         <!-- Error label -->

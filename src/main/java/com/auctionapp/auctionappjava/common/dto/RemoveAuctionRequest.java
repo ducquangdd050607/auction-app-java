@@ -2,7 +2,4 @@ package com.auctionapp.auctionappjava.common.dto;
 
 import java.io.Serializable;
 
-public record RemoveAuctionRequest(
-        String auctionId
-) implements Serializable {
-}
+public record RemoveAuctionRequest(String userId, String auctionId) implements Serializable {}

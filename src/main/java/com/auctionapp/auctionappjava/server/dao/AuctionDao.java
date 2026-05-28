@@ -2,33 +2,37 @@ package com.auctionapp.auctionappjava.server.dao;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
-import com.auctionapp.auctionappjava.common.model.Auction;
+import com.auctionapp.auctionappjava.server.model.Auction;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface AuctionDao {
-    Auction save(Auction auction);
+  Auction save(Auction auction);
 
-    Optional<Auction> findById(UUID auctionId);
+  Optional<Auction> findById(UUID auctionId);
 
-    List<Auction> findByStatus(AuctionStatus status);
+  List<Auction> findByStatus(AuctionStatus status);
 
-    List<Auction> findAll();
+  List<Auction> findAll();
 
-    List<Auction> findBySellerId(UUID sellerId);
+  List<Auction> findBySellerId(UUID sellerId);
 
-    List<AuctionSummaryResponse> findAllSummaries();
+  List<AuctionSummaryResponse> findAllSummaries();
 
-    List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
+  List<AuctionSummaryResponse> findRunningAuctionSummaries();
 
+  List<AuctionSummaryResponse> findSummariesBySellerId(UUID sellerId);
 
-    Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
+  Optional<Auction> findLatestAuctionCreatedBySellerId(UUID sellerId);
 
-    Optional<Auction> findMostBiddedAuction();
+  Optional<Auction> findMostExpiredAuction();
 
-    long countAuctionsCreatedBySellerId(UUID sellerId);
+  Optional<Auction> findMostBiddedAuction();
 
-    void deleteById(UUID auctionId);
+  long countAuctionsCreatedBySellerId(UUID sellerId);
 
+  void deleteById(UUID auctionId);
+
+  long countRunningAuctions();
 }

@@ -1,24 +1,26 @@
 package com.auctionapp.auctionappjava.server.dao;
 
-import com.auctionapp.auctionappjava.common.model.Item;
+import com.auctionapp.auctionappjava.server.model.Item;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface AuctionItemDao {
-    Item save(Item item);
+  Item save(Item item);
 
-    Optional<Item> findById(UUID itemId);
+  Optional<Item> findById(UUID itemId);
 
-    Optional<byte[]> findImageByAuctionId(UUID auctionId);
+  Optional<byte[]> findImageByAuctionId(UUID auctionId);
 
-    Optional<Item> findByIdWithoutImage(UUID itemId);
+  Optional<Item> findByIdWithoutImage(UUID itemId);
 
-    List<Item> findBySellerId(UUID sellerId);
+  List<Item> findBySellerId(UUID sellerId);
 
-    Optional<Item> findByAuctionId(UUID auctionId);
+  Optional<Item> findByAuctionId(UUID auctionId);
 
-    void deleteById(UUID itemId);
+  Optional<Item> findByAuctionIdWithoutImage(UUID auctionId);
 
-    void nookzzAll();
+  void deleteById(UUID itemId);
+
+  void nookzzAll();
 }

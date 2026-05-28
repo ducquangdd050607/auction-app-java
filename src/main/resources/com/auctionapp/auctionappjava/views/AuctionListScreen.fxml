@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -14,7 +13,7 @@
 
 <!-- Slide 7: Danh sách phiên đấu giá -->
 
-<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" stylesheets="@../css/AuctionListAndItemScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
+<BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: white;" stylesheets="@../css/AuctionListAndDetailScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.AuctionListController">
     <padding><Insets bottom="30" left="40" right="40" top="30" /></padding>
 
     <top>
@@ -51,12 +50,7 @@
             </TableColumn>
             <TableColumn fx:id="clmBiddedTime" prefWidth="144.0001220703125" text="Thời điểm đặt" visible="false" />
             <TableColumn fx:id="clmTime" prefWidth="109.0" text="Thời gian còn lại" />
-            <TableColumn fx:id="clmBidders" prefWidth="125.0" text="Số Bidders quan tâm" />
-            <TableColumn fx:id="clmChoose" minWidth="0.0" prefWidth="20.0">
-               <graphic>
-                  <CheckBox mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" />
-               </graphic>
-            </TableColumn>
+            <TableColumn fx:id="clmBidders" prefWidth="131.0" text="Số Bidders quan tâm" />
         </columns>
          <BorderPane.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -73,9 +67,7 @@
                <children>
                   <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#handleAdd" styleClass="confirm-btn" text="Thêm sản phẩm" />
                   <Button fx:id="btnRemove" layoutX="67.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRemove" styleClass="confirm-btn" text="Xóa sản phẩm" />
-                  <Button fx:id="btnConfirm" layoutX="307.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleConfirm" styleClass="confirm-btn" text="Xác nhận" />
                   <Button fx:id="btnCancel" layoutX="345.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleCancel" styleClass="confirm-btn" text="Hủy bỏ" />
-                  <Button fx:id="btnTest" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleTest" styleClass="confirm-btn" text="Test" />
                </children>
             </HBox>
          </children>

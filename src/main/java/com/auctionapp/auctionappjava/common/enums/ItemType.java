@@ -1,8 +1,8 @@
 package com.auctionapp.auctionappjava.common.enums;
 
 public enum ItemType {
-    ELECTRONICS,
-    ART,
-    VEHICLE
+  ELECTRONICS,
+  ART,
+  VEHICLE
 }
-// 3 lo  ại Item
+// 3 loại Item

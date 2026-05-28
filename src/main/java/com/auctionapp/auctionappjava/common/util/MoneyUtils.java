@@ -1,61 +1,62 @@
 package com.auctionapp.auctionappjava.common.util;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 public final class MoneyUtils {
 
-    private MoneyUtils() {}
+  private MoneyUtils() {}
 
-    public static BigDecimal zeroIfNull(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
-    }
+  public static BigDecimal zeroIfNull(BigDecimal v) {
+    return v == null ? BigDecimal.ZERO : v;
+  }
 
-    public static void settingMoneyFormat(TextField txtAmount) {
-        // Ép hệ thống dùng chuẩn Mỹ để chắc chắn hàng nghìn được ngăn cách bằng dấu phẩy (,)
-        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-        formatter.applyPattern("#,###");
+  public static void settingMoneyFormat(TextField txtAmount) {
+    // Ép hệ thống dùng chuẩn Mỹ để chắc chắn hàng nghìn được ngăn cách bằng dấu phẩy (,)
+    DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+    formatter.applyPattern("#,###");
 
-        // Chuyển sang sử dụng TEXTFORMATTER
-        TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
-            // Nếu chỉ là click chuột, bôi đen (không đổi text) thì cho qua
-            if (!change.isContentChange()) {
+    // Chuyển sang sử dụng TEXTFORMATTER
+    TextFormatter<String> textFormatter =
+        new TextFormatter<>(
+            change -> {
+              // Nếu chỉ là click chuột, bôi đen (không đổi text) thì cho qua
+              if (!change.isContentChange()) {
                 return change;
-            }
+              }
 
-            // Lấy chuỗi mà người dùng định tạo ra (chưa được in lên UI)
-            String newText = change.getControlNewText();
+              // Lấy chuỗi mà người dùng định tạo ra (chưa được in lên UI)
+              String newText = change.getControlNewText();
 
-            if (newText.isEmpty()) {
+              if (newText.isEmpty()) {
                 return change;
-            }
+              }
 
-            // Đếm số lượng chữ số nằm trước con trỏ trong chuỗi
-            int caretPos = change.getCaretPosition();
-            int digitsBeforeCaret = 0;
-            for (int i = 0; i < caretPos && i < newText.length(); i++) {
+              // Đếm số lượng chữ số nằm trước con trỏ trong chuỗi
+              int caretPos = change.getCaretPosition();
+              int digitsBeforeCaret = 0;
+              for (int i = 0; i < caretPos && i < newText.length(); i++) {
                 if (Character.isDigit(newText.charAt(i))) {
-                    digitsBeforeCaret++;
+                  digitsBeforeCaret++;
                 }
-            }
+              }
 
-            // Lọc bỏ mọi thứ không phải là số
-            String cleanText = newText.replaceAll("[^\\d]", "");
+              // Lọc bỏ mọi thứ không phải là số
+              String cleanText = newText.replaceAll("[^\\d]", "");
 
-            if (cleanText.isEmpty()) {
+              if (cleanText.isEmpty()) {
                 // Không cho gõ chữ cái vào
                 return null;
-            }
+              }
 
-            try {
+              try {
                 // Format tiền tệ và GHI ĐÈ toàn bộ thao tác của người dùng
                 long amount = Long.parseLong(cleanText);
                 String formattedStr = formatter.format(amount).replaceAll(",", ".");
@@ -70,13 +71,13 @@ public final class MoneyUtils {
                 int newCaretPos = 0;
                 int digitsCounted = 0;
                 for (int i = 0; i < formattedStr.length(); i++) {
-                    if (digitsCounted == digitsBeforeCaret) {
-                        break;
-                    }
-                    if (Character.isDigit(formattedStr.charAt(i))) {
-                        digitsCounted++;
-                    }
-                    newCaretPos++;
+                  if (digitsCounted == digitsBeforeCaret) {
+                    break;
+                  }
+                  if (Character.isDigit(formattedStr.charAt(i))) {
+                    digitsCounted++;
+                  }
+                  newCaretPos++;
                 }
 
                 // Cập nhật vị trí con trỏ và mốc bôi đen ngay bên trong gói tin
@@ -86,59 +87,61 @@ public final class MoneyUtils {
                 // CHẤP NHẬN gói tin đã được nhào nặn này
                 return change;
 
-            } catch (NumberFormatException e) {
+              } catch (NumberFormatException e) {
                 // Nếu số nhập vào to vượt quá kiểu 'long', TỪ CHỐI không cho nhập thêm
                 return null;
-            }
-        });
+              }
+            });
 
-        // 3. GẮN VÀO TEXTFIELD
-        txtAmount.setTextFormatter(textFormatter);
+    // 3. GẮN VÀO TEXTFIELD
+    txtAmount.setTextFormatter(textFormatter);
+  }
+
+  public static BigDecimal purifyingText(String price) {
+    // 1. Kiểm tra nếu chuỗi rỗng hoặc null để tránh lỗi crash
+    if (price == null || price.isEmpty()) {
+      return BigDecimal.ZERO;
     }
 
-    public static BigDecimal purifyingText(String price) {
-        // 1. Kiểm tra nếu chuỗi rỗng hoặc null để tránh lỗi crash
-        if (price == null || price.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
+    // 2. Làm sạch chuỗi (chỉ giữ lại số)
+    String cleanString = price.replaceAll("[^\\d]", "");
 
-        // 2. Làm sạch chuỗi (chỉ giữ lại số)
-        String cleanString = price.replaceAll("[^\\d]", "");
+    // 3. Chuyển đổi sang BigDecimal
+    // Nếu chuỗi sau khi làm sạch bị trống (ví dụ input chỉ toàn chữ), trả về 0
+    if (cleanString.isEmpty()) {
+      return BigDecimal.ZERO;
+    }
+    return new BigDecimal(cleanString);
+  }
 
-        // 3. Chuyển đổi sang BigDecimal
-        // Nếu chuỗi sau khi làm sạch bị trống (ví dụ input chỉ toàn chữ), trả về 0
-        if (cleanString.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(cleanString);
+  public static String formatMoney(BigDecimal amount) {
+    if (amount == null) {
+      return "0";
     }
 
-    public static String formatMoney(BigDecimal amount) {
-        if (amount == null) {
-            return "0";
-        }
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setGroupingSeparator('.'); // Dùng dấu chấm ngăn cách hàng nghìn
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator('.'); // Dùng dấu chấm ngăn cách hàng nghìn
+    DecimalFormat df = new DecimalFormat("#,###", symbols);
+    return df.format(amount);
+  }
 
-        DecimalFormat df = new DecimalFormat("#,###", symbols);
-        return df.format(amount);
-    }
-
-    // Setup lại giá tiền trên UI nhìn cho đẹp
-    // Thêm <T> đại diện cho BẤT KỲ loại đối tượng (Response) nào chứa trong dòng của bảng
-    public static <T> void formatPriceColumn(TableColumn<T, BigDecimal> column) {
-        column.setCellFactory(tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(BigDecimal price, boolean empty) {
+  // Setup lại giá tiền trên UI nhìn cho đẹp
+  // Thêm <T> đại diện cho BẤT KỲ loại đối tượng (Response) nào chứa trong dòng của bảng
+  public static <T> void formatPriceColumn(TableColumn<T, BigDecimal> column) {
+    column.setCellFactory(
+        tc ->
+            new TableCell<>() {
+              @Override
+              protected void updateItem(BigDecimal price, boolean empty) {
                 super.updateItem(price, empty);
                 if (empty || price == null) {
-                    setText(null);
+                  setText(null);
                 } else {
-                    // Gọi hàm đa năng MoneyUtils ta vừa tạo lúc nãy
-                    setText(MoneyUtils.formatMoney(price));
+                  // Gọi hàm đa năng MoneyUtils ta vừa tạo lúc nãy
+                  setText(MoneyUtils.formatMoney(price));
                 }
-            }
-        });
-    }
+              }
+            });
+  }
 }
