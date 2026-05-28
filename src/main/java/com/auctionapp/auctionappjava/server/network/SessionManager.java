@@ -1,5 +1,6 @@
 package com.auctionapp.auctionappjava.server.network;
 
+import com.auctionapp.auctionappjava.common.dto.Response;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +24,19 @@ public class SessionManager {
 
   public void removeSession(String userId) {
     activeSessions.remove(userId);
+  }
+
+  public Response handleLogout(String userId) {
+    if (userId == null || userId.isBlank()) {
+      return new Response(false, "Phien dang nhap khong hop le", null);
+    }
+
+    removeSession(userId);
+    return new Response(true, "Dang xuat thanh cong", null);
+  }
+
+  boolean hasSession(String userId) {
+    return activeSessions.containsKey(userId);
   }
 
   // Gửi đích danh cho 1 người

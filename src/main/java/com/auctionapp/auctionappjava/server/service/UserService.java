@@ -240,13 +240,13 @@ public class UserService {
 
   private void validateRegister(RegisterRequest data) {
     if (data == null) {
-      throw new ValidationException("Du lieu dang ky khong hop le");
+      throw new ValidationException("Dữ liệu đăng ký không hợp lệ");
     }
-    ValidationUtils.requireText(data.username(), "Ten dang nhap");
-    ValidationUtils.requireText(data.fullName(), "Ho ten");
+    ValidationUtils.requireText(data.username(), "Tên đăng nhập");
+    ValidationUtils.requireText(data.fullName(), "Họ tên");
     ValidationUtils.requireEmail(data.email());
     if (data.role() == null || data.role().isBlank()) {
-      throw new ValidationException("Vai tro khong hop le");
+      throw new ValidationException("Vai trò không hợp lệ!!");
     }
   }
 }
