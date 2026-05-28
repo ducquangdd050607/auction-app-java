@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -166,6 +168,8 @@ public class AuctionListController implements Initializable {
     Parent root = loader.load();
     AddItemController addItemController = loader.getController();
     Stage stage = new Stage();
+    stage.getIcons().add(SceneSwitcherUtils.icon);
+    stage.setTitle("Thêm vật phẩm đấu giá");
     stage.initModality(Modality.APPLICATION_MODAL);
     stage.setScene(new Scene(root));
     stage.showAndWait();

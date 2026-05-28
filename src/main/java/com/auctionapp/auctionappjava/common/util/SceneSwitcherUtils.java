@@ -7,10 +7,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class SceneSwitcherUtils {
+
+  public static Image icon = new Image(SceneSwitcherUtils.class.getResourceAsStream("/com/auctionapp/auctionappjava/images/IconApp.png"));
+
   public static void PopupController(ActionEvent event, String address, String title)
       throws IOException {
     Parent modalRoot = FXMLLoader.load(SceneSwitcherUtils.class.getResource(address));
@@ -20,8 +24,10 @@ public class SceneSwitcherUtils {
     Stage parentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     modalStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
     modalStage.initOwner(parentStage);
+    modalStage.getIcons().add(icon);
 
     Scene modalScene = new Scene(modalRoot);
+
     modalStage.setScene(modalScene);
     modalStage.setResizable(false);
 
@@ -30,8 +36,10 @@ public class SceneSwitcherUtils {
 
   public static void NewSceneController(ActionEvent event, String address, String title)
       throws IOException {
+
     Parent root = FXMLLoader.load(SceneSwitcherUtils.class.getResource(address));
     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    stage.getIcons().add(icon);
     stage.setTitle(title);
     Scene scene = new Scene(root);
     stage.setScene(scene);

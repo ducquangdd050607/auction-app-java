@@ -2,6 +2,8 @@ package com.auctionapp.auctionappjava.client;
 
 import com.auctionapp.auctionappjava.client.network.Client;
 import java.io.IOException;
+
+import com.auctionapp.auctionappjava.common.util.SceneSwitcherUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -32,6 +34,7 @@ public class ClientLauncher extends Application {
             ClientLauncher.class.getResource(
                 "/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 920, 620);
+    stage.getIcons().add(SceneSwitcherUtils.icon);
     stage.setTitle("Blue88");
     stage.setScene(scene);
     stage.show();
