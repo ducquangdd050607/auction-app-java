@@ -54,11 +54,12 @@ public class RealtimeHandler {
         BigDecimal newPrice = (BigDecimal) pushData[1];
         UUID newBidderId = (UUID) pushData[2];
         String newEndTime = (String) pushData[3];
+        int newBidderCount = (Integer) pushData[4];
 
         if (AuctionListController.instance != null) {
           // Đổi tên hàm thành updateSingleRowPriceAndEndTime
           AuctionListController.instance.updateSingleRowPriceAndEndTime(
-              updatedAuctionId, newPrice, newEndTime);
+              updatedAuctionId, newPrice, newEndTime, newBidderCount);
         }
 
         AuctionSummaryResponse currentAuction = AuctionSession.getInstance().getCurrentAuction();

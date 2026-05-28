@@ -626,7 +626,7 @@ public class AuctionListController implements Initializable {
 
   // Cập nhật giá Real-time cho 1 dòng trên bảng danh sách
   public void updateSingleRowPriceAndEndTime(
-      UUID auctionId, BigDecimal newPrice, String newEndTime) {
+      UUID auctionId, BigDecimal newPrice, String newEndTime, int newBidderCount) {
     Platform.runLater(
         () -> {
           for (int i = 0; i < auctionData.size(); i++) {
@@ -647,7 +647,7 @@ public class AuctionListController implements Initializable {
                       newEndTime, // Lấy thêm tgian nếu có anti-snipping
                       currentItem.timeLeft(),
                       currentItem.status(),
-                      currentItem.bidderCount(),
+                      newBidderCount,
                       currentItem.imageData(),
                       currentItem.bots());
               auctionData.set(i, updatedItem);

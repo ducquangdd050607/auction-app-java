@@ -399,7 +399,8 @@ public class AuctionService {
                         placeBidData.auctionId(),
                         placeBidData.amount(),
                         placeBidData.userId(),
-                        newEndTime
+                        newEndTime,
+                        auction.getBiddersCount()
                       };
 
                   Response bidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
@@ -642,7 +643,11 @@ public class AuctionService {
 
     Object[] pushData =
         new Object[] {
-          auction.getId(), amount, bidderId, newEndTime // Lấy thêm tgian nếu có anti-snipping
+          auction.getId(),
+          amount,
+          bidderId,
+          newEndTime, // Lấy thêm tgian nếu có anti-snipping
+          auction.getBiddersCount()
         };
     Response newBidResponse = new Response(true, "SERVER_PUSH_NEW_BID", pushData);
     SessionManager.getInstance().broadcast(newBidResponse);
