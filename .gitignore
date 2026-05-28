@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Skip file config
+config.properties

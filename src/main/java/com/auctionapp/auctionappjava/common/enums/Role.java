@@ -17,4 +17,3 @@ public enum Role {
     return this == BIDDER;
   }
 }
-// this là giá trị enum hiện tại , class này kiểm tra vai trò
