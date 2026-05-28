@@ -32,9 +32,9 @@
                               <Image url="@../images/IconApp.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" text="Hệ thống đấu giá trực tuyến" textFill="#ececec">
+                        <Label alignment="CENTER" text="Hệ thống đấu giá trực tuyến Blue88" textFill="#ececec">
                            <font>
-                              <Font size="17.0" />
+                              <Font name="System Bold" size="17.0" />
                            </font>
                         </Label>
                      </children>

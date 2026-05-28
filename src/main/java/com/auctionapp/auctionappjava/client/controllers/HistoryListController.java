@@ -38,7 +38,7 @@ public class HistoryListController implements Initializable {
   @FXML private TableColumn<BidHistoryResponse, BigDecimal> clmStartingPrice;
   @FXML private TableColumn<BidHistoryResponse, String> clmStatus;
   @FXML private TableColumn<BidHistoryResponse, BigDecimal> clmBiddingMoney;
-  @FXML private TableColumn<BidHistoryResponse, String> clmBiddedTime; // Thời điểm đặt
+  @FXML private TableColumn<BidHistoryResponse, String> clmBiddedTime;
   @FXML private Label txtHistory;
   @FXML private TextField txtSearch;
   @FXML private Button btnSearch;
@@ -235,10 +235,10 @@ public class HistoryListController implements Initializable {
   void show() {
     if (LoginController.bidderRoute) {
       txtHistory.setVisible(true);
-      txtHistory.setText("Lịch sử đặt cược");
+      txtHistory.setText("Lịch sử đặt giá");
     } else if (LoginController.adminRoute) {
       txtHistory.setVisible(true);
-      txtHistory.setText("Danh sách đặt cược");
+      txtHistory.setText("Danh sách đặt giá");
     }
   }
 

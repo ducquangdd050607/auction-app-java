@@ -19,13 +19,13 @@
 
     <top>
         <VBox>
-            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Blue88 Live Auction Services" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" text="Blue88 Thông tin phiên đấu giá - Bảng xếp hạng" />
             <Button fx:id="btnBack" alignment="TOP_LEFT" onAction="#handleBack" prefHeight="30.0" prefWidth="83.0" styleClass="underline-link" text="← Quay lại" />
 
             <HBox alignment="CENTER_LEFT" spacing="14.0">
-                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14; -fx-font-weight: bold;" text="[Type]" />
-                <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="[Name]" />
-                <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 12; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 3 10 3 10;" text="[STATUS]" />
+                <Label fx:id="lblCategory" style="-fx-text-fill: #B0D8E8; -fx-font-size: 14; -fx-font-weight: bold;" text="[Thể loại]" />
+                <Label fx:id="lblItemName" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;" text="[Tên]" />
+                <Label fx:id="lblStatus" style="-fx-background-color: #27AE60; -fx-text-fill: white;                               -fx-font-size: 12; -fx-font-weight: bold;                               -fx-background-radius: 4; -fx-padding: 3 10 3 10;" text="[Trạng thái]" />
             </HBox>
             <HBox spacing="12.0">
                 <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="Giá khởi điểm:" />

@@ -15,7 +15,7 @@
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
    <center>
         <VBox spacing="4" style="-fx-background-color: #2E7D9B; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
-            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Blue88 User Account">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" text="Blue88 Thông tin tài khoản">
             <VBox.margin>
                <Insets left="30.0" right="25.0" top="25.0" />
             </VBox.margin>
@@ -34,7 +34,7 @@
            <VBox prefHeight="143.0" prefWidth="818.0" spacing="15.0">
             <HBox alignment="BOTTOM_LEFT" prefHeight="22.0" prefWidth="818.0">
                <children>
-                  <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Fullname:  " />
+                  <Label style="-fx-text-fill: #B0D8E8; -fx-font-size: 15;" text="Họ và tên: " />
                   <Label fx:id="lblFullname" style="-fx-text-fill: white; -fx-font-size: 15;" />
                </children>
                <opaqueInsets>
