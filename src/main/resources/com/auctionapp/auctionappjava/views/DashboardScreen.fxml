@@ -98,7 +98,7 @@
                                     </padding>
                                     <children>
                                         <Label fx:id="lblBidders" style="-fx-text-fill: #2E7D9B; -fx-font-size: 25; -fx-font-weight: bold;" text="..." />
-                                        <Label fx:id="lblStat1Label1" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Users Active" />
+                                        <Label fx:id="lblStat1Label1" prefHeight="18.0" prefWidth="143.0" style="-fx-text-fill: #888; -fx-font-size: 12;" text="Active users" />
                                     </children>
                                 </VBox>
                             </graphic>
