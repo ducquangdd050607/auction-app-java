@@ -45,6 +45,7 @@ public class SceneSwitcherUtils {
     stage.getIcons().add(icon);
     stage.setTitle(title);
     Scene scene = new Scene(root);
+    stage.setResizable(false);
     stage.setScene(scene);
     stage.sizeToScene();
     stage.centerOnScreen();

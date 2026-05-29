@@ -12,8 +12,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Thêm sản phẩm mới (Seller only) -->
-
 <BorderPane prefHeight="375.0" prefWidth="393.0" style="-fx-background-color: #2E7D9B;" stylesheets="@../css/ChangeInformation.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.ChangeInformationController">
     <padding><Insets bottom="30" left="50" right="50" top="30" /></padding>
 
@@ -33,8 +31,7 @@
             <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Họ và tên mới:" />
             <TextField fx:id="txtFullname" onAction="#handleConfirm" prefHeight="34.0" promptText="Nhập họ tên mới của bạn" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" />
 
-                <!-- Thông tin bổ sung (Artist / Warranty) -->
-                <Label fx:id="lblExtraInfo" style="-fx-text-fill: white; -fx-font-size: 14;" text="Email mới:" GridPane.rowIndex="4" />
+                <Label style="-fx-text-fill: white; -fx-font-size: 14;" text="Email mới:" GridPane.rowIndex="4" />
                 <TextField fx:id="txtEmail" onAction="#handleConfirm" prefHeight="34" prefWidth="300" promptText="VD: abc@email.com" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <columnConstraints>
                <ColumnConstraints maxWidth="110.0" minWidth="23.0" prefWidth="97.0" />
@@ -52,8 +49,7 @@
             </rowConstraints>
             </GridPane>
 
-            <!-- Error label -->
-            <Label fx:id="lblError" style="-fx-text-fill: #FF8A80; -fx-font-size: 13;" text="" visible="false" />
+            <Label fx:id="lblError" style="-fx-text-fill: #FF8A80; -fx-font-size: 13;" visible="false" />
         </VBox>
     </center>
 
