@@ -87,6 +87,10 @@ public class RankingListController {
       btnRemove.setManaged(false);
     }
 
+    if (currentAuction.status() == AuctionStatus.FINISHED) {
+      btnExportWinner.setText("Xuất thông báo người thắng");
+    }
+
     lblStartingPrice.setText(formatMoney(currentAuction.startPrice()) + " VND");
     lblTopBid.setText(formatMoney(currentAuction.currentPrice()) + " VND");
     lblMinIncrement.setText(formatMoney(currentAuction.minimumIncrement()) + " VND");

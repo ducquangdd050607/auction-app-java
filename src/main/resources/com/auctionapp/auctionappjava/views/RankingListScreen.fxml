@@ -59,7 +59,7 @@
         <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="386.0" spacing="12">
          <Button fx:id="btnRemove" layoutX="10.0" layoutY="10.0" onAction="#handleRemove" prefHeight="36" prefWidth="120" styleClass="confirm-btn" text="Xóa sản phẩm" />
          <Pane prefHeight="36.0" prefWidth="118.0" HBox.hgrow="ALWAYS" />
-         <Button fx:id="btnExportWinner" layoutX="10.0" layoutY="10.0" onAction="#handleExportWinner" prefHeight="36" prefWidth="218.0" styleClass="confirm-btn" text="Xuất thông báo người thắng" />
+         <Button fx:id="btnExportWinner" layoutX="10.0" layoutY="10.0" onAction="#handleExportWinner" prefHeight="36" prefWidth="283.0" styleClass="confirm-btn" text="Xuất thông báo người dẫn đầu hiện tại" />
         </HBox>
     </bottom>
    <left>
