@@ -10,7 +10,6 @@ import com.auctionapp.auctionappjava.server.dao.jdbc.JdbcBidDao;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.BidTransaction;
 import com.auctionapp.auctionappjava.server.strategy.trend.*;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;

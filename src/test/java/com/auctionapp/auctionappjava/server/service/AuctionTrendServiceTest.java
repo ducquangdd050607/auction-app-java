@@ -8,8 +8,8 @@ import com.auctionapp.auctionappjava.common.dto.Response;
 import com.auctionapp.auctionappjava.common.enums.AuctionStatus;
 import com.auctionapp.auctionappjava.server.model.Auction;
 import com.auctionapp.auctionappjava.server.model.BidTransaction;
-import com.auctionapp.auctionappjava.server.strategy.trend.FrequencyAnalyzer;
 import com.auctionapp.auctionappjava.server.strategy.trend.AuctionTrendContext;
+import com.auctionapp.auctionappjava.server.strategy.trend.FrequencyAnalyzer;
 import com.auctionapp.auctionappjava.server.strategy.trend.TimePressureAnalyzer;
 import com.auctionapp.auctionappjava.server.strategy.trend.TrendSignal;
 import java.lang.reflect.Field;
@@ -148,10 +148,8 @@ class AuctionTrendServiceTest {
         "bid");
   }
 
-  private AuctionTrendContext context(
-      Auction auction, LocalDateTime now) {
-    return new AuctionTrendContext(
-        auction, summary(auction, 1), List.of(), 0, now);
+  private AuctionTrendContext context(Auction auction, LocalDateTime now) {
+    return new AuctionTrendContext(auction, summary(auction, 1), List.of(), 0, now);
   }
 
   private void setPrivateField(String fieldName, Object value) throws Exception {

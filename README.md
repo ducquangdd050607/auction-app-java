@@ -28,7 +28,7 @@ Môi trường chạy khuyến nghị:
 
 - Windows, macOS hoặc Linux có cài JDK 25.
 - Maven có thể dùng trực tiếp qua Maven Wrapper trong repo: `mvnw` hoặc `mvnw.cmd`.
-- Database MySQL/TiDB đã tạo schema theo file `src/main/resources/db/mysql-schema.sql`.
+- Database MySQL/TiDB đã tạo schema theo file `src/main/resources/db/mysql-schema.sql` và có account admin mẫu trong file `src/main/resources/db/insert-dummy-data.sql`.
 
 Yêu cầu cài đặt:
 
@@ -36,27 +36,30 @@ Yêu cầu cài đặt:
 2. Đảm bảo máy có kết nối tới database MySQL/TiDB.
 3. Nếu không dùng cấu hình database mặc định trong code, truyền các JVM options sau khi chạy server:
 
-powershell
+```powershell
 -Dauction.db.url=jdbc:mysql://HOST:PORT/auction_app?sslMode=REQUIRED&serverTimezone=UTC
 -Dauction.db.user=your_username
 -Dauction.db.password=your_password
+```
 
 
 4. Build project:
 
-powershell
+```powershell
 .\mvnw.cmd clean package
+```
 
 
 Trên macOS/Linux:
 
-bash
+```bash
 ./mvnw clean package
+```
 
 
 ## 3. Cấu trúc thư mục và các module chính
 
-text
+```text
 auction-app-java/
 |-- pom.xml
 |-- mvnw, mvnw.cmd
@@ -68,6 +71,7 @@ auction-app-java/
 |   |   |   `-- com/auctionapp/auctionappjava/
 |   |   |       |-- client/
 |   |   |       |   |-- ClientLauncher.java
+|   |   |       |   |-- AppLauncher.java
 |   |   |       |   |-- controllers/
 |   |   |       |   |-- network/
 |   |   |       |   `-- session/
@@ -155,10 +159,10 @@ Server lắng nghe ở cổng:
 5. Sau khi server đã chạy, run class client:
 
 ```text
-com.auctionapp.auctionappjava.client.ClientLauncher
+com.auctionapp.auctionappjava.client.network.Launcher
 ```
 
-### Cách 2: Chạy bằng terminal
+### Cách 2: Chạy bằng Terminal
 
 Mở Terminal 1 để chạy server:
 

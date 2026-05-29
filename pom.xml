@@ -79,7 +79,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.auctionapp.auctionappjava.client.ClientLauncher</mainClass>
+                            <mainClass>com.auctionapp.auctionappjava.client.network.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -135,7 +135,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.auctionapp.auctionappjava.client.AppLauncher</mainClass>
+                                    <mainClass>com.auctionapp.auctionappjava.client.ClientLauncher</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>
