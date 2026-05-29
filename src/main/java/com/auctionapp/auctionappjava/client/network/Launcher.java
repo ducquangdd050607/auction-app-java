@@ -29,8 +29,7 @@ public class Launcher extends Application {
 
     FXMLLoader fxmlLoader =
         new FXMLLoader(
-            Launcher.class.getResource(
-                "/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
+            Launcher.class.getResource("/com/auctionapp/auctionappjava/views/MainScreen.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 920, 620);
     stage.getIcons().add(SceneSwitcherUtils.icon);
     stage.setTitle("Blue88");
