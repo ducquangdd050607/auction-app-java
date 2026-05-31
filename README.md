@@ -42,13 +42,11 @@ Yêu cầu cài đặt:
 -Dauction.db.password=your_password
 ```
 
-
 4. Build project:
 
 ```powershell
 .\mvnw.cmd clean package
 ```
-
 
 Trên macOS/Linux:
 
@@ -212,6 +210,6 @@ Thứ tự bắt buộc:
 
 ## 7. Link báo cáo PDF và video demo
 
-- Báo cáo PDF: chưa cập nhật link. Tài liệu báo cáo hiện có trong repo: `TrendingAuction Insight.docx`.
-- Video demo: chưa cập nhật link.
+- Báo cáo PDF: (https://drive.google.com/file/d/1_jNA2mtZv8_UfxjIoy-nEn6t_QpdCDXk/view?usp=drive_link).
+- Video demo: [YouTube](https://www.youtube.com/watch?v=V7moKR0x_To).
 

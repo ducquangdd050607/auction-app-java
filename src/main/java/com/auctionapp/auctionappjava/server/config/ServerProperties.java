@@ -30,7 +30,7 @@ public final class ServerProperties {
    * file properties bị xóa hoặc mất key.
    */
   public static final String DB_URL =
-      properties.getProperty("auction.db.url", "jdbc:mysql://localhost:3306/auction_app_fallback");
+      properties.getProperty("auction.db.url", "jdbc:mysql://localhost:3306/auction_app");
 
   public static final String DB_USER = properties.getProperty("auction.db.user", "root");
 

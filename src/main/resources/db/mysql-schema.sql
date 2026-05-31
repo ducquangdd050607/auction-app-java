@@ -93,4 +93,4 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at DATETIME NOT NULL,
     CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_notifications_auction FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE
-    );
+);
