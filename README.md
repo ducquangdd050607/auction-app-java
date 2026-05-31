@@ -44,13 +44,13 @@ Yêu cầu cài đặt:
 
 4. Build project:
 
-```text
+```powershell
 .\mvnw.cmd clean package
 ```
 
 Trên macOS/Linux:
 
-```text
+```bash
 ./mvnw clean package
 ```
 
@@ -69,7 +69,6 @@ auction-app-java/
 |   |   |   `-- com/auctionapp/auctionappjava/
 |   |   |       |-- client/
 |   |   |       |   |-- ClientLauncher.java
-|   |   |       |   |-- AppLauncher.java
 |   |   |       |   |-- controllers/
 |   |   |       |   |-- network/
 |   |   |       |   `-- session/
