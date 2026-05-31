@@ -42,13 +42,11 @@ Yêu cầu cài đặt:
 -Dauction.db.password=your_password
 ```
 
-
 4. Build project:
 
 ```powershell
 .\mvnw.cmd clean package
 ```
-
 
 Trên macOS/Linux:
 
