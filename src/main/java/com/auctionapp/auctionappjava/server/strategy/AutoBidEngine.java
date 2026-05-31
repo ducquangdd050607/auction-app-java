@@ -58,7 +58,7 @@ public class AutoBidEngine {
       return Optional.empty();
     }
 
-    // Nếu người auto-bid max cao nhất đang dẫn đầu sẵn rồi thì không cần tạo bid mới.
+    // Nếu người auto-bid max cao nhất đang dẫn đầu, vẫn nâng giá khi còn đối thủ auto-bid.
     if (firstBidder.getBidderId().equals(currentLeaderId)) {
       Optional<BidCandidate> tiedCompetitor =
           findTiedAutoBidCompetitor(bidList, firstBidder, currentLeaderId);
@@ -73,16 +73,34 @@ public class AutoBidEngine {
                   competitor.getBidderId(),
                   bidAmount,
                   competitor.getMaxBid(),
-                  currentPrice));
+                  currentPrice,
+                  currentLeaderId));
         }
       }
-      return Optional.empty();
+
+      Optional<BidCandidate> strongestCompetitor =
+          findStrongestCompetitor(bidList, currentLeaderId);
+      if (strongestCompetitor.isEmpty()) {
+        return Optional.empty();
+      }
+
+      BigDecimal bidAmount = calculateBidAmount(firstBidder, strongestCompetitor.get().getMaxBid());
+      if (currentPrice != null
+          && strongestCompetitor.get().getMaxBid().compareTo(currentPrice) <= 0) {
+        return Optional.empty();
+      }
+
+      return Optional.of(
+          new AutoBidResult(
+              firstBidder.getAuctionId(),
+              firstBidder.getBidderId(),
+              bidAmount,
+              firstBidder.getMaxBid(),
+              strongestCompetitor.get().getMaxBid(),
+              strongestCompetitor.get().getBidderId()));
     }
 
-    BigDecimal bidAmount = secondBidder.getMaxBid().add(firstBidder.getIncrement());
-    if (bidAmount.compareTo(firstBidder.getMaxBid()) > 0) {
-      bidAmount = firstBidder.getMaxBid();
-    }
+    BigDecimal bidAmount = calculateBidAmount(firstBidder, secondBidder.getMaxBid());
 
     if (currentPrice != null && bidAmount.compareTo(currentPrice) <= 0) {
       return Optional.empty();
@@ -94,7 +112,8 @@ public class AutoBidEngine {
             firstBidder.getBidderId(),
             bidAmount,
             firstBidder.getMaxBid(),
-            secondBidder.getMaxBid()));
+            secondBidder.getMaxBid(),
+            secondBidder.getBidderId()));
   }
 
   private List<AutoBidConfig> getValidAutoBidConfigs(List<AutoBidConfig> configs) {
@@ -142,6 +161,24 @@ public class AutoBidEngine {
     }
 
     return Optional.empty();
+  }
+
+  private Optional<BidCandidate> findStrongestCompetitor(
+      List<BidCandidate> bidList, UUID currentLeaderId) {
+    for (BidCandidate candidate : bidList) {
+      if (!candidate.getBidderId().equals(currentLeaderId)) {
+        return Optional.of(candidate);
+      }
+    }
+    return Optional.empty();
+  }
+
+  private BigDecimal calculateBidAmount(BidCandidate bidder, BigDecimal competitorMaxBid) {
+    BigDecimal bidAmount = competitorMaxBid.add(bidder.getIncrement());
+    if (bidAmount.compareTo(bidder.getMaxBid()) > 0) {
+      return bidder.getMaxBid();
+    }
+    return bidAmount;
   }
 
   private BigDecimal getIncrement(AutoBidConfig config, BigDecimal defaultIncrement) {
@@ -205,18 +242,21 @@ public class AutoBidEngine {
     private BigDecimal bidAmount;
     private BigDecimal firstMaxBid;
     private BigDecimal secondMaxBid;
+    private UUID secondBidderId;
 
     public AutoBidResult(
         UUID auctionId,
         UUID bidderId,
         BigDecimal bidAmount,
         BigDecimal firstMaxBid,
-        BigDecimal secondMaxBid) {
+        BigDecimal secondMaxBid,
+        UUID secondBidderId) {
       this.auctionId = auctionId;
       this.bidderId = bidderId;
       this.bidAmount = bidAmount;
       this.firstMaxBid = firstMaxBid;
       this.secondMaxBid = secondMaxBid;
+      this.secondBidderId = secondBidderId;
     }
 
     public UUID getAuctionId() {
@@ -237,6 +277,10 @@ public class AutoBidEngine {
 
     public BigDecimal getSecondMaxBid() {
       return secondMaxBid;
+    }
+
+    public UUID getSecondBidderId() {
+      return secondBidderId;
     }
   }
 }

@@ -630,13 +630,22 @@ public class AuctionService {
     }
 
     AutoBidEngine.AutoBidResult result = resultOpt.get();
-    if (result.getBidderId().equals(auction.getLeadingBidderId())) {
-      return;
-    }
-
     BigDecimal minimumNextBid = auction.getCurrentPrice().add(auction.getMinimumIncrement());
     if (result.getBidAmount().compareTo(minimumNextBid) < 0) {
       return;
+    }
+
+    if (result.getBidderId().equals(auction.getLeadingBidderId())
+        && result.getSecondBidderId() != null
+        && result.getSecondMaxBid().compareTo(auction.getCurrentPrice()) > 0) {
+      if (!placeAutoBid(auction, result.getSecondBidderId(), result.getSecondMaxBid())) {
+        return;
+      }
+
+      minimumNextBid = auction.getCurrentPrice().add(auction.getMinimumIncrement());
+      if (result.getBidAmount().compareTo(minimumNextBid) < 0) {
+        return;
+      }
     }
 
     placeAutoBid(auction, result.getBidderId(), result.getBidAmount());
@@ -653,19 +662,26 @@ public class AuctionService {
 
   // Thêm AUTO-BID ENGINE: Đặt giá thay cho user bằng auto-bid, xử lý trừ tiền, hoàn tiền cho người
   // bị vượt giá và push realtime.
-  private void placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
+  private boolean placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
     Optional<Wallet> bidderWalletOpt = userDao.findWalletByUserId(bidderId);
     if (bidderWalletOpt.isEmpty()) {
-      return;
+      return false;
     }
 
     Wallet bidderWallet = bidderWalletOpt.get();
-    if (bidderWallet.getBalance().compareTo(amount) < 0) {
-      return;
+    UUID oldLeaderId = auction.getLeadingBidderId();
+    boolean bidderIsCurrentLeader = bidderId.equals(oldLeaderId);
+    BigDecimal availableBalance = bidderWallet.getBalance();
+    if (bidderIsCurrentLeader) {
+      availableBalance = availableBalance.add(auction.getCurrentPrice());
+    }
+    if (availableBalance.compareTo(amount) < 0) {
+      return false;
     }
 
-    UUID oldLeaderId = auction.getLeadingBidderId();
-    if (oldLeaderId != null && !oldLeaderId.equals(bidderId)) {
+    if (bidderIsCurrentLeader) {
+      bidderWallet.setBalance(availableBalance);
+    } else if (oldLeaderId != null) {
       Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
       if (oldLeaderWalletOpt.isPresent()) {
         Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
@@ -792,6 +808,7 @@ public class AuctionService {
           .sendToUser(
               admin.userId(), new Response(true, "SERVER_PUSH_ADMIN_NOTIFICATION", adminMsg));
     }
+    return true;
   }
 
   // THÊM ANTI-SNIPING.
