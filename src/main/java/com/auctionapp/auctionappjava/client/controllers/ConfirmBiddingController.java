@@ -118,8 +118,8 @@ public class ConfirmBiddingController {
                         isAutoBidding = true;
                         chboxAutoBidding.setSelected(true);
                         boxAutoBidding.setVisible(true);
-                        txtSetAuto.setText(config.incrementAmount().toPlainString());
-                        txtSetMaxAuto.setText(config.maxBid().toPlainString());
+                        txtSetAuto.clear();
+                        txtSetMaxAuto.clear();
                       }
 
                       chboxAutoBidding.setDisable(false);
