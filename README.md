@@ -28,13 +28,13 @@ Môi trường chạy khuyến nghị:
 
 - Windows, macOS hoặc Linux có cài JDK 25.
 - Maven có thể dùng trực tiếp qua Maven Wrapper trong repo: `mvnw` hoặc `mvnw.cmd`.
-- Database MySQL/TiDB đã tạo schema theo file `src/main/resources/db/mysql-schema.sql` và có account admin mẫu trong file `src/main/resources/db/insert-dummy-data.sql`.
+- Database MySQL/TiDB đã tạo schema theo file `src/main/resources/db/mysql-schema.sql` và có account admin mẫu trong file `src/main/resources/db/insert-admin-account.sql`.
 
 Yêu cầu cài đặt:
 
 1. Cài JDK 25 và cấu hình biến môi trường `JAVA_HOME`.
 2. Đảm bảo máy có kết nối tới database MySQL/TiDB.
-3. Nhập cấu hình Database theo mẫu của `config.example.properties`, đổi tên thành `config.properties` trước khi bắt đầu:
+3. Nhập cấu hình MySQL/TiDB database theo mẫu của `config.example.properties`, đổi tên thành `config.properties` trước khi bắt đầu:
 
 ```text
 auction.db.url="YOUR_DB_URL"
@@ -45,11 +45,13 @@ auction.server.port=8080
 
 4. Build project:
 
+- Trên Windows:
+
 ```powershell
 .\mvnw.cmd clean package
 ```
 
-Trên macOS/Linux:
+- Trên macOS/Linux:
 
 ```bash
 ./mvnw clean package
@@ -99,7 +101,6 @@ auction-app-java/
 ```
 
 Mô tả module:
-```
 - `client`: màn hình JavaFX, controller, session người dùng và kết nối tới server.
 - `server`: server socket, xử lý request, service nghiệp vụ, DAO, model và các chiến lược đấu giá.
 - `common`: DTO, enum, exception và utility dùng chung giữa client/server.
@@ -107,7 +108,6 @@ Mô tả module:
 - `resources/css`: style cho giao diện.
 - `resources/db`: script tạo bảng database.
 - `test`: unit test cho factory, service, strategy và utility.
-```
 ## 4. Vị trí các file jar
 
 Sau khi chạy lệnh build:
@@ -136,13 +136,23 @@ Lưu ý:
 
 ## 5. Hướng dẫn chạy Server/Client theo thứ tự
 
-Cần chạy Server trước, sau đó mới chạy Client.
+### 1. Đầu tiên, cần cung cấp thông tin kết nối Database:
+- Đổi tên file `src/main/resources/config.example.properties` thành `config.properties`.
+- Mở file lên và điền tài khoản, mật khẩu MySQL của bạn vào:
+```text
+auction.db.url="YOUR_DB_URL"
+auction.db.user="YOUR_DB_USER"
+auction.db.password="YOUR_DB_PASSWORD"
+auction.server.port=8080
+```
 
-### Cách 1: Chạy bằng IntelliJ IDEA
+### 2. Sau đó, chạy Server trước, sau đó mới chạy Client:
+
+#### Cách 1: Chạy bằng IntelliJ IDEA
 
 1. Import project Maven từ file `pom.xml`.
 2. Đảm bảo JDK project là JDK 25.
-3. Chạy database và đảm bảo schema đã được tạo bằng file `src/main/resources/db/mysql-schema.sql`.
+3. Chạy database và đảm bảo schema đã được tạo bằng file `src/main/resources/db/mysql-schema.sql` và `src/main/resources/db/insert-admin-account.sql` để tạo sẵn 1 account admin (username: `admin`, password: `12345`).
 4. Run class server:
 
 ```text
@@ -158,30 +168,33 @@ Server lắng nghe ở cổng:
 5. Sau khi server đã chạy, run class client:
 
 ```text
-com.auctionapp.auctionappjava.client.network.Launcher
+com.auctionapp.auctionappjava.client.ClientLauncher
 ```
 
-### Cách 2: Chạy bằng Terminal
+#### Cách 2: Chạy bằng Terminal
 
-Mở Terminal 1 để chạy server:
-
-```powershell
-.\mvnw.cmd -q -DskipTests compile
-.\mvnw.cmd -q exec:java "-Dexec.mainClass=com.auctionapp.auctionappjava.server.ServerLauncher"
+Mở Terminal tại thư mục gốc của dự án và chạy lệnh:
+```bash
+mvn clean package
 ```
 
-Giữ Terminal 1 đang chạy, sau đó mở Terminal 2 để chạy client:
+Sau khi build thành công, Maven sẽ tạo ra các file .jar trong thư mục target/.
+Khởi động Server bằng lệnh:
 
-```powershell
-.\mvnw.cmd javafx:run
+```bash
+java -jar ./target/Server-Blue88.jar
 ```
 
-Trên macOS/Linux, thay `.\mvnw.cmd` bằng `./mvnw`.
+Sau đó mở thêm terminal khác để chạy Client:
+
+```bash
+java -jar ./target/Client-Blue88.jar
+```
 
 Thứ tự bắt buộc:
 
 1. Khởi động database.
-2. Tạo schema bằng `src/main/resources/db/mysql-schema.sql` nếu database chưa có bảng.
+2. Tạo schema bằng `src/main/resources/db/mysql-schema.sql` và `src/main/resources/db/insert-admin-account.sql` nếu database chưa có bảng.
 3. Khởi động Server.
 4. Khởi động Client.
 5. Đăng ký/đăng nhập và sử dụng các chức năng đấu giá.
