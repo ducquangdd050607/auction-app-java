@@ -50,6 +50,7 @@ public class AuctionServiceAutoBidTest {
     UUID bidderId = UUID.randomUUID();
 
     fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(bidderId, "300"));
 
     ConfigureAutoBidRequest request =
         new ConfigureAutoBidRequest(
@@ -120,6 +121,7 @@ public class AuctionServiceAutoBidTest {
     UUID auctionId = UUID.randomUUID();
     UUID bidderId = UUID.randomUUID();
     fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(bidderId, "100"));
 
     var response =
         auctionService.handleConfigureAutoBid(
@@ -135,6 +137,7 @@ public class AuctionServiceAutoBidTest {
     UUID auctionId = UUID.randomUUID();
     UUID bidderId = UUID.randomUUID();
     fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
+    fakeUserDao.putWallet(wallet(bidderId, "200"));
 
     var response =
         auctionService.handleConfigureAutoBid(
