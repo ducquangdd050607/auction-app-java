@@ -46,7 +46,7 @@
   },
   {
     "question": "Auto-bid hoạt động như thế nào?",
-    "answer": "Khi đặt giá, bạn có thể bật auto-bid, nhập bước tự đặt và mức tối đa. Hệ thống sẽ tự đặt giá trong giới hạn bạn cấu hình để cạnh tranh với các người đặt giá khác.",
+    "answer": "Khi đặt giá, bạn có thể bật auto-bid, nhập bước tự đặt và mức tối đa. Hệ thống sẽ tự đặt giá trong giới hạn bạn cấu hình để cạnh tranh với các người đặt giá khác. Lưu ý: nếu người top 1 đang thấp hơn mức tối đa bạn định đặt chỉ một chút, hãy đặt mức tối đa cao hơn thêm một chút. Hệ thống còn xét bước giá của bạn và người đó; nếu chênh lệch không nhiều thì có khả năng xảy ra lỗi do không đủ một bước giá để vượt.",
     "keywords": ["auto-bid", "autobid", "tự đặt", "tu dat", "đấu giá tự động", "dau gia tu dong"]
   },
   {

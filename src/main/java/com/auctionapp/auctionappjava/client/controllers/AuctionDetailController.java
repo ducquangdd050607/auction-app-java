@@ -240,7 +240,7 @@ public class AuctionDetailController {
                       // Check dữ liệu hợp lệ
                       Object firstRow = rows.get(0);
                       if (firstRow instanceof BidRankingResponse winner) {
-                        lblCurrentLeader.setText(winner.bidderName());
+                        lblCurrentLeader.setText(winner.displayBidderName());
                       } else {
                         // Đề phòng trường hợp Server trả về List nhưng sai kiểu object
                         lblCurrentLeader.setText("Dữ liệu không hợp lệ");

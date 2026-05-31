@@ -190,27 +190,27 @@ public class AuctionServiceAutoBidTest {
   }
 
   @Test
-  public void handlePlaceBid_twoAutoBiddersDifferentMax_shouldHighestMaxLead() {
-    // Technique: EP
+  public void handlePlaceBid_higherAutoBidMaxBelowNextIncrement_shouldHighestMaxLead() {
     UUID auctionId = UUID.randomUUID();
-    UUID manualBidderId = UUID.randomUUID();
     UUID lowerAutoBidder = UUID.randomUUID();
     UUID higherAutoBidder = UUID.randomUUID();
 
     fakeAuctionDao.save(runningAuction(auctionId, new BigDecimal("100"), null));
-    fakeUserDao.putWallet(wallet(manualBidderId, "1000"));
     fakeUserDao.putWallet(wallet(lowerAutoBidder, "1000"));
     fakeUserDao.putWallet(wallet(higherAutoBidder, "1000"));
-    fakeAutoBidDao.save(autoBidConfig(auctionId, lowerAutoBidder, "180", "10"));
-    fakeAutoBidDao.save(autoBidConfig(auctionId, higherAutoBidder, "250", "10"));
+    fakeAutoBidDao.save(autoBidConfig(auctionId, lowerAutoBidder, "200", "10"));
+    fakeAutoBidDao.save(autoBidConfig(auctionId, higherAutoBidder, "205", "10"));
 
     var response =
         auctionService.handlePlaceBid(
-            new PlaceBidRequest(auctionId, manualBidderId, new BigDecimal("120")));
+            new PlaceBidRequest(auctionId, higherAutoBidder, new BigDecimal("110")));
 
     assertTrue(response.success());
-    assertEquals(
-        higherAutoBidder, fakeAuctionDao.findById(auctionId).orElseThrow().getLeadingBidderId());
+    Auction auction = fakeAuctionDao.findById(auctionId).orElseThrow();
+    assertEquals(higherAutoBidder, auction.getLeadingBidderId());
+    assertEquals(new BigDecimal("205"), auction.getCurrentPrice());
+    assertTrue(
+        fakeBidDao.hasSavedAutoBidForAuction(auctionId, higherAutoBidder, new BigDecimal("205")));
   }
 
   @Test

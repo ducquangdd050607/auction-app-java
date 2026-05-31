@@ -638,13 +638,12 @@ public class AuctionService {
     if (result.getBidderId().equals(auction.getLeadingBidderId())
         && result.getSecondBidderId() != null
         && result.getSecondMaxBid().compareTo(auction.getCurrentPrice()) > 0) {
-      if (!placeAutoBid(auction, result.getSecondBidderId(), result.getSecondMaxBid())) {
-        return;
-      }
-
-      minimumNextBid = auction.getCurrentPrice().add(auction.getMinimumIncrement());
-      if (result.getBidAmount().compareTo(minimumNextBid) < 0) {
-        return;
+      BigDecimal minimumBidAfterCompetitor =
+          result.getSecondMaxBid().add(auction.getMinimumIncrement());
+      if (result.getBidAmount().compareTo(minimumBidAfterCompetitor) >= 0) {
+        if (!placeAutoBid(auction, result.getSecondBidderId(), result.getSecondMaxBid())) {
+          return;
+        }
       }
     }
 
