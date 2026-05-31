@@ -210,6 +210,6 @@ Thứ tự bắt buộc:
 
 ## 7. Link báo cáo PDF và video demo
 
-- Báo cáo PDF: (https://drive.google.com/file/d/1_jNA2mtZv8_UfxjIoy-nEn6t_QpdCDXk/view?usp=drive_link).
-- Video demo: [YouTube](https://www.youtube.com/watch?v=V7moKR0x_To).
+- Báo cáo PDF: [Báo cáo nhóm 10](https://drive.google.com/file/d/1dsN4qHc6ClU04OpkzkVWWhkoDAuRI0_8/view?usp=sharing).
+- Video demo: [Link Youtube demo](https://www.youtube.com/watch?v=V7moKR0x_To).
 
