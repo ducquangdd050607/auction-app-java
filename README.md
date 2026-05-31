@@ -36,7 +36,7 @@ Yêu cầu cài đặt:
 2. Đảm bảo máy có kết nối tới database MySQL/TiDB.
 3. Nếu không dùng cấu hình database mặc định trong code, truyền các JVM options sau khi chạy server:
 
-```powershell
+```text
 -Dauction.db.url=jdbc:mysql://HOST:PORT/auction_app?sslMode=REQUIRED&serverTimezone=UTC
 -Dauction.db.user=your_username
 -Dauction.db.password=your_password
@@ -44,13 +44,13 @@ Yêu cầu cài đặt:
 
 4. Build project:
 
-```powershell
+```text
 .\mvnw.cmd clean package
 ```
 
 Trên macOS/Linux:
 
-```bash
+```text
 ./mvnw clean package
 ```
 
@@ -99,7 +99,7 @@ auction-app-java/
 ```
 
 Mô tả module:
-
+```
 - `client`: màn hình JavaFX, controller, session người dùng và kết nối tới server.
 - `server`: server socket, xử lý request, service nghiệp vụ, DAO, model và các chiến lược đấu giá.
 - `common`: DTO, enum, exception và utility dùng chung giữa client/server.
@@ -107,7 +107,7 @@ Mô tả module:
 - `resources/css`: style cho giao diện.
 - `resources/db`: script tạo bảng database.
 - `test`: unit test cho factory, service, strategy và utility.
-
+```
 ## 4. Vị trí các file jar
 
 Sau khi chạy lệnh build:
@@ -166,7 +166,7 @@ Mở Terminal 1 để chạy server:
 
 ```powershell
 .\mvnw.cmd -q -DskipTests compile
-.\mvnw.cmd -q exec:java -Dexec.mainClass="com.auctionapp.auctionappjava.server.ServerLauncher"
+.\mvnw.cmd -q exec:java "-Dexec.mainClass=com.auctionapp.auctionappjava.server.ServerLauncher"
 ```
 
 Giữ Terminal 1 đang chạy, sau đó mở Terminal 2 để chạy client:
