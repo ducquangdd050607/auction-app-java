@@ -49,7 +49,7 @@
             </VBox>
 
             <!-- Message / error -->
-            <Label fx:id="lblMessage" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" text="" visible="false" />
+            <Label fx:id="lblMessage" style="-fx-text-fill: #B0D8E8; -fx-font-size: 13;" visible="false" />
         </VBox>
     </center>
 

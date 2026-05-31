@@ -4,7 +4,7 @@ import com.auctionapp.auctionappjava.server.model.Auction;
 import java.time.LocalDateTime;
 
 public class AntiSnipingExtensionStrategy implements AuctionExtensionStrategy {
-  private final long thresholdSeconds; // thời gian nguy hieemr <= 36s
+  private final long thresholdSeconds; // thời gian nguy hiểm <= 36s
 
   private final long extensionSeconds; // tg gia hạn
 

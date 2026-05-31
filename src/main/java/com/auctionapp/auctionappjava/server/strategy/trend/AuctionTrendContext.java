@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.server.service.trend;
+package com.auctionapp.auctionappjava.server.strategy.trend;
 
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.server.model.Auction;

@@ -45,7 +45,7 @@ jobs:
       - name: Initialize Database
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -proot < src/main/resources/db/mysql-schema.sql
-          mysql -h 127.0.0.1 -P 3306 -u root -proot < src/main/resources/db/insert-dummy-data.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -proot < src/main/resources/db/insert-admin-account.sql
 
       - name: Setup config.properties
         run: |

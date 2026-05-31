@@ -67,6 +67,9 @@ public class RequestDispatcher {
       case "PLACE_BID" -> auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
       case "CONFIGURE_AUTO_BID" ->
           auctionService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
+      case "GET_AUTO_BID" -> auctionService.handleGetAutoBid((AutoBidRequest) request.payload());
+      case "DISABLE_AUTO_BID" ->
+          auctionService.handleDisableAutoBid((AutoBidRequest) request.payload());
       case "GET_USERS" -> auctionService.handleGetUsers();
       case "REMOVE_AUCTION" ->
           auctionService.handleRemoveAuction((RemoveAuctionRequest) request.payload());
@@ -74,7 +77,8 @@ public class RequestDispatcher {
           auctionService.handleSetUserStatus((ManagerAndHistoryRequest) request.payload());
       case "GET_IMAGE" -> auctionService.handleGetImage((ImageRequest) request.payload());
       case "GET_NOTIFICATIONS" -> getNotifications((String) request.payload());
-      default -> new Response(false, "Hanh dong khong hop le: " + request.action(), null);
+      case "LOGOUT" -> new Response(true, "Đã đăng xuất khỏi Server", null);
+      default -> new Response(false, "Hành động không hợp lệ: " + request.action(), null);
     };
   }
 

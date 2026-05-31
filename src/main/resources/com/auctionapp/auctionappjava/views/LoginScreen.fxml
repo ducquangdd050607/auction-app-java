@@ -16,18 +16,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!-- Slide 4: Login Screen -->
+<!-- Login Screen -->
 
 <StackPane style="-fx-background-color: #2E7D9B;" stylesheets="@../css/LoginAndRegisterScreen.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auctionapp.auctionappjava.client.controllers.LoginController">
 
     <!-- Login card -->
     <VBox alignment="CENTER" maxHeight="480" maxWidth="460" spacing="20" style="-fx-background-color: #2E7D9B;">
         <padding><Insets bottom="40" left="60" right="60" top="40" /></padding>
-      <ImageView fitHeight="69.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../images/IconApp.png" />
-         </image>
-      </ImageView>
+        <ImageView fitHeight="69.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../images/IconApp.png"/>
+        </ImageView>
 
         <!-- Logo -->
         <StackPane alignment="TOP_LEFT" prefWidth="1" />

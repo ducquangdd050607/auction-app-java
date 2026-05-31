@@ -13,4 +13,5 @@ module com.auctionapp.auctionappjava {
   exports com.auctionapp.auctionappjava.client;
   exports com.auctionapp.auctionappjava.server;
   exports com.auctionapp.auctionappjava.server.model;
+  exports com.auctionapp.auctionappjava.client.network;
 }

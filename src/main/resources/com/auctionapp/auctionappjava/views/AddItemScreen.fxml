@@ -44,7 +44,7 @@
             <Label fx:id="lblExtraInfo1" style="-fx-text-fill: white; -fx-font-size: 14;" text="Thông tin bổ sung 1:" GridPane.rowIndex="2" />
                 <TextField fx:id="txtExtraInfo1" onAction="#handleAddItem" prefHeight="34" prefWidth="300" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                <!-- Thông tin bổ sung (Artist / Warranty) -->
+                <!-- Thông tin bổ sung -->
                 <Label fx:id="lblExtraInfo2" style="-fx-text-fill: white; -fx-font-size: 14;" text="Thông tin bổ sung 2:" GridPane.rowIndex="3" />
             <TextField fx:id="txtExtraInfo2" onAction="#handleAddItem" prefHeight="66.0" prefWidth="300.0" style="-fx-background-radius: 4; -fx-font-size: 14;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 

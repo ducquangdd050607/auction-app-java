@@ -6,6 +6,8 @@ import static java.time.LocalDateTime.now;
 import com.auctionapp.auctionappjava.common.dto.AddItemRequest;
 import com.auctionapp.auctionappjava.common.dto.AuctionSummaryResponse;
 import com.auctionapp.auctionappjava.common.dto.AuctionTrendResponse;
+import com.auctionapp.auctionappjava.common.dto.AutoBidConfigResponse;
+import com.auctionapp.auctionappjava.common.dto.AutoBidRequest;
 import com.auctionapp.auctionappjava.common.dto.BidHistoryResponse;
 import com.auctionapp.auctionappjava.common.dto.BidRankingResponse;
 import com.auctionapp.auctionappjava.common.dto.ConfigureAutoBidRequest;
@@ -254,6 +256,11 @@ public class AuctionService {
             "Bước auto-bid phải từ " + auction.getMinimumIncrement() + " trở lên!");
       }
 
+      BigDecimal availableBalance = getAvailableAutoBidBalance(auction, data.bidderId());
+      if (availableBalance.compareTo(data.maxBid()) < 0) {
+        throw new InsufficientBalanceException("Số dư trong ví không đủ cho mức max auto-bid!");
+      }
+
       AutoBidConfig config =
           new AutoBidConfig(
               UUID.randomUUID(),
@@ -267,11 +274,48 @@ public class AuctionService {
       autoBidDao.save(config);
 
       return new Response(true, "Đã cấu hình auto-bid.", null);
-    } catch (NotFoundException | ConflictException | ValidationException e) {
+    } catch (NotFoundException
+        | ConflictException
+        | ValidationException
+        | InsufficientBalanceException e) {
       return new Response(false, e.getMessage(), null);
     } catch (Exception e) {
       e.printStackTrace();
       return new Response(false, "Loi may chu khi cau hinh auto-bid!", null);
+    }
+  }
+
+  public Response handleGetAutoBid(AutoBidRequest data) {
+    try {
+      validateAutoBidRequest(data);
+      return autoBidDao
+          .findByAuctionIdAndBidderId(data.auctionId(), data.bidderId())
+          .map(
+              config ->
+                  new Response(
+                      true,
+                      "Tai cau hinh auto-bid thanh cong.",
+                      new AutoBidConfigResponse(
+                          config.getMaxBid(), config.getIncrementAmount(), config.isEnabled())))
+          .orElseGet(() -> new Response(true, "Chua cau hinh auto-bid.", null));
+    } catch (ValidationException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Loi may chu khi tai cau hinh auto-bid!", null);
+    }
+  }
+
+  public Response handleDisableAutoBid(AutoBidRequest data) {
+    try {
+      validateAutoBidRequest(data);
+      autoBidDao.disableByAuctionIdAndBidderId(data.auctionId(), data.bidderId());
+      return new Response(true, "Da tat auto-bid.", null);
+    } catch (ValidationException e) {
+      return new Response(false, e.getMessage(), null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new Response(false, "Loi may chu khi tat auto-bid!", null);
     }
   }
 
@@ -553,6 +597,12 @@ public class AuctionService {
     }
   }
 
+  private void validateAutoBidRequest(AutoBidRequest data) {
+    if (data == null || data.auctionId() == null || data.bidderId() == null) {
+      throw new ValidationException("Yeu cau auto-bid khong hop le");
+    }
+  }
+
   private void processAutoBid(UUID auctionId) {
     Optional<Auction> auctionOpt = auctionDao.findById(auctionId);
     if (auctionOpt.isEmpty()) {
@@ -560,7 +610,14 @@ public class AuctionService {
     }
 
     Auction auction = auctionOpt.get();
-    List<AutoBidConfig> configs = autoBidDao.findEnabledByAuctionId(auctionId);
+    List<AutoBidConfig> configs =
+        autoBidDao.findEnabledByAuctionId(auctionId).stream()
+            .filter(
+                config ->
+                    getAvailableAutoBidBalance(auction, config.getBidderId())
+                            .compareTo(config.getMaxBid())
+                        >= 0)
+            .toList();
     Optional<AutoBidEngine.AutoBidResult> resultOpt =
         autoBidEngine.calculateNextBid(
             configs,
@@ -573,33 +630,57 @@ public class AuctionService {
     }
 
     AutoBidEngine.AutoBidResult result = resultOpt.get();
-    if (result.getBidderId().equals(auction.getLeadingBidderId())) {
-      return;
-    }
-
     BigDecimal minimumNextBid = auction.getCurrentPrice().add(auction.getMinimumIncrement());
     if (result.getBidAmount().compareTo(minimumNextBid) < 0) {
       return;
     }
 
+    if (result.getBidderId().equals(auction.getLeadingBidderId())
+        && result.getSecondBidderId() != null
+        && result.getSecondMaxBid().compareTo(auction.getCurrentPrice()) > 0) {
+      BigDecimal minimumBidAfterCompetitor =
+          result.getSecondMaxBid().add(auction.getMinimumIncrement());
+      if (result.getBidAmount().compareTo(minimumBidAfterCompetitor) >= 0) {
+        if (!placeAutoBid(auction, result.getSecondBidderId(), result.getSecondMaxBid())) {
+          return;
+        }
+      }
+    }
+
     placeAutoBid(auction, result.getBidderId(), result.getBidAmount());
+  }
+
+  private BigDecimal getAvailableAutoBidBalance(Auction auction, UUID bidderId) {
+    BigDecimal availableBalance =
+        userDao.findWalletByUserId(bidderId).map(Wallet::getBalance).orElse(BigDecimal.ZERO);
+    if (bidderId.equals(auction.getLeadingBidderId())) {
+      availableBalance = availableBalance.add(auction.getCurrentPrice());
+    }
+    return availableBalance;
   }
 
   // Thêm AUTO-BID ENGINE: Đặt giá thay cho user bằng auto-bid, xử lý trừ tiền, hoàn tiền cho người
   // bị vượt giá và push realtime.
-  private void placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
+  private boolean placeAutoBid(Auction auction, UUID bidderId, BigDecimal amount) {
     Optional<Wallet> bidderWalletOpt = userDao.findWalletByUserId(bidderId);
     if (bidderWalletOpt.isEmpty()) {
-      return;
+      return false;
     }
 
     Wallet bidderWallet = bidderWalletOpt.get();
-    if (bidderWallet.getBalance().compareTo(amount) < 0) {
-      return;
+    UUID oldLeaderId = auction.getLeadingBidderId();
+    boolean bidderIsCurrentLeader = bidderId.equals(oldLeaderId);
+    BigDecimal availableBalance = bidderWallet.getBalance();
+    if (bidderIsCurrentLeader) {
+      availableBalance = availableBalance.add(auction.getCurrentPrice());
+    }
+    if (availableBalance.compareTo(amount) < 0) {
+      return false;
     }
 
-    UUID oldLeaderId = auction.getLeadingBidderId();
-    if (oldLeaderId != null && !oldLeaderId.equals(bidderId)) {
+    if (bidderIsCurrentLeader) {
+      bidderWallet.setBalance(availableBalance);
+    } else if (oldLeaderId != null) {
       Optional<Wallet> oldLeaderWalletOpt = userDao.findWalletByUserId(oldLeaderId);
       if (oldLeaderWalletOpt.isPresent()) {
         Wallet oldLeaderWallet = oldLeaderWalletOpt.get();
@@ -726,6 +807,7 @@ public class AuctionService {
           .sendToUser(
               admin.userId(), new Response(true, "SERVER_PUSH_ADMIN_NOTIFICATION", adminMsg));
     }
+    return true;
   }
 
   // THÊM ANTI-SNIPING.

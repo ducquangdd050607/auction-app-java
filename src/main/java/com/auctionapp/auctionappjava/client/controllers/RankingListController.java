@@ -87,6 +87,10 @@ public class RankingListController {
       btnRemove.setManaged(false);
     }
 
+    if (currentAuction.status() == AuctionStatus.FINISHED) {
+      btnExportWinner.setText("Xuất thông báo người thắng");
+    }
+
     lblStartingPrice.setText(formatMoney(currentAuction.startPrice()) + " VND");
     lblTopBid.setText(formatMoney(currentAuction.currentPrice()) + " VND");
     lblMinIncrement.setText(formatMoney(currentAuction.minimumIncrement()) + " VND");
@@ -122,7 +126,8 @@ public class RankingListController {
 
   private void setupColumns() {
     colRank.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().rank()));
-    colUsername.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().bidderName()));
+    colUsername.setCellValueFactory(
+        cell -> new SimpleStringProperty(cell.getValue().displayBidderName()));
     colBidAmount.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().amount()));
     colBidAmount.setCellFactory(
         column ->
@@ -211,7 +216,7 @@ public class RankingListController {
     }
 
     BidRankingResponse winner = rows.get(0);
-    lblTopBidder.setText(winner.bidderName());
+    lblTopBidder.setText(winner.displayBidderName());
     lblTopBid.setText(formatMoney(winner.amount()) + " VND");
   }
 
@@ -313,7 +318,7 @@ public class RankingListController {
     new Alert(
             Alert.AlertType.INFORMATION,
             "Người thắng: "
-                + winner.bidderName()
+                + winner.displayBidderName()
                 + "\nGiá thắng: "
                 + formatMoney(winner.amount())
                 + " VND"

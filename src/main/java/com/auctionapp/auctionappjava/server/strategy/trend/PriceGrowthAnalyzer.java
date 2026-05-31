@@ -1,4 +1,4 @@
-package com.auctionapp.auctionappjava.server.service.trend;
+package com.auctionapp.auctionappjava.server.strategy.trend;
 
 import com.auctionapp.auctionappjava.server.model.BidTransaction;
 import java.math.BigDecimal;
