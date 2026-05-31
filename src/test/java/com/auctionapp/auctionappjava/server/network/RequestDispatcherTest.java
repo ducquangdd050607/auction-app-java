@@ -8,10 +8,13 @@ import com.auctionapp.auctionappjava.server.model.Notification;
 import com.auctionapp.auctionappjava.server.service.AuctionService;
 import com.auctionapp.auctionappjava.server.service.AuctionTrendService;
 import com.auctionapp.auctionappjava.server.service.UserService;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +24,7 @@ class RequestDispatcherTest {
   private TrackingAuctionService auctionService;
   private TrackingNotificationDao notificationDao;
   private RequestDispatcher dispatcher;
+  private String logoutUserId;
 
   @BeforeEach
   void setUp() {
@@ -30,6 +34,13 @@ class RequestDispatcherTest {
     dispatcher =
         new RequestDispatcher(
             userService, new AuctionTrendService(), auctionService, notificationDao);
+  }
+
+  @AfterEach
+  void tearDown() {
+    if (logoutUserId != null) {
+      SessionManager.getInstance().removeSession(logoutUserId);
+    }
   }
 
   @Test
@@ -89,6 +100,29 @@ class RequestDispatcherTest {
     assertTrue(response.success());
     assertTrue(notificationDao.findCalled);
     assertEquals(1, ((List<?>) response.data()).size());
+  }
+
+  @Test
+  void dispatch_logoutWhenUserLoggedIn_shouldReturnSuccess() throws Exception {
+    // Technique: EP
+    logoutUserId = UUID.randomUUID().toString();
+    SessionManager.getInstance()
+        .registerSession(logoutUserId, new ObjectOutputStream(new ByteArrayOutputStream()));
+
+    Response response = dispatcher.dispatch(new Request("LOGOUT", logoutUserId));
+
+    assertTrue(response.success());
+    assertNull(response.data());
+  }
+
+  @Test
+  void dispatch_logoutWhenUserNotLoggedIn_shouldReturnSuccessWithoutCrash() {
+    // Technique: EP
+    Response response = assertDoesNotThrow(() -> dispatcher.dispatch(new Request("LOGOUT", null)));
+
+    assertNotNull(response);
+    assertTrue(response.success());
+    assertNull(response.data());
   }
 
   @Test
