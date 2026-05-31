@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 public class ConfirmBiddingController {
 
   public static boolean isAutoBidding = false;
+  private boolean hasEnabledAutoBidConfig = false;
 
   private final BigDecimal best = AuctionSession.getInstance().getCurrentAuction().currentPrice();
   private final BigDecimal minIncrement =
@@ -67,14 +68,19 @@ public class ConfirmBiddingController {
     boxAutoBidding.setVisible(chboxAutoBidding.isSelected());
     /*boxAutoBidding.setManaged(chboxAutoBidding.isSelected());*/
     isAutoBidding = chboxAutoBidding.isSelected();
+    if (!isAutoBidding && hasEnabledAutoBidConfig) {
+      disableAutoBid();
+    }
   }
 
   @FXML
   public void initialize() {
     instance = this;
-    // THÊM AUTO-BID OPTIONAL: mỗi lần mở màn confirm thì mặc định tắt auto-bid.
+    // Giữ form khóa cho đến khi đọc xong cấu hình auto-bid đang lưu trên server.
     isAutoBidding = false;
     chboxAutoBidding.setSelected(false);
+    chboxAutoBidding.setDisable(true);
+    btnConfirm.setDisable(true);
     boxAutoBidding.setVisible(false);
     /*boxAutoBidding.setManaged(false);*/
 
@@ -87,6 +93,80 @@ public class ConfirmBiddingController {
     settingMoneyFormat(txtSetAuto);
     // THÊM AUTO-BID UI: format cả ô max auto-bid để parse tiền giống các ô khác.
     settingMoneyFormat(txtSetMaxAuto);
+    loadAutoBidConfig();
+  }
+
+  private void loadAutoBidConfig() {
+    Request request =
+        new Request(
+            "GET_AUTO_BID",
+            new AutoBidRequest(UUID.fromString(currentAuctionId), UUID.fromString(userId)));
+
+    CompletableFuture.supplyAsync(() -> sendAutoBidRequest(request))
+        .thenAccept(
+            response ->
+                Platform.runLater(
+                    () -> {
+                      if (!response.success()) {
+                        showAutoBidError(response.message());
+                        return;
+                      }
+
+                      if (response.data() instanceof AutoBidConfigResponse config
+                          && config.enabled()) {
+                        hasEnabledAutoBidConfig = true;
+                        isAutoBidding = true;
+                        chboxAutoBidding.setSelected(true);
+                        boxAutoBidding.setVisible(true);
+                        txtSetAuto.setText(config.incrementAmount().toPlainString());
+                        txtSetMaxAuto.setText(config.maxBid().toPlainString());
+                      }
+
+                      chboxAutoBidding.setDisable(false);
+                      btnConfirm.setDisable(false);
+                    }));
+  }
+
+  private void disableAutoBid() {
+    chboxAutoBidding.setDisable(true);
+    btnConfirm.setDisable(true);
+    Request request =
+        new Request(
+            "DISABLE_AUTO_BID",
+            new AutoBidRequest(UUID.fromString(currentAuctionId), UUID.fromString(userId)));
+
+    CompletableFuture.supplyAsync(() -> sendAutoBidRequest(request))
+        .thenAccept(
+            response ->
+                Platform.runLater(
+                    () -> {
+                      chboxAutoBidding.setDisable(false);
+                      btnConfirm.setDisable(false);
+                      if (response.success()) {
+                        hasEnabledAutoBidConfig = false;
+                        return;
+                      }
+
+                      isAutoBidding = true;
+                      chboxAutoBidding.setSelected(true);
+                      boxAutoBidding.setVisible(true);
+                      showAutoBidError(response.message());
+                    }));
+  }
+
+  private Response sendAutoBidRequest(Request request) {
+    try {
+      return Client.getInstance().sendRequest(request);
+    } catch (Exception e) {
+      return new Response(false, "Lỗi kết nối máy chủ!", null);
+    }
+  }
+
+  private void showAutoBidError(String message) {
+    lblError.setText(message);
+    lblError.setVisible(true);
+    lblError.setManaged(true);
+    lblError.setTextFill(Color.web("#FF8A80"));
   }
 
   @FXML

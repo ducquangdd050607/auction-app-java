@@ -67,6 +67,9 @@ public class RequestDispatcher {
       case "PLACE_BID" -> auctionService.handlePlaceBid((PlaceBidRequest) request.payload());
       case "CONFIGURE_AUTO_BID" ->
           auctionService.handleConfigureAutoBid((ConfigureAutoBidRequest) request.payload());
+      case "GET_AUTO_BID" -> auctionService.handleGetAutoBid((AutoBidRequest) request.payload());
+      case "DISABLE_AUTO_BID" ->
+          auctionService.handleDisableAutoBid((AutoBidRequest) request.payload());
       case "GET_USERS" -> auctionService.handleGetUsers();
       case "REMOVE_AUCTION" ->
           auctionService.handleRemoveAuction((RemoveAuctionRequest) request.payload());
