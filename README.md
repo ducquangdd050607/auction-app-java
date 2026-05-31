@@ -34,12 +34,13 @@ Yêu cầu cài đặt:
 
 1. Cài JDK 25 và cấu hình biến môi trường `JAVA_HOME`.
 2. Đảm bảo máy có kết nối tới database MySQL/TiDB.
-3. Nếu không dùng cấu hình database mặc định trong code, truyền các JVM options sau khi chạy server:
+3. Nhập cấu hình Database theo mẫu của `config.example.properties`, đổi tên thành `config.properties` trước khi bắt đầu:
 
 ```text
--Dauction.db.url=jdbc:mysql://HOST:PORT/auction_app?sslMode=REQUIRED&serverTimezone=UTC
--Dauction.db.user=your_username
--Dauction.db.password=your_password
+auction.db.url="YOUR_DB_URL"
+auction.db.user="YOUR_DB_USER"
+auction.db.password="YOUR_DB_PASSWORD"
+auction.server.port=8080
 ```
 
 4. Build project:
@@ -115,10 +116,11 @@ Sau khi chạy lệnh build:
 .\mvnw.cmd clean package
 ```
 
-File jar của ứng dụng được tạo tại:
+File jar của ứng dụng được tạo tại thư mục target trong dự án:
 
 ```text
-target/auction-app-java-1.0-SNAPSHOT.jar
+target/Client-Blue88.jar
+target/Server-Blue88.jar
 ```
 
 Lưu ý:
@@ -206,6 +208,7 @@ Thứ tự bắt buộc:
 - Quản lý người dùng cho admin.
 - Kết nối và thao tác database qua DAO/JDBC.
 - Unit test cho các thành phần chính: factory, service, strategy và utility.
+- Chatbot hỗ trợ cách sử dụng các chức năng hợp lý.
 
 ## 7. Link báo cáo PDF và video demo
 
