@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public final class ValidationUtils {
 
   private static final Pattern EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+  private static final Pattern PASSWORD = Pattern.compile("((?=.d)(?=.[a-z])(?=.[A-Z])(?=.[!.#$@_+,?-]).{8,50})");
 
   private ValidationUtils() {}
 
@@ -85,6 +86,12 @@ public final class ValidationUtils {
         || minIncrement == null
         || bidPrice.subtract(bestPrice).compareTo(minIncrement) < 0) {
       throw new ValidationException("Vui lòng nhiều hơn mức quy định.");
+    }
+  }
+
+  public static void requireMininumPasswordLength(String password) {
+    if (password.length() < 6) {
+      throw new ValidationException("Mật khẩu nhiều hơn 6 kí tự");
     }
   }
 }
